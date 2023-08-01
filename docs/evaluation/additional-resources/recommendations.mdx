@@ -1,0 +1,96 @@
+---
+sidebar_label: Recommendations
+sidebar_position: 6
+---
+
+# Recommendations
+
+This conceptual guide shares thoughts on how to use testing and evaluations for your LLM applications. There is no one-size-fits-all solution, but we believe the most successful teams will adapt strategies from design, software development, and machine learning to their use cases to deliver better, more reliable results.
+
+### Test early and often
+
+While "unit tests" don't truly exist for the model, writing "minimum functionality tests" for each chain during the debugging and prototyping stage will help you scaffold more reliable systems.
+
+Datasets facilitate this. Using debugging projects, you can log runs while prototyping. From these runs, you can select representative samples to add to a "Functionality Test Dataset" for that component. Evaluators can be run in CI to ensure that individual chains (or other components) still perform as desired for known use cases.
+
+- Completing a specific structured schema
+- Selecting the correct tool for a given question
+- Extracting the correct information from a passage
+- Generating valid code for a typical input.
+- Avoiding unwanted behavior when given leading inputs (e.g., appropriate polite refusals, adversarial inputs, etc.)
+
+These datasets can range from anywhere between 10-100+ examples and will continue to grow as you capture more example traces and add them as known tests.
+
+### Create domain-specific evaluators
+
+LangChain has strong and configurable built-in evaluators for common tasks, and everyone will benefit from your [contributions to these evaluators](https://github.com/hwchase17/langchain/tree/master/langchain/evaluation). However, often the best evaluation metrics are domain-specific. Some examples include:
+
+- Evaluate the validity and efficiency of domain-specific code
+- Applying custom rules to check the response output against a proprietary system
+- Asserting numerical values are within a certain range
+
+### Use labels where possible
+
+When adding examples to a dataset, you can improve the output to represent a "gold standard" label. Evaluators that compare outputs against labels generally are much more reliable than those that have to operate "reference-free."
+
+Once you have deployed an application, capture and filter user feedback (even in testing deployments) to help improve the signal.
+
+### Use aggregate evals
+
+Testing individual data points is useful for asserting behavior on known examples, but a lot of information can only be measured in aggregate. Aggregating automated feedback over a dataset can help you detect differences in performance across component versions or between configurations.
+
+These datasets are usually 100-1000+ examples to return statistically significant results.
+
+### Measure model stability
+
+LLMs can be non-deterministic. They also can be sensitive to small (even imperceptible) changes in the input. Generating a dataset of synthetic examples is a good way to measure this. Some common approaches to address this usually start from a representative dataset and then:
+
+- Generate examples using explicit transformations that don't change the meaning of the input, such as changing pronouns or roles, verb tense, misspellings, paraphrasing, etc. These are semantic invariance tests
+- Generate "similar examples" from the model (or differently tokenized LLMs). When evaluating, ensure that the correctness or other metrics don't change, or ask the model to assert whether the outputs are equivalent.
+- (If the model's temperature > 0) run the model multiple times and grade whether outputs are consistent.
+
+### Measure performance on subsets
+
+Use tags or organize datasets based on cohorts or important properties to return stratified results for different groups. This can help you quantify your application's bias or other issues that might not be apparent when looking at intermingled results.
+
+### Evaluate production data
+
+Once you have deployed an application, you can use the same evaluators to measure performance or behavior on real user data. This can help you identify issues that might not be apparent during testing, and it can help quantify signals that are contained in the unstructured data. These can be used alongside other application metrics to help better understand ways to improve your application.
+
+You can also log proxy metrics (such as click-through/response rate) as feedback to measure to drive better analysis.
+
+### Don't train on test datasets
+
+If you've ever heard of the "train, validation, test" splits in ML, you are well aware that if you use a dataset for optimizing a prompt, fine-tuning an LLM, or picking other configurable parameters in your setup, it's important to keep this separate from the datasets you use for testing. Otherwise, you risk "overfitting" to the test data, which will likely lead to poor performance on new data once you deploy it.
+
+### Test the model yourself
+
+Looking at the data remains an effective (albeit time-consuming) evaluation technique in many scenarios. You can evaluate runs yourself and log feedback from your application users using
+
+LangSmith exposes this in the client via a `create_feedback` method. We recommend adding as many signals as possible and using tags and aggregated feedback to help you understand what is happening in your application.
+
+### Ask appropriate questions
+
+When thinking of what evaluator to use, it is helpful to think of "what question I need to answer" to be sure that my application has the desired behavior. Then it's vital to decide "what question can I reasonably answer given the input data".
+
+Asking a model if an output is "correct" will likely return an unreliable result, unless the model has additional information (such as a ground-truth label) that wasn't available to the evaluated model.
+
+It can be useful to select evaluators based on whether labels are present and what types of information would be useful for your concerns. Below are a few examples:
+
+|             | Reference Free                                                                                                               | With References                                         |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Pass/Fail   | Exact/fuzzy string match; "Does this output answer the user's question? YES or NO                                            | "Is the generated output equivalent to the answer?"     |
+| Scoring     | Perplexity / Normalized log probs; "On a scale from 1 to 5, 1 being a \_\_\_ and 5 being \_\_\_, how \_\_\_ is this output?" | ROUGE/BLEU; “On a scale from 1 to 5, how similar is …?” |
+| Labeling    | "Is this output mostly related to sports, finance, pop culture, or other?"                                                   | _less useful here_                                      |
+| Comparisons | Which of these outputs best responds to the following input: 1. \_\_\_ 2. \_\_\_                                             | _less useful here_                                      |
+
+You'll notice that we've included some more traditional NLP measurements like "perplexity" or "ROUGE" alongside natural language questions prompted to an LLM. Both techniques have their place and very notable limitations. We recommend using a combination of these approaches to get a more complete picture of your application's performance.
+
+### Other Resources
+
+There's a lot of great work that has been done in this space. Some resources our community have found useful include:
+
+- ELeutherAI's [LM Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness/)
+- HuggingFace [Evaluate](https://huggingface.co/docs/evaluate/index)
+- OpenAI's [evals](https://github.com/openai/evals/) repository
+- Chatbot Arena [lmsys](https://chat.lmsys.org/)

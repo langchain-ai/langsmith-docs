@@ -1,0 +1,186 @@
+---
+sidebar_label: Feedback
+sidebar_position: 5
+---
+
+import {
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# Working with feedback
+
+Feedback comes in two forms: automated and human. Both are key to delivering a consistently high quality application experience.
+
+Automated feedback is generated any time you use the `run_on_dataset` method to test your component on a dataset or any time you call `client.evaluate_run(run_id, run_evaluator)`. This guide will focus on human feedback using a common workflow.
+
+There are two ways to log human feedback:
+
+1. Clicking "Rate Run" on a run's trace in the web app directly
+2. Using the LangSmith client (or REST API).
+
+Below is the method signature from the client.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+client = Client()
+feedback = client.create_feedback(
+    "<run_id>",
+    "<feedback_key>",
+    *,
+    score: float | int | bool | None = None,
+    value: float | int | bool | str | dict | None = None,
+    correction: str | dict | None = None,
+    comment: str | None = None,
+    source_info: Dict[str, Any] | None = None,
+    feedback_source_type: "API" | "MODEL" = "API",
+)`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client();
+const feedback = await client.createFeedback("<run_id>", "<feedbackKey>", {
+  score?: float | int | bool,
+  value?: float | int | bool | string | object,
+  correction?: string | object,
+  comment?: string,
+  sourceInfo?: object,
+  feedbackSourceType?: "API" | "MODEL"
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+Feedback requires a "key" as a name for the feedback and a run_id to assign the feedback to. Typically, you will also want a "score" to characterize measure the feedback and facilitate comparisons. Feedback can contain any of the following optional fields:
+
+- score: The score to rate this run on the metric or aspect.
+- value: The display value or non-numeric value for this feedback.
+- correction: The correct ground truth for this run.
+- comment: A comment about this feedback, or additional reasoning about why it received this score.
+- source_info: Information about the source of this feedback (e.g., a user ID, model type, tags, etc.)
+- feedback_source_type: The type of feedback source, either API or MODEL.
+
+## Example workflow
+
+In addition to general production observability, user feedback is a key ingredient to continually improving your LLM application. A simple workflow for this is:
+
+1. Enable tracing and use the LangSmith client to save user feedback.
+2. Filter runs based on feedback and other automated metrics.
+3. Export runs to a dataset to use for evaluation and training.
+
+### 1. Log feedback for a run
+
+Assuming you've already set up tracing in the [LangSmith quick start](/#quick-start), you can add user feedback to a run by returning the run ID and and including that in the `create_feedback` call.
+
+To return the run ID for a given call, look for the `__run` key of the LangChain component's response dictionary (or typescript object). In python, you will have to specify `include_run_id=True` when calling your chain or LLM. Below is an example:
+
+```bash
+export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
+export LANGCHAIN_API_KEY=<your_api_key>
+export LANGCHAIN_PROJECT=<your_project>
+```
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`import os
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import LLMChain
+from langsmith import Client\n
+chain = LLMChain.from_string(ChatOpenAI(), "Say hi to {name}")
+client = Client()
+def main():
+  response = chain("Clara", include_run_info=True)
+  run_id = response["__run"].run_id
+  # ... User copies the generated response
+  client.create_feedback(run_id, "did_copy", score=True)
+  # ... User clicks a thumbs up button
+  client.create_feedback(run_id, "thumbs_up", score=True)
+`),
+    TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
+import { LLMChain } from "langchain/chains";
+import { PromptTemplate } from "langchain/prompts";
+import { Client } from "langsmith";\n
+const client = new Client();
+const prompt = PromptTemplate.fromTemplate("Say hi to {name}");
+const chain = new LLMChain({
+  llm: new ChatOpenAI(),
+  prompt: prompt,
+});
+async function main() {
+    const response = await chain.call({ name: "Clara" });
+    const runId = response.__run;
+    // ... User copies the generated response
+    await client.createFeedback(runId, "did_copy", { score: true });
+    // ... User clicks a thumbs up button
+    await client.createFeedback(runId, "thumbs_up", { score: true });
+}
+main();
+`),
+  ]}
+  groupId="client-language"
+/>
+
+### 2. Filter runs based on feedback
+
+Once you've collected runs, you can select some to analyze or export to a dataset. It's easiest to do this directly
+in the LangSmith web app directly, but you can also use the SDK. Below, select all runs that
+received a 'thumbs_up' from the user.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `runs = client.list_runs(
+    project_name="<your_project>",
+    filter='and(eq(feedback_key, "Correctness"), eq(feedback_score, 1.0))',
+)`
+    ),
+    TypeScriptBlock(
+      `const runs: Run[] = []
+for await (const run of client.listRuns({
+  project: "<your_project>",
+  filter: 'and(eq(feedback_key, "Correctness"), eq(feedback_score, 1.0))',
+})) {
+  runs.push(run);
+};`
+    ),
+  ]}
+  groupId="client-language"
+/>
+
+### 3. Export runs to dataset
+
+After reviewing the runs or filtering for other metrics, you can export them to a dataset for further analysis, evaluation, or even for training new models. The easiest way to do so is via the web app directly by going to the project, selecting runs and clicking "Add to dataset".
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`dataset = client.create_dataset(
+  "Thumbs Up Runs",
+  description="Runs that received a thumbs up from the user",
+  runs=runs,
+)
+for run in runs:
+    client.create_example(
+      inputs=run.inputs,
+      outputs=run.outputs,
+      dataset_id=dataset.id,
+    )`),
+    TypeScriptBlock(`const dataset = await client.createDataset({
+    name: "Thumbs Up Runs",
+    description: "Runs that received a thumbs up from the user",
+    runs: runs,
+  });
+  for (const run of runs) {
+    await client.createExample(
+      inputs: run.inputs,
+      outputs: run.outputs,
+      {
+        datasetId: dataset.id,
+      }
+    )
+  }`),
+  ]}
+  groupId="client-language"
+/>
+
+Once you've created a dataset, you can use it to evaluate new prompts against, to train a new LLM, or for other purposes.
