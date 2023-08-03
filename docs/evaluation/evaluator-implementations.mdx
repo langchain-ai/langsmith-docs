@@ -1,0 +1,230 @@
+---
+sidebar_label: LangChain Evaluators
+sidebar_position: 3
+---
+
+import {
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# LangChain Evaluators
+
+LangChain's evaluation module provides evaluators you can use as-is for common evaluation scenarios.
+
+It's easy to use these to grade your chain or agent by naming these in the [RunEvalConfig](https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.config.RunEvalConfig.html#langchain.smith.evaluation.config.RunEvalConfig) provided to the [run_on_dataset](https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.runner_utils.run_on_dataset.html#langchain.smith.evaluation.runner_utils.run_on_dataset) (or async [arun_on_dataset](https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.runner_utils.arun_on_dataset.html#langchain.smith.evaluation.runner_utils.arun_on_dataset)) function in the LangChain library. You can check out the [linked doc](https://python.langchain.com/docs/guides/langsmith) for a quick walkthrough of how to use it.
+
+Copy the code snippets below to get started. You can also configure them for your applications using the arguments mentioned in the "Parameters" sections.
+
+If you don't see an implementation that suits your needs, you can learn how to create your own [Custom Run Evaluators](custom-evaluators) in the linked guide, or contribute an string evaluator to the [LangChain repository](https://github.com/hwchase17/langchain/blob/master/langchain/evaluation/).
+
+:::note
+Most of these evaluators are useful but imperfect! We recommend against blind trust of any single automated metric and to always incorporate them as a part of a holistic testing and evaluation strategy.
+:::
+
+## Correctness: QA evaluation
+
+QA evalutors help to measure the correctness of a response to a user query or question. If you have a dataset with reference labels or reference context docs, these are the evaluators for you!
+
+Three QA evaluators you can load are: `"qa"`, `"context_qa"`, and `"cot_qa"`:
+
+- The `"qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.QAEvalChain.html#langchain-evaluation-qa-eval-chain-qaevalchain)) instructs an LLMChain to directly grade a response as "correct" or "incorrect" based on the reference answer.
+- The `"context_qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.ContextQAEvalChain.html#langchain.evaluation.qa.eval_chain.ContextQAEvalChain)) instructs the LLM chain to use reference "context" (provided throught the example outputs) in determining correctness. This is useful if you have a larger corpus of grounding docs but don't have ground truth answers to a query.
+- The `"cot_qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.CotQAEvalChain.html#langchain.evaluation.qa.eval_chain.CotQAEvalChain)) is similar to the "context_qa" evaluator, expect it instructs the LLMChain to use chain of thought "reasoning" before determining a final verdict. This tends to lead to responses that better correlate with human labels, for a slightly higher token and runtime cost.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        "qa",
+        "context_qa",
+        "cot_qa",
+    ]
+)\n
+client = Client()
+run_on_dataset(
+    client,
+    "<dataset_id>",
+    <LLM or constructor for chain or agent>,
+    evaluation=evaluation_config,
+)`),
+  ]}
+  groupId="client-language"
+/>
+
+You can customize the evaluator by specifying the LLM used to power its LLM chain or even by customizing the prompt itself.
+Below is an example using an Anthropic model to run the evaluator, and a custom prompt for the base QA evaluator. Check out the reference docs for more information on the expected prompt format.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain.chat_models import ChatAnthropic
+from langchain.prompts.prompt import PromptTemplate\n
+_PROMPT_TEMPLATE = """You are an expert professor specialized in grading students' answers to questions.
+You are grading the following question:
+{query}
+Here is the real answer:
+{answer}
+You are grading the following predicted answer:
+{result}
+Respond with CORRECT or INCORRECT:
+Grade:
+"""\n
+PROMPT = PromptTemplate(
+    input_variables=["query", "answer", "result"], template=_PROMPT_TEMPLATE
+)
+eval_llm = ChatAnthropic(temperature=0.0)
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        RunEvalConfig.QA(llm=eval_llm, prompt=PROMPT),
+        RunEvalConfig.ContextQA(llm=eval_llm),
+        RunEvalConfig.CoTQA(llm=eval_llm),
+    ]
+)
+`),
+  ]}
+  groupId="client-language"
+/>
+
+## No labels: criteria evaluation
+
+If you don't have ground truth reference labels (i.e., if you are evaluating against production data or if your task doesn't involve factuality), you can evaluate your run against a custom set of criteria using the `"criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.CriteriaEvalChain.html)).
+
+This is helpful when there are high level semantic aspects of your model's output you'd like to monitor that aren't captured by other explicit checks or rules.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        # You can define an arbitrary criterion as a key: value pair in the criteria dict
+        RunEvalConfig.Criteria({"creativity": "Is this submission creative, imaginative, or novel?"}),
+        # We provide some simple default criteria like "conciseness" you can use as well
+        RunEvalConfig.Criteria("conciseness"),
+    ]
+)\n
+client = Client()
+run_on_dataset(
+    client,
+    "<dataset_id>",
+    <LLM or constructor for chain or agent>,
+    evaluation=evaluation_config,
+)`),
+  ]}
+  groupId="client-language"
+/>
+
+## Criteria with labels
+
+Your dataset may have ground truth labels or contextual information demonstrating an output that satisfies a criterion or prediction for a certain input. You can use criteria in context with the `"labeled_criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.LabeledCriteriaEvalChain.html)).
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        RunEvalConfig.LabeledCriteria("correctness"),
+        # You can define an arbitrary criterion as a key: value pair in the criteria dict
+        RunEvalConfig.LabeledCriteria(
+            {
+                "helpfulness": (
+                    "Is this submission helpful to the user,"
+                    " taking into account the correct reference answer?"
+                )
+            }
+        ),
+    ]
+)\n
+client = Client()
+run_on_dataset(
+    client,
+    "<dataset_id>",
+    <LLM or constructor for chain or agent>,
+    evaluation=evaluation_config,
+)
+`),
+  ]}
+  groupId="client-language"
+/>
+
+::::tip Supported Criteria
+Default criteria are implemented for the following aspects: conciseness, relevance, correctness, coherence, harmfulness, maliciousness, helpfulness, controversiality, misogyny, and criminality.
+To specify custom criteria, write a mapping of a criterion name to its description, such as:
+
+      criterion = {"creativity": "Is this submission creative, imaginative, or novel?"}
+      eval_config = RunEvalConfig(evaluators=[RunEvalConfig.Criteria(criterion)])
+
+::::
+
+::::tip Interpreting the Score
+Evaluation scores don't have an inherent "direction" (i.e., higher is not necessarily better).
+The direction of the score depends on the criteria being evaluated. For example, a score of 1 for "helpfulness" means that the prediction was deemed to be helpful by the model.
+However, a score of 1 for "maliciousness" means that the prediction contains malicious content, which, of course, is "bad".
+::::
+
+# Embedding distance
+
+One way to quantify the semantic (dis-)similarity between a predicted output and a ground truth is via embedding distance.
+You can use the `embedding_distance` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.embedding_distance.base.EmbeddingDistanceEvalChain.html)) to measure the distance between the predicted output and the ground truth.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset
+from langchain.embeddings import HuggingFaceEmbeddings\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        # You can define an arbitrary criterion as a key: value pair in the criteria dict
+        "embedding_distance",
+        # Or to customize the embeddings:
+        # Requires 'pip install sentence_transformers'
+        # RunEvalConfig.EmbeddingDistance(embeddings=HuggingFaceEmbeddings(), distance_metric="cosine"),
+    ]
+)\n
+client = Client()
+run_on_dataset(
+    client,
+    "<dataset_id>",
+    <LLM or constructor for chain or agent>,
+    evaluation=evaluation_config,
+)`),
+  ]}
+  groupId="client-language"
+/>
+
+# String distance
+
+Another simple way to measure similarity is by computing a string edit distance like Levenshtein distance. You can use the `"string_distance"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.string_distance.base.StringDistanceEvalChain.html))to measure the distance between the predicted output and the ground truth. This depends on the `rapidfuzz` library.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        # You can define an arbitrary criterion as a key: value pair in the criteria dict
+        "string_distance",
+        # Or to customize the distance metric:
+        # RunEvalConfig.StringDistance(distance="levenshtein", normalize_score=True),
+    ]
+)\n
+client = Client()
+run_on_dataset(
+    client,
+    "<dataset_id>",
+    <LLM or constructor for chain or agent>,
+    evaluation=evaluation_config,
+)`),
+  ]}
+  groupId="client-language"
+/>
+
+## Don't see what you're looking for?
+
+These implementations are just a starting point. We want to work with you to build better off-the-shelf evaluation tools for everyone.
+
+We'd love feedback and contributions! Send us feedback at support@langchain.dev, check out the [Evaluators](https://github.com/hwchase17/langchain/tree/master/langchain/evaluation) in LangChain or submit PRs or issues directly to better address your needs.

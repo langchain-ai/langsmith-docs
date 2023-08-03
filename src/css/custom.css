@@ -1,0 +1,108 @@
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @format
+ */
+
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans&display=swap");
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: var(--joy-palette-primary-600);
+  --ifm-color-primary-dark: var(--joy-palette-primary-600);
+  --ifm-color-primary-darker: var(--joy-palette-primary-700);
+  --ifm-color-primary-darkest: var(--joy-palette-primary-800);
+  --ifm-color-primary-light: var(--joy-palette-primary-400);
+  --ifm-color-primary-lighter: var(--joy-palette-primary-200);
+  --ifm-color-primary-lightest: var(--joy-palette-primary-100);
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-base: "Public Sans", sans-serif;
+  --docusaurus-highlighted-code-line-bg: var(--joy-palette-primary-100);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme="dark"] {
+  --ifm-color-primary: var(--joy-palette-primary-400);
+  --ifm-color-primary-dark: var(--joy-palette-primary-500);
+  --ifm-color-primary-darker: var(--joy-palette-primary-600);
+  --ifm-color-primary-darkest: var(--joy-palette-primary-700);
+  --ifm-color-primary-light: var(--joy-palette-primary-300);
+  --ifm-color-primary-lighter: var(--joy-palette-primary-100);
+  --ifm-color-primary-lightest: var(--joy-palette-primary-50);
+  --docusaurus-highlighted-code-line-bg: var(--joy-palette-primary-800);
+}
+
+html[data-theme="dark"] {
+  --ifm-background-color: var(--joy-palette-background-body);
+}
+
+.navbar {
+  outline: 1px solid var(--ifm-color-gray-200);
+}
+
+[data-theme="dark"] .navbar {
+  background-color: var(--joy-palette-common-black);
+  outline: 1px solid var(--ifm-color-gray-800);
+}
+
+.footer__links {
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+}
+
+.footer__col {
+  text-align: center;
+}
+
+.footer__copyright {
+  opacity: 0.6;
+}
+
+.theme-doc-sidebar-item-category > div > a {
+  flex: 1 1 0;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.theme-doc-sidebar-item-category > div > button {
+  opacity: 0.5;
+}
+
+.markdown > h2 {
+  margin-top: 3rem;
+  border-bottom-color: var(--ifm-color-primary);
+  border-bottom-width: 2px;
+  padding-bottom: 1rem;
+}
+
+.markdown > :not(h2) + h3 {
+  margin-top: 4rem;
+}
+
+.markdown > h4 {
+  margin-bottom: 0.2rem;
+  font-weight: 600;
+}
+
+.markdown > h4:has(+ table) {
+  margin-bottom: 0.4rem;
+}
+
+.markdown > h5 {
+  margin-bottom: 0.2rem;
+  font-weight: 600;
+}
+
+/* Config search */
+.DocSearch {
+  width: 250px;
+}

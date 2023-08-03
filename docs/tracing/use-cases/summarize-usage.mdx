@@ -1,0 +1,110 @@
+---
+sidebar_label: Summarize App Usage
+sidebar_position: 3
+---
+
+# Generating App Insights
+
+Most usage of LLM applications is in the form of unstructured data. LangChain can be used to
+cluster and summarize how people are using an application so you can build a better product.
+
+In this example, you will perform simple k-means clustering and an LLM call to summarize logged user activity.
+
+## Step 1: Sample recent runs
+
+For this example, we will randomly sample from the past day's runs. You can take a much larger sample,
+depending on your needs.
+
+```python
+import random
+from datetime import datetime, timedelta
+
+from langsmith import Client
+
+project_name = "my-project"
+max_to_analyze = 200
+yesterday = datetime.now() - timedelta(days=1)
+
+client = Client()
+runs = list(
+    client.list_runs(
+        project_name=project_name,
+        start_time=yesterday,
+        execution_order=1, # Ignore child runs
+    )
+)
+
+if len(runs) > max_to_analyze:
+    runs = random.sample(runs, max_to_analyze)
+
+# Assumes a single key.
+inputs = [str(next(iter(run.inputs.values()))) for run in runs]
+```
+
+## Step 2: Embed the inputs for clustering:
+
+Embeddings provide vector representations of text that we can use to cluster semantically similar inputs.
+
+```python
+import numpy as np
+from langchain.embeddings import OpenAIEmbeddings
+
+embedder = OpenAIEmbeddings()
+embeddings = embedder.embed_documents(inputs)
+arr = np.stack(embeddings)
+```
+
+Now, cluster the embeddings:
+
+```python
+from sklearn.cluster import KMeans
+
+# Reduce n_clusters in case you're trying this walkthrough out on a small project
+n_clusters = min(4, len(inputs)//4)
+
+kmeans = KMeans(n_clusters=n_clusters, n_init='auto', init="k-means++", random_state=42)
+kmeans.fit(arr)
+```
+
+## Step 3: Summarize each cluster
+
+Now it's time to produce the summaries! We will use the `ChatOpenAI` model with a 16k token context window.
+
+```python
+import tiktoken
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import LLMChain
+from langchain.schema import HumanMessage, SystemMessage
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
+
+llm = ChatOpenAI(model="gpt-3.5-turbo-16k", temperature=0.7)
+prompt_template = ChatPromptTemplate.from_messages(
+    [SystemMessage(content="You are a helpful AI assistant trained to generate insights on how users are using a product. You are given the following query logs:"),
+    SystemMessagePromptTemplate.from_template("""BEGIN LOGS
+-----
+{logs}
+-----
+END LOGS"""),
+    HumanMessage(content="Please respond with a title capturing the commonalities of these logs and a summary of the topic cluster.")]
+)
+chain = LLMChain(llm=llm, prompt=prompt_template)
+
+
+input_arr = np.array(inputs)
+summaries = []
+encoding = tiktoken.encoding_for_model("gpt-3.5-turbo-16k")
+
+def _truncate_inputs(inputs: str) -> str:
+    # Truncate to max 15k tokens, leaving ~1k for the completion
+    return inputs[:len(encoding.decode(encoding.encode(inputs)[:15000]))]
+
+for i in range(n_clusters):
+    cluster_members = input_arr[kmeans.labels_ == i]
+    cluster_inputs = "\n\n".join(cluster_members)
+    truncated_inputs = _truncate_inputs(cluster_inputs)
+    summary = chain.run(truncated_inputs)
+    summaries.append(summary)
+    print(f"{summary}\n")
+```
+
+Congratulations! You have now clustered and summarized user activity for an application.

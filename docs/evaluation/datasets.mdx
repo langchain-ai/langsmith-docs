@@ -1,0 +1,253 @@
+---
+sidebar_label: Datasets
+sidebar_position: 2
+toc_max_heading_level: 3
+---
+
+import {
+  CodeTabs,
+  ShellBlock,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# Datasets
+
+Datasets are a collections of examples that can be used to evaluate or otherwise improve a chain, agent, or model. Examples are rows in the dataset, containing the inputs and (optionally) expected outputs for a given interaction. Below we will go over the current types of datasets as well as different ways to create them.
+
+## Dataset types
+
+There are currently three types of datasets.
+
+- `kv` datasets are the default type, where inputs and outputs can be any dictionary. These are useful for more custom workflows, but when there are more than one key-value pair, additional configuration may be required to use for evaluation.
+- `llm` datasets have an `"inputs"` dictionary which contains a single `"input"` key mapped to a single prompt string. Similarly, the `"outputs"` dictionary contains a single `"output"` key mapped to a single response string.
+- `chat` dataset have and `"inputs"` dictionary contains a single `"input"` key mapped to a single list of serialized chat messages. The `"outputs"` dictionary contains a single `"output"` key mapped to a single list of serialized chat messages.
+
+## Managing datasets in the web app
+
+### From Existing Runs
+
+We typically construct datasets over time by collecting representative examples from debugging or other runs. To do this, we first filter the runs to find the ones we want to add to the dataset. Then, we create a dataset and add the runs as examples.
+
+You can do this from any 'run' details page by clicking the 'Add to Dataset' button in the top right-hand corner.
+
+![Add to Dataset](static/add_to_dataset.png)
+
+From there, we select the dataset to organize it in and update the ground truth output values if necessary.
+
+![Modify example](static/modify_example.png)
+
+
+### Upload a CSV
+
+The easiest way to create a dataset from your own data is by clicking the 'upload a CSV dataset' button on the home page or in the top right-hand corner of the 'Datasets & Testing' page.
+
+![Upload CSV](static/create_dataset_csv.png)
+
+Select a name and description for the dataset, and then confirm that the inferred input and output columns are correct.
+
+![Confirm Columns](static/select_columns.png)
+
+### Exporting datasets to other formats
+
+You can export your LangSmith dataset to CSV or OpenAI evals format directly from the web application.
+
+To do so, click "Export Dataset" from the homepage.
+To do so, select a dataset, click on "Examples", and then click the "Export Dataset" button at the top of the examples table.
+
+![Export Dataset Button](static/export-dataset-button.png)
+
+This will open a modal where you can select the format you want to export to.
+
+![Export Dataset Modal](static/export-dataset-modal.png)
+
+## Creating datasets using the client
+
+You can create a dataset from existing runs or upload a CSV file (or pandas dataframe in python).
+
+Once you have a dataset created, you can continue to add new runs to it as examples. We recommend that you organize datasets to target a single "task", usually served by a single chain or LLM. For more discussions on datasets and evaluations, check out the [recommendations](additional-resources/recommendations).
+
+### Create from list of examples
+
+The most flexible way to make a dataset using the client is by creating examples from a list of inputs and optional outputs. Below is an example.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+example_inputs = [
+  ("What is the largest mammal?", "The blue whale"),
+  ("What do mammals and birds have in common?", "They are both warm-blooded"),
+  ("What are reptiles known for?", "Having scales"),
+  ("What's the main characteristic of amphibians?", "They live both in water and on land"),
+]\n
+client = Client()
+dataset_name = "Elementary Animal Questions"\n
+# Storing inputs in a dataset lets us
+# run chains and LLMs over a shared set of examples.
+dataset = client.create_dataset(
+    dataset_name=dataset_name, description="Questions and answers about animal phylogenetics.",
+)
+for input_prompt, output_answer in example_inputs:
+    client.create_example(
+        inputs={"question": input_prompt},
+        outputs={"answer": output_answer},
+        dataset_id=dataset.id,
+    )`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client({
+  // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
+  // apiKey: "my_api_key", // Defaults to the LANGCHAIN_API_KEY env var
+  /* callerOptions: {
+         maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
+         maxRetries?: 6; // Maximum number of retries to make
+  }*/
+});\n
+const exampleInputs: [string, string][] = [
+  ["What is the largest mammal?", "The blue whale"],
+  ["What do mammals and birds have in common?", "They are both warm-blooded"],
+  ["What are reptiles known for?", "Having scales"],
+  ["What's the main characteristic of amphibians?", "They live both in water and on land"],
+];\n
+const datasetName = "Elementary Animal Questions";\n
+// Storing inputs in a dataset lets us
+// run chains and LLMs over a shared set of examples.
+const dataset = await client.createDataset(datasetName, {
+  description: "Questions and answers about animal phylogenetics",
+});\n
+for (const [inputPrompt, outputAnswer] of exampleInputs) {
+  await client.createExample(
+    { question: inputPrompt },
+    { answer: outputAnswer },
+    {
+      datasetId: dataset.id,
+    }
+  );
+}`),
+  ]}
+  groupId="client-language"
+/>
+
+### Create from existing runs
+
+To create datasets from existing runs, you can use the same approach. Below is an example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>" 
+client = Client()
+dataset_name = "Example Dataset"\n
+# Filter runs to add to the dataset
+runs = client.list_runs(
+    project_name="my_project",
+    execution_order=1,
+    error=False,
+)\n
+dataset = client.create_dataset(dataset_name, description="An example dataset")
+for run in runs:
+    client.create_example(
+        inputs=run.inputs,
+        outputs=run.outputs,
+        dataset_id=dataset.id,
+    )`),
+    TypeScriptBlock(`import { Client, Run } from "langsmith";
+const client = new Client({
+  // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
+  // apiKey: "my_api_key", // Defaults to the LANGCHAIN_API_KEY env var
+  /* callerOptions: {
+         maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
+         maxRetries?: 6; // Maximum number of retries to make
+  }*/
+});\n
+const datasetName = "Example Dataset";
+// Filter runs to add to the dataset
+const runs: Run[] = [];
+for await (const run of client.listRuns({
+  projectName: "my_project",
+  executionOrder: 1,
+  error: false,
+})) {
+  runs.push(run);
+}\n
+const dataset = await client.createDataset(datasetName, {
+  description: "An example dataset",
+  dataType: "kv",
+});\n
+for (const run of runs) {
+  await client.createExample(run.inputs, run.outputs ?? {}, {
+    datasetId: dataset.id,
+  });
+}
+`),
+  ]}
+  groupId="client-language"
+/>
+
+### Create dataset from CSV
+
+In this section, we will demonstrate how you can create a dataset by uploading a CSV file.
+
+First, ensure your CSV file is properly formatted with columns that represent your input and output keys. These keys will be utilized to map your data properly during the upload. You can specify an optional name and description for your dataset. Otherwise, the file name will be used as the dataset name and no description will be provided.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+import os\n
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"\n
+client = Client()\n
+csv_file = 'path/to/your/csvfile.csv' 
+input_keys = ['column1', 'column2'] # replace with your input column names
+output_keys = ['output1', 'output2'] # replace with your output column names\n
+dataset = client.upload_csv(
+    csv_file=csv_file,
+    input_keys=input_keys,
+    output_keys=output_keys,
+    name="My CSV Dataset",
+    description="Dataset created from a CSV file"
+    data_type="kv"
+)`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client();\n
+const csvFile = 'path/to/your/csvfile.csv';
+const inputKeys = ['column1', 'column2']; // replace with your input column names
+const outputKeys = ['output1', 'output2']; // replace with your output column names\n
+const dataset = await client.uploadCsv({
+    csvFile: csvFile,
+    fileName: "My CSV Dataset",
+    inputKeys: inputKeys,
+    outputKeys: outputKeys,
+    description: "Dataset created from a CSV file",
+    dataType: "kv"
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+### Create dataset from pandas dataframe
+
+The python client offers an additional convenience method to upload a dataset from a pandas dataframe.
+
+```python
+from langsmith import Client
+import os
+import pandas as pd
+
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
+client = Client()
+
+df = pd.read_parquet('path/to/your/myfile.parquet')
+input_keys = ['column1', 'column2'] # replace with your input column names
+output_keys = ['output1', 'output2'] # replace with your output column names
+
+dataset = client.upload_dataframe(
+    df=df,
+    input_keys=input_keys,
+    output_keys=output_keys,
+    name="My Parquet Dataset",
+    description="Dataset created from a parquet file",
+    data_type="kv" # The default
+)
+```

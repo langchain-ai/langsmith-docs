@@ -1,0 +1,32 @@
+---
+sidebar_label: Overview
+sidebar_position: 1
+---
+
+import {
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+import DocCardList from "@theme/DocCardList";
+
+# Testing & Evaluation
+
+Many challenges hinder the creation of a high-quality, production-grade LLM applications, including:
+
+- Non-deterministic Outputs: models are probabilistic and can produce different outputs for the same prompt (even with a 0 temperature setting as model weights are not guaranteed to be static over time).
+- API opacity: Models behind APIs change over time
+- Security: LLMs are vulnerable to prompt injections
+- Bias: LLMs encode biases that can create negative experiences
+- Cost: State-of-the-art models can be expensive
+- Latency: Most experiences need to be fast
+
+Testing and evaluation help expose issues, so you can decide how to best address them, be that through different design choices, better models or prompts, additional code checks, or other means.
+
+We don't have all the answers! We provide a number of tools and reference materials to help you get started, including automated evaluators of various types that help detect issues you face when scaling up LLM applications. No single tool is perfect, and we want to encourage experimentation and innovation in this space by providing these tools and guides as a starting point. We welcome your feedback and collaboration!
+
+Check out the [Quick Start Guide](/evaluation/quickstart) for a brief walkthrough evaluating your chain or LLM, or read on for more details.
+
+For a higher-level set of recommendations on how to think about testing and evaluating your LLM app, check out the [evaluation recommendations](/evaluation/additional-resources/recommendations) page.
+
+<DocCardList />
