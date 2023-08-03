@@ -29,26 +29,9 @@ $ yarn build
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
-### Deployment
 
-Using SSH:
+### Contributing
 
-```
-$ USE_SSH=true yarn deploy
-```
+If you see an issue in one of the examples, feel free to open a PR! Or file an issue reporting it.
 
-Not using SSH:
-
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
-
-### Continuous Integration
-
-Some common defaults for linting/formatting have been set for you. If you integrate your project with an open source Continuous Integration system (e.g. Travis CI, CircleCI), you may check for issues using the following command.
-
-```
-$ yarn ci
-```
+Thanks for reading!

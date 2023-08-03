@@ -453,6 +453,16 @@ In python, we also provide an experimental `@traceable` decorator that automatic
 
 <TraceableThreadingCodeBlock />
 
+### When logging with the SDK, which fields can I update when I patch?
+
+The following fields can be updated when patching a run:
+
+- end_time: `datetime.datetime`
+- error: `str | None`
+- outputs: `Dict | None`
+- events: `list[dict] | None`
+
+Once an `end_time` is set on a run, it is marked as "closed" and can no longer be updated. This is the case if you include an end time in the initial run creation `post` request or if you do so in a later `patch` request.
 
 ### How do I search and filter runs?
 
