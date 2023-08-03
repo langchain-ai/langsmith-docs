@@ -1,6 +1,11 @@
-# Website
+# LangSmith Documentation
 
-This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+This repository hosts the source code for the [LangSmith Docs](https://docs.smith.langchain.com/).
+
+- For the code for the LangSmith client SDK, check out the [LangSmith SDK](https://github.com/langchain-ai/langsmith-sdk) repository.
+- For a "cookbook" on use cases and guides for how to get the most out of LangSmith, check out the [LangSmith Cookbook repo](https://github.com/langchain-ai/langsmith-cookbook)
+
+The docs are built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
 
 ### Installation
 
