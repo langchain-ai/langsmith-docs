@@ -37,6 +37,7 @@ From there, we select the dataset to organize it in and update the ground truth 
 
 ![Modify example](static/modify_example.png)
 
+
 ### Upload a CSV
 
 The easiest way to create a dataset from your own data is by clicking the 'upload a CSV dataset' button on the home page or in the top right-hand corner of the 'Datasets & Testing' page.
@@ -64,9 +65,71 @@ This will open a modal where you can select the format you want to export to.
 
 You can create a dataset from existing runs or upload a CSV file (or pandas dataframe in python).
 
+Once you have a dataset created, you can continue to add new runs to it as examples. We recommend that you organize datasets to target a single "task", usually served by a single chain or LLM. For more discussions on datasets and evaluations, check out the [recommendations](additional-resources/recommendations).
+
+### Create from list of examples
+
+The most flexible way to make a dataset using the client is by creating examples from a list of inputs and optional outputs. Below is an example.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+example_inputs = [
+  ("What is the largest mammal?", "The blue whale"),
+  ("What do mammals and birds have in common?", "They are both warm-blooded"),
+  ("What are reptiles known for?", "Having scales"),
+  ("What's the main characteristic of amphibians?", "They live both in water and on land"),
+]\n
+client = Client()
+dataset_name = "Elementary Animal Questions"\n
+# Storing inputs in a dataset lets us
+# run chains and LLMs over a shared set of examples.
+dataset = client.create_dataset(
+    dataset_name=dataset_name, description="Questions and answers about animal phylogenetics.",
+)
+for input_prompt, output_answer in example_inputs:
+    client.create_example(
+        inputs={"question": input_prompt},
+        outputs={"answer": output_answer},
+        dataset_id=dataset.id,
+    )`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client({
+  // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
+  // apiKey: "my_api_key", // Defaults to the LANGCHAIN_API_KEY env var
+  /* callerOptions: {
+         maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
+         maxRetries?: 6; // Maximum number of retries to make
+  }*/
+});\n
+const exampleInputs: [string, string][] = [
+  ["What is the largest mammal?", "The blue whale"],
+  ["What do mammals and birds have in common?", "They are both warm-blooded"],
+  ["What are reptiles known for?", "Having scales"],
+  ["What's the main characteristic of amphibians?", "They live both in water and on land"],
+];\n
+const datasetName = "Elementary Animal Questions";\n
+// Storing inputs in a dataset lets us
+// run chains and LLMs over a shared set of examples.
+const dataset = await client.createDataset(datasetName, {
+  description: "Questions and answers about animal phylogenetics",
+});\n
+for (const [inputPrompt, outputAnswer] of exampleInputs) {
+  await client.createExample(
+    { question: inputPrompt },
+    { answer: outputAnswer },
+    {
+      datasetId: dataset.id,
+    }
+  );
+}`),
+  ]}
+  groupId="client-language"
+/>
+
 ### Create from existing runs
 
-If you have already logged runs to LangSmith, you can create a dataset from them using the client:
+To create datasets from existing runs, you can use the same approach. Below is an example:
 
 <CodeTabs
   tabs={[
@@ -120,8 +183,6 @@ for (const run of runs) {
   ]}
   groupId="client-language"
 />
-
-Once you have a dataset created, you can continue to add new runs to it as examples. We recommend that you organize datasets to target a single "task", usually served by a single chain or LLM. For more discussions on datasets and evaluations, check out the [recommendations](additional-resources/recommendations).
 
 ### Create dataset from CSV
 

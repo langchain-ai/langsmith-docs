@@ -56,11 +56,33 @@ export const LangChainQuickStartCodeTabs = ({}) => (
     tabs={[
       PythonBlock(`from langchain.chat_models import ChatOpenAI\n
 llm = ChatOpenAI()
-llm.predict("Hello, world!")
-  `),
+llm.predict("Hello, world!")`),
       TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";\n
 const llm = new ChatOpenAI()
-await llm.call("Hello, world!");`),
+await llm.predict("Hello, world!");
+
+/**
+ * For environments where process.env is not defined,
+ * initialize by explicitly passing keys:
+ */
+
+import { Client } from "langsmith";
+import { LangChainTracer } from "langchain/callbacks";
+
+const client = new Client({
+  apiUrl: "https://api.smith.langchain.com",
+  apiKey: "YOUR_API_KEY"
+});
+
+const tracer = new LangChainTracer({
+  projectName: "YOUR_PROJECT_NAME",
+  client
+});
+
+const model = new ChatOpenAI({
+  openAIApiKey: "YOUR_OPENAI_API_KEY",
+  callbacks: [tracer]
+});`),
     ]}
     groupId="client-language"
   />
@@ -73,36 +95,43 @@ const TraceableQuickStart = {
   content: `import datetime
 from typing import Any\n
 import openai
-from langsmith.run_helpers import traceable\n\n
+from langsmith.run_helpers import traceable
+
+
 @traceable(run_type="llm")
 def my_llm(prompt: str, temperature: float = 0.0, **kwargs: Any) -> str:
-messages = [
-    {
-        "role": "system",
-        "content": "You are an AI Assistant. The time is "
-        + str(datetime.datetime.now()),
-    },
-    {"role": "user", "content": prompt},
-]
-return (
-    openai.ChatCompletion.create(
-        model="gpt-3.5-turbo", messages=messages, temperature=temperature, **kwargs
-    )
-    .choices[0]
-    .message.content
-)\n\n
+  messages = [
+      {
+          "role": "system",
+          "content": "You are an AI Assistant. The time is "
+          + str(datetime.datetime.now()),
+      },
+      {"role": "user", "content": prompt},
+  ]
+  return (
+      openai.ChatCompletion.create(
+          model="gpt-3.5-turbo", messages=messages, temperature=temperature, **kwargs
+      )
+      .choices[0]
+      .message.content
+  )
+
+
 @traceable(run_type="tool")
 def my_tool(tool_input: str) -> str:
-return tool_input.upper()\n\n
+  return tool_input.upper()
+
+
 @traceable(run_type="chain")
 def my_chat_bot(text: str) -> str:
-generated = my_llm(text, temperature=0.0)
+  generated = my_llm(text, temperature=0.0)
 
-if "meeting" in generated:
+  if "meeting" in generated:
     return my_tool(generated)
-else:
+  else:
     return generated\n\n
-my_chat_bot("Summarize this morning's meetings.")`,
+my_chat_bot("Summarize this morning's meetings.")
+# See an example run at: https://smith.langchain.com/public/b5e2666d-f570-4b83-a611-86a2503ed91b/r`,
 };
 
 export const TraceableQuickStartCodeBlock = ({}) => (
@@ -223,7 +252,7 @@ outputs: {
 // False means post all nested runs as a batch
 // (don't exclude child runs)
 await parentRun.postRun(false);
-        
+
   `),
     ]}
     groupId="client-language"
