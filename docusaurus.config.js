@@ -119,12 +119,21 @@ const config = {
             title: "GitHub",
             items: [
               {
+                label: "Docs Code",
+                href: "https://github.com/langchain-ai/langsmith-docs"
+              },
+              {
+                label: "LangSmith SDK",
+                href: "https://github.com/langchain-ai/langsmith-sdk"
+
+              },
+              {
                 label: "Python",
-                href: "https://github.com/hwchase17/langchain",
+                href: "https://github.com/langchain-ai/langchain",
               },
               {
                 label: "JS/TS",
-                href: "https://github.com/hwchase17/langchainjs",
+                href: "https://github.com/langchain-ai/langchainjs",
               },
             ],
           },
