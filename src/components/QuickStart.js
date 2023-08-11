@@ -1,5 +1,8 @@
 import React from 'react';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 import CodeBlock from '@theme/CodeBlock';
+
 import {
   CodeTabs,
   PythonBlock,
@@ -51,22 +54,12 @@ export LANGCHAIN_PROJECT=<your-project>  # if not specified, defaults to "defaul
   />
 );
 
-export const LangChainQuickStartCodeTabs = ({}) => (
-  <CodeTabs
-    tabs={[
-      PythonBlock(`from langchain.chat_models import ChatOpenAI\n
-llm = ChatOpenAI()
-llm.predict("Hello, world!")`),
-      TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";\n
+export const LangChainQuickStartCodeTabs = ({}) => {
+  const simpleTSBlock = `import { ChatOpenAI } from "langchain/chat_models/openai";\n
 const llm = new ChatOpenAI()
-await llm.predict("Hello, world!");
+await llm.predict("Hello, world!");`;
 
-/**
- * For environments where process.env is not defined,
- * initialize by explicitly passing keys:
- */
-
-import { Client } from "langsmith";
+  const alternativeTSBlock = `import { Client } from "langsmith";
 import { LangChainTracer } from "langchain/callbacks";
 
 const client = new Client({
@@ -82,57 +75,62 @@ const tracer = new LangChainTracer({
 const model = new ChatOpenAI({
   openAIApiKey: "YOUR_OPENAI_API_KEY",
   callbacks: [tracer]
-});`),
-    ]}
-    groupId="client-language"
-  />
-);
+});`;
 
-const TraceableQuickStart = {
-  value: 'python-experimental',
-  language: `python`,
-  label: 'Python (experimental)',
-  content: `import datetime
+  return (
+    <Tabs groupId="client-language">
+      <TabItem key="python" value="python" label="Python">
+        <CodeBlock className="python" language="python">
+          {`from langchain.chat_models import ChatOpenAI\n
+llm = ChatOpenAI()
+llm.predict("Hello, world!")`}
+        </CodeBlock>
+      </TabItem>
+      <TabItem key="typescript" value="typescript" label="TypeScript">
+        <CodeBlock className="typescript" language="typescript">
+          {simpleTSBlock}
+        </CodeBlock>
+        <p>For environments where process.env is not defined, initialize by explicitly passing keys:</p>
+        <CodeBlock className="typescript" language="typescript">
+          {alternativeTSBlock}
+        </CodeBlock>
+      </TabItem>
+    </Tabs>
+  );
+};
+
+
+const TraceableQuickStart = PythonBlock(`import datetime
 from typing import Any\n
 import openai
-from langsmith.run_helpers import traceable
-
-
-@traceable(run_type="llm")
-def my_llm(prompt: str, temperature: float = 0.0, **kwargs: Any) -> str:
-  messages = [
-      {
-          "role": "system",
-          "content": "You are an AI Assistant. The time is "
-          + str(datetime.datetime.now()),
-      },
-      {"role": "user", "content": prompt},
-  ]
-  return (
-      openai.ChatCompletion.create(
-          model="gpt-3.5-turbo", messages=messages, temperature=temperature, **kwargs
-      )
-      .choices[0]
-      .message.content
-  )
-
-
+from langsmith.run_helpers import traceable\n\n
+@traceable(run_type="llm", name="openai.ChatCompletion.create")
+def my_llm(*args: Any, **kwargs: Any) -> dict:
+    return openai.ChatCompletion.create(*args, **kwargs)\n\n
 @traceable(run_type="tool")
 def my_tool(tool_input: str) -> str:
-  return tool_input.upper()
-
-
+    return tool_input.upper()\n\n
+@traceable(run_type="chain")
+def my_chain(prompt: str) -> str:
+    messages = [
+        {
+            "role": "system",
+            "content": "You are an AI Assistant. The time is "
+            + str(datetime.datetime.now()),
+        },
+        {"role": "user", "content": prompt},
+    ]
+    return my_llm(model="gpt-3.5-turbo", messages=messages)\n\n
 @traceable(run_type="chain")
 def my_chat_bot(text: str) -> str:
-  generated = my_llm(text, temperature=0.0)
+    generated = my_chain(text)
 
-  if "meeting" in generated:
-    return my_tool(generated)
-  else:
-    return generated\n\n
+    if "meeting" in generated:
+        return my_tool(generated)
+    else:
+        return generated\n\n
 my_chat_bot("Summarize this morning's meetings.")
-# See an example run at: https://smith.langchain.com/public/b5e2666d-f570-4b83-a611-86a2503ed91b/r`,
-};
+# See an example run at: https://smith.langchain.com/public/b5e2666d-f570-4b83-a611-86a2503ed91b/r`);
 
 export const TraceableQuickStartCodeBlock = ({}) => (
   <CodeBlock
@@ -197,7 +195,12 @@ async def nested_chain(text: str, run_tree: RunTree, **kwargs: Any) -> str:
 export const RunTreeQuickStartCodeTabs = ({}) => (
   <CodeTabs
     tabs={[
-      PythonBlock(`from langsmith.run_trees import RunTree\n
+      TraceableQuickStart,
+      {
+        value: "python-run-tree",
+        label: "Python (Run Tree)",
+        language: "python",
+        content:`from langsmith.run_trees import RunTree\n
 parent_run = RunTree(
     name="My Chat Bot",
     run_type="chain",
@@ -216,8 +219,7 @@ child_llm_run = parent_run.create_child(
 child_llm_run.end(outputs={"generations": ["Summary of the meeting..."]})
 parent_run.end(outputs={"output": ["The meeting notes are as follows:..."]})\n
 res = parent_run.post(exclude_child_runs=False)
-res.result()`),
-      TraceableQuickStart,
+res.result()`},
       TypeScriptBlock(`import { RunTree, RunTreeConfig } from "langsmith";\n
 const parentRunConfig: RunTreeConfig = {
     name: "My Chat Bot",
