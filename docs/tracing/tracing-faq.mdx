@@ -53,7 +53,16 @@ tracer = LangChainTracer(project_name="My Project")
 chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"callbacks": [tracer]})
 `),
     TypeScriptBlock(`import { LangChainTracer } from "langchain/callbacks";\n
-const tracer = new LangChainTracer({ projectName: "My Project" });
+import { ChatOpenAI } from "langchain/chat_models/openai";
+import {
+  ChatPromptTemplate,
+  HumanMessagePromptTemplate,
+} from "langchain/prompts";\n
+const chatPrompt = ChatPromptTemplate.fromPromptMessages([
+  HumanMessagePromptTemplate.fromTemplate("{query}"),
+]);\n
+const chain = chatPrompt.pipe(new ChatOpenAI());
+const tracer = new LangChainTracer({ projectName: "My Project" });\n
 await chain.invoke({ query: "How many people live in canada as of 2023?" }, { callbacks: [tracer] });
 `),
   ]}
@@ -83,7 +92,8 @@ prompt = PromptTemplate.from_template("Say {input}")
 chain = LLMChain(llm=llm, prompt=prompt, tags=["my-bash-tag", "another-tag"])\n
 chain("Hello, World!", tags=["shared-tags"])
 `),
-    TypeScriptBlock(`import { LLMChain, PromptTemplate } from "langchain";
+    TypeScriptBlock(`import { LLMChain } from "langchain/chains";
+import { PromptTemplate } from "langchain/prompts";
 import { ChatOpenAI } from "langchain/chat_models/openai";\n
 const llm = new ChatOpenAI({ temperature: 0, tags: ["my-llm-tag"] });
 const prompt = PromptTemplate.fromTemplate("Say {input}");
