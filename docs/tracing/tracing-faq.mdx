@@ -66,7 +66,7 @@ The Python tracer also has a context manager you can use to set the project for 
 from langchain.callbacks import tracing_v2_enabled
 
 with tracing_v2_enabled(project_name="My Project"):
-    agent.invoke("How many people live in canada as of 2023?")
+    chain.invoke({"query": "How many people live in canada as of 2023?"})
 ```
 
 ### How do I add tags to runs?
@@ -139,7 +139,7 @@ Inject the experiment ID or testing variant(s) in as metadata values, then use t
 
 <CodeTabs
   tabs={[
-    PythonBlock(`ffrom langchain.chat_models import ChatOpenAI
+    PythonBlock(`from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain\n
 chat_model = ChatOpenAI()
 chain = LLMChain.from_string(llm=chat_model, template="What's the answer to {input}?")\n
@@ -213,9 +213,9 @@ prompt = PromptTemplate(
 )
 chain = LLMChain(llm=llm, prompt=prompt)
 with trace_as_chain_group("my_group") as group_manager:
-    chain.invoke({"question": "What is your name?"}, config={"callbacks": [group_manager]})
-    chain.invoke({"question": "What is your quest?"}, config={"callbacks": [group_manager]})
-    chain.invoke({"question": "What is your favorite color?"}, config={"callbacks": [group_manager]})`),
+    chain.invoke({"question": "What is your name?"}, config={"callbacks": group_manager})
+    chain.invoke({"question": "What is your quest?"}, config={"callbacks": group_manager})
+    chain.invoke({"question": "What is your favorite color?"}, config={"callbacks": group_manager})`),
     TypeScriptBlock(`import { CallbackManager, traceAsGroup, TraceGroup } from "langchain/callbacks";
 import { LLMChain } from "langchain/chains";
 import { ChatOpenAI } from "langchain/chat_models/openai";
@@ -408,7 +408,8 @@ We are working to add better data connectors and export options. For now, you ca
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client\n
+    PythonBlock(`from datetime import datetime, timedelta
+from langsmith import Client\n
 client = Client()
 # Download all runs in a project
 project_runs = client.list_runs(project_name="<your_project>")\n
