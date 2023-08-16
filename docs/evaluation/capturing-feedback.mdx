@@ -11,6 +11,8 @@ import {
 
 # Working with feedback
 
+This guide will walk you through feedback in LangSmith. For more end-to-end examples incorporating feedback into a workflow, see the [LangSmith Cookbook](https://github.com/langchain-ai/langsmith-cookbook/tree/main/feedback-examples).
+
 Feedback comes in two forms: automated and human. Both are key to delivering a consistently high quality application experience.
 
 Automated feedback is generated any time you use the `run_on_dataset` method to test your component on a dataset or any time you call `client.evaluate_run(run_id, run_evaluator)`. This guide will focus on human feedback using a common workflow.
