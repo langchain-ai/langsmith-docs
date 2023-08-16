@@ -129,6 +129,12 @@ await chain.call(
 groupId="client-language"
 />
 
+### How do I customize the name of a run?
+
+If you're using LangChain, the run name is set as the class name of the object being called. We do not currently support customizing the run name. If you want to filter or search by run name, consider using tags or metadata to accomplish this.
+
+If you are logging using the LangSmith SDK or REST API directly, you can set the name of the run manually to be whatever you like.
+
 ### How do I use LangSmith in my AB Testing framework?
 
 AB tests are a great way to compare the performance of different models or chains. Currently, this is best facilitated using [metadata](#how-do-i-add-metadata-to-runs) (though [tags](#how-do-i-add-tags-to-runs) also suffice).
