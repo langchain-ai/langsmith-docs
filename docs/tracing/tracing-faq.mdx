@@ -8,13 +8,13 @@ import {
   CodeTabs,
   PythonBlock,
   TypeScriptBlock,
-} from '@site/src/components/InstructionsWithCode';
+} from "@site/src/components/InstructionsWithCode";
 
 import {
   RunTreeQuickStartCodeTabs,
   TraceableQuickStartCodeBlock,
   TraceableThreadingCodeBlock,
-} from '@site/src/components/QuickStart';
+} from "@site/src/components/QuickStart";
 
 # Tracing FAQs
 
@@ -34,10 +34,10 @@ export LANGCHAIN_PROJECT="My Project"
   tabs={[
     PythonBlock(`from langchain.chat_models import ChatAnthropic
 llm = ChatAnthropic()\n
-llm.predict("Hello, World!")`),
+llm.invoke("Hello, World!")`),
     TypeScriptBlock(`import { ChatAnthropic } from "langchain/chat_models/anthropic";\n
 const llm = new ChatAnthropic();
-await llm.predict("Hello, World!");`),
+await llm.invoke("Hello, World!");`),
   ]}
   groupId="client-language"
 />
@@ -50,15 +50,15 @@ When global environment variables are too broad, you can also set the project na
   tabs={[
     PythonBlock(`from langchain.callbacks.tracers import LangChainTracer\n
 tracer = LangChainTracer(project_name="My Project")
-# Use the tracer as one of the callbacks to a chain or LLM run
-agent.run("How many people live in canada as of 2023?", callbacks=[tracer])
+chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"callbacks": [tracer]})
 `),
-    TypeScriptBlock(`import { LangChainTracer } from "langchain/callbacks/tracers";\n
+    TypeScriptBlock(`import { LangChainTracer } from "langchain/callbacks";\n
 const tracer = new LangChainTracer({ projectName: "My Project" });
-// Use the tracer as one of the callbacks to a chain or LLM run
-await agent.call({ input: "How many people live in canada as of 2023?" }, [
-  tracer,
-]);`),
+await chain.invoke({
+  query: "How many people live in canada as of 2023?" },
+  { callbacks: [tracer]
+});
+`),
   ]}
   groupId="client-language"
 />
@@ -69,7 +69,7 @@ The Python tracer also has a context manager you can use to set the project for 
 from langchain.callbacks import tracing_v2_enabled
 
 with tracing_v2_enabled(project_name="My Project"):
-    agent.run("How many people live in canada as of 2023?")
+    chain.invoke({"query": "How many people live in canada as of 2023?"})
 ```
 
 ### How do I add tags to runs?
@@ -86,7 +86,8 @@ prompt = PromptTemplate.from_template("Say {input}")
 chain = LLMChain(llm=llm, prompt=prompt, tags=["my-bash-tag", "another-tag"])\n
 chain("Hello, World!", tags=["shared-tags"])
 `),
-    TypeScriptBlock(`import { LLMChain, PromptTemplate } from "langchain";
+    TypeScriptBlock(`import { LLMChain } from "langchain/chains";
+import { PromptTemplate } from "langchain/prompts";
 import { ChatOpenAI } from "langchain/chat_models/openai";\n
 const llm = new ChatOpenAI({ temperature: 0, tags: ["my-llm-tag"] });
 const prompt = PromptTemplate.fromTemplate("Say {input}");
@@ -95,7 +96,7 @@ const chain = new LLMChain({
   prompt,
   tags: ["my-bash-tag", "another-tag"],
 });\n
-await chain.call({ input: "Hello, World!", tags: ["shared-tags"] });
+await chain.invoke({ input: "Hello, World!", tags: ["shared-tags"] });
 `),
   ]}
   groupId="client-language"
@@ -117,16 +118,16 @@ import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";\n
 const chatModel = new ChatOpenAI();
 const chain = new LLMChain({
-llm: chatModel,
-prompt: PromptTemplate.fromTemplate("What's the answer to {input}?"),
+  llm: chatModel,
+  prompt: PromptTemplate.fromTemplate("What's the answer to {input}?"),
 });\n
-await chain.call(
+await chain.invoke(
   { input: "What is the meaning of life?" },
   { metadata: { myKey: "My Value" } }
 );
 `),
-]}
-groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### How do I customize the name of a run?
@@ -142,7 +143,7 @@ Inject the experiment ID or testing variant(s) in as metadata values, then use t
 
 <CodeTabs
   tabs={[
-    PythonBlock(`ffrom langchain.chat_models import ChatOpenAI
+    PythonBlock(`from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain\n
 chat_model = ChatOpenAI()
 chain = LLMChain.from_string(llm=chat_model, template="What's the answer to {input}?")\n
@@ -155,7 +156,7 @@ const chain = new LLMChain({
   llm: chatModel,
   prompt: PromptTemplate.fromTemplate("What's the answer to {input}?"),
 });\n
-await chain.call(
+await chain.invoke(
   { input: "What is the meaning of life?" },
   { metadata: { variant: "abc123" } }
 );
@@ -175,6 +176,7 @@ runs = list(client.list_runs(
 ))`),
     TypeScriptBlock(`import { Client, Run } from "langsmith";\n
 const client = new Client();
+const runs: Run[] = [];
 for await (const run of client.listRuns({
   filter: 'has(metadata, \\'{"variant": "abc123"}\\')',
 })) {
@@ -216,9 +218,9 @@ prompt = PromptTemplate(
 )
 chain = LLMChain(llm=llm, prompt=prompt)
 with trace_as_chain_group("my_group") as group_manager:
-    chain.run(question="What is your name?", callbacks=group_manager)
-    chain.run(question="What is your quest?", callbacks=group_manager)
-    chain.run(question="What is your favorite color?", callbacks=group_manager)`),
+    chain.invoke({"question": "What is your name?"}, config={"callbacks": group_manager})
+    chain.invoke({"question": "What is your quest?"}, config={"callbacks": group_manager})
+    chain.invoke({"question": "What is your favorite color?"}, config={"callbacks": group_manager})`),
     TypeScriptBlock(`import { CallbackManager, traceAsGroup, TraceGroup } from "langchain/callbacks";
 import { LLMChain } from "langchain/chains";
 import { ChatOpenAI } from "langchain/chat_models/openai";
@@ -229,31 +231,31 @@ const prompt = new PromptTemplate({
   inputVariables: ["question"],
   template: "What is the answer to {question}?",
 });
-const chain = new LLMChain({ llm, prompt });\n
+const chain = new LLMChain({ llm, prompt });
 // You can group runs together using the traceAsGroup function
 const blockResult = await traceAsGroup(
   { name: "my_group_name" },
   async (manager: CallbackManager, questions: string[]) => {
-    await chain.call({ question: questions[0] }, manager);
-    await chain.call({ question: questions[1] }, manager);
-    const finalResult = await chain.call({ question: questions[2] }, manager);
+    await chain.invoke({ question: questions[0] }, { callbacks: manager });
+    await chain.invoke({ question: questions[1] }, { callbacks: manager });
+    const finalResult = await chain.invoke(
+      { question: questions[2] },
+      { callbacks: manager }
+    );
     return finalResult;
   },
-  [
-    "What is your name?",
-    "What is your quest?",
-    "What is your favorite color?",
-  ]
-);\n
+  ["What is your name?", "What is your quest?", "What is your favorite color?"]
+);
+console.log(blockResult);\n
 // Or you can manually control the start and end of the grouped run
 const traceGroup = new TraceGroup("my_group_name");
 const groupManager = await traceGroup.start();
 try {
-  await chain.call({ question: "What is your name?" }, groupManager);
-  await chain.call({ question: "What is your quest?" }, groupManager);
-  await chain.call(
+  await chain.invoke({ question: "What is your name?" }, { callbacks: groupManager });
+  await chain.invoke({ question: "What is your quest?" }, { callbacks: groupManager });
+  await chain.invoke(
     { question: "What is the airspeed velocity of an unladen swallow?" },
-    groupManager
+    { callbacks: groupManager }
   );
 } finally {
   // Code goes here
@@ -266,18 +268,18 @@ try {
 
 ### How do I get the run ID from a call?
 
-The run ID is returned in the call response under the `__run` key. In python, it is not returned by default. There you will have to pass the `include_run_info=True` parameter to the call function. Example:
+The run ID is returned in the call response under the `__run` key. In python chains, it is not returned by default. There you will have to pass the `include_run_info=True` parameter to the call function. Example:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`import os
-from langchain.chat_models import ChatOpenAI
+    PythonBlock(`from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain\n
 chain = LLMChain.from_string(ChatOpenAI(), "Say hi to {name}")
 def main():
-  response = chain("Clara", include_run_info=True)
-  run_id = response["__run"].run_id
-  print(run_id)
+    response = chain("Clara", include_run_info=True)
+    run_id = response["__run"].run_id
+    print(run_id)
+main()
 `),
     TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
 import { LLMChain } from "langchain/chains";
@@ -288,7 +290,7 @@ const chain = new LLMChain({
   prompt: prompt,
 });\n
 async function main() {
-  const response = await chain.call({ name: "Clara" });
+  const response = await chain.invoke({ name: "Clara" });
   console.log(response.__run);
 }\n
 main();
@@ -296,6 +298,34 @@ main();
   ]}
   groupId="client-language"
 />
+
+For python LLMs/chat models, the run information is returned automatically when calling the `generate()` method. Example:
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+
+chat_model = ChatOpenAI()
+
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are a cat"),
+        ("human", "Hi"),
+    ]
+)
+res = chat_model.generate(messages=[prompt.format_messages()])
+res.run[0].run_id
+```
+
+or for LLMs
+
+```python
+  from langchain.llms import OpenAI
+
+openai = OpenAI()
+res = openai.generate(["You are a good bot"])
+print(res.run[0].run_id)
+```
 
 ### How do I get the URL of the run?
 
@@ -340,7 +370,7 @@ callbacks = [
   )
 ]\n
 llm = ChatOpenAI(callbacks=callbacks)
-llm.predict("Hello, world!")
+llm.invoke("Hello, world!")
 `),
     TypeScriptBlock(`import { Client } from "langsmith";
 import { LangChainTracer } from "langchain/callbacks";
@@ -356,7 +386,7 @@ const llm = new ChatOpenAI({
     }),
   ],
 });
-await llm.predict("Hello, world!");
+await llm.invoke("Hello, world!");
 `),
   ]}
   groupId="client-language"
@@ -364,13 +394,27 @@ await llm.predict("Hello, world!");
 
 This tactic is also useful for when you have multiple chains running in a shared environment but want to log their run traces to different projects.
 
+### How do I turn tracing off?
+
+If you've decided you no longer want to trace your runs, you can remove the environment variables configured to start tracing in the first place.
+By unsetting the `LANGCHAIN_TRACING_V2` environment variable, traces will no longer be logged to LangSmith.
+
+```bash
+unset LANGCHAIN_TRACING_V2
+```
+
+Unsetting an environment variable while a program is in the middle of execution is not guaranteed to terminate logging.
+If you want to selectively log runs or stop tracing mid-execution, you must not start tracing using the `LANGCHAIN_TRACING_V2` environment variable and
+instead selectively log runs by passing the `LangChainTracer` callback to the LangChain object (or by using the context manager in python).
+
 ### How do I export runs?
 
 We are working to add better data connectors and export options. For now, you can use the LangSmith API directly to export runs. Below are a couple examples:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client\n
+    PythonBlock(`from datetime import datetime, timedelta
+from langsmith import Client\n
 client = Client()
 # Download all runs in a project
 project_runs = client.list_runs(project_name="<your_project>")\n
@@ -430,7 +474,7 @@ Below is an example:
 from langchain.callbacks.tracers.langchain import wait_for_all_tracers\n
 llm = ChatOpenAI()
 try:
-    llm.predict("Hello, World!")
+    llm.invoke("Hello, World!")
 finally:
     # highlight-next-line
     wait_for_all_tracers()
@@ -438,12 +482,11 @@ finally:
     TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
 import { awaitAllCallbacks } from "langchain/callbacks";\n
 const llm = new ChatOpenAI();
-llm.predict("Hello, World!").finally(() => awaitAllCallbacks());
+llm.invoke("Hello, World!").finally(() => awaitAllCallbacks());
 `),
   ]}
   groupId="client-language"
 />
-
 
 ### How do I log to LangSmith if I am not using LangChain?
 
@@ -451,13 +494,11 @@ The most reliable way to log run trees to LangSmith is by using the `RunTree` ob
 
 <RunTreeQuickStartCodeTabs />
 
-In python, we also provide an experimental `@traceable` decorator that automatically handles the the life cycle of the `RunTree` object. Below is an example that will log a nested run tree to LangSmith:
-
-<TraceableQuickStartCodeBlock />
-
 `traceable` functions work out of the box for synchronous and async calls. If you want to call sub-chains/functions on separate threads, you will have to manually pass the run tree to the child functions. To do so, you should update the parent function to accept a `run_tree` argument (which is injected by the decorator) and pass it to the child functions through the `langsmith_extra` keyword argument. Below is an example:
 
 <TraceableThreadingCodeBlock />
+
+For more information, check out the [traceable notebook](https://github.com/langchain-ai/langsmith-cookbook/blob/main/tracing-examples/traceable/tracing_without_langchain.ipynb in the LangSmith cookbook.
 
 ### When logging with the SDK, which fields can I update when I patch?
 
@@ -475,7 +516,6 @@ Once an `end_time` is set on a run, it is marked as "closed" and can no longer b
 You can flexibly search and filter for runs directly in the web app or via the SDK. See [exporting runs locally guide](use-cases/export-runs/local) for more examples.
 
 In the web app, you can search through 'traces' (the top level runs) or through all runs using the search bar in the runs table. This uses the [run filtering](use-cases/export-runs/local#run-filtering) query syntax.
-
 
 ### How do I use the playground for runs logged using the SDK?
 
