@@ -84,7 +84,7 @@ from langchain.prompts import PromptTemplate\n
 llm = ChatOpenAI(temperature=0, tags=["my-llm-tag"])
 prompt = PromptTemplate.from_template("Say {input}")
 chain = LLMChain(llm=llm, prompt=prompt, tags=["my-bash-tag", "another-tag"])\n
-chain("Hello, World!", tags=["shared-tags"])
+chain.invoke("Hello, World!", {"tags": ["shared-tags"]})
 `),
     TypeScriptBlock(`import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";
@@ -112,7 +112,7 @@ Similar to tags, LangSmith permits associating arbitrary key-value pairs as meta
 from langchain.chains import LLMChain\n
 chat_model = ChatOpenAI()
 chain = LLMChain.from_string(llm=chat_model, template="What's the answer to {input}?")\n
-chain({"input": "What is the meaning of life?"}, metadata={"my_key": "My Value"})`),
+chain.invoke({"input": "What is the meaning of life?"}, {"metadata": {"my_key": "My Value"}})`),
     TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
 import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";\n
@@ -147,7 +147,7 @@ Inject the experiment ID or testing variant(s) in as metadata values, then use t
 from langchain.chains import LLMChain\n
 chat_model = ChatOpenAI()
 chain = LLMChain.from_string(llm=chat_model, template="What's the answer to {input}?")\n
-chain({"input": "What is the meaning of life?"}, metadata={"variant": "abc123"})`),
+chain.invoke({"input": "What is the meaning of life?"}, {"metadata": {"variant": "abc123"}})`),
     TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
 import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";\n

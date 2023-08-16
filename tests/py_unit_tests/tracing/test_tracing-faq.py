@@ -14,6 +14,7 @@ async def test_code_block_0():
 @pytest.mark.asyncio
 async def test_code_block_1():
     from langchain.callbacks.tracers import LangChainTracer
+    
     tracer = LangChainTracer(project_name="My Project")
     chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"callbacks": [tracer]})
     
@@ -28,7 +29,7 @@ async def test_code_block_2():
     prompt = PromptTemplate.from_template("Say {input}")
     chain = LLMChain(llm=llm, prompt=prompt, tags=["my-bash-tag", "another-tag"])
     
-    chain("Hello, World!", tags=["shared-tags"])
+    chain.invoke("Hello, World!", {"tags": ["shared-tags"]})
     
 
 @pytest.mark.asyncio
@@ -39,7 +40,7 @@ async def test_code_block_3():
     chat_model = ChatOpenAI()
     chain = LLMChain.from_string(llm=chat_model, template="What's the answer to {input}?")
     
-    chain({"input": "What is the meaning of life?"}, metadata={"my_key": "My Value"})
+    chain.invoke({"input": "What is the meaning of life?"}, {"metadata": {"my_key": "My Value"}})
 
 @pytest.mark.asyncio
 async def test_code_block_4():
@@ -49,7 +50,7 @@ async def test_code_block_4():
     chat_model = ChatOpenAI()
     chain = LLMChain.from_string(llm=chat_model, template="What's the answer to {input}?")
     
-    chain({"input": "What is the meaning of life?"}, metadata={"variant": "abc123"})
+    chain.invoke({"input": "What is the meaning of life?"}, {"metadata": {"variant": "abc123"}})
 
 @pytest.mark.asyncio
 async def test_code_block_5():
