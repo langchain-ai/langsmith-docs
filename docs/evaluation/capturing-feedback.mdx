@@ -72,7 +72,7 @@ In addition to general production observability, user feedback is a key ingredie
 
 Assuming you've already set up tracing in the [LangSmith quick start](/#quick-start), you can add user feedback to a run by returning the run ID and and including that in the `create_feedback` call.
 
-To return the run ID for a given call, look for the `__run` key of the LangChain component's response dictionary (or typescript object). In python, you will have to specify `include_run_id=True` when calling your chain or LLM. Below is an example:
+To return the run ID for a given call, look for the `__run` key of the LangChain component's response dictionary (or typescript object). In python, you will have to specify `include_run_info=True` when calling your chain or LLM. Below is an example:
 
 ```bash
 export LANGCHAIN_TRACING_V2=true
