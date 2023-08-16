@@ -135,7 +135,7 @@ my_chat_bot("Summarize this morning's meetings.")
 export const TraceableQuickStartCodeBlock = ({}) => (
   <CodeBlock
     className={TraceableQuickStart.value}
-    language={TraceableQuickStart.language}
+    language={TraceableQuickStart.language ?? TraceableQuickStart.value}
   >
     {TraceableQuickStart.content}
   </CodeBlock>
@@ -144,7 +144,7 @@ export const TraceableQuickStartCodeBlock = ({}) => (
 export const TraceableThreadingCodeBlock = ({}) => (
   <CodeBlock
     className={TraceableQuickStart.value}
-    language={TraceableQuickStart.language}
+    language={TraceableQuickStart.language ?? TraceableQuickStart.value}
   >
     {`import asyncio
 import datetime
