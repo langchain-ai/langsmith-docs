@@ -48,7 +48,7 @@ When global environment variables are too broad, you can also set the project na
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.callbacks.tracers import LangChainTracer
+    PythonBlock(`from langchain.callbacks.tracers import LangChainTracer\n
 tracer = LangChainTracer(project_name="My Project")
 chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"callbacks": [tracer]})
 `),
