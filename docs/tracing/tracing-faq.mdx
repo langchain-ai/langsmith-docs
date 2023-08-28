@@ -198,7 +198,7 @@ within a defined context beneath a virtual parent run.
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain.callbacks.manager import (
-    trace_as_chain_group, 
+    trace_as_chain_group,
     atrace_as_chain_group,
 )\n
 with trace_as_chain_group("my_group_name") as group_manager:
@@ -462,9 +462,11 @@ Check out the [exporting runs](use-cases/export-runs) directory for more example
 
 ### How do I ensure logging is completed before exiting my application?
 
-In LangChain, LangSmith's tracing is asynchronous (or done in a background thread in python) to avoid obstructing your production application. This means that if you're process may end before all traces are successfully posted to LangSmith. This is especially prevelant in a serverless environment, where your VM may be terminated immediately once your chain or agent completes.
+In LangChain.py, LangSmith's tracing is done in a background thread to avoid obstructing your production application. This means that if you're process may end before all traces are successfully posted to LangSmith. This is especially prevelant in a serverless environment, where your VM may be terminated immediately once your chain or agent completes.
 
-LangChain exposes methods to wait for traces to be submitted before exiting your application.
+In LangChain.js, the default is to block for a short period of time for the trace to finish due to the greater popularity of serverless environments. You can make callbacks asynchronous by setting the `LANGCHAIN_CALLBACKS_BACKGROUND` environment variable to `"true"`.
+
+For both languages, LangChain exposes methods to wait for traces to be submitted before exiting your application.
 
 Below is an example:
 
