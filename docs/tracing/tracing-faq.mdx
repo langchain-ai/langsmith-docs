@@ -483,9 +483,14 @@ finally:
 `),
     TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
 import { awaitAllCallbacks } from "langchain/callbacks";\n
-const llm = new ChatOpenAI();
-const response = await llm.invoke("Hello, World!");
-await awaitAllCallbacks();
+try {
+  const llm = new ChatOpenAI();
+  const response = await llm.invoke("Hello, World!");
+} catch (e) {
+  // handle error
+} finally {
+  await awaitAllCallbacks();
+}
 `),
   ]}
   groupId="client-language"
