@@ -173,10 +173,10 @@ The following examples assume you have configured your environment appropriately
 <CodeTabs
   tabs={[
     PythonBlock(
-      `client.list_runs(filter='and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))')`
+      `client.list_runs(project_name="<your_project>", filter='and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))')`
     ),
     TypeScriptBlock(
-      `client.listRuns({filter: 'and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))'})`
+      `client.listRuns({projectName: "<your_project>", filter: 'and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))'})`
     ),
   ]}
   groupId="client-language"
@@ -186,8 +186,8 @@ The following examples assume you have configured your environment appropriately
 
 <CodeTabs
   tabs={[
-    PythonBlock(`client.list_runs(filter='gt(latency, "5s")')`),
-    TypeScriptBlock(`client.listRuns({filter: 'gt(latency, "5s")'})`),
+    PythonBlock(`client.list_runs(project_name="<your_project>", filter='gt(latency, "5s")')`),
+    TypeScriptBlock(`client.listRuns({projectName: "<your_project>", filter: 'gt(latency, "5s")'})`),
   ]}
   groupId="client-language"
 />
@@ -196,8 +196,8 @@ The following examples assume you have configured your environment appropriately
 
 <CodeTabs
   tabs={[
-    PythonBlock(`client.list_runs(filter='gt(total_tokens, 5000)')`),
-    TypeScriptBlock(`client.listRuns({filter: 'gt(total_tokens, 5000)'})`),
+    PythonBlock(`client.list_runs(project_name="<your_project>", filter='gt(total_tokens, 5000)')`),
+    TypeScriptBlock(`client.listRuns({projectName: "<your_project>", filter: 'gt(total_tokens, 5000)'})`),
   ]}
   groupId="client-language"
 />
@@ -206,8 +206,8 @@ The following examples assume you have configured your environment appropriately
 
 <CodeTabs
   tabs={[
-    PythonBlock(`client.list_runs(filter='neq(error, null)')`),
-    TypeScriptBlock(`client.listRuns({filter: 'neq(error, null)'})`),
+    PythonBlock(`client.list_runs(project_name="<your_project>", filter='neq(error, null)')`),
+    TypeScriptBlock(`client.listRuns({projectName: "<your_project>", filter: 'neq(error, null)'})`),
   ]}
   groupId="client-language"
 />
@@ -216,8 +216,8 @@ The following examples assume you have configured your environment appropriately
 
 <CodeTabs
   tabs={[
-    PythonBlock(`client.list_runs(filter='lt(execution_order, 10)')`),
-    TypeScriptBlock(`client.listRuns({filter: 'lt(execution_order, 10)'})`),
+    PythonBlock(`client.list_runs(project_name="<your_project>", filter='lt(execution_order, 10)')`),
+    TypeScriptBlock(`client.listRuns({projectName: "<your_project>", filter: 'lt(execution_order, 10)'})`),
   ]}
   groupId="client-language"
 />
@@ -227,10 +227,10 @@ The following examples assume you have configured your environment appropriately
 <CodeTabs
   tabs={[
     PythonBlock(
-      `client.list_runs(filter='gt(start_time, "2023-07-15T12:34:56Z")')`
+      `client.list_runs(project_name="<your_project>", filter='gt(start_time, "2023-07-15T12:34:56Z")')`
     ),
     TypeScriptBlock(
-      `client.listRuns({filter: 'gt(start_time, "2023-07-15T12:34:56Z")'})`
+      `client.listRuns({projectName: "<your_project>", filter: 'gt(start_time, "2023-07-15T12:34:56Z")'})`
     ),
   ]}
   groupId="client-language"
@@ -240,8 +240,8 @@ The following examples assume you have configured your environment appropriately
 
 <CodeTabs
   tabs={[
-    PythonBlock(`client.list_runs(filter='search("substring")')`),
-    TypeScriptBlock(`client.listRuns({filter: 'search("substring")'})`),
+    PythonBlock(`client.list_runs(project_name="<your_project>", filter='search("substring")')`),
+    TypeScriptBlock(`client.listRuns({projectName: "<your_project>", filter: 'search("substring")'})`),
   ]}
   groupId="client-language"
 />
@@ -250,8 +250,8 @@ The following examples assume you have configured your environment appropriately
 
 <CodeTabs
   tabs={[
-    PythonBlock(`client.list_runs(filter='has(tags, "2aa1cf4")')`),
-    TypeScriptBlock(`client.listRuns({filter: 'has(tags, "2aa1cf4")'})`),
+    PythonBlock(`client.list_runs(project_name="<your_project>", filter='has(tags, "2aa1cf4")')`),
+    TypeScriptBlock(`client.listRuns({projectName: "<your_project>", filter: 'has(tags, "2aa1cf4")'})`),
   ]}
   groupId="client-language"
 />
@@ -261,9 +261,11 @@ The following examples assume you have configured your environment appropriately
 <CodeTabs
   tabs={[
     PythonBlock(`client.list_runs(
+  project_name="<your_project>",
   filter='and(eq(run_type, "chain"), gt(latency, 10), gt(total_tokens, 5000))'
 )`),
     TypeScriptBlock(`client.listRuns({
+  projectName: "<your_project>",
   filter: 'and(eq(run_type, "chain"), gt(latency, 10), gt(total_tokens, 5000))'
 })`),
   ]}
@@ -276,11 +278,13 @@ The following examples assume you have configured your environment appropriately
   tabs={[
     PythonBlock(
       `client.list_runs(
+  project_name="<your_project>",
   filter='and(gt(start_time, "2023-07-15T12:34:56Z"), or(neq(error, null), and(eq(feedback_key, "Correctness"), eq(feedback_score, 0.0))))'
 )`
     ),
     TypeScriptBlock(
       `client.listRuns({
+  projectName: "<your_project>",
   filter: 'and(gt(start_time, "2023-07-15T12:34:56Z"), or(neq(error, null), and(eq(feedback_key, "Correctness"), eq(feedback_score, 0.0))))'
 })`
     ),
@@ -294,11 +298,13 @@ The following examples assume you have configured your environment appropriately
   tabs={[
     PythonBlock(
       `client.list_runs(
+  project_name="<your_project>",
   filter='and(or(has(tags, "experimental"), has(tags, "beta")), gt(latency, 2))'
 )`
     ),
     TypeScriptBlock(
       `client.listRuns({
+  projectName: "<your_project>",
   filter: 'and(or(has(tags, "experimental"), has(tags, "beta")), gt(latency, 2))'
 })`
     ),
