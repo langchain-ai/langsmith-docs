@@ -5,6 +5,14 @@ sidebar_position: 1
 
 # Quick Start
 
+## What is LangChain Hub?
+
+LangChain Hub lets you discover, share, and version control prompts for LangChain and LLMs in general.
+
+It's a great place to find inspiration for your own prompts, or to share your own prompts with the world!
+
+Currently, it supports LangChain prompt templates, and more object types are coming soon.
+
 :::tip Public Features
 Some hub features can be used without logging in [here](https://smith.langchain.com/hub)! However, creating and modifying prompts requires a non-waitlisted account.
 :::
@@ -46,7 +54,7 @@ The playground should look like this:
 
 On the left, we see an editable view of our Chat Prompt.
 
-To the right, we can configure our inputs and model, and above that, you can add API Keys for OpenAI or Anthropic (the 2 playground-supported models for now).
+To the right, we can configure our inputs and model, and above that, you can add API Keys for playground-supported model providers.
 
 Let's try it out! First, fill out your OpenAI API Key in "Secrets", and fill out a profession (e.g. biologist) and question (e.g. "what is 1 fun fact about parrots?"). Now click "Run"!
 The output should look something like this:
@@ -59,11 +67,11 @@ Now that we've tried out a prompt, let's log in and set a handle. This will allo
 
 First, let's click that "Login" button in the top-right and log in. If you find yourself on the waitlist, you can enter your access code if you have one, or hang tight! We're letting people off every week.
 
-Second, go to the [hub home](https://smith.langchain.com/hub). If you haven't set a handle yet, you'll be prompted to do so:
+Second, go to the [hub home](https://smith.langchain.com/hub). If you haven't set a handle yet, you'll be prompted to add one, so people can associate your prompts with you! 
+
+The handle reserves a namespace for all of your prompts, so everything you add will be saved under `your-handle/prompt-name`.
 
 ![Hub Set Handle](static/hub-handle.png)
-
-Once you've set a handle, you'll be able to commit changes to prompts back to the hub under your user!
 
 
 ## 4. Modify the prompt in the playground and commit it back to the hub (Login Required)
