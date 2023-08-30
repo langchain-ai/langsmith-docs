@@ -1,0 +1,60 @@
+---
+sidebar_label: TypeScript Setup
+sidebar_position: 3
+---
+# TypeScript Setup
+
+This guide will continue from the hub quickstart, using the TypeScript SDK to interact with the hub instead of the Playground UI.
+
+This guide assumes you've gone through the Hub [Quick Start](./quickstart) including login-required steps.
+
+If you don't yet have an account, you'll only be able to pull public objects in steps 1 and 3.
+
+## 1. Install/upgrade packages
+
+**Note:** You likely need to upgrade even if they're already installed!
+
+```bash
+yarn add langchain langchainhub 
+```
+
+## 2. Configuring environment variables
+
+Get an API key for your **personal tenant** if you have not yet. The hub will not work with your non-personal organization's api key!
+
+```bash
+export LANGCHAIN_HUB_API_KEY="ls_..."
+```
+
+## 3. Pull an object from the hub and use it
+
+```ts
+// import
+import * as hub from "langchain/hub";
+import { ChatOpenAI } from "langchain/chat_models/openai";
+
+// pull a chat prompt
+const prompt = await hub.pull("efriis/my-first-repo");
+
+// create a model to use it with
+const model = new ChatOpenAI();
+
+// use it in a runnable
+const runnable = prompt.pipe(model);
+const result = await runnable.invoke({
+	"profession": "biologist",
+	"question": "What is special about parrots?",
+});
+
+console.log(result);
+```
+
+## 4. Push it back to your own tenant as a private prompt
+
+For this step, you'll need the `handle` for your account!
+
+```ts
+import * as hub from "langchain/hub";
+
+await hub.push("<handle>/my-first-repo", prompt);
+```
