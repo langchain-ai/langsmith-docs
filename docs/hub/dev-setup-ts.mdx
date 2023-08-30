@@ -20,7 +20,7 @@ yarn add langchain langchainhub
 
 ## 2. Configuring environment variables
 
-Get an API key for your **personal tenant** if you have not yet. The hub will not work with your non-personal organization's api key!
+Get an API key for your **personal** organization if you have not yet. The hub will not work with your non-personal organization's api key!
 
 ```bash
 export LANGCHAIN_HUB_API_KEY="ls_..."
@@ -49,7 +49,7 @@ const result = await runnable.invoke({
 console.log(result);
 ```
 
-## 4. Push it back to your own tenant as a private prompt
+## 4. Push it back to your own organization as a private prompt
 
 For this step, you'll need the `handle` for your account!
 
