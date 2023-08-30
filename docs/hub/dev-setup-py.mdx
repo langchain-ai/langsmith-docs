@@ -32,7 +32,7 @@ export LANGCHAIN_HUB_API_KEY="ls_..."
 from langchain import hub
 
 # pull a chat prompt
-prompt = hub.pull("efriis/my-first-repo")
+prompt = hub.pull("efriis/my-first-prompt")
 
 # create a model to use it with
 from langchain.chat_models import ChatOpenAI
@@ -53,5 +53,5 @@ For this step, you'll need the `handle` for your account!
 ```python
 from langchain import hub
 
-hub.push("<handle>/my-first-repo", prompt)
+hub.push("<handle>/my-first-prompt", prompt)
 ```

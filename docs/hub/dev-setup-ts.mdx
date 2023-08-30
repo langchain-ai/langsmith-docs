@@ -34,7 +34,7 @@ import * as hub from "langchain/hub";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 
 // pull a chat prompt
-const prompt = await hub.pull("efriis/my-first-repo");
+const prompt = await hub.pull("efriis/my-first-prompt");
 
 // create a model to use it with
 const model = new ChatOpenAI();
@@ -56,5 +56,5 @@ For this step, you'll need the `handle` for your account!
 ```ts
 import * as hub from "langchain/hub";
 
-await hub.push("<handle>/my-first-repo", prompt);
+await hub.push("<handle>/my-first-prompt", prompt);
 ```
