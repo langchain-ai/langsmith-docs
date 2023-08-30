@@ -1,0 +1,57 @@
+---
+sidebar_label: Python Setup
+sidebar_position: 2
+---
+# Python Setup
+
+This guide will continue from the hub quickstart, using the Python SDK to interact with the hub instead of the Playground UI.
+
+This guide assumes you've gone through the Hub [Quick Start](./quickstart) including login-required steps.
+
+If you don't yet have an account, you'll only be able to pull public objects in steps 1 and 3.
+
+## 1. Install/upgrade packages
+
+**Note:** You likely need to upgrade even if they're already installed!
+
+```bash
+pip install --upgrade langchain langchainhub 
+```
+
+## 2. Configuring environment variables
+
+Get an API key for your **Personal** organization if you have not yet. The hub will not work with your non-personal organization's api key!
+
+```bash
+export LANGCHAIN_HUB_API_KEY="ls_..."
+```
+
+## 3. Pull an object from the hub and use it
+
+```python
+from langchain import hub
+
+# pull a chat prompt
+prompt = hub.pull("efriis/my-first-prompt")
+
+# create a model to use it with
+from langchain.chat_models import ChatOpenAI
+model = ChatOpenAI()
+
+# use it in a runnable
+runnable = prompt | model
+runnable.invoke({
+	"profession": "biologist",
+	"question": "What is special about parrots?",
+})
+```
+
+## 4. Push it back to your personal organization as a private prompt
+
+For this step, you'll need the `handle` for your account!
+
+```python
+from langchain import hub
+
+hub.push("<handle>/my-first-prompt", prompt)
+```
