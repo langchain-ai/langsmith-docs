@@ -16,6 +16,10 @@ import {
   TraceableThreadingCodeBlock,
 } from "@site/src/components/QuickStart";
 
+import {
+  AccessRunIdBlock,
+} from "@site/src/components/TracingFaq";
+
 # Tracing FAQs
 
 The following are some frequently asked questions about logging runs to LangSmith:
@@ -268,64 +272,11 @@ try {
 
 ### How do I get the run ID from a call?
 
-The run ID is returned in the call response under the `__run` key. In python chains, it is not returned by default. There you will have to pass the `include_run_info=True` parameter to the call function. Example:
+In Typescript, the run ID is returned in the call response under the `__run` key. In python, we recommend using the run collector callback.
+Below is an example:
 
-<CodeTabs
-  tabs={[
-    PythonBlock(`from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain\n
-chain = LLMChain.from_string(ChatOpenAI(), "Say hi to {name}")
-def main():
-    response = chain("Clara", include_run_info=True)
-    run_id = response["__run"].run_id
-    print(run_id)
-main()
-`),
-    TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
-import { LLMChain } from "langchain/chains";
-import { PromptTemplate } from "langchain/prompts";\n
-const prompt = PromptTemplate.fromTemplate("Say hi to {name}");
-const chain = new LLMChain({
-  llm: new ChatOpenAI(),
-  prompt: prompt,
-});\n
-async function main() {
-  const response = await chain.invoke({ name: "Clara" });
-  console.log(response.__run);
-}\n
-main();
-`),
-  ]}
-  groupId="client-language"
-/>
+<AccessRunIdBlock />
 
-For python LLMs/chat models, the run information is returned automatically when calling the `generate()` method. Example:
-
-```python
-from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-
-chat_model = ChatOpenAI()
-
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", "You are a cat"),
-        ("human", "Hi"),
-    ]
-)
-res = chat_model.generate(messages=[prompt.format_messages()])
-res.run[0].run_id
-```
-
-or for LLMs
-
-```python
-  from langchain.llms import OpenAI
-
-openai = OpenAI()
-res = openai.generate(["You are a good bot"])
-print(res.run[0].run_id)
-```
 
 ### How do I get the URL of the run?
 
