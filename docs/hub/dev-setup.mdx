@@ -1,0 +1,44 @@
+---
+sidebar_label: Developer Setup
+sidebar_position: 2
+---
+
+import {
+  HubInstallationCodeTabs,
+  HubPullCodeTabs,
+  HubPushCodeTabs,
+} from "@site/src/components/Hub";
+
+# Developer Setup
+
+This guide will continue from the hub quickstart, using the Python or TypeScript SDK to interact with the hub instead of the Playground UI.
+
+This guide assumes you've gone through the Hub [Quick Start](./quickstart) including login-required steps.
+
+If you don't yet have an account, you'll only be able to pull public objects.
+
+## 1. Install/upgrade packages
+
+**Note:** You likely need to upgrade even if they're already installed!
+
+<HubInstallationCodeTabs />
+
+## 2. Configuring environment variables
+
+Get an API key for your **Personal** organization if you have not yet. The hub will not work with your non-personal organization's api key!
+
+```bash
+export LANGCHAIN_HUB_API_KEY="ls_..."
+```
+
+If you already have `LANGCHAIN_API_KEY` set to a personal organization’s api key from LangSmith, you can skip this.
+
+## 3. Pull an object from the hub and use it
+
+<HubPullCodeTabs />
+
+## 4. Push a prompt to your personal organization
+
+For this step, you'll need the `handle` for your account!
+
+<HubPushCodeTabs />
