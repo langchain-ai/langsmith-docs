@@ -96,10 +96,22 @@ console.log(result);`
 
 export const HubPushCodeTabs = ({}) => {
   const pyBlock = `from langchain import hub
+from langchain.prompts.chat import ChatPromptTemplate
 
-hub.push("<handle>/my-first-prompt", prompt)`;
+prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
+
+hub.push("<handle>/topic-joke-generator", prompt)`;
 
 const jsBlock = `import * as hub from "langchain/hub";
+import {
+  ChatPromptTemplate,
+  HumanMessagePromptTemplate,
+} from 'langchain/prompts';
+
+const message = HumanMessagePromptTemplate.fromTemplate(
+  'tell me a joke about {topic}'
+);
+const prompt = ChatPromptTemplate.fromPromptMessages([message]);
 
 await hub.push("<handle>/my-first-prompt", prompt);`
 
