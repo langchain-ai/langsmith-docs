@@ -24,19 +24,19 @@ export const HubInstallationCodeTabs = () => (
         value: 'typescript',
         label: 'yarn',
         language: 'bash',
-        content: `yarn add langchain langchainhub`,
+        content: `yarn add langchain`,
       },
       {
         value: 'npm',
         label: 'npm',
         language: 'bash',
-        content: `npm install -S langchain langchainhub`,
+        content: `npm install -S langchain`,
       },
       {
         value: 'pnpm',
         label: 'pnpm',
         language: 'bash',
-        content: `pnpm add langchain langchainhub`,
+        content: `pnpm add langchain`,
       },
     ]}
   />
@@ -72,8 +72,8 @@ const model = new ChatOpenAI();
 // use it in a runnable
 const runnable = prompt.pipe(model);
 const result = await runnable.invoke({
-	"profession": "biologist",
-	"question": "What is special about parrots?",
+  "profession": "biologist",
+  "question": "What is special about parrots?",
 });
 
 console.log(result);`
