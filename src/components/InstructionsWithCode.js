@@ -6,7 +6,7 @@ import CodeBlock from "@theme/CodeBlock";
 export function TypeScriptBlock(content) {
   return {
     value: "typescript",
-    label: "Typescript",
+    label: "TypeScript",
     content: content,
   };
 }

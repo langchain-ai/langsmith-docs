@@ -21,8 +21,7 @@ def extract_code_blocks(mdx_file: str) -> list[str]:
             code_block.replace("\\n", "\n").replace("\\\\", "\\")
             for code_block in code_blocks
             # Skip because we don't have the actual UUID to run in the test.
-            if "<run_id>" not in code_block
-            and "<your_project>" not in code_block
+            if "<run_id>" not in code_block and "<your_project>" not in code_block
         ]
         return code_blocks
 
@@ -72,7 +71,23 @@ if __name__ == "__main__":
 from langchain.prompts import ChatPromptTemplate\n
 chain = ChatPromptTemplate.from_messages([("human", "{query}")]) | ChatOpenAI()
 """,
-        )
+        ),
+        (
+            "evaluation/capturing-feedback.mdx",
+            """import uuid
+from langsmith import Client, schemas
+runs = [schemas.Run(
+    name="my_run",
+    inputs={"prompt": "Hello world!"},
+    execution_order=1,
+    run_type="llm",
+    outputs={"generation": "Hi!"},
+    start_time=0,
+    id=uuid.uuid4(),
+    end_time=100,
+)]
+client = Client()\n""",
+        ),
     ]
     for file, boilerplate in files:
         stem = Path(file).stem

@@ -54,17 +54,8 @@ async def test_code_block_4():
 
 @pytest.mark.asyncio
 async def test_code_block_5():
-    from langsmith import Client
-    
-    client = Client()
-    runs = list(client.list_runs(
-        filter='has(metadata, \'{"variant": "abc123"}\')',
-    ))
-
-@pytest.mark.asyncio
-async def test_code_block_6():
     from langchain.callbacks.manager import (
-        trace_as_chain_group, 
+        trace_as_chain_group,
         atrace_as_chain_group,
     )
     
@@ -93,20 +84,7 @@ async def test_code_block_6():
         chain.invoke({"question": "What is your favorite color?"}, config={"callbacks": group_manager})
 
 @pytest.mark.asyncio
-async def test_code_block_7():
-    from langchain.chat_models import ChatOpenAI
-    from langchain.chains import LLMChain
-    
-    chain = LLMChain.from_string(ChatOpenAI(), "Say hi to {name}")
-    def main():
-        response = chain("Clara", include_run_info=True)
-        run_id = response["__run"].run_id
-        print(run_id)
-    main()
-    
-
-@pytest.mark.asyncio
-async def test_code_block_8():
+async def test_code_block_6():
     from langchain.callbacks import LangChainTracer
     from langchain.chat_models import ChatOpenAI
     from langsmith import Client
@@ -126,7 +104,7 @@ async def test_code_block_8():
     
 
 @pytest.mark.asyncio
-async def test_code_block_9():
+async def test_code_block_7():
     from langchain.chat_models import ChatOpenAI
     from langchain.callbacks.tracers.langchain import wait_for_all_tracers
     
@@ -139,32 +117,13 @@ async def test_code_block_9():
     
 
 @pytest.mark.asyncio
-async def test_code_block_10():
+async def test_code_block_8():
     from langchain.callbacks import tracing_v2_enabled
     
     with tracing_v2_enabled(project_name="My Project"):
         chain.invoke({"query": "How many people live in canada as of 2023?"})
 
 @pytest.mark.asyncio
-async def test_code_block_11():
-    from langchain.chat_models import ChatOpenAI
-    from langchain.prompts import ChatPromptTemplate
-    
-    chat_model = ChatOpenAI()
-    
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", "You are a cat"),
-            ("human", "Hi"),
-        ]
-    )
-    res = chat_model.generate(messages=[prompt.format_messages()])
-    res.run[0].run_id
-
-@pytest.mark.asyncio
-async def test_code_block_12():
-    from langchain.llms import OpenAI
-    
-    openai = OpenAI()
-    res = openai.generate(["You are a good bot"])
-    print(res.run[0].run_id)
+async def test_code_block_9():
+    configured_chain = chain.with_config({"run_name": "MyCustomChain"})
+    configured_chain.invoke({"query": "What is the meaning of life?"})

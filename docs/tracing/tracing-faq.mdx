@@ -142,8 +142,8 @@ You can customize chain and runnable trace names by calling `new_chain = chain.w
 Example:
 
 ```python
-chain = (prompt | llm).with_config({"run_name": "MyCustomChain"})
-chain.invoke({"question": "What is the meaning of life?"})
+configured_chain = chain.with_config({"run_name": "MyCustomChain"})
+configured_chain.invoke({"query": "What is the meaning of life?"})
 ```
 
 For more examples of this, check out the [recipe on customizing run names](https://github.com/langchain-ai/langsmith-cookbook/blob/main/tracing-examples/runnable-naming/run-naming.ipynb).
@@ -186,12 +186,14 @@ Then in the runs page of the web app, you can filter runs using the query `has(m
     PythonBlock(`from langsmith import Client\n
 client = Client()
 runs = list(client.list_runs(
+    project_name="<your_project>",
     filter='has(metadata, \\'{"variant": "abc123"}\\')',
 ))`),
     TypeScriptBlock(`import { Client, Run } from "langsmith";\n
 const client = new Client();
 const runs: Run[] = [];
 for await (const run of client.listRuns({
+  projectName: "<your_project>",
   filter: 'has(metadata, \\'{"variant": "abc123"}\\')',
 })) {
   runs.push(run);
@@ -489,3 +491,16 @@ In the web app, you can search through 'traces' (the top level runs) or through 
 ### How do I use the playground for runs logged using the SDK?
 
 The LangSmith playground doesn't yet support re-running arbitrary runs logged using the SDK. We are working to extend logging and playground support for users not using LangChain components in their app.
+
+
+### How do I mask sensitive information in my runs?
+
+If you need to completely hide the inputs and outputs of your traces, you can set the following environment variables when running your application:
+
+```bash
+LANGCHAIN_HIDE_INPUTS=true
+LANGCHAIN_HIDE_OUTPUTS=true
+```
+
+This will block input or output data from being transmitted to the LangSmith API. The latency and sequence of operation types will still be visible, but all the
+inputs and outputs will be unavailable. Token count tracking is not available in this setting.
