@@ -135,6 +135,7 @@ run_on_dataset(
     llm_or_chain_factory=create_chain,
     evaluation=eval_config,
     verbose=True,
+    project_name="llmchain-test-1",
 )`,
     },
     {
@@ -157,11 +158,12 @@ eval_config = RunEvalConfig(
   ]
 )
 run_on_dataset(
-    client=client,
     dataset_name=dataset_name,
     llm_or_chain_factory=llm,
     evaluation=eval_config,
+    client=client,
     verbose=True,
+    project_name="chatopenai-test-1",
 )`,
     },
   ]}
