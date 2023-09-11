@@ -17,13 +17,144 @@ Datasets are a collections of examples that can be used to evaluate or otherwise
 
 ## Dataset types
 
-There are currently three types of datasets.
+There are currently three types of datasets. Dataset types communicate common input and output schemas 
 
-- `kv` datasets are the default type, where inputs and outputs can be any dictionary. These are useful for more custom workflows, but when there are more than one key-value pair, additional configuration may be required to use for evaluation.
-- `llm` datasets have an `"inputs"` dictionary which contains a single `"input"` key mapped to a single prompt string. Similarly, the `"outputs"` dictionary contains a single `"output"` key mapped to a single response string.
-- `chat` dataset have and `"inputs"` dictionary contains a single `"input"` key mapped to a single list of serialized chat messages. The `"outputs"` dictionary contains a single `"output"` key mapped to a single list of serialized chat messages.
+#### Key-value datasets
+
+Datasets with the data type "kv" are the default type. For these datasets, inputs and outputs can be arbitrary key-value pairs. These are useful when evaluating chains and agents that require multiple inputs or that return multiple outputs. 
+
+Below is an example call to create a KV dataset with a single example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`dataset = client.create_dataset(dataset_name="My KV Dataset", description="A dataset with key-value inputs and outputs")\n
+client.create_example(
+  inputs={
+    "a-question": "What is the largest mammal?",
+    "user-context": "The user is a 1st grader writing a bio report.",
+  },
+  outputs = {
+    "answer": "The blue whale is the largest mammal.",
+    "source": "https://en.wikipedia.org/wiki/Blue_whale",
+  },
+  dataset_id=dataset.id,
+  # Or dataset_name="My KV Dataset"
+)`),
+    TypeScriptBlock(`const dataset = await client.createDataset("My KV Dataset", {
+  description: "A dataset with key-value inputs and outputs",
+});\n
+await client.createExample(
+  {
+    "a-question": "What is the largest mammal?",
+    "user-context": "The user is a 1st grader writing a bio report.",
+  },
+  {
+    answer: "The blue whale is the largest mammal.",
+    source: "https://en.wikipedia.org/wiki/Blue_whale",
+  },
+  {
+    datasetId: dataset.id,
+    // Or datasetName: "My KV Dataset",
+  }
+);`),
+  ]}
+  groupId="client-language"
+/>
+
+The tradeoff with these datasets is that running evaluations on them can be a bit more involved. If there are multiple keys, you will have to manually specify the input_key, reference_key, (and possibly output_key) in the `RunEvalConfig`.
+
+#### LLM datasets
+
+Datasets with the "llm" data type correspond to the string inpts and outputs from the "completion" style LLMS (string in, string out). 
+
+The `"inputs"` dictionary contains a single `"input"` key mapped to a single prompt string. Similarly, the `"outputs"` dictionary contains a single `"output"` key mapped to a single response string.
+
+Below is an example call to create an LLM dataset with a single example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`dataset = client.create_dataset(dataset_name="My LLM Dataset", description="A dataset with LLM inputs and outputs", data_type="llm")\n
+client.create_example(
+  inputs={"input": "What is the largest mammal?"},
+  outputs={"output": "The blue whale is the largest mammal."},
+  dataset_id=dataset.id,
+  # Or dataset_name="My LLM Dataset"
+)`),
+    TypeScriptBlock(`const dataset = await client.createDataset("My LLM Dataset", {
+  description: "A dataset with LLM inputs and outputs",
+  dataType: "llm",
+});\n
+await client.createExample(
+  { input: "What is the largest mammal?" },
+  { output: "The blue whale is the largest mammal." },
+  {
+    datasetId: dataset.id,
+    // Or datasetName: "My LLM Dataset",
+  }
+);`),
+  ]}
+  groupId="client-language"
+/>
+
+#### Chat datasets
+
+Datasets with the "chat" data type correspond to messages and generations from LLMs that expect structured "chat" messages as inputs and outputs. Each example row
+expects an `"inputs"` dictionary containing a single `"input"` key mapped to a list of serialized chat messages. The `"outputs"` dictionary contains a single `"output"` key mapped to a single list of serialized chat messages.
+
+Below is an example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`dataset = client.create_dataset(
+  dataset_name="My Chat Dataset",
+  description="A dataset with chat inputs and outputs",
+  data_type="chat",
+)\n
+client.create_example(
+  inputs={
+    "input": [
+      {"data": {"content": "You are a helpful tutor AI."}, "type": "system"},
+      {"data": {"content": "What is the largest mammal?"}, "type": "human"},
+    ]},
+  outputs={
+    "output": {
+      "data": {
+        "content": "The blue whale is the largest mammal."
+        }, 
+      "type": "ai",
+    },
+  },
+  dataset_id=dataset.id,
+)`),
+    TypeScriptBlock(`const dataset = await client.createDataset("My Chat Dataset4", {
+  description: "A dataset with chat inputs and outputs",
+  dataType: "chat",
+});\n
+await client.createExample(
+  {
+    input: [
+      { data: { content: "You are a helpful tutor AI." }, type: "system" },
+      { data: { content: "What is the largest mammal?" }, type: "human" },
+    ],
+  },
+  {
+    output: {
+      data: {
+        content: "The blue whale is the largest mammal.",
+      },
+      type: "ai",
+    },
+  },
+  { datasetId: dataset.id }
+);`),
+  ]}
+  groupId="client-language"
+/>
+
 
 ## Managing datasets in the web app
+
+The easiest way to interact with datasets is directly in the LangSmith app. Here, you can create and edit datasets and example rows. Below are a few ways to interact with them.
 
 ### From Existing Runs
 
@@ -67,7 +198,7 @@ You can create a dataset from existing runs or upload a CSV file (or pandas data
 
 Once you have a dataset created, you can continue to add new runs to it as examples. We recommend that you organize datasets to target a single "task", usually served by a single chain or LLM. For more discussions on datasets and evaluations, check out the [recommendations](additional-resources/recommendations).
 
-### Create from list of examples
+### Create from list of values
 
 The most flexible way to make a dataset using the client is by creating examples from a list of inputs and optional outputs. Below is an example.
 
@@ -251,3 +382,103 @@ dataset = client.upload_dataframe(
     data_type="kv" # The default
 )
 ```
+
+
+## Listing datasets from the client
+
+You can programmatically fetch the datasets from LangSmith using the `list_datasets` method in the client. Below are some common examples:
+
+#### Query all datasets
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets()`),
+    TypeScriptBlock(`const datasets = await client.listDatasets();`),
+  ]}
+  groupId="client-language"
+/>
+
+#### List datasets by name
+
+If you want to search by the exact name, you can do the following:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets(datasetName="My Test Dataset 1")`),
+    TypeScriptBlock(`const datasets = await client.listDatasets({datasetName: "My Test Dataset 1"});`),
+  ]}
+  groupId="client-language"
+/>
+
+If you want do do a case-invariant substring search, try the following:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets(dataset_name_contains="some substring")`),
+    TypeScriptBlock(`const datasets = await client.listDatasets({datasetNameContains: "some substring"});`),
+  ]}
+  groupId="client-language"
+/>
+
+#### List datasets by type
+
+You can filter datasets by type. Below is an example querying for chat datasets.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets(data_type="chat")`),
+    TypeScriptBlock(`const datasets = await client.listDatasets({dataType: "chat"});`),
+  ]}
+  groupId="client-language"
+/>
+
+
+## Listing dataset examples from the client
+
+Once you have a dataset created, you may want to download the examples. You can fetch dataset examples using the `list_examples` method on the LangSmith client. Below are some common calls:
+
+
+#### List all examples for a dataset
+
+You can filter by dataset ID:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`examples = client.list_examples(dataset_id="c9ace0d8-a82c-4b6c-13d2-83401d68e9ab")`),
+    TypeScriptBlock(`const examples = await client.listExamples({datasetId: "c9ace0d8-a82c-4b6c-13d2-83401d68e9ab"});`),
+  ]}
+  groupId="client-language"
+/>
+
+Or you can filter by dataset name (this must exactly match the dataset name you want to query)
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`examples = client.list_examples(dataset_name="My Test Dataset")`),
+    TypeScriptBlock(`const examples = await client.listExamples({datasetName: "My test Dataset"});`),
+  ]}
+  groupId="client-language"
+/>
+
+#### List examples by id
+
+You can also list multiple examples all by ID. 
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`example_ids = [
+ '734fc6a0-c187-4266-9721-90b7a025751a',
+ 'd6b4c1b9-6160-4d63-9b61-b034c585074f',
+ '4d31df4e-f9c3-4a6e-8b6c-65701c2fed13',
+]
+examples = client.list_examples(example_ids=example_ids)`),
+    TypeScriptBlock(`
+const exampleIds = [
+  "734fc6a0-c187-4266-9721-90b7a025751a",
+  "d6b4c1b9-6160-4d63-9b61-b034c585074f",
+  "4d31df4e-f9c3-4a6e-8b6c-65701c2fed13",
+];
+const examples = await client.listExamples({exampleIds: exampleIds});`),
+  ]}
+  groupId="client-language"
+/>
