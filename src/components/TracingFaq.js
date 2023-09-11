@@ -7,7 +7,7 @@ export const AccessRunIdBlock = ({}) => {
   const callbackPythonBlock = `from langchain import chat_models, prompts, callbacks
 chain = (
     prompts.ChatPromptTemplate.from_template("Say hi to {name}")
-    | chat_models.ChatOpenAI()
+    | chat_models.ChatAnthropic()
 )
 with callbacks.collect_runs() as cb:
   result = chain.invoke({"name": "Clara"})
@@ -15,17 +15,17 @@ with callbacks.collect_runs() as cb:
 print(run_id)
 `;
 
-  const alternativePythonBlock = `from langchain.chat_models import ChatOpenAI
+  const alternativePythonBlock = `from langchain.chat_models import ChatAnthropic
 from langchain.chains import LLMChain\n
-chain = LLMChain.from_string(ChatOpenAI(), "Say hi to {name}")
+chain = LLMChain.from_string(ChatAnthropic(), "Say hi to {name}")
 response = chain("Clara", include_run_info=True)
 run_id = response["__run"].run_id
 print(run_id)`;
 
-  const chatModelPythonBlock = `from langchain.chat_models import ChatOpenAI
+  const chatModelPythonBlock = `from langchain.chat_models import ChatAnthropic
  from langchain.prompts import ChatPromptTemplate
  
- chat_model = ChatOpenAI()
+ chat_model = ChatAnthropic()
  
  prompt = ChatPromptTemplate.from_messages(
      [
@@ -42,6 +42,31 @@ print(run_id)`;
 openai = OpenAI()
 res = openai.generate(["You are a good bot"])
 print(res.run[0].run_id)`;
+
+  const callbackTypeScriptBlock = `import { ChatAnthropic } from "langchain/chat_models/anthropic";
+import { PromptTemplate } from "langchain/prompts";
+import { RunCollectorCallbackHandler } from "langchain/callbacks";\n
+const runCollector = new RunCollectorCallbackHandler();
+const prompt = PromptTemplate.fromTemplate("Say hi to {name}");
+const chain = prompt.pipe(new ChatAnthropic());
+const pred = await chain.invoke(
+  { name: "Clara" },
+  {
+    callbacks: [runCollector],
+  }
+);
+const runId = runCollector.tracedRuns[0].id;
+console.log(runId);`;
+  const oldTypeScriptBlock= `import { ChatAnthropic } from "langchain/chat_models/anthropic";
+import { LLMChain } from "langchain/chains";
+import { PromptTemplate } from "langchain/prompts";\n
+const prompt = PromptTemplate.fromTemplate("Say hi to {name}");
+const chain = new LLMChain({
+  llm: new ChatAnthropic(),
+  prompt: prompt,
+});\n
+const response = await chain.invoke({ name: "Clara" });
+console.log(response.__run);`;
   return (
     <Tabs groupId="client-language">
       <TabItem key="python" value="python" label="Python">
@@ -69,17 +94,13 @@ print(res.run[0].run_id)`;
         </CodeBlock>
       </TabItem>
       <TabItem key="typescript" value="typescript" label="TypeScript">
+        <p>For newer versions of Langchain ({`>=`}0.0.139), you can use the `RunCollectorCallbackHandler` for any chain or runnable.</p>
         <CodeBlock className="typescript" language="typescript">
-          {`import { ChatOpenAI } from "langchain/chat_models/openai";
-import { LLMChain } from "langchain/chains";
-import { PromptTemplate } from "langchain/prompts";\n
-const prompt = PromptTemplate.fromTemplate("Say hi to {name}");
-const chain = new LLMChain({
-  llm: new ChatOpenAI(),
-  prompt: prompt,
-});\n
-const response = await chain.invoke({ name: "Clara" });
-console.log(response.__run);`}
+          {callbackTypeScriptBlock}
+        </CodeBlock>
+        <p>If youre on an older version of LangChain, you can still retrieve the run ID directly from chain calls.</p>
+        <CodeBlock className="typescript" language="typescript">
+          {oldTypeScriptBlock}
         </CodeBlock>
       </TabItem>
     </Tabs>
