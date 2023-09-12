@@ -11,7 +11,7 @@ chain = (
 )
 with callbacks.collect_runs() as cb:
   result = chain.invoke({"name": "Clara"})
-  run_id = id.traced_runs[0].id
+  run_id = cb.traced_runs[0].id
 print(run_id)
 `;
 
