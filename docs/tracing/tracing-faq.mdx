@@ -58,10 +58,12 @@ chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"c
 `),
     TypeScriptBlock(`import { LangChainTracer } from "langchain/callbacks";\n
 const tracer = new LangChainTracer({ projectName: "My Project" });
-await chain.invoke({
-  query: "How many people live in canada as of 2023?" },
-  { callbacks: [tracer]
-});
+await chain.invoke(
+  {
+    query: "How many people live in canada as of 2023?"
+  },
+  { callbacks: [tracer] }
+);
 `),
   ]}
   groupId="client-language"
@@ -332,24 +334,23 @@ callbacks = [
     )
   )
 ]\n
-llm = ChatOpenAI(callbacks=callbacks)
-llm.invoke("Hello, world!")
+llm = ChatOpenAI()
+llm.invoke("Hello, world!", config={"callbacks": callbacks})
 `),
     TypeScriptBlock(`import { Client } from "langsmith";
 import { LangChainTracer } from "langchain/callbacks";
 import { ChatOpenAI } from "langchain/chat_models/openai";\n
-const llm = new ChatOpenAI({
-  callbacks: [
-    new LangChainTracer({
-      projectName: "YOUR_PROJECT_NAME_HERE",
-      client: new Client({
-        apiUrl: "https://api.smith.langchain.com",
-        apiKey: "YOUR_API_KEY_HERE",
-      }),
+const callbacks = [
+  new LangChainTracer({
+    projectName: "YOUR_PROJECT_NAME_HERE",
+    client: new Client({
+      apiUrl: "https://api.smith.langchain.com",
+      apiKey: "YOUR_API_KEY_HERE",
     }),
-  ],
-});
-await llm.invoke("Hello, world!");
+  }),
+];
+const llm = new ChatOpenAI({});
+await llm.invoke("Hello, world!", { callbacks });
 `),
   ]}
   groupId="client-language"

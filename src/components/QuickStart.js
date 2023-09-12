@@ -73,9 +73,10 @@ const tracer = new LangChainTracer({
 });
 
 const model = new ChatOpenAI({
-  openAIApiKey: "YOUR_OPENAI_API_KEY",
-  callbacks: [tracer]
-});`;
+  openAIApiKey: "YOUR_OPENAI_API_KEY"
+});
+
+await model.invoke("Hello, world!", { callbacks: [tracer] })`;
 
   return (
     <Tabs groupId="client-language">
