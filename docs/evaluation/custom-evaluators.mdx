@@ -91,10 +91,11 @@ evaluation_config = RunEvalConfig(
     custom_evaluators = [RelevanceEvaluator()],
 )
 run_on_dataset(
-    client,
-    "<my_dataset_name>",
-    <llm or function constructing chain>,
+    dataset_name="<my_dataset_name>",
+    llm_or_chain_factory=<llm or function constructing chain>,
+    client=client,
     evaluation=evaluation_config,
+    project_name="<the name to assign to this test project>",
 )
 ```
 
@@ -174,10 +175,11 @@ evaluation_config = RunEvalConfig(
 )
 
 run_on_dataset(
-    client,
-    "<my_dataset_name>",
-    <llm or function constructing chain>,
+    dataset_name="<my_dataset_name>",
+    llm_or_chain_factory=<llm or function constructing chain>,
+    client=client,
     evaluation=evaluation_config,
+    project_name="<the name to assign to this test project>",
 )
 ```
 

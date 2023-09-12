@@ -19,6 +19,22 @@ This can help improve the quality of the model, permit usage of cheaper models, 
 
 As a motivating example, we will show how we can use a few examples from a chain powered by OpenAI's `gpt4` model to improve the quality of a "history Q&A" bot powered by the local `GPT4All` model.
 
+## Setup
+
+First, we will need to install LangChain and GPT4All
+
+```bash
+pip install -U langchain openai langsmith gpt4all
+```
+
+Then configure your environment:
+
+```bash
+export OPENAI_API_KEY=<your key>
+export LANGCHAIN_API_KEY=<your key>
+export LANGCHAIN_TRACING_V2_ENABLED=true
+```
+
 ## Step 1: Trace Prototype Model
 
 Run your chain prototype to collect example traces. This data could come from a live deployment, staging environment, prototyping dataset, or any other source.
@@ -87,14 +103,16 @@ def construct_chain():
         template="Help out as best you can.\nQuestion: {input}\nResponse: ",
     )
 
+prototype_project_name = "History Prototype Test"
+
 prototype_results = await arun_on_dataset(
-    client=client,
     dataset_name=shared_dataset_name,
     llm_or_chain_factory=construct_chain,
+    client=client,
     verbose=True,
+    project_name=prototype_project_name,
 )
 
-prototype_project_name = prototype_results["project_name"]
 ```
 
 ## Step 2: Create Few-Shot Dataset
@@ -189,7 +207,6 @@ evaluators = [
 ]
 
 original_dev_res = run_on_dataset(
-    client=client,
     dataset_name=dev_dataset_name,
     llm_or_chain_factory=construct_dev_chain,
     evaluation=RunEvalConfig(
@@ -199,7 +216,9 @@ original_dev_res = run_on_dataset(
                 "completeness": "Is the submission complete, providing adequate depth in its answer?"
             })
         ]),
+    client=client,
     verbose=True,
+    project_name="zero-shot chain test",
 )
 ```
 
@@ -293,13 +312,14 @@ def construct_few_shot_chain():
     )
 
 few_shot_dev_res = run_on_dataset(
-    client=client,
     dataset_name=dev_dataset_name,
     llm_or_chain_factory=construct_few_shot_chain,
     evaluation=RunEvalConfig(
         evaluators=evaluators,
     ),
     verbose=True,
+    client=client,
+    project_name="few-shot chain test",
 )
 ```
 
@@ -308,6 +328,7 @@ few_shot_dev_res = run_on_dataset(
 Both the helpfulness and completeness of the responses improved!
 
 ```python
+few_shot_dev_res.get_aggregate_feedback()
 client.read_project(project_name=few_shot_dev_res["project_name"]).feedback_stats
 ```
 <details> <summary>Console output</summary>

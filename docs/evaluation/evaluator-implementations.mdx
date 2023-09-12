@@ -47,10 +47,11 @@ evaluation_config = RunEvalConfig(
 )\n
 client = Client()
 run_on_dataset(
-    client,
-    "<dataset_id>",
-    <LLM or constructor for chain or agent>,
+    dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
+    client=client,
     evaluation=evaluation_config,
+    project_name="<the name to assign to this test project>",
 )`),
   ]}
   groupId="client-language"
@@ -108,11 +109,10 @@ evaluation_config = RunEvalConfig(
     ]
 )\n
 client = Client()
-run_on_dataset(
-    client,
-    "<dataset_id>",
-    <LLM or constructor for chain or agent>,
+   dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
     evaluation=evaluation_config,
+    client=client,
 )`),
   ]}
   groupId="client-language"
@@ -140,11 +140,10 @@ evaluation_config = RunEvalConfig(
     ]
 )\n
 client = Client()
-run_on_dataset(
-    client,
-    "<dataset_id>",
-    <LLM or constructor for chain or agent>,
+   dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
     evaluation=evaluation_config,
+    client=client,
 )
 `),
   ]}
@@ -186,11 +185,10 @@ evaluation_config = RunEvalConfig(
     ]
 )\n
 client = Client()
-run_on_dataset(
-    client,
-    "<dataset_id>",
-    <LLM or constructor for chain or agent>,
+   dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
     evaluation=evaluation_config,
+    client=client,
 )`),
   ]}
   groupId="client-language"
@@ -213,11 +211,10 @@ evaluation_config = RunEvalConfig(
     ]
 )\n
 client = Client()
-run_on_dataset(
-    client,
-    "<dataset_id>",
-    <LLM or constructor for chain or agent>,
+   dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
     evaluation=evaluation_config,
+    client=client,
 )`),
   ]}
   groupId="client-language"
