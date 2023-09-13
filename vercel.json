@@ -1,10 +1,20 @@
 {
-    "cleanUrls": true,
-    "trailingSlash": false,
-    "redirects": [
-        {
-            "source": "/docs/:path*",
-            "destination": "/:path*"
-        }
-    ]
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/docs/:path*",
+      "destination": "/:path*"
+    }
+  ],
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "outputDirectory": "build",
+        "buildCommand": "npm run vercel-build"
+      }
+    }
+  ]
 }
