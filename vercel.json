@@ -2,9 +2,19 @@
     "cleanUrls": true,
     "trailingSlash": false,
     "redirects": [
-        {
-            "source": "/docs/:path*",
-            "destination": "/:path*"
+      {
+        "source": "/docs/:path*",
+        "destination": "/:path*"
+      }
+    ],
+    "builds": [
+      {
+        "src": "package.json",
+        "use": "@vercel/static-build",
+        "config": {
+          "buildCommand": "pip install -r subdirectories/scripts/requirements.txt && python subdirectories/scripts/build_cookbook.py && npm run build"
         }
+      }
     ]
-}
+  }
+  
