@@ -60,7 +60,6 @@ sidebar_label: Overview
 sidebar_position: 1
 ---
 {title}
-LangSmith Cookbook: A Guide to Practical Workflows
 
 The LangSmith Cookbook offers hands-on code examples to inspire and assist in your projects. While we've incorporated summaries and overviews from the READMEs here, the full code resides in our [GitHub repository](https://github.com/langchain-ai/langsmith-cookbook). We suggest running the code by forking or cloning the repository.
 
