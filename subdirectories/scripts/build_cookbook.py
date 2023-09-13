@@ -130,6 +130,8 @@ We're always evolving. If there's a specific use case or pattern you want to see
                     def replace_md_ipynb_links(match):
                         # Extract the relative link from the match object
                         relative_link = match.group(1)
+                        if "colab.research.google" in relative_link:
+                            return match.group(0).replace('/./', '/')
                         parent_dir = os.path.dirname(relative_link)
                         return f"]({parent_dir})"
 
