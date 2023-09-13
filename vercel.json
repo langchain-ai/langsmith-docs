@@ -1,21 +1,20 @@
 {
-    "cleanUrls": true,
-    "trailingSlash": false,
-    "redirects": [
-      {
-        "source": "/docs/:path*",
-        "destination": "/:path*"
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/docs/:path*",
+      "destination": "/:path*"
+    }
+  ],
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "outputDirectory": "build",
+        "buildCommand": "npm run vercel-build"
       }
-    ],
-    "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/static-build",
-        "config": {
-          "outputDirectory": "build",
-          "buildCommand": "pip install -r subdirectories/scripts/requirements.txt && python subdirectories/scripts/build_cookbook.py && npm run build"
-        }
-      }
-    ]
-  }
-  
+    }
+  ]
+}
