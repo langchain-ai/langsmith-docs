@@ -84,9 +84,9 @@ for await (const run of client.listRuns({
   groupId="client-language"
 />
 
-#### List root runs in a project
+#### List traces in a project
 
-Root runs, or run traces, are runs that have no parents.
+Root runs (or run traces), are runs that have no parents. These are assigned an 'execution_order' of 1. You can use this to filter for root runs.
 
 <CodeTabs
   tabs={[
