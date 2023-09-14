@@ -24,6 +24,17 @@ import {
 
 The following are some frequently asked questions about logging runs to LangSmith:
 
+
+### What is a Run?
+
+A 'Run' represents a single unit of work or operation within your LLM application. This could be anything from single call to an LLM or chain, to a prompt formatting call, to a runnable lambda invocation. If you are familiar with Open Telemetry, this corresponds loosely to a [span](https://opentelemetry.io/docs/concepts/signals/traces/#spans).
+Each run contains a unique ID, name, inputs, and optionally outputs, error information, tags, and other metadata.
+
+A 'Trace' is a collection of runs organized in a tree or graph. The 'Root Run' is the top level run in a trace, which is assigned an execution_order=1. It is the run that is directly invoked by the user or application.
+
+The execution order of a run is the order in which it was called in the trace.
+
+
 ### How do I group traces into a project?
 
 All runs are logged to a project. If left unspecified, the tracer project is set to `default`.

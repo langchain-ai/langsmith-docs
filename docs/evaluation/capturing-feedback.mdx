@@ -28,7 +28,7 @@ Below is the method signature from the client.
   tabs={[
     PythonBlock(`from langsmith import Client\n
 client = Client()
-feedback = client.create_feedback(
+client.create_feedback(
     "<run_id>",
     "<feedback_key>",
     *,
@@ -41,7 +41,7 @@ feedback = client.create_feedback(
 )`),
     TypeScriptBlock(`import { Client } from "langsmith";\n
 const client = new Client();
-const feedback = await client.createFeedback("<run_id>", "<feedbackKey>", {
+await client.createFeedback("<run_id>", "<feedbackKey>", {
   score?: float | int | bool,
   value?: float | int | bool | string | object,
   correction?: string | object,
@@ -74,7 +74,7 @@ In addition to general production observability, user feedback is a key ingredie
 
 Assuming you've already set up tracing in the [LangSmith quick start](/#quick-start), you can add user feedback to a run by returning the run ID and and including that in the `create_feedback` call.
 
-To return the run ID for a given call, look for the `__run` key of the LangChain component's response dictionary (or typescript object). In python, you will have to specify `include_run_info=True` when calling your chain or LLM. Below is an example:
+To use the run ID for a given call, use the "RunCollectorCallbackHandler" (or use the `collect_runs()`. In python, you will have to specify `include_run_info=True` when calling your chain or LLM. Below is an example:
 
 ```bash
 export LANGCHAIN_TRACING_V2=true
@@ -113,16 +113,17 @@ def main():
     TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
 import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";
+// Supported in versions >= 0.0.139
+import { RunCollectorCallbackHandler } from "langchain/callbacks";
 import { Client } from "langsmith";\n
 const client = new Client();
 const prompt = PromptTemplate.fromTemplate("Say hi to {name}");
-const chain = new LLMChain({
-  llm: new ChatOpenAI(),
-  prompt: prompt,
-});
+const llm = new ChatOpenAI();
+const chain = prompt.pipe(llm);
+const runCollector = new RunCollectorCallbackHandler();
 async function main() {
-    const response = await chain.call({ name: "Clara" });
-    const runId = response.__run;
+    const response = await chain.invoke({ name: "Clara" }, {callbacks: [runCollector]});
+    const runId = runCollector.tracedRuns[0].id;
     // ... User copies the generated response
     await client.createFeedback(runId, "did_copy", { score: true });
     // ... User clicks a thumbs up button
