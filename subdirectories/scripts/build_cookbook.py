@@ -10,16 +10,39 @@ from tqdm import tqdm
 _REPO_ROOT = "https://github.com/langchain-ai/langsmith-cookbook"
 
 
-def convert_notebooks_to_markdown(root_path: str):
-    """Convert all Jupyter notebooks in the directory to Markdown."""
+def convert_notebooks_to_markdown(root_path: str) -> None:
+    """
+    Convert all Jupyter notebooks in the directory to Markdown and save images.
+    
+    Args:
+    - root_path (str): Path to the root directory containing the notebooks.
+    """
     exporter = MarkdownExporter()
+    
+    # This function will be used to save the images
+    def output_post_save(md, resources, **kwargs):
+        for filename, data in resources.get('outputs', {}).items():
+            filepath = os.path.join(resources['metadata']['path'], filename)
+            with open(filepath, 'wb') as f:
+                f.write(data)
+    
     for dirpath, _, filenames in tqdm(os.walk(root_path)):
         for file in filenames:
             if file.endswith(".ipynb"):
                 file_path = os.path.join(dirpath, file)
                 with open(file_path, "r", encoding="utf-8") as notebook_file:
                     notebook = nbformat.read(notebook_file, as_version=4)
-                    markdown, _ = exporter.from_notebook_node(notebook)
+                    # The exporter's `from_notebook_node` function has a `resources` parameter.
+                    # We can use this to specify where and how to save images.
+                    resources = {
+                        'metadata': {'path': dirpath}  # Set the output path for images
+                    }
+                    markdown, resources = exporter.from_notebook_node(notebook, resources=resources)
+                    
+                    # Now, save the images
+                    output_post_save(markdown, resources)
+                    
+                    # Write the markdown content to a .md file
                     md_file_path = os.path.join(dirpath, file.replace(".ipynb", ".md"))
                     with open(md_file_path, "w", encoding="utf-8") as md_file:
                         md_file.write(markdown)
