@@ -4,28 +4,28 @@ from pathlib import Path
 from shutil import copy2
 
 import nbformat
+from bs4 import BeautifulSoup
 from nbconvert import MarkdownExporter
 from tqdm import tqdm
 
 _REPO_ROOT = "https://github.com/langchain-ai/langsmith-cookbook"
 
-
 def convert_notebooks_to_markdown(root_path: str) -> None:
     """
     Convert all Jupyter notebooks in the directory to Markdown and save images.
-    
+
     Args:
     - root_path (str): Path to the root directory containing the notebooks.
     """
     exporter = MarkdownExporter()
-    
+
     # This function will be used to save the images
     def output_post_save(md, resources, **kwargs):
-        for filename, data in resources.get('outputs', {}).items():
-            filepath = os.path.join(resources['metadata']['path'], filename)
-            with open(filepath, 'wb') as f:
+        for filename, data in resources.get("outputs", {}).items():
+            filepath = os.path.join(resources["metadata"]["path"], filename)
+            with open(filepath, "wb") as f:
                 f.write(data)
-    
+
     for dirpath, _, filenames in tqdm(os.walk(root_path)):
         for file in filenames:
             if file.endswith(".ipynb"):
@@ -35,17 +35,128 @@ def convert_notebooks_to_markdown(root_path: str) -> None:
                     # The exporter's `from_notebook_node` function has a `resources` parameter.
                     # We can use this to specify where and how to save images.
                     resources = {
-                        'metadata': {'path': dirpath}  # Set the output path for images
+                        "metadata": {"path": dirpath}  # Set the output path for images
                     }
-                    markdown, resources = exporter.from_notebook_node(notebook, resources=resources)
-                    
-                    # Now, save the images
+                    markdown, resources = exporter.from_notebook_node(
+                        notebook, resources=resources
+                    )
+
                     output_post_save(markdown, resources)
-                    
-                    # Write the markdown content to a .md file
+                    markdown = clean_markdown(markdown)
+
                     md_file_path = os.path.join(dirpath, file.replace(".ipynb", ".md"))
                     with open(md_file_path, "w", encoding="utf-8") as md_file:
                         md_file.write(markdown)
+
+def flexible_table_replacement(markdown: str, table_str: str) -> str:
+    """
+    Replace the table in the markdown with the given table string using a more flexible matching.
+    
+    Args:
+    - markdown (str): The original markdown content.
+    - table_str (str): The exact table string to replace with.
+
+    Returns:
+    - str: The markdown with the table replaced.
+    """
+    start_of_table = "<table"
+    end_of_table = "</table>"
+    
+    start_index = markdown.find(start_of_table)
+    end_index = markdown.find(end_of_table, start_index) + len(end_of_table) if start_index != -1 else -1
+    
+    # If both start and end are found, replace
+    if start_index != -1 and end_index != -1:
+        return markdown[:start_index] + table_str + markdown[end_index:]
+    else:
+        return markdown
+
+def clean_markdown(markdown: str) -> str:
+    soup = BeautifulSoup(markdown, "html.parser")
+    for table in soup.find_all("table"):
+        md_table = html_table_to_markdown(str(table))
+        markdown = flexible_table_replacement(markdown, md_table)
+    markdown = remove_dataframe_styles(markdown)
+    markdown = remove_stray_divs(markdown)
+    return markdown
+
+def remove_stray_divs(markdown: str) -> str:
+    """
+    Remove stray and empty <div> tags from the markdown content.
+    
+    Args:
+    - markdown (str): The original markdown content.
+
+    Returns:
+    - str: The markdown without stray and empty <div> tags.
+    """
+    soup = BeautifulSoup(markdown, "html.parser")
+    
+    # Remove empty <div> tags
+    for div in soup.find_all("div"):
+        if not div.contents or all(isinstance(c, str) and not c.strip() for c in div.contents):
+            div.extract()
+
+    # Convert back to string and check for stray <div> tags
+    cleaned_content = str(soup)
+    cleaned_content = cleaned_content.replace("<div>", "").replace("</div>", "")
+    
+    return cleaned_content
+
+
+def remove_dataframe_styles(markdown: str) -> str:
+    """
+    Remove style blocks related to Pandas DataFrames from the markdown content.
+    
+    Args:
+    - markdown (str): The original markdown content.
+
+    Returns:
+    - str: The markdown without the DataFrame style blocks.
+    """
+    soup = BeautifulSoup(markdown, "html.parser")
+    
+    # Find all <style> tags with the 'scoped' attribute (commonly used by Pandas DataFrame styles)
+    for style_tag in soup.find_all("style", attrs={"scoped": True}):
+        style_tag.extract()  # Remove the tag from the soup object
+
+    return str(soup)
+
+def html_table_to_markdown(html_content: str) -> str:
+    """
+    Convert an HTML table into a Markdown table.
+
+    Args:
+    - html_content (str): The HTML content containing the table.
+
+    Returns:
+    - str: The Markdown representation of the table.
+    """
+    soup = BeautifulSoup(html_content, "html.parser")
+    table = soup.find("table")
+
+    # If no table is found, return the original content
+    if not table:
+        return html_content
+
+    # Extracting headers
+    headers = [th.get_text().strip() for th in table.find_all("th")]
+    header_str = " | ".join(headers)
+
+    # Creating separator
+    separator = "--- | " * (len(headers) - 1) + "---"
+
+    # Extracting rows
+    rows = table.find_all("tr")[1:]  # excluding header
+    row_strs = []
+    for row in rows:
+        row_strs.append(
+            " | ".join([td.get_text().strip() for td in row.find_all("td")])
+        )
+
+    # Combining everything
+    markdown_table = "\n".join([header_str, separator] + row_strs)
+    return markdown_table
 
 
 def move_to_docs(root_path: str, destination_path: str) -> None:
@@ -84,13 +195,10 @@ sidebar_position: 1
 ---
 {title}
 
-The LangSmith Cookbook offers hands-on code examples to inspire and assist in your projects. While we've incorporated summaries and overviews from the READMEs here, the full code resides in our [GitHub repository](https://github.com/langchain-ai/langsmith-cookbook). We suggest running the code by forking or cloning the repository.
-
-**What's Inside?**
-This repository is your practical guide to maximizing LangSmith. As a tool, LangSmith empowers you to debug, evaluate, test, and oversee your LLM applications seamlessly. These recipes dive deeper than the standard documentation, presenting real-world scenarios for you to adapt and implement.
-
-**Your Input Matters**
-We're always evolving. If there's a specific use case or pattern you want to see or if you'd like to contribute, raise a GitHub issue or reach out to the LangChain development team. Your feedback helps everyone!
+The LangSmith Cookbook offers hands-on code examples to inspire and assist in your projects.
+While we've incorporated summaries and overviews from the READMEs here, the full code resides
+in our [GitHub repository](https://github.com/langchain-ai/langsmith-cookbook).
+We suggest running the code by forking or cloning the repository.
 
 ## Introduction
 {rest}
@@ -154,7 +262,7 @@ We're always evolving. If there's a specific use case or pattern you want to see
                         # Extract the relative link from the match object
                         relative_link = match.group(1)
                         if "colab.research.google" in relative_link:
-                            return match.group(0).replace('/./', '/')
+                            return match.group(0).replace("/./", "/")
                         parent_dir = os.path.dirname(relative_link)
                         return f"]({parent_dir})"
 

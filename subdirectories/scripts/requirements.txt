@@ -1,3 +1,4 @@
 jupyter
+bs4
 nbconvert
 tqdm
