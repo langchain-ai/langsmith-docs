@@ -313,7 +313,7 @@ Below is an example:
 ### How do I get the URL of the run?
 
 Runs are streamed to whichever project you have configured ("default" if none is set), and you can view them by opening the project page. To programmatically access the run's URL, you can
-use the LangSmith client. This can be conveniently used in conjunction with [the above method to get the run ID from a call](#how-do-i-get-the-run-id-from-a-call). Below is an example.
+use the LangSmith client. Below is an example.
 
 <i>Note: This requires</i> <code>langsmith>=0.0.11</code>
 
@@ -331,6 +331,8 @@ console.log(runUrl);
   ]}
   groupId="client-language"
 />
+
+There may be a period of time between when you first post a run and when it is retrievable via the API. You may need to wait a few seconds before the run is available.
 
 ### How do I log traces without environment variables?
 
