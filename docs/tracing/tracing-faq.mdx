@@ -231,26 +231,32 @@ within a defined context beneath a virtual parent run.
     trace_as_chain_group,
     atrace_as_chain_group,
 )\n
-with trace_as_chain_group("my_group_name") as group_manager:
+with trace_as_chain_group("my_group_name", inputs={"input": "My Input"}) as group_manager:
     """Pass the group_manager as a callback to group all runs
     within this context"""\n
+    # ...
+    group_manager.on_chain_end({"output": "Final output"})
 # Or for async code
-async with atrace_as_chain_group("my_group_name") as async_group_manager:
-    """Async applications are better suited with the async callback manager"""\n
+async with atrace_as_chain_group("my_group_name", inputs={"input": "My Input"}) as async_group_manager:
+    """Async applications are better suited with the async callback manager"""
+    # ...
+    await async_group_manager.on_chain_end({"output": "Final output"})\n
 # Example usage:
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate\n
-llm = ChatOpenAI(temperature=0.9)
-prompt = PromptTemplate(
-    input_variables=["question"],
-    template="What is the answer to {question}?",
+from langchain.chat_models.anthropic import ChatAnthropic
+from langchain.prompts import ChatPromptTemplate\n
+llm = ChatAnthropic()
+prompt = ChatPromptTemplate.from_messages(
+  [
+    ("system", "You are a helpful AI."),
+    ("human", "{question}")
+  ]
 )
-chain = LLMChain(llm=llm, prompt=prompt)
-with trace_as_chain_group("my_group") as group_manager:
-    chain.invoke({"question": "What is your name?"}, config={"callbacks": group_manager})
-    chain.invoke({"question": "What is your quest?"}, config={"callbacks": group_manager})
-    chain.invoke({"question": "What is your favorite color?"}, config={"callbacks": group_manager})`),
+chain = prompt | llm\n
+question = "What is your name?"
+with trace_as_chain_group("my_group", inputs={"question": question}) as group_manager:
+    res1 = chain.invoke({"question": question}, config={"callbacks": group_manager})
+    res2 = chain.invoke({"question": "What is your quest?"}, config={"callbacks": group_manager})
+    group_manager.on_chain_end({"output": res2})`),
     TypeScriptBlock(`import { CallbackManager, traceAsGroup, TraceGroup } from "langchain/callbacks";
 import { LLMChain } from "langchain/chains";
 import { ChatOpenAI } from "langchain/chat_models/openai";
