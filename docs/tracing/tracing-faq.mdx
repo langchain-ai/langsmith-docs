@@ -248,7 +248,7 @@ llm = ChatAnthropic()
 prompt = ChatPromptTemplate.from_messages(
   [
     ("system", "You are a helpful AI."),
-    ("human", "{input}")
+    ("human", "{question}")
   ]
 )
 chain = prompt | llm\n
