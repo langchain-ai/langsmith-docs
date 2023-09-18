@@ -240,7 +240,7 @@ with trace_as_chain_group("my_group_name", inputs={"input": "My Input"}) as grou
 async with atrace_as_chain_group("my_group_name", inputs={"input": "My Input"}) as async_group_manager:
     """Async applications are better suited with the async callback manager"""
     # ...
-    await async_group_manager.on_chain_end({"output": "Final output"})`)\n
+    await async_group_manager.on_chain_end({"output": "Final output"})\n
 # Example usage:
 from langchain.chat_models.anthropic import ChatAnthropic
 from langchain.prompts import ChatPromptTemplate\n
