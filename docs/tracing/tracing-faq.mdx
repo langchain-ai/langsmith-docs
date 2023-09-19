@@ -225,6 +225,10 @@ By default, these are saved as separate runs (though the memory and chat history
 To group these runs together, we offer convenience methods in both Python and JS that save all runs
 within a defined context beneath a virtual parent run.
 
+:::note New in 0.0.293
+The ability to add inputs and call `on_chain_end()` in python is only available in `langchain>=0.0.293`.
+:::
+
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain.callbacks.manager import (
