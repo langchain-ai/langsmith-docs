@@ -265,6 +265,7 @@ We suggest running the code by forking or cloning the repository.
                             .replace("/cookbook/", "/")
                         )
                         return f"]({absolute_link})"
+
                     code_link_pattern = re.compile(r"\]\(([^)]*\.(py|ts|txt|json))\)")
                     content = code_link_pattern.sub(replace_code_links, content)
 
@@ -275,11 +276,20 @@ We suggest running the code by forking or cloning the repository.
                             return match.group(0).replace("/./", "/")
                         parent_dir = os.path.dirname(relative_link)
                         return f"]({parent_dir})"
-                    
+
+                    # Skip markdown comments 
                     content = re.sub(r"^\s*<!--.*?-->", "", content, flags=re.MULTILINE)
+                    # Bad sidebar ampersands
+                    content = re.sub(
+                        r"(^#\s+.*?)(\&amp;)(.*?$)",
+                        r"\1&\3",
+                        content,
+                        flags=re.MULTILINE,
+                    )
+                    # Fix relative links to .md or .ipynb files
                     md_ipynb_pattern = re.compile(r"\]\(([^)]*\.(md|ipynb))\)")
                     content = md_ipynb_pattern.sub(replace_md_ipynb_links, content)
-
+                    # Fix rendering of <> brackets.
                     content = content.replace("<", "&lt;")
                     content = content.replace(">", "&gt;")
                     content = content.replace("/README.md)", "/)")
