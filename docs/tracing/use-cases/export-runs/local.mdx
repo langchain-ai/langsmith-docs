@@ -328,18 +328,14 @@ about your runs.
   tabs={[
     PythonBlock(`import json\n
 to_search = {
-    "user": {
-        "4070f233-f61e-44eb-bff1-da3c163895a3"
-    }
+    "user_id": "4070f233-f61e-44eb-bff1-da3c163895a3"
 }\n
 client.list_runs(
   project_name="default",
   filter=f"has(metadata, '{json.dumps(to_search)}')"
 )`),
     TypeScriptBlock(`const toSearch = {
-  user: {
-    id: '4070f233-f61e-44eb-bff1-da3c163895a3'
-  }
+  user_id: '4070f233-f61e-44eb-bff1-da3c163895a3'
 }\n
 client.listRuns({
   projectName: 'default',
