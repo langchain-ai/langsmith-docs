@@ -328,22 +328,97 @@ about your runs.
   tabs={[
     PythonBlock(`import json\n
 to_search = {
-    "user": {
-        "4070f233-f61e-44eb-bff1-da3c163895a3"
-    }
+    "user_id": "4070f233-f61e-44eb-bff1-da3c163895a3"
 }\n
 client.list_runs(
   project_name="default",
   filter=f"has(metadata, '{json.dumps(to_search)}')"
 )`),
     TypeScriptBlock(`const toSearch = {
-  user: {
-    id: '4070f233-f61e-44eb-bff1-da3c163895a3'
-  }
+  user_id: '4070f233-f61e-44eb-bff1-da3c163895a3'
 }\n
 client.listRuns({
   projectName: 'default',
   filter: \`has(metadata, '\${JSON.stringify(toSearch)}')\`
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+#### Check for environment details in metadata
+
+A common pattern is to add environment information to your traces via metadata. If you want to filter for runs
+containing environment metadata, you can use the same pattern as above:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`import json\n
+to_search = {
+    "environment": "production"
+}\n
+client.list_runs(
+  project_name="default",
+  filter=f"has(metadata, '{json.dumps(to_search)}')"
+)`),
+    TypeScriptBlock(`const toSearch = {
+  environment: 'production'
+}\n
+client.listRuns({
+  projectName: 'default',
+  filter: \`has(metadata, '\${JSON.stringify(toSearch)}')\`
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+
+#### Check for conversation ID in metadata
+
+Another common way to associate traces in the same conversation is by using a shared conversation ID.
+If you want to filter runs based on a conversation ID in this way, you can search for that ID in the metadata.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`import json\n
+to_search = {
+    "conversation_id": "a1b2c3d4-e5f6-7890"
+}\n
+client.list_runs(
+  project_name="default",
+  filter=f"has(metadata, '{json.dumps(to_search)}')"
+)`),
+    TypeScriptBlock(`const toSearch = {
+  conversation_id: 'a1b2c3d4-e5f6-7890'
+}\n
+client.listRuns({
+  projectName: 'default',
+  filter: \`has(metadata, '\${JSON.stringify(toSearch)}')\`
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+#### Combine multiple filters to refine your search
+
+If you want to combine multiple conditions to refine your search, you can use the `and` operator along with other filtering functions.
+Here's how you can search for runs named "ChatOpenAI" that also have a specific `conversation_id` in their metadata:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`import json\n
+to_search = {
+    "conversation_id": "69b12c91-b1e2-46ce-91de-794c077e8151"
+}\n
+client.list_runs(
+  project_name="default",
+  filter=f"and(has(metadata, '{json.dumps(to_search)}'), eq(name, 'ChatOpenAI'))"
+)`),
+    TypeScriptBlock(`const toSearch = {
+  conversation_id: '69b12c91-b1e2-46ce-91de-794c077e8151'
+}\n
+client.listRuns({
+  projectName: 'default',
+  filter: \`and(has(metadata, '\${JSON.stringify(toSearch)}'), eq(name, 'ChatOpenAI'))\`
 });`),
   ]}
   groupId="client-language"
