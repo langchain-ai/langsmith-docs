@@ -273,8 +273,8 @@ We suggest running the code by forking or cloning the repository.
                         # Extract the relative link from the match object
                         relative_link = match.group(1)
                         if "colab.research.google" in relative_link:
-                            return match.group(0).replace("/./", "/")
-                        parent_dir = os.path.dirname(relative_link)
+                            return os.path.normpath(match.group(0))
+                        parent_dir = os.path.normpath(os.path.dirname(relative_link))
                         return f"]({parent_dir})"
 
                     # Skip markdown comments 

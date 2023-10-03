@@ -22,7 +22,7 @@ Using the `list_runs` method, you can filter runs to analyze and export. Most si
 - `reference_example_id`: Fetch runs that are associated with a specific example row. This is useful for comparing prompts or models on a given input.
 - `parent_run_id` - Fetch runs that are children of a given run. This is useful for fetching [runs grouped together](../../tracing-faq#how-do-i-group-runs-from-multi-turn-interactions) using the context manager or for fetching an agent trajectory.
 - `error`: Fetch runs that errored or did not error.
-- `run_ids`: Fetch runs with a given list of run ids.
+- `run_ids`: Fetch runs with a given list of run ids. Note: **This will ignore all other filtering arguments.**
 - `filter`: Fetch runs that match a given structured filter statement. See the [run filtering guide](#run-filtering) below for more information.
 - `query` (*experimental*): Query the experimental natural language API, which translates your query into a filter statement.
 
@@ -123,7 +123,7 @@ for await (const run of client.listRuns({
 
 #### List runs by run ID
 
-If you have a list of run IDs, you can search for them directly using the `id` argumesnt.
+If you have a list of run IDs, you can list them directly:
 
 <CodeTabs
   tabs={[
@@ -142,6 +142,10 @@ for await (const run of client.listRuns({
   ]}
   groupId="client-language"
 />
+
+:::important Ignores Other Arguments
+If you provide a list of run IDs in the way described above, it will ignore all other filtering arguments like `project_name`, `run_type`, etc. and directly return the runs matching the given IDs.
+:::
 
 ## Run Filtering
 
