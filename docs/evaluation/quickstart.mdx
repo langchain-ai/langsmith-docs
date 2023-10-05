@@ -76,6 +76,23 @@ Chains and agents may have memory or other stateful variables wrapped within. To
 <CodeTabs
   tabs={[
     {
+      value: "runnable",
+      label: "Runnable",
+      language: "python",
+      content: `from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+from langchain.schema.runnable import RunnableMap, RunnablePassthrough\n
+# Since chains and agents can be stateful (they can have memory),
+# create a constructor to pass in to the run_on_dataset method.
+def create_runnable():
+    llm = ChatOpenAI(temperature=0)
+    prompt = ChatPromptTemplate.from_messages([
+      ("human", "Spit some bars about {input}.")
+    ])
+    return RunnableMap({"input": RunnablePassthrough()}) | prompt | llm
+`,
+    },
+    {
       value: "chain",
       label: "Chain or Agent",
       language: "python",
@@ -111,6 +128,32 @@ For more information on how to write a custom evaluator, check out the [custom e
 
 <CodeTabs
   tabs={[
+    {
+      value: "runnable",
+      label: "Runnable",
+      language: "python",
+      content: `from langchain.smith import RunEvalConfig, run_on_dataset\n
+eval_config = RunEvalConfig(
+  evaluators=[
+    # You can specify an evaluator by name/enum.
+    # In this case, the default criterion is "helpfulness"
+    "criteria",
+    # Or you can configure the evaluator
+    RunEvalConfig.Criteria("harmfulness"),
+    RunEvalConfig.Criteria(
+      {"cliche": "Are the lyrics cliche?"
+      " Respond Y if they are, N if they're entirely unique."}
+      )
+  ]
+)
+run_on_dataset(
+    client=client,
+    dataset_name=dataset_name,
+    llm_or_chain_factory=create_runnable,
+    evaluation=eval_config,
+    verbose=True,
+)`,
+    },
     {
       value: "chain",
       label: "Chain or Agent",
