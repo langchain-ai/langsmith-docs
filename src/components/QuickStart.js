@@ -48,7 +48,10 @@ export const ConfigureEnvironmentCodeTabs = ({}) => (
       ShellBlock(`export LANGCHAIN_TRACING_V2=true
 export LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 export LANGCHAIN_API_KEY=<your-api-key>
-export LANGCHAIN_PROJECT=<your-project>  # if not specified, defaults to "default"`),
+export LANGCHAIN_PROJECT=<your-project>  # if not specified, defaults to "default"
+
+# The below examples use the OpenAI API, so you will need
+export OPENAI_API_KEY=<your-openai-api-key>`),
     ]}
     groupId="client-language"
   />
