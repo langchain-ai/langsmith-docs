@@ -62,7 +62,12 @@ If you already use LangChain, you can connect to LangSmith in a few steps:
 <li>Create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</li>
 <li>Install the latest version <code>LangChain</code> for your target environment and programming language.</li>
 <LangChainInstallationCodeTabs />
-<li> Configure runtime environment; replace <code>"&lt;your-api-key&gt;"</code> with the API key generated in step 1.</li>
+<li> Configure runtime environment:
+  <ol style={{marginTop:7}}>
+    <li>Replace <code>"&lt;your-api-key&gt;"</code> with the API key generated in step 1</li>
+    <li>Replace <code>"&lt;your-openai-api-key&gt;"</code> with an OpenAI API Key from <a href="https://platform.openai.com/account/api-keys">here</a></li>
+  </ol>
+</li>
 <ConfigureEnvironmentCodeTabs />
 <li>Run the example code below.</li>
 <LangChainQuickStartCodeTabs />
