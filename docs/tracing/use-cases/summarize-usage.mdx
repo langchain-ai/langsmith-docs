@@ -10,6 +10,23 @@ cluster and summarize how people are using an application so you can build a bet
 
 In this example, you will perform simple k-means clustering and an LLM call to summarize logged user activity.
 
+## Prerequesites
+
+This example assumes you've configured your environment to connect to LangSmith.
+
+```bash
+export LANGCHAIN_API_KEY=<your api key>
+```
+
+It also uses OpenAI for the embeddings and Anthropic to run the LLM. You can replace these with your models of choice or
+install the following:
+
+```bash
+pip install -U langchain openai anthropic
+export OPENAI_API_KEY=<your api key>
+export ANTHROPIC_API_KEY=<your api key>
+```
+
 ## Step 1: Sample recent runs
 
 For this example, we will randomly sample from the past day's runs. You can take a much larger sample,
