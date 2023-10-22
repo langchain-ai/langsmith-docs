@@ -6,10 +6,30 @@ from shutil import copy2
 import nbformat
 from bs4 import BeautifulSoup
 from nbconvert import MarkdownExporter
+from nbconvert.preprocessors import Preprocessor
+from traitlets.config import Config
 from tqdm import tqdm
-
+from black import format_str, Mode
 _REPO_ROOT = "https://github.com/langchain-ai/langsmith-cookbook"
 
+black_mode = Mode()
+
+class Black(Preprocessor):
+    """Format code that has a cell tag `black`"""
+    def preprocess_cell(self, cell, resources, index):
+        tags = cell.metadata.get('tags', [])
+        if cell.cell_type == 'code' and 'black' in tags:
+            cell.source = format_str(src_contents=cell.source, mode=black_mode).strip()
+        return cell, resources
+    
+def get_mdx_exporter():
+    """A mdx notebook exporter which composes many pre-processors together."""
+    # TODO: Combine with other ad-hoc logic
+    c = Config()
+    pp = [Black]
+    c.MarkdownExporter.preprocessors = pp
+    tmp_dir = Path(__file__).parent/'templates/'
+    return MarkdownExporter(config=c)
 
 def convert_notebooks_to_markdown(root_path: str) -> None:
     """
@@ -18,7 +38,7 @@ def convert_notebooks_to_markdown(root_path: str) -> None:
     Args:
     - root_path (str): Path to the root directory containing the notebooks.
     """
-    exporter = MarkdownExporter()
+    exporter = get_mdx_exporter()
 
     # This function will be used to save the images
     def output_post_save(md, resources, **kwargs):
@@ -169,6 +189,20 @@ def html_table_to_markdown(html_content: str) -> str:
     markdown_table = "\n".join([header_str, separator] + row_strs)
     return markdown_table
 
+def replace_brackets(content: str) -> str:
+    # Search through a conent string and parse <> to &lt; and &gt;
+    in_code_block = False
+    new_content = ""
+    for line in content.split("\n"):
+        if line.startswith("```"):
+            in_code_block = not in_code_block
+        if not in_code_block:
+            # TODO: Handle single backticks
+            line = line.replace("<", "&lt;")
+            line = line.replace(">", "&gt;")
+        new_content += line + "\n"
+    return new_content
+    
 
 def move_to_docs(root_path: str, destination_path: str) -> None:
     """Move all markdown files and linked images to the docs folder."""
@@ -290,8 +324,7 @@ We suggest running the code by forking or cloning the repository.
                     md_ipynb_pattern = re.compile(r"\]\(([^)]*\.(md|ipynb))\)")
                     content = md_ipynb_pattern.sub(replace_md_ipynb_links, content)
                     # Fix rendering of <> brackets.
-                    content = content.replace("<", "&lt;")
-                    content = content.replace(">", "&gt;")
+                    content = replace_brackets(content)
                     content = content.replace("/README.md)", "/)")
 
                     with open(dest, "w", encoding="utf-8") as md_file:
@@ -302,5 +335,4 @@ if __name__ == "__main__":
     cookbook_directory = Path(__file__).parents[1] / "langsmith-cookbook"
     convert_notebooks_to_markdown(cookbook_directory)
     docs_directory = Path(__file__).parents[2] / "docs"
-    #
     move_to_docs(cookbook_directory, docs_directory)
