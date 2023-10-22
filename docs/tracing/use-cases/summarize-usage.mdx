@@ -3,12 +3,29 @@ sidebar_label: Summarize App Usage
 sidebar_position: 3
 ---
 
-# Generating App Insights
+# Summarize App Usage
 
 Most usage of LLM applications is in the form of unstructured data. LangChain can be used to
 cluster and summarize how people are using an application so you can build a better product.
 
 In this example, you will perform simple k-means clustering and an LLM call to summarize logged user activity.
+
+## Prerequesites
+
+This example assumes you've configured your environment to connect to LangSmith.
+
+```bash
+export LANGCHAIN_API_KEY=<your api key>
+```
+
+It also uses OpenAI for the embeddings and Anthropic to run the LLM. You can replace these with your models of choice or
+install the following:
+
+```bash
+pip install -U langchain openai anthropic
+export OPENAI_API_KEY=<your api key>
+export ANTHROPIC_API_KEY=<your api key>
+```
 
 ## Step 1: Sample recent runs
 
@@ -21,8 +38,11 @@ from datetime import datetime, timedelta
 
 from langsmith import Client
 
+# Update these values to match your project
+# and run schema.
 project_name = "my-project"
-max_to_analyze = 200
+input_key = "question"
+max_to_analyze = 10_000
 yesterday = datetime.now() - timedelta(days=1)
 
 client = Client()
@@ -34,14 +54,13 @@ runs = list(
     )
 )
 
-if len(runs) > max_to_analyze:
-    runs = random.sample(runs, max_to_analyze)
-
-# Assumes a single key.
-inputs = [str(next(iter(run.inputs.values()))) for run in runs]
+inputs = [str(run.inputs[input_key]) for run in runs if input_key in run.inputs]
+sampled = inputs
+if len(inputs) > max_to_analyze:
+    sampled = random.sample(sampled, max_to_analyze)
 ```
 
-## Step 2: Embed the inputs for clustering:
+## Step 2: Embed the inputs for clustering
 
 Embeddings provide vector representations of text that we can use to cluster semantically similar inputs.
 
@@ -50,7 +69,7 @@ import numpy as np
 from langchain.embeddings import OpenAIEmbeddings
 
 embedder = OpenAIEmbeddings()
-embeddings = embedder.embed_documents(inputs)
+embeddings = embedder.embed_documents(sampled)
 arr = np.stack(embeddings)
 ```
 
@@ -60,7 +79,7 @@ Now, cluster the embeddings:
 from sklearn.cluster import KMeans
 
 # Reduce n_clusters in case you're trying this walkthrough out on a small project
-n_clusters = min(4, len(inputs)//4)
+n_clusters = min(10, len(sampled)//4)
 
 kmeans = KMeans(n_clusters=n_clusters, n_init='auto', init="k-means++", random_state=42)
 kmeans.fit(arr)
@@ -68,43 +87,49 @@ kmeans.fit(arr)
 
 ## Step 3: Summarize each cluster
 
-Now it's time to produce the summaries! We will use the `ChatOpenAI` model with a 16k token context window.
+Now it's time to produce the summaries! We will use Claude-2 using the `ChatAnthropic` model with a 100k token context window.
+You can check out the prompt we're using [on the hub](https://smith.langchain.com/hub/wfh/summarize_logs).
 
 ```python
-import tiktoken
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain
-from langchain.schema import HumanMessage, SystemMessage
-from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
+import anthropic
+from langchain import hub
+from langchain.chat_models import ChatAnthropic
+from langchain.schema.output_parser import StrOutputParser
 
-llm = ChatOpenAI(model="gpt-3.5-turbo-16k", temperature=0.7)
-prompt_template = ChatPromptTemplate.from_messages(
-    [SystemMessage(content="You are a helpful AI assistant trained to generate insights on how users are using a product. You are given the following query logs:"),
-    SystemMessagePromptTemplate.from_template("""BEGIN LOGS
------
-{logs}
------
-END LOGS"""),
-    HumanMessage(content="Please respond with a title capturing the commonalities of these logs and a summary of the topic cluster.")]
+
+def _truncate_inputs(input_logs: list) -> str:
+    max_prompt_tokens = 80_000
+    # Truncate to max_prompt_tokens
+    tokenizer = anthropic.Anthropic().get_tokenizer()
+    inputs = "\n\n".join(input_logs)
+    truncated_ids = tokenizer.encode(inputs).ids[:max_prompt_tokens]
+    return {
+        "logs": tokenizer.decode(truncated_ids)
+    }
+
+prompt = hub.pull("wfh/summarize_logs")
+chain = (
+    _truncate_inputs
+    | prompt
+    | ChatAnthropic(
+        model="claude-2", 
+        temperature=1,
+        max_tokens_to_sample=1000,
+    )
+    | StrOutputParser()
 )
-chain = LLMChain(llm=llm, prompt=prompt_template)
-
-
-input_arr = np.array(inputs)
-summaries = []
-encoding = tiktoken.encoding_for_model("gpt-3.5-turbo-16k")
-
-def _truncate_inputs(inputs: str) -> str:
-    # Truncate to max 15k tokens, leaving ~1k for the completion
-    return inputs[:len(encoding.decode(encoding.encode(inputs)[:15000]))]
-
-for i in range(n_clusters):
-    cluster_members = input_arr[kmeans.labels_ == i]
-    cluster_inputs = "\n\n".join(cluster_members)
-    truncated_inputs = _truncate_inputs(cluster_inputs)
-    summary = chain.run(truncated_inputs)
-    summaries.append(summary)
-    print(f"{summary}\n")
+    
+input_arr = np.array(sampled)
+batch_inputs = [
+    input_arr[kmeans.labels_ == i] for i in range(n_clusters)
+]
+summaries = chain.batch(batch_inputs, {"max_concurrency": 2})
+for summary in summaries:
+    print(summary)
 ```
 
 Congratulations! You have now clustered and summarized user activity for an application.
+
+This is just a simple example of how to use LangChain to analyze your application logs. You will likely 
+want to combine this with other techniques, such as [run filtering](./export-runs/local) to select relevant
+examples. You can also update the prompt to ask more targed questions or to provide additional context.
