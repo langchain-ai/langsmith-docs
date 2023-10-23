@@ -10,26 +10,89 @@ from nbconvert.preprocessors import Preprocessor
 from traitlets.config import Config
 from tqdm import tqdm
 from black import format_str, Mode
+from html.parser import HTMLParser
+
 _REPO_ROOT = "https://github.com/langchain-ai/langsmith-cookbook"
 
 black_mode = Mode()
 
+
+# Cell
+class HTMLdf(HTMLParser):
+    """HTML Parser that finds a dataframe."""
+
+    df = False
+    scoped = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "style":
+            for k, v in attrs:
+                if k == "scoped":
+                    self.scoped = True
+
+    def handle_data(self, data):
+        if ".dataframe" in data and self.scoped:
+            self.df = True
+
+    def handle_endtag(self, tag):
+        if tag == "style":
+            self.scoped = False
+
+    @classmethod
+    def search(cls, x):
+        parser = cls()
+        parser.feed(x)
+        return parser.df
+
+
 class Black(Preprocessor):
     """Format code that has a cell tag `black`"""
+
     def preprocess_cell(self, cell, resources, index):
-        tags = cell.metadata.get('tags', [])
-        if cell.cell_type == 'code' and 'black' in tags:
+        tags = cell.metadata.get("tags", [])
+        if cell.cell_type == "code" and "black" in tags:
             cell.source = format_str(src_contents=cell.source, mode=black_mode).strip()
         return cell, resources
-    
+
+
+def clean_markdown(markdown: str) -> str:
+    soup = BeautifulSoup(markdown, "html.parser")
+    for table in soup.find_all("table"):
+        md_table = html_table_to_markdown(str(table))
+        markdown = flexible_table_replacement(markdown, md_table)
+    markdown = remove_dataframe_styles(markdown)
+    markdown = remove_stray_divs(markdown)
+    return markdown
+
+
+class HTMLEscape(Preprocessor):
+    """
+    Place HTML in a codeblock and surround it with a <HTMLOutputBlock> component.
+    """
+
+    def preprocess_cell(self, cell, resources, index):
+        if cell.cell_type == "code":
+            for o in cell.outputs:
+                if o.get("data") and o["data"].get("text/html"):
+                    cell.metadata.html_output = True
+                    html = o["data"]["text/html"]
+                    if HTMLdf.search(html):
+                        cell.metadata.html_center = False
+                        o["data"]["text/html"] = clean_markdown(html.strip())
+                    else:
+                        cell.metadata.html_center = True
+                        o["data"]["text/html"] = "```html\n" + html.strip() + "\n```"
+        return cell, resources
+
+
 def get_mdx_exporter():
     """A mdx notebook exporter which composes many pre-processors together."""
     # TODO: Combine with other ad-hoc logic
     c = Config()
-    pp = [Black]
+    pp = [Black, HTMLEscape]
     c.MarkdownExporter.preprocessors = pp
-    tmp_dir = Path(__file__).parent/'templates/'
     return MarkdownExporter(config=c)
+
 
 def convert_notebooks_to_markdown(root_path: str) -> None:
     """
@@ -63,7 +126,7 @@ def convert_notebooks_to_markdown(root_path: str) -> None:
                     )
 
                     output_post_save(markdown, resources)
-                    markdown = clean_markdown(markdown)
+                    # markdown = clean_markdown(markdown)
 
                     md_file_path = os.path.join(dirpath, file.replace(".ipynb", ".md"))
                     with open(md_file_path, "w", encoding="utf-8") as md_file:
@@ -96,16 +159,6 @@ def flexible_table_replacement(markdown: str, table_str: str) -> str:
         return markdown[:start_index] + table_str + markdown[end_index:]
     else:
         return markdown
-
-
-def clean_markdown(markdown: str) -> str:
-    soup = BeautifulSoup(markdown, "html.parser")
-    for table in soup.find_all("table"):
-        md_table = html_table_to_markdown(str(table))
-        markdown = flexible_table_replacement(markdown, md_table)
-    markdown = remove_dataframe_styles(markdown)
-    markdown = remove_stray_divs(markdown)
-    return markdown
 
 
 def remove_stray_divs(markdown: str) -> str:
@@ -148,7 +201,7 @@ def remove_dataframe_styles(markdown: str) -> str:
 
     # Find all <style> tags with the 'scoped' attribute (commonly used by Pandas DataFrame styles)
     for style_tag in soup.find_all("style", attrs={"scoped": True}):
-        style_tag.extract()  # Remove the tag from the soup object
+        style_tag.extract()
 
     return str(soup)
 
@@ -189,6 +242,7 @@ def html_table_to_markdown(html_content: str) -> str:
     markdown_table = "\n".join([header_str, separator] + row_strs)
     return markdown_table
 
+
 def replace_brackets(content: str) -> str:
     # Search through a conent string and parse <> to &lt; and &gt;
     in_code_block = False
@@ -202,7 +256,7 @@ def replace_brackets(content: str) -> str:
             line = line.replace(">", "&gt;")
         new_content += line + "\n"
     return new_content
-    
+
 
 def move_to_docs(root_path: str, destination_path: str) -> None:
     """Move all markdown files and linked images to the docs folder."""
@@ -311,7 +365,7 @@ We suggest running the code by forking or cloning the repository.
                         parent_dir = os.path.normpath(os.path.dirname(relative_link))
                         return f"]({parent_dir})"
 
-                    # Skip markdown comments 
+                    # Skip markdown comments
                     content = re.sub(r"^\s*<!--.*?-->", "", content, flags=re.MULTILINE)
                     # Bad sidebar ampersands
                     content = re.sub(
