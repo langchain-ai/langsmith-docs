@@ -37,7 +37,7 @@ def add_github_backlink(content: str) -> str:
     github_link = f"[![Open In GitHub]({github_shield})]({github_base}{github_path})"
 
     # Insert the GitHub link after the Collab link
-    new_content = content[:match.end(1)] + "\n\n" + github_link + content[match.end(1):]
+    new_content = content[:match.end(1)] + " " + github_link + content[match.end(1):]
     return new_content
     
 def get_mdx_exporter():
