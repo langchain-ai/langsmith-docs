@@ -81,12 +81,7 @@ class HTMLEscape(Preprocessor):
                         o["data"]["text/html"] = clean_markdown(html.strip())
                     else:
                         cell.metadata.html_center = True
-                        if "dataframe" in html:
-                            o["data"]["text/html"] = clean_markdown(
-                                html.strip(), all_attrs=True
-                            )
-                        else:
-                            o["data"]["text/html"] = "```html\n" + html.strip() + "\n```"
+                        o["data"]["text/html"] = "```html\n" + html.strip() + "\n```"
         return cell, resources
 
 
