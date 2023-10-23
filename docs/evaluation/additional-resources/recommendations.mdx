@@ -59,6 +59,10 @@ Once you have deployed an application, you can use the same evaluators to measur
 
 You can also log proxy metrics (such as click-through/response rate) as feedback to measure to drive better analysis.
 
+Check out some cookbook examples for this:
+- [Evaluate production runs (batch)](../../../cookbook/feedback-examples/algorithmic-feedback): automate feedback metrics for advanced monitoring and performance tuning.
+- [Evaluate production runs (real-time)](../../../cookbook/feedback-examples/realtime-algorithmic-feedback): automatically generate feedback metrics for every run using an async callback.
+
 ### Don't train on test datasets
 
 If you've ever heard of the "train, validation, test" splits in ML, you are well aware that if you use a dataset for optimizing a prompt, fine-tuning an LLM, or picking other configurable parameters in your setup, it's important to keep this separate from the datasets you use for testing. Otherwise, you risk "overfitting" to the test data, which will likely lead to poor performance on new data once you deploy it.
