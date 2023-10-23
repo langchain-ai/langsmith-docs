@@ -21,6 +21,24 @@ class Black(Preprocessor):
         if cell.cell_type == 'code' and 'black' in tags:
             cell.source = format_str(src_contents=cell.source, mode=black_mode).strip()
         return cell, resources
+
+def add_github_backlink(content: str) -> str:
+    """Inserts the 'Open In GitHub' shield link into the content after the Collab link."""
+
+    # Match the Collab link and extract the GitHub path
+    collab_link_pattern = r'(\[!\[Open In Collab\]\(.*\)\]\(https:/?/colab\.research\.google\.com/github/([^\)]*)\))'
+    match = re.search(collab_link_pattern, content)
+    
+    if not match:
+        return content
+    github_path = match.group(2)
+    github_base = "https://github.com/"
+    github_shield = f"https://img.shields.io/badge/GitHub-View%20source-green.svg"
+    github_link = f"[![Open In GitHub]({github_shield})]({github_base}{github_path})"
+
+    # Insert the GitHub link after the Collab link
+    new_content = content[:match.end(1)] + "\n\n" + github_link + content[match.end(1):]
+    return new_content
     
 def get_mdx_exporter():
     """A mdx notebook exporter which composes many pre-processors together."""
@@ -203,25 +221,7 @@ def replace_brackets(content: str) -> str:
     return new_content
     
 
-def add_github_backlink(content: str) -> str:
-    """Inserts the 'Open In GitHub' shield link into the content after the Collab link."""
 
-    # Match the Collab link and extract the GitHub path
-    collab_link_pattern = r'(\[!\[Open In Collab\]\(https://colab\.research\.google\.com/assets/colab-badge\.svg\)\]\(https://colab\.research\.google\.com/github/([\w\-\.]+/[\w\-\.]+/blob/master/[\w\-/\.]+)\))'
-    match = re.search(collab_link_pattern, content)
-    
-    if not match:
-        return content
-
-    github_path = match.group(2)
-    github_base = "https://github.com/"
-    github_shield = f"https://img.shields.io/badge/GitHub-View%20source-green.svg"
-    github_link = f"[![Open In GitHub]({github_shield})]({github_base}{github_path})"
-
-    # Insert the GitHub link after the Collab link
-    new_content = content[:match.end(1)] + "\n" + github_link + content[match.end(1):]
-
-    return new_content
 
 def move_to_docs(root_path: str, destination_path: str) -> None:
     """Move all markdown files and linked images to the docs folder."""
