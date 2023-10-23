@@ -55,12 +55,12 @@ class Black(Preprocessor):
         return cell, resources
 
 
-def clean_markdown(markdown: str) -> str:
+def clean_markdown(markdown: str, all_attrs: bool = False) -> str:
     soup = BeautifulSoup(markdown, "html.parser")
     for table in soup.find_all("table"):
         md_table = html_table_to_markdown(str(table))
         markdown = flexible_table_replacement(markdown, md_table)
-    markdown = remove_dataframe_styles(markdown)
+    markdown = remove_dataframe_styles(markdown, all_attrs=all_attrs)
     markdown = remove_stray_divs(markdown)
     return markdown
 
@@ -81,7 +81,12 @@ class HTMLEscape(Preprocessor):
                         o["data"]["text/html"] = clean_markdown(html.strip())
                     else:
                         cell.metadata.html_center = True
-                        o["data"]["text/html"] = "```html\n" + html.strip() + "\n```"
+                        if "dataframe" in html:
+                            o["data"]["text/html"] = clean_markdown(
+                                html.strip(), all_attrs=True
+                            )
+                        else:
+                            o["data"]["text/html"] = "```html\n" + html.strip() + "\n```"
         return cell, resources
 
 
@@ -187,7 +192,7 @@ def remove_stray_divs(markdown: str) -> str:
     return cleaned_content
 
 
-def remove_dataframe_styles(markdown: str) -> str:
+def remove_dataframe_styles(markdown: str, all_attrs: bool = False) -> str:
     """
     Remove style blocks related to Pandas DataFrames from the markdown content.
 
@@ -200,7 +205,8 @@ def remove_dataframe_styles(markdown: str) -> str:
     soup = BeautifulSoup(markdown, "html.parser")
 
     # Find all <style> tags with the 'scoped' attribute (commonly used by Pandas DataFrame styles)
-    for style_tag in soup.find_all("style", attrs={"scoped": True}):
+    attrs = {"scoped": True} if not all_attrs else None
+    for style_tag in soup.find_all("style", attrs=attrs):
         style_tag.extract()
 
     return str(soup)
