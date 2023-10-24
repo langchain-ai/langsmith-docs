@@ -278,6 +278,15 @@ def replace_brackets(content: str) -> str:
     return new_content
 
 
+def replace_dead_readme_links(content: str) -> str:
+    # The readmes are mapped to index.md which are mapped to the parent directory
+    # by docusaurus.
+    # The pattern checks that the link does not start with "http:" or "https:",
+    # and then replaces the ending "/README.md)"
+    pattern = r"\((?!http:|https:).*?(/README\.md\))"
+    return re.sub(pattern, "(/)", content)
+
+
 def move_to_docs(root_path: str, destination_path: str) -> None:
     """Move all markdown files and linked images to the docs folder."""
     img_extensions = [".png", ".jpg", ".jpeg", ".gif", ".svg"]
@@ -398,7 +407,7 @@ We suggest running the code by forking or cloning the repository.
                     md_ipynb_pattern = re.compile(r"\]\(([^)]*\.(md|ipynb))\)")
                     content = md_ipynb_pattern.sub(replace_md_ipynb_links, content)
                     content = replace_brackets(content)
-                    content = content.replace("/README.md)", "/)")
+                    content = replace_dead_readme_links(content)
                     content = add_github_backlink(content)
 
                     with open(dest, "w", encoding="utf-8") as md_file:
