@@ -89,9 +89,9 @@ def add_github_backlink(content: str) -> str:
     """Inserts the 'Open In GitHub' shield link into the content after the Collab link."""
 
     # Match the Collab link and extract the GitHub path
-    collab_link_pattern = r'(\[!\[Open In Collab\]\(.*\)\]\(https:/?/colab\.research\.google\.com/github/([^\)]*)\))'
+    collab_link_pattern = r"(\[!\[Open In Collab\]\(.*\)\]\(https:/?/colab\.research\.google\.com/github/([^\)]*)\))"
     match = re.search(collab_link_pattern, content)
-    
+
     if not match:
         return content
     github_path = match.group(2)
@@ -100,9 +100,10 @@ def add_github_backlink(content: str) -> str:
     github_link = f"[![Open In GitHub]({github_shield})]({github_base}{github_path})"
 
     # Insert the GitHub link after the Collab link
-    new_content = content[:match.end(1)] + " " + github_link + content[match.end(1):]
+    new_content = content[: match.end(1)] + " " + github_link + content[match.end(1) :]
     return new_content
-    
+
+
 def get_mdx_exporter():
     """A mdx notebook exporter which composes many pre-processors together."""
     # TODO: Combine with other ad-hoc logic
@@ -277,8 +278,6 @@ def replace_brackets(content: str) -> str:
     return new_content
 
 
-
-
 def move_to_docs(root_path: str, destination_path: str) -> None:
     """Move all markdown files and linked images to the docs folder."""
     img_extensions = [".png", ".jpg", ".jpeg", ".gif", ".svg"]
@@ -291,7 +290,7 @@ def move_to_docs(root_path: str, destination_path: str) -> None:
                 )
 
                 # Adjust paths
-                if file.endswith(".png"):
+                if file.endswith((".png", ".jpg", ".jpeg", ".gif", ".svg")):
                     dest = dest.replace("img/", "static/")
                 if file.endswith(".md"):
                     # Make the name index.md
