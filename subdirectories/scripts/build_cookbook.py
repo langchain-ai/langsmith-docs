@@ -89,9 +89,9 @@ def add_github_backlink(content: str) -> str:
     """Inserts the 'Open In GitHub' shield link into the content after the Collab link."""
 
     # Match the Collab link and extract the GitHub path
-    collab_link_pattern = r'(\[!\[Open In Collab\]\(.*\)\]\(https:/?/colab\.research\.google\.com/github/([^\)]*)\))'
+    collab_link_pattern = r"(\[!\[Open In Collab\]\(.*\)\]\(https:/?/colab\.research\.google\.com/github/([^\)]*)\))"
     match = re.search(collab_link_pattern, content)
-    
+
     if not match:
         return content
     github_path = match.group(2)
@@ -100,9 +100,10 @@ def add_github_backlink(content: str) -> str:
     github_link = f"[![Open In GitHub]({github_shield})]({github_base}{github_path})"
 
     # Insert the GitHub link after the Collab link
-    new_content = content[:match.end(1)] + " " + github_link + content[match.end(1):]
+    new_content = content[: match.end(1)] + " " + github_link + content[match.end(1) :]
     return new_content
-    
+
+
 def get_mdx_exporter():
     """A mdx notebook exporter which composes many pre-processors together."""
     # TODO: Combine with other ad-hoc logic
@@ -277,6 +278,13 @@ def replace_brackets(content: str) -> str:
     return new_content
 
 
+def replace_dead_readme_links(content: str) -> str:
+    # The readmes are mapped to index.md which are mapped to the parent directory
+    # by docusaurus.
+    # The pattern checks that the link does not start with "http:" or "https:",
+    # and then replaces the ending "/README.md)"
+    pattern = r"\((?!http:|https:).*?(/README\.md\))"
+    return re.sub(pattern, "(/)", content)
 
 
 def move_to_docs(root_path: str, destination_path: str) -> None:
@@ -291,7 +299,7 @@ def move_to_docs(root_path: str, destination_path: str) -> None:
                 )
 
                 # Adjust paths
-                if file.endswith(".png"):
+                if file.endswith((".png", ".jpg", ".jpeg", ".gif", ".svg")):
                     dest = dest.replace("img/", "static/")
                 if file.endswith(".md"):
                     # Make the name index.md
@@ -399,7 +407,7 @@ We suggest running the code by forking or cloning the repository.
                     md_ipynb_pattern = re.compile(r"\]\(([^)]*\.(md|ipynb))\)")
                     content = md_ipynb_pattern.sub(replace_md_ipynb_links, content)
                     content = replace_brackets(content)
-                    content = content.replace("/README.md)", "/)")
+                    content = replace_dead_readme_links(content)
                     content = add_github_backlink(content)
 
                     with open(dest, "w", encoding="utf-8") as md_file:
