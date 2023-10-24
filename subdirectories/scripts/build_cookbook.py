@@ -145,7 +145,6 @@ def convert_notebooks_to_markdown(root_path: str) -> None:
                     )
 
                     output_post_save(markdown, resources)
-                    # markdown = clean_markdown(markdown)
 
                     md_file_path = os.path.join(dirpath, file.replace(".ipynb", ".md"))
                     with open(md_file_path, "w", encoding="utf-8") as md_file:
@@ -389,8 +388,8 @@ We suggest running the code by forking or cloning the repository.
                     def replace_md_ipynb_links(match):
                         # Extract the relative link from the match object
                         relative_link = match.group(1)
-                        if "colab.research.google" in relative_link:
-                            return os.path.normpath(match.group(0))
+                        if relative_link.startswith("http"):
+                            return match.group(0)
                         parent_dir = os.path.normpath(os.path.dirname(relative_link))
                         return f"]({parent_dir})"
 
