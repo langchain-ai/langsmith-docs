@@ -22,6 +22,26 @@ The benefit here is that all calls to LLMs, chains, agents, tools, and retriever
 
 ## Debugging
 
+<>
+  <div style={{ position: "relative", paddingBottom: "50%", height: 0 }}>
+    <iframe
+      src="https://www.loom.com/embed/0b92322a2c544129ab0b116db4632d7f?sid=01cf3594-8523-4027-a233-da09e35c0797"
+      frameBorder={0}
+      webkitallowfullscreen=""
+      mozallowfullscreen=""
+      allowFullScreen=""
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+      }}
+    />
+  </div>
+  <br />
+</>
+
 Debugging LLMs, chains, and agents can be tough. LangSmith helps solve the following pain points:
 
 ### What was the exact input to the LLM?
@@ -62,6 +82,32 @@ In the past, sharing a faulty chain with a colleague for debugging was challengi
 
 ## Collecting examples
 
+<>
+  <div
+    style={{
+      position: "relative",
+      paddingBottom: "64.67065868263472%",
+      height: 0,
+    }}
+  >
+    <iframe
+      src="https://www.loom.com/embed/6e29c025ecb54cb583788bdd5d10aac8?sid=0696439b-bb47-41dc-a44f-6e6ddac0fb19"
+      frameBorder={0}
+      webkitallowfullscreen=""
+      mozallowfullscreen=""
+      allowFullScreen=""
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+      }}
+    />
+  </div>
+  <br />
+</>
+
 Most of the time we go to debug, it's because something bad or unexpected outcome has happened in our application. These failures are valuable data points! By identifying how our chain can fail and monitoring these failures, we can test future chain versions against these known issues.
 
 Why is this so impactful? When building LLM applications, it’s often common to start without a dataset of any kind. This is part of the power of LLMs! They are amazing zero-shot learners, making it possible to get started as easily as possible. But this can also be a curse -- as you adjust the prompt, you're wandering blind. You don’t have any examples to benchmark your changes against.
@@ -74,13 +120,114 @@ End-to-end chain examples are excellent for testing the overall flow, while sing
 
 ## Testing & evaluation
 
-Initially, we do most of our evaluation manually and ad hoc. We pass in different inputs, and see what happens. At some point though, our application is performing well and we want to be more rigorous about testing changes. We can use a dataset that we’ve constructed along the way (see above). Alternatively, we could spend some time constructing a small dataset by hand. For these situations, LangSmith simplifies dataset uploading.
+<>
+  <div
+    style={{
+      position: "relative",
+      paddingBottom: "64.67065868263472%",
+      height: 0,
+    }}
+  >
+    <iframe
+      src="https://www.loom.com/embed/2787b88a975044f2962cc26d49e459f0?sid=c92f5aac-40dd-4c07-b8db-cade56ff3a57"
+      frameBorder={0}
+      webkitallowfullscreen=""
+      mozallowfullscreen=""
+      allowFullScreen=""
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+      }}
+    />
+  </div>
+  <br />
+</>
+
+Initially, we do most of our evaluation manually and ad hoc. We pass in different
+inputs, and see what happens. At some point though, our application is performing
+well and we want to be more rigorous about testing changes. We can use a dataset
+that we’ve constructed along the way (see above). Alternatively, we could spend some
+time constructing a small dataset by hand. For these situations, LangSmith simplifies
+dataset uploading.
 
 Once we have a dataset, how can we use it to test changes to a prompt or chain? The most basic approach is to run the chain over the data points and visualize the outputs. Despite technological advancements, there still is no substitute for looking at outputs by eye. Currently, running the chain over the data points needs to be done client-side. The LangSmith client makes it easy to pull down a dataset and then run a chain over them, logging the results to a new project associated with the dataset. From there, you can review them. We've made it easy to assign feedback to runs and mark them as correct or incorrect directly in the web app, displaying aggregate statistics for each test project.
 
 We also make it easier to evaluate these runs. To that end, we've added a set of evaluators to the open-source LangChain library. These evaluators can be specified when initiating a test run and will evaluate the results once the test run completes. If we’re being honest, most of these evaluators aren't perfect. We would not recommend that you trust them blindly. However, we do think they are useful for guiding your eye to examples you should look at. This becomes especially valuable as the number of data points increases and it becomes infeasible to look at each one manually.
 
-### Monitoring
+## Human Evaluation
+
+<>
+  <div
+    style={{
+      position: "relative",
+      paddingBottom: "49.791666666666664%",
+      height: 0,
+    }}
+  >
+    <iframe
+      src="https://www.loom.com/embed/55b46f54c1e04cf4867b8a2d4aa334c3?sid=ed073f2b-ba0b-4381-9ba2-237066b06205"
+      frameBorder={0}
+      webkitallowfullscreen=""
+      mozallowfullscreen=""
+      allowFullScreen=""
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+      }}
+    />
+  </div>
+  <br />
+</>
+
+Automatic evaluation metrics are helpful for getting consistent and scalable information about model behavior;
+however, there is still no complete substitute for human review to get the utmost quality and reliability from your application.
+LangSmith makes it easy to manually review and annotate runs through **annotation queues**.
+
+These queues allow you to select any runs based on criteria like model type or automatic evaluation scores, and queue them up for human review. As a reviewer, you can then quickly step through the runs, viewing the input, output, and any existing tags before adding your own feedback.
+
+We often use this for a couple of reasons:
+
+- To assess subjective qualities that automatic evaluators struggle with, like creativity or humor
+
+- To sample and validate a subset of runs that were auto-evaluated, ensuring the automatic metrics are still reliable and capturing the right information
+
+All the annotations made using the queue are assigned as "feedback" to the source runs, so you can easily filter and analyze them later.
+You can also quickly edit examples and add them to datasets to expand the surface area of your evaluation sets or to fine-tune a model for improved quality or reduced costs.
+
+## Monitoring
+
+<>
+  <div
+    style={{
+      position: "relative",
+      paddingBottom: "57.50798722044729%",
+      height: 0
+    }}
+  >
+    <iframe
+      src="https://www.loom.com/embed/67e2c0f138684b81b80149cc73a691ef?sid=6bc2fdd8-b6b7-4bf4-8c96-dd92b85e1b66"
+      frameBorder={0}
+      webkitallowfullscreen=""
+      mozallowfullscreen=""
+      allowFullScreen=""
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%"
+      }}
+    />
+  </div>
+  <br />
+</>
+
 
 After all this, your app might finally ready to go in production. LangSmith can also be used to monitor your application in much the same way that you used for debugging. You can log all traces, visualize latency and token usage statistics, and troubleshoot specific issues as they arise. Each run can also be assigned string tags or key-value metadata, allowing you to attach correlation ids or AB test variants, and filter runs accordingly.
 

@@ -4,9 +4,30 @@ sidebar_position: 3
 ---
 # Frequently Asked Questions
 
-### Why can't I use my organization with hub?
+### What is LangChain Hub?
 
-Hub is currently only available for "Personal" organizations! We are working on adding support for other organizations.
+The [LangChain Hub](https://smith.langchain.com/hub) lets you discover, version control, and experiment with different prompts for LangChain and LLMs in general directly in your browser.
+
+### How do I share a private prompt with my teammates?
+
+You can share prompts within a LangSmith organization by uploading them within a shared organization.
+
+First, create an API key for your organization, then set the variable in your development environment:
+
+```bash
+export LANGCHAIN_HUB_API_KEY = "ls__.."
+```
+
+Then, you can upload prompts to the organization. Assuming your organization's handle is "my-organization":
+
+```python
+from langchain import hub
+
+prompt = ...
+hub.upload("my-organization/my-prompt-name", prompt, new_repo_is_public=False)
+```
+
+Now, all your team-members within your LangSmith organization will be able to view, pull, and open the prompt in the playground.
 
 ### Why can't I push anything other than prompts?
 

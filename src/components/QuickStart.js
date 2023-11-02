@@ -1,14 +1,14 @@
-import React from 'react';
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
-import CodeBlock from '@theme/CodeBlock';
-
 import {
   CodeTabs,
   PythonBlock,
-  TypeScriptBlock,
   ShellBlock,
+  TypeScriptBlock,
 } from './InstructionsWithCode';
+
+import CodeBlock from '@theme/CodeBlock';
+import React from 'react';
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
 
 export const LangChainInstallationCodeTabs = () => (
   <CodeTabs
@@ -60,7 +60,7 @@ export OPENAI_API_KEY=<your-openai-api-key>`),
 export const LangChainQuickStartCodeTabs = ({}) => {
   const simpleTSBlock = `import { ChatOpenAI } from "langchain/chat_models/openai";\n
 const llm = new ChatOpenAI()
-await llm.predict("Hello, world!");`;
+await llm.invoke("Hello, world!");`;
 
   const alternativeTSBlock = `import { Client } from "langsmith";
 import { LangChainTracer } from "langchain/callbacks";
@@ -87,7 +87,7 @@ await model.invoke("Hello, world!", { callbacks: [tracer] })`;
         <CodeBlock className="python" language="python">
           {`from langchain.chat_models import ChatOpenAI\n
 llm = ChatOpenAI()
-llm.predict("Hello, world!")`}
+llm.invoke("Hello, world!")`}
         </CodeBlock>
       </TabItem>
       <TabItem key="typescript" value="typescript" label="TypeScript">
