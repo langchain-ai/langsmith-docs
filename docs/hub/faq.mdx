@@ -6,7 +6,7 @@ sidebar_position: 3
 
 ### What is LangChain Hub?
 
-The [LangChain Hub](https://smith.langchain.com/hub) lets you discover, version control, and experiment with different prompts for LangChain and LLMs in general directly in your browser.
+[LangChain Hub](https://smith.langchain.com/hub) lets you discover, version control, and experiment with different prompts for LangChain and LLMs in general directly in your browser.
 
 ### How do I share a private prompt with my teammates?
 
@@ -24,7 +24,7 @@ Then, you can upload prompts to the organization. Assuming your organization's h
 from langchain import hub
 
 prompt = ...
-hub.upload("my-organization/my-prompt-name", prompt, new_repo_is_public=False)
+hub.push("my-organization/my-prompt-name", prompt, new_repo_is_public=False)
 ```
 
 Now, all your team-members within your LangSmith organization will be able to view, pull, and open the prompt in the playground.
