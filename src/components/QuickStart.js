@@ -134,7 +134,7 @@ def my_chat_bot(text: str) -> str:
     else:
         return generated\n\n
 my_chat_bot("Summarize this morning's meetings.")
-# See an example run at: https://smith.langchain.com/public/b5e2666d-f570-4b83-a611-86a2503ed91b/r`);
+# See an example run at: https://smith.langchain.com/public/3e853ad8-77ce-404d-ad4c-05726851ad0f/r`);
 
 export const TraceableQuickStartCodeBlock = ({}) => (
   <CodeBlock
