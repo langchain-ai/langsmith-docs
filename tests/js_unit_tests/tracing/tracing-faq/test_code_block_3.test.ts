@@ -1,13 +1,13 @@
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { LLMChain } from "langchain/chains";
-import { PromptTemplate } from "langchain/prompts";
+import { ChatPromptTemplate } from "langchain/prompts";
 
 test('test_code_block_3', async () => {
     const chatModel = new ChatOpenAI();
-    const chain = new LLMChain({
-      llm: chatModel,
-      prompt: PromptTemplate.fromTemplate("What's the answer to {input}?"),
-    });
+    const prompt = ChatPromptTemplate.fromMessages([
+      ["system", "You are a helpful AI."],
+      ["human", "{input}"],
+    ]);
+    const chain = prompt.pipe(chatModel);
     
     await chain.invoke(
       { input: "What is the meaning of life?" },

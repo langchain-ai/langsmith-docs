@@ -153,46 +153,65 @@ export const TraceableThreadingCodeBlock = ({}) => (
     {`import asyncio
 import datetime
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any\n
+from typing import Any, Dict, List\n
 import openai
 from langsmith.run_helpers import traceable
 from langsmith.run_trees import RunTree\n\n
 @traceable(run_type="llm")
 def my_llm(prompt: str, temperature: float = 0.0, **kwargs: Any) -> str:
+    """Call a completion model."""
+    return openai.Completion.create(
+        model="gpt-3.5-turbo-instruct", prompt=prompt, temperature=temperature, **kwargs
+    )\n\n
+@traceable(run_type="chain")
+def llm_chain(user_input: str, **kwargs: Any) -> str:
+    """Select the text from the openai call."""
+    return my_llm(prompt=user_input, **kwargs).choices[0].text\n\n
+@traceable(run_type="llm")
+def my_chat_model(messages: List[Dict], temperature: float = 0.0, **kwargs: Any) -> str:
+    """Call a chat model."""
+    return openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", messages=messages, temperature=temperature, **kwargs
+    )\n\n
+@traceable(run_type="chain")
+def llm_chat_chain(user_input: str, **kwargs: Any) -> str:
+    """Prepare prompt & select first choice response."""
     messages = [
         {
             "role": "system",
             "content": "You are an AI Assistant. The time is "
             + str(datetime.datetime.now()),
         },
-        {"role": "user", "content": prompt},
+        {"role": "user", "content": user_input},
     ]
-    return (
-        openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", messages=messages, temperature=temperature, **kwargs
-        )
-        .choices[0]
-        .message.content
-    )\n\n
+    return my_chat_model(messages=messages, **kwargs).choices[0].message.content\n\n
 @traceable(run_type="chain")
-# highlight-next-line
 async def nested_chain(text: str, run_tree: RunTree, **kwargs: Any) -> str:
-    thread_pool = ThreadPoolExecutor(max_workers=1)
+    """Example with nesting and thread pools."""
     futures = []
-    for i in range(2):
-        futures.append(
-            thread_pool.submit(
-                my_llm,
-                f"Gather {i}: {text}",
-                # highlight-next-line
-                langsmith_extra={"run_tree": run_tree},
-                **kwargs,
+    with ThreadPoolExecutor() as thread_pool:
+        for i in range(2):
+            futures.append(
+                thread_pool.submit(
+                    llm_chain,
+                    f"Completion gather {i}: {text}",
+                    # highlight-next-line
+                    langsmith_extra={"run_tree": run_tree},
+                    **kwargs,
+                )
             )
-        )
-    thread_pool.shutdown(wait=True)
-    results = [future.result() for future in futures]
-    return "\\n".join(results)\n\n
-    await nested_chain("Summarize meeting")`}
+        for i in range(2):
+            futures.append(
+                thread_pool.submit(
+                    llm_chat_chain,
+                    f"Chat gather {i}: {text}",
+                    # highlight-next-line
+                    langsmith_extra={"run_tree": run_tree},
+                    **kwargs,
+                )
+            )
+    return "\\n".join([future.result() for future in futures])\n\n
+asyncio.run(nested_chain("Summarize meeting"))`}
   </CodeBlock>
 );
 

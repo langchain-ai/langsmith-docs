@@ -96,24 +96,17 @@ The `LangChainTracer` supports adding tags to any run trace. These tags are visi
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.chains import LLMChain
-from langchain.chat_models import ChatOpenAI
+    PythonBlock(`from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate\n
 llm = ChatOpenAI(temperature=0, tags=["my-llm-tag"])
 prompt = PromptTemplate.from_template("Say {input}")
-chain = LLMChain(llm=llm, prompt=prompt, tags=["my-bash-tag", "another-tag"])\n
-chain.invoke("Hello, World!", {"tags": ["shared-tags"]})
-`),
-    TypeScriptBlock(`import { LLMChain } from "langchain/chains";
-import { PromptTemplate } from "langchain/prompts";
+chain = (prompt | llm).with_config({"tags": ["my-bash-tag", "another-tag"]})\n
+chain.invoke({"input": "Hello, World!"}, {"tags": ["shared-tags"]})`),
+    TypeScriptBlock(`import { PromptTemplate } from "langchain/prompts";
 import { ChatOpenAI } from "langchain/chat_models/openai";\n
 const llm = new ChatOpenAI({ temperature: 0, tags: ["my-llm-tag"] });
 const prompt = PromptTemplate.fromTemplate("Say {input}");
-const chain = new LLMChain({
-  llm,
-  prompt,
-  tags: ["my-bash-tag", "another-tag"],
-});\n
+const chain = prompt.pipe(llm).withConfig( { tags: ["my-bash-tag", "another-tag"] });\n
 await chain.invoke({ input: "Hello, World!", tags: ["shared-tags"] });
 `),
   ]}
@@ -127,18 +120,22 @@ Similar to tags, LangSmith permits associating arbitrary key-value pairs as meta
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain\n
+from langchain.prompts import ChatPromptTemplate\n
 chat_model = ChatOpenAI()
-chain = LLMChain.from_string(llm=chat_model, template="What's the answer to {input}?")\n
+prompt = ChatPromptTemplate.from_messages([
+  ("system", "You are a helpful AI."),
+  ("human", "{input}")
+])
+chain = prompt | chat_model\n
 chain.invoke({"input": "What is the meaning of life?"}, {"metadata": {"my_key": "My Value"}})`),
     TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
-import { LLMChain } from "langchain/chains";
-import { PromptTemplate } from "langchain/prompts";\n
+import { ChatPromptTemplate } from "langchain/prompts";\n
 const chatModel = new ChatOpenAI();
-const chain = new LLMChain({
-  llm: chatModel,
-  prompt: PromptTemplate.fromTemplate("What's the answer to {input}?"),
-});\n
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful AI."],
+  ["human", "{input}"],
+]);
+const chain = prompt.pipe(chatModel);\n
 await chain.invoke(
   { input: "What is the meaning of life?" },
   { metadata: { myKey: "My Value" } }
@@ -178,18 +175,22 @@ Inject the experiment ID or testing variant(s) in as metadata values, then use t
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain\n
+from langchain.prompts import ChatPromptTemplate
 chat_model = ChatOpenAI()
-chain = LLMChain.from_string(llm=chat_model, template="What's the answer to {input}?")\n
+prompt = ChatPromptTemplate.from_messages([
+  ("system", "You are a helpful AI."),
+  ("human", "{input}")
+])
+chain = prompt | chat_model\n
 chain.invoke({"input": "What is the meaning of life?"}, {"metadata": {"variant": "abc123"}})`),
-    TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
-import { LLMChain } from "langchain/chains";
-import { PromptTemplate } from "langchain/prompts";\n
+    TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai"
+import { ChatPromptTemplate } from "langchain/prompts";\n
 const chatModel = new ChatOpenAI();
-const chain = new LLMChain({
-  llm: chatModel,
-  prompt: PromptTemplate.fromTemplate("What's the answer to {input}?"),
-});\n
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful AI."],
+  ["human", "{input}"],
+]);
+const chain = prompt.pipe(chatModel);\n
 await chain.invoke(
   { input: "What is the meaning of life?" },
   { metadata: { variant: "abc123" } }
@@ -268,16 +269,15 @@ with trace_as_chain_group("my_group", inputs={"question": question}) as group_ma
     res2 = chain.invoke({"question": "What is your quest?"}, config={"callbacks": group_manager})
     group_manager.on_chain_end({"output": res2})`),
     TypeScriptBlock(`import { CallbackManager, traceAsGroup, TraceGroup } from "langchain/callbacks";
-import { LLMChain } from "langchain/chains";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { PromptTemplate } from "langchain/prompts";\n
-// Initialize the LLMChain
+// Initialize the Chain
 const llm = new ChatOpenAI({ temperature: 0.9 });
 const prompt = new PromptTemplate({
   inputVariables: ["question"],
   template: "What is the answer to {question}?",
 });
-const chain = new LLMChain({ llm, prompt });
+const chain = prompt.pipe(llm);\n
 // You can group runs together using the traceAsGroup function
 const blockResult = await traceAsGroup(
   { name: "my_group_name" },
@@ -497,6 +497,8 @@ The most reliable way to log run trees to LangSmith is by using the `RunTree` ob
 `traceable` functions work out of the box for synchronous and async calls. If you want to call sub-chains/functions on separate threads, you will have to manually pass the run tree to the child functions. To do so, you should update the parent function to accept a `run_tree` argument (which is injected by the decorator) and pass it to the child functions through the `langsmith_extra` keyword argument. Below is an example:
 
 <TraceableThreadingCodeBlock />
+
+See the [trace](https://smith.langchain.com/public/e13ce247-bda1-44b5-bdb9-76443e296cbb/r) for a visualization of the run tree generated by this code.
 
 For more information, check out the [traceable notebook](https://github.com/langchain-ai/langsmith-cookbook/blob/main/tracing-examples/traceable/tracing_without_langchain.ipynb in the LangSmith cookbook.
 

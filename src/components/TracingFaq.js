@@ -1,7 +1,7 @@
-import React from "react";
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
+import React from "react";
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
 
 export const AccessRunIdBlock = ({}) => {
   const callbackPythonBlock = `from langchain import chat_models, prompts, callbacks
@@ -23,7 +23,7 @@ run_id = response["__run"].run_id
 print(run_id)`;
 
   const chatModelPythonBlock = `from langchain.chat_models import ChatAnthropic
- from langchain.prompts import ChatPromptTemplate
+from langchain.prompts import ChatPromptTemplate
  
  chat_model = ChatAnthropic()
  
@@ -36,8 +36,7 @@ print(run_id)`;
  res = chat_model.generate(messages=[prompt.format_messages()])
  res.run[0].run_id`;
 
-  const llmModelPythonBlock = `python
- from langchain.llms import OpenAI
+  const llmModelPythonBlock = `from langchain.llms import OpenAI
 
 openai = OpenAI()
 res = openai.generate(["You are a good bot"])
