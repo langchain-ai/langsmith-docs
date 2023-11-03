@@ -151,14 +151,20 @@ await chain.invoke(
 ### How do I customize the name of a run?
 
 When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
-You can customize chain and runnable trace names by calling `new_chain = chain.with_config({"run_name": "MyRunName"})`.
+You can customize chain and runnable trace names by calling `new_chain = chain.with_config({"run_name": "MyRunName"})`. (Note: this is not currently supported directly on LLM objects.)
 
 Example:
 
-```python
-configured_chain = chain.with_config({"run_name": "MyCustomChain"})
-configured_chain.invoke({"query": "What is the meaning of life?"})
-```
+<CodeTabs
+  tabs={[
+    PythonBlock(`configured_chain = chain.with_config({"run_name": "MyCustomChain"})
+configured_chain.invoke({"query": "What is the meaning of life?"})`),
+    TypeScriptBlock(`const configuredChain = chain.withConfig({ runName: "MyCustomChain" });
+await configuredChain.invoke({query: "What is the meaning of life?"});
+`),
+  ]}
+  groupId="client-language"
+/>
 
 For more examples of this, check out the [recipe on customizing run names](https://github.com/langchain-ai/langsmith-cookbook/blob/main/tracing-examples/runnable-naming/run-naming.ipynb).
 
