@@ -21,6 +21,7 @@ def extract_code_blocks(mdx_file: str) -> list[str]:
             for code_block in code_blocks
             if "<run_id>" not in code_block
             and "<your_" not in code_block
+            and "YOUR_" not in code_block
         ]
         return code_blocks
 
@@ -57,7 +58,7 @@ def add_boilerplate(code_block: str) -> str:
     :param code_block: The code block to transform
     :return: The code block with boilerplate code
     """
-    if "chain.invoke" in code_block and "const chain = " not in code_block:
+    if ("chain.invoke" in code_block or "configuredChain.invoke" in code_block) and "const chain = " not in code_block:
         code_block = (
             """import { ChatOpenAI } from "langchain/chat_models/openai";
 import {

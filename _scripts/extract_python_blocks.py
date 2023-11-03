@@ -21,7 +21,9 @@ def extract_code_blocks(mdx_file: str) -> list[str]:
             code_block.replace("\\n", "\n").replace("\\\\", "\\")
             for code_block in code_blocks
             # Skip because we don't have the actual UUID to run in the test.
-            if "<run_id>" not in code_block and "<your_project>" not in code_block
+            if "<run_id>" not in code_block
+            and "<your_project>" not in code_block
+            and "create_dataset" not in code_block
         ]
         return code_blocks
 
