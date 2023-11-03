@@ -6,5 +6,5 @@ test('test_code_block_2', async () => {
     const prompt = PromptTemplate.fromTemplate("Say {input}");
     const chain = prompt.pipe(llm).withConfig( { tags: ["my-bash-tag", "another-tag"] });
     
-    await chain.invoke({ input: "Hello, World!", tags: ["shared-tags"] });
+    await chain.invoke({ input: "Hello, World!"}, { tags: ["shared-tags"] });
 });

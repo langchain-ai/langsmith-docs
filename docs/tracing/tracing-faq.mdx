@@ -107,7 +107,7 @@ import { ChatOpenAI } from "langchain/chat_models/openai";\n
 const llm = new ChatOpenAI({ temperature: 0, tags: ["my-llm-tag"] });
 const prompt = PromptTemplate.fromTemplate("Say {input}");
 const chain = prompt.pipe(llm).withConfig( { tags: ["my-bash-tag", "another-tag"] });\n
-await chain.invoke({ input: "Hello, World!", tags: ["shared-tags"] });
+await chain.invoke({ input: "Hello, World!"}, { tags: ["shared-tags"] });
 `),
   ]}
   groupId="client-language"

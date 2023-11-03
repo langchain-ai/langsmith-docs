@@ -28,7 +28,7 @@ async def test_code_block_2():
     prompt = PromptTemplate.from_template("Say {input}")
     chain = (prompt | llm).with_config({"tags": ["my-bash-tag", "another-tag"]})
     
-    chain.invoke("Hello, World!", {"tags": ["shared-tags"]})
+    chain.invoke({"input": "Hello, World!"}, {"tags": ["shared-tags"]})
 
 @pytest.mark.asyncio
 async def test_code_block_3():
