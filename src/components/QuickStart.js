@@ -186,6 +186,7 @@ def llm_chat_chain(user_input: str, **kwargs: Any) -> str:
     ]
     return my_chat_model(messages=messages, **kwargs).choices[0].message.content\n\n
 @traceable(run_type="chain")
+# highlight-next-line
 async def nested_chain(text: str, run_tree: RunTree, **kwargs: Any) -> str:
     """Example with nesting and thread pools."""
     futures = []
