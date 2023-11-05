@@ -107,9 +107,10 @@ llm.invoke("Hello, world!")`}
 const TraceableQuickStart = PythonBlock(`import datetime
 from typing import Any\n
 import openai
+from openai.openai_object import OpenAIObject
 from langsmith.run_helpers import traceable\n\n
 @traceable(run_type="llm", name="openai.ChatCompletion.create")
-def my_llm(*args: Any, **kwargs: Any) -> dict:
+def my_chat_model(*args: Any, **kwargs: Any) -> OpenAIObject:
     return openai.ChatCompletion.create(*args, **kwargs)\n\n
 @traceable(run_type="tool")
 def my_tool(tool_input: str) -> str:
@@ -124,7 +125,7 @@ def my_chain(prompt: str) -> str:
         },
         {"role": "user", "content": prompt},
     ]
-    return my_llm(model="gpt-3.5-turbo", messages=messages)\n\n
+    return my_chat_model(model="gpt-3.5-turbo", messages=messages)\n\n
 @traceable(run_type="chain")
 def my_chat_bot(text: str) -> str:
     generated = my_chain(text)
@@ -155,10 +156,11 @@ import datetime
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List\n
 import openai
+from openai.openai_object import OpenAIObject
 from langsmith.run_helpers import traceable
 from langsmith.run_trees import RunTree\n\n
 @traceable(run_type="llm")
-def my_llm(prompt: str, temperature: float = 0.0, **kwargs: Any) -> str:
+def my_llm(prompt: str, temperature: float = 0.0, **kwargs: Any) -> OpenAIObject:
     """Call a completion model."""
     return openai.Completion.create(
         model="gpt-3.5-turbo-instruct", prompt=prompt, temperature=temperature, **kwargs
@@ -168,7 +170,7 @@ def llm_chain(user_input: str, **kwargs: Any) -> str:
     """Select the text from the openai call."""
     return my_llm(prompt=user_input, **kwargs).choices[0].text\n\n
 @traceable(run_type="llm")
-def my_chat_model(messages: List[Dict], temperature: float = 0.0, **kwargs: Any) -> str:
+def my_chat_model(messages: List[Dict], temperature: float = 0.0, **kwargs: Any) -> OpenAIObject:
     """Call a chat model."""
     return openai.ChatCompletion.create(
         model="gpt-3.5-turbo", messages=messages, temperature=temperature, **kwargs
