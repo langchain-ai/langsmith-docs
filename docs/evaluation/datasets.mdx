@@ -17,7 +17,11 @@ Datasets are a collections of examples that can be used to evaluate or otherwise
 
 ## Dataset types
 
-There are currently three types of datasets. Dataset types communicate common input and output schemas 
+There are currently three types of datasets. Dataset types communicate common input and output schemas. For almost all use cases, the default "kv" dataset type is sufficient. The other two types, "llm" and "chat", can be useful to conveniently export datasets into known fine-tuning formats.
+
+:::tip
+When in doubt, use the default "kv" dataset type.
+:::
 
 #### Key-value datasets
 
