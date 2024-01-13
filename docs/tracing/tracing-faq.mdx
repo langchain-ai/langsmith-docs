@@ -16,14 +16,11 @@ import {
   TraceableThreadingCodeBlock,
 } from "@site/src/components/QuickStart";
 
-import {
-  AccessRunIdBlock,
-} from "@site/src/components/TracingFaq";
+import { AccessRunIdBlock } from "@site/src/components/TracingFaq";
 
 # Tracing FAQs
 
 The following are some frequently asked questions about logging runs to LangSmith:
-
 
 ### What is a Run?
 
@@ -34,7 +31,6 @@ A 'Trace' is a collection of runs organized in a tree or graph. The 'Root Run' i
 Each run contains a unique ID, run_type, name, run_type, inputs, start times, and optionally outputs, error information, end times, events, tags, and other metadata.
 
 The run_type indicates the kind of operation that was performed. Some common ones include "llm", "chain", "retriever", and "tool".
-
 
 ### How do I group traces into a project?
 
@@ -166,6 +162,50 @@ await configuredChain.invoke({query: "What is the meaning of life?"});
 For more examples of this, check out the [recipe on customizing run names](https://github.com/langchain-ai/langsmith-cookbook/blob/main/tracing-examples/runnable-naming/run-naming.ipynb).
 
 If you are logging using the LangSmith SDK or REST API directly, you can set the name of the run manually to be whatever you like.
+
+### How do I query by metadata?
+
+To query a run or trace by metadata, you can use the `has` filter. This filter takes a key and value and returns all runs that have a metadata key with the specified value. Below is an example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+client = Client()
+runs = list(client.list_runs(
+    project_name="<your_project>",
+    filter='has(metadata, \\'{"user_id": "abc123"}\\')',
+))`),
+    TypeScriptBlock(`import { Client, Run } from "langsmith";\n
+const client = new Client();
+const runs: Run[] = [];
+for await (const run of client.listRuns({
+  projectName: "<your_project>",
+  filter: 'has(metadata, \\'{"user_id": "abc123"}\\')',
+})) {
+  runs.push(run);
+}
+`),
+  ]}
+  groupId="client-language"
+/>
+
+For more information on fetching runs from the API, check out the [local run filtering](use-cases/export-runs/local) guide.
+
+### How do I query by tags?
+
+To query a run or trace by tag, you can use the `has` filter. This filter takes a key and value and returns all runs that have a tag with the specified value. Below is an example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `client.list_runs(project_name="<your_project>", filter='has(tags, "2aa1cf4")')`
+    ),
+    TypeScriptBlock(
+      `client.listRuns({projectName: "<your_project>", filter: 'has(tags, "2aa1cf4")'})`
+    ),
+  ]}
+  groupId="client-language"
+/>
 
 ### How do I use LangSmith in my AB Testing framework?
 
@@ -318,7 +358,6 @@ In Typescript, the run ID is returned in the call response under the `__run` key
 Below is an example:
 
 <AccessRunIdBlock />
-
 
 ### How do I get the URL of the run?
 
@@ -522,7 +561,6 @@ In the web app, you can search through 'traces' (the top level runs) or through 
 ### How do I use the playground for runs logged using the SDK?
 
 The LangSmith playground doesn't yet support re-running arbitrary runs logged using the SDK. We are working to extend logging and playground support for users not using LangChain components in their app.
-
 
 ### How do I mask sensitive information in my runs?
 
