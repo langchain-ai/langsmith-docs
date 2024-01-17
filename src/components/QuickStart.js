@@ -18,7 +18,7 @@ export const LangChainInstallationCodeTabs = () => (
         value: 'python',
         label: 'pip',
         language: 'bash',
-        content: `pip install -U langchain`,
+        content: `pip install -U langchain_openai`,
       },
       {
         value: 'typescript',
@@ -85,7 +85,7 @@ await model.invoke("Hello, world!", { callbacks: [tracer] })`;
     <Tabs groupId="client-language">
       <TabItem key="python" value="python" label="Python">
         <CodeBlock className="python" language="python">
-          {`from langchain.chat_models import ChatOpenAI\n
+          {`from langchain_openai import ChatOpenAI\n
 llm = ChatOpenAI()
 llm.invoke("Hello, world!")`}
         </CodeBlock>

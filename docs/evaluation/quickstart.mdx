@@ -55,15 +55,11 @@ dataset_name = "Rap Battle Dataset"\n
 dataset = client.create_dataset(
     dataset_name=dataset_name, description="Rap battle prompts.",
 )
-for input_prompt in example_inputs:
-    # Each example must be unique and have inputs defined.
-    # Outputs are optional
-    client.create_example(
-        inputs={"question": input_prompt},
-        outputs=None,
-        dataset_id=dataset.id,
-    )
-`),
+client.create_examples(
+    inputs=[{"question": q} for q in example_inputs],
+    outputs=None,
+    dataset_id=dataset.id,
+)`),
   ]}
   groupId="client-language"
 />
@@ -84,29 +80,24 @@ so that all inferences will be traced.
       value: "runnable",
       label: "Runnable",
       language: "python",
-      content: `from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema.runnable import RunnableMap, RunnablePassthrough\n
-# Since chains and agents can be stateful (they can have memory),
-# create a constructor to pass in to the run_on_dataset method.
-def create_runnable():
-    llm = ChatOpenAI(temperature=0)
-    prompt = ChatPromptTemplate.from_messages([
-      ("human", "Spit some bars about {input}.")
-    ])
-    return RunnableMap({"input": RunnablePassthrough()}) | prompt | llm
-`,
+      content: `from langchain.schema.runnable import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI\n
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+prompt = ChatPromptTemplate.from_messages([("human", "Spit some bars about {input}.")])
+chain = prompt | llm | StrOutputParser()`,
     },
     {
       value: "chain",
       label: "Chain or Agent",
       language: "python",
-      content: `from langchain.chat_models import ChatOpenAI
+      content: `from langchain_openai import ChatOpenAI
 from langchain.chains import LLMChain\n
 # Since chains and agents can be stateful (they can have memory),
 # create a constructor to pass in to the run_on_dataset method.
 def create_chain():
-    llm = ChatOpenAI(temperature=0)
+    llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
     return LLMChain.from_string(llm, "Spit some bars about {input}.")
 `,
     },
@@ -114,8 +105,8 @@ def create_chain():
       value: "llm",
       label: "LLM or Chat Model",
       language: "python",
-      content: `from langchain.chat_models import ChatOpenAI\n
-llm = ChatOpenAI(temperature=0)
+      content: `from langchain_openai import ChatOpenAI\n
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 `,
     },
     {
@@ -125,8 +116,7 @@ llm = ChatOpenAI(temperature=0)
       content: `# You can also evaluate any arbitrary function over the dataset.
 # The input to the function will be the inputs dictionary for each example.
 def predict_result(input_: dict) -> dict:
-    return {"output": "Bar Bar Bar"}\n
-      `,
+    return {"output": "Bar Bar Bar"}`,
     },
     {
       value: "custom-class",
@@ -168,79 +158,106 @@ For more information on how to write a custom evaluator, check out the [custom e
       value: "runnable",
       label: "Runnable",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset\n
+      content: `from langchain.smith import RunEvalConfig, run_on_dataset
+from langsmith.evaluation import EvaluationResult, run_evaluator\n
+@run_evaluator
+def not_empty(run, example) -> EvaluationResult:
+    score = bool(run.outputs is not None and run.outputs["output"].strip())
+    return EvaluationResult(key="not_empty", score=score)\n\n
 eval_config = RunEvalConfig(
-  evaluators=[
-    # You can specify an evaluator by name/enum.
-    # In this case, the default criterion is "helpfulness"
-    "criteria",
-    # Or you can configure the evaluator
-    RunEvalConfig.Criteria("harmfulness"),
-    RunEvalConfig.Criteria(
-      {"cliche": "Are the lyrics cliche?"
-      " Respond Y if they are, N if they're entirely unique."}
-      )
-  ]
+    custom_evaluators=[not_empty],
+    # You can also use a prebuilt evaluator
+    # by providing a name or RunEvalConfig.<configured evaluator>
+    evaluators=[
+        # You can specify an evaluator by name/enum.
+        # In this case, the default criterion is "helpfulness"
+        "criteria",
+        # Or you can configure the evaluator
+        RunEvalConfig.Criteria("harmfulness"),
+        RunEvalConfig.Criteria(
+            {
+                "cliche": "Are the lyrics cliche?"
+                " Respond Y if they are, N if they're entirely unique."
+            }
+        ),
+    ],
 )
-run_on_dataset(
-    client=client,
+client.run_on_dataset(
     dataset_name=dataset_name,
-    llm_or_chain_factory=create_runnable,
+    llm_or_chain_factory=chain,
     evaluation=eval_config,
     verbose=True,
+    project_name="runnable-test-1",
 )`,
     },
     {
       value: "chain",
       label: "Chain or Agent",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset\n
+      content: `from langchain.smith import RunEvalConfig, run_on_dataset
+from langsmith.evaluation import EvaluationResult, run_evaluator\n
+@run_evaluator
+def not_empty(run, example) -> EvaluationResult:
+    score = run.outputs is not None and run.outputs["text"].strip()
+    return EvaluationResult(key="not_empty", score=score)\n
 eval_config = RunEvalConfig(
-  evaluators=[
-    # You can specify an evaluator by name/enum.
-    # In this case, the default criterion is "helpfulness"
-    "criteria",
-    # Or you can configure the evaluator
-    RunEvalConfig.Criteria("harmfulness"),
-    RunEvalConfig.Criteria(
-      {"cliche": "Are the lyrics cliche?"
-      " Respond Y if they are, N if they're entirely unique."}
-      )
-  ]
+    custom_evaluators=[not_empty],
+    # You can also use a prebuilt evaluator
+    # by providing a name or RunEvalConfig.<configured evaluator>
+    evaluators=[
+        # You can specify an evaluator by name/enum.
+        # In this case, the default criterion is "helpfulness"
+        "criteria",
+        # Or you can configure the evaluator
+        RunEvalConfig.Criteria("harmfulness"),
+        RunEvalConfig.Criteria(
+            {
+                "cliche": "Are the lyrics cliche?"
+                " Respond Y if they are, N if they're entirely unique."
+            }
+        ),
+    ],
 )
-run_on_dataset(
-    client=client,
+client.run_on_dataset(
     dataset_name=dataset_name,
     llm_or_chain_factory=create_chain,
     evaluation=eval_config,
     verbose=True,
-    project_name="llmchain-test-1",
+    project_name="chain-test-1",
 )`,
     },
     {
       value: "llm",
       label: "LLM or Chat Model",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset\n
+      content: `from langchain.smith import RunEvalConfig, run_on_dataset
+from langsmith.evaluation import EvaluationResult, run_evaluator\n
+@run_evaluator
+def not_empty(run, example) -> EvaluationResult:
+    score = run.outputs and run.outputs["generations"][0][0]["text"].strip()
+    return EvaluationResult(key="not_empty", score=score)\n
 eval_config = RunEvalConfig(
-  evaluators=[
-    # You can specify an evaluator by name/enum.
-    # In this case, the default criterion is "helpfulness"
-    "criteria",
-    # Or you can configure the evaluator
-    RunEvalConfig.Criteria("harmfulness"),
-    RunEvalConfig.Criteria("misogyny"),
-    RunEvalConfig.Criteria(
-      {"cliche": "Are the lyrics cliche? "
-      "Respond Y if they are, N if they're entirely unique."}
-      )
-  ]
+    custom_evaluators=[not_empty],
+    # You can also use a prebuilt evaluator
+    # by providing a name or RunEvalConfig.<configured evaluator>
+    evaluators=[
+        # You can specify an evaluator by name/enum.
+        # In this case, the default criterion is "helpfulness"
+        "criteria",
+        # Or you can configure the evaluator
+        RunEvalConfig.Criteria("harmfulness"),
+        RunEvalConfig.Criteria(
+            {
+                "cliche": "Are the lyrics cliche?"
+                " Respond Y if they are, N if they're entirely unique."
+            }
+        ),
+    ],
 )
-run_on_dataset(
+client.run_on_dataset(
     dataset_name=dataset_name,
     llm_or_chain_factory=llm,
     evaluation=eval_config,
-    client=client,
     verbose=True,
     project_name="chatopenai-test-1",
 )`,
@@ -249,26 +266,34 @@ run_on_dataset(
       value: "custom-function",
       label: "Custom function",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset\n
+      content: `from langchain.smith import RunEvalConfig, run_on_dataset
+from langsmith.evaluation import EvaluationResult, run_evaluator\n
+@run_evaluator
+def not_empty(run, example) -> EvaluationResult:
+    score = bool(run.outputs and run.outputs["output"])
+    return EvaluationResult(key="not_empty", score=score)\n
 eval_config = RunEvalConfig(
-  evaluators=[
-    # You can specify an evaluator by name/enum.
-    # In this case, the default criterion is "helpfulness"
-    "criteria",
-    # Or you can configure the evaluator
-    RunEvalConfig.Criteria("harmfulness"),
-    RunEvalConfig.Criteria("misogyny"),
-    RunEvalConfig.Criteria(
-      {"cliche": "Are the lyrics cliche? "
-      "Respond Y if they are, N if they're entirely unique."}
-      )
-  ]
+    custom_evaluators=[not_empty],
+    # You can also use a prebuilt evaluator
+    # by providing a name or RunEvalConfig.<configured evaluator>
+    evaluators=[
+        # You can specify an evaluator by name/enum.
+        # In this case, the default criterion is "helpfulness"
+        "criteria",
+        # Or you can configure the evaluator
+        RunEvalConfig.Criteria("harmfulness"),
+        RunEvalConfig.Criteria(
+            {
+                "cliche": "Are the lyrics cliche?"
+                " Respond Y if they are, N if they're entirely unique."
+            }
+        ),
+    ],
 )
-run_on_dataset(
+client.run_on_dataset(
     dataset_name=dataset_name,
     llm_or_chain_factory=predict_result,
     evaluation=eval_config,
-    client=client,
     verbose=True,
     project_name="custom-function-test-1",
 )`,
@@ -277,27 +302,35 @@ run_on_dataset(
       value: "custom-class",
       label: "Custom class",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset\n
+      content: `from langchain.smith import RunEvalConfig, run_on_dataset
+from langsmith.evaluation import EvaluationResult, run_evaluator\n
+@run_evaluator
+def not_empty(run, example) -> EvaluationResult:
+    score = run.outputs and run.outputs["output"]
+    return EvaluationResult(key="not_empty", score=score)\n
 eval_config = RunEvalConfig(
-  evaluators=[
-    # You can specify an evaluator by name/enum.
-    # In this case, the default criterion is "helpfulness"
-    "criteria",
-    # Or you can configure the evaluator
-    RunEvalConfig.Criteria("harmfulness"),
-    RunEvalConfig.Criteria("misogyny"),
-    RunEvalConfig.Criteria(
-      {"cliche": "Are the lyrics cliche? "
-      "Respond Y if they are, N if they're entirely unique."}
-      )
-  ]
+    custom_evaluators=[not_empty],
+    # You can also use a prebuilt evaluator
+    # by providing a name or RunEvalConfig.<configured evaluator>
+    evaluators=[
+        # You can specify an evaluator by name/enum.
+        # In this case, the default criterion is "helpfulness"
+        "criteria",
+        # Or you can configure the evaluator
+        RunEvalConfig.Criteria("harmfulness"),
+        RunEvalConfig.Criteria(
+            {
+                "cliche": "Are the lyrics cliche?"
+                " Respond Y if they are, N if they're entirely unique."
+            }
+        ),
+    ],
 )
-run_on_dataset(
+client.run_on_dataset(
     dataset_name=dataset_name,
     # We are passing the "factory" function in this case.
     llm_or_chain_factory=create_object,
     evaluation=eval_config,
-    client=client,
     verbose=True,
     project_name="custom-class-test-1",
 )`,
@@ -314,13 +347,13 @@ There, you can inspect the traces and feedback generated from the evaluation con
 
 ![Eval test run screenshot](static/eval-test-run.png)
 
-You can click on any row to view the trace and feedback generated for that example.
+You can click "Open Run" to view the trace and feedback generated for that example.
 
 ![Eval trace screenshot](static/eval-run-trace.png)
 
-To view the outputs for other runs on that same example rows, click `View all reference runs`.
+To compare to another test on this dataset, you can click "Compare Tests".
 
-![Eval reference runs screenshot](static/eval-referenced-runs.png)
+![Compare Tests](static/compare-tests.png)
 
 ## More on evaluation
 

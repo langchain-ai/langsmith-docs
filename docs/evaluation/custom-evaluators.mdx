@@ -1,11 +1,131 @@
 ---
-sidebar_label: Custom Evaluators
-sidebar_position: 4
+sidebar_label: Evaluators
+sidebar_position: 3
 ---
 
-# Writing Custom Evaluators
+# Custom Evaluators 
 
-In this guide, you will create a custom string evaluator for your agent. You can choose to use LangChain components or write your own custom evaluator from scratch.
+In this guide, you will create a custom evaluator to grade your agent. You can choose to use LangChain components or write your own custom evaluator from scratch.
+
+## Run Evaluators
+
+Run evaluators return a score and feedback (metric) key for a given run. You can define them however you see fit. Common types include:
+
+1. Heuristics: Checking for regex matches, presence/absence of certain words or code, etc.
+2. AI-assisted: Instruct an LLM to grade the output of a run based on the prediction reference answer.
+
+
+We will demonstrate some simple ones below.
+
+#### Example 1: Emptiness Evaluator
+
+```python
+from langsmith.evaluation import EvaluationResult, run_evaluator
+from langsmith.schemas import Example, Run
+
+
+@run_evaluator
+def is_empty(run: Run, example: Example | None = None):
+    model_outputs = run.outputs["output"]
+    score = not model_outputs.strip()
+    return EvaluationResult(key="is_empty", score=score)
+```
+
+#### Example 2: Blocklist Evaluator
+
+You may want to parametrize your evaluator as a class. For this, you can use the RunEvaluator class, which is functionally equivalent to the decorator above.
+
+```python
+from langsmith.evaluation import EvaluationResult, RunEvaluator
+from langsmith.schemas import Example, Run
+
+class BlocklistEvaluator(RunEvaluator):
+    def __init__(self, blocklist: list[str]):
+        self.blocklist = blocklist
+
+    def evaluate_run(
+        self, run: Run, example: Example | None = None
+    ) -> EvaluationResult:
+        model_outputs = run.outputs["output"]
+        score = not any([word in model_outputs for word in self.blocklist])
+        return EvaluationResult(key="blocklist", score=score)
+```
+
+#### Example 3: Perplexity Evaluator
+
+You may want to use statistical measures such as [`perplexity`](https://huggingface.co/spaces/evaluate-metric/perplexity) to grade your run output. Below is an example in which we use the [evaluate](https://huggingface.co/docs/evaluate/index) package by HuggingFace, which contains numerous commonly used metrics for tasks such as text generation, machine translation, and more. Start by installing the `evaluate` package by running `pip install evaluate`.
+
+```python
+from typing import Optional
+
+from evaluate import load
+from langsmith.evaluation import EvaluationResult, RunEvaluator
+from langsmith.schemas import Example, Run
+
+
+class PerplexityEvaluator(RunEvaluator):
+    def __init__(self, prediction_key: Optional[str] = None, model_id: str = "gpt-2"):
+        self.prediction_key = prediction_key
+        self.model_id = model_id
+        self.metric_fn = load("perplexity", module_type="metric")
+
+    def evaluate_run(
+        self, run: Run, example: Optional[Example] = None
+    ) -> EvaluationResult:
+        if run.outputs is None:
+            raise ValueError("Run outputs cannot be None")
+        prediction = run.outputs[self.prediction_key]
+        results = self.metric_fn.compute(
+            predictions=[prediction], model_id=self.model_id
+        )
+        ppl = results["perplexities"][0]
+        return EvaluationResult(key="Perplexity", score=ppl)
+```
+
+Let's break down what the `PerplexityEvaluator` is doing:
+
+- **Initialize**: In the constructor, we're setting up a few properties that will be needed later on.
+
+  - `prediction_key`: The key to find the model's prediction in the outputs of a run.
+  - `model_id`: The ID of the language model you want to use to compute the metric. In our example, we are using 'gpt-2'.
+  - `metric_fn`: The evaluation metric function, which is loaded from the HuggingFace `evaluate` package.
+
+- **Evaluate**: This method takes a run (and optionally an example) and returns an `EvaluationResult`.
+  - If the run outputs are `None`, the evaluator raises an error.
+  - Otherwise, the outputs are passed to the `metric_fn` to compute the perplexity. The perplexity score is then returned as part of an `EvaluationResult`.
+
+Once you've define your evaluators, you can use them to evaluate your model.
+
+```python
+from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset
+
+ds = client.create_dataset("My Dataset")
+client.create_examples(,
+    inputs=[
+        {"input": "Hello"},
+        {"input": "How are you?"},
+    ],
+    outputs=[
+        {"output": "I'm good, thanks!"},
+        {"output": "I'm not doing so well."},
+    ],
+    dataset_id=ds.id,
+)
+
+evaluation_config = RunEvalConfig(
+    custom_evaluators = [PerplexityEvaluator(), BlocklistEvaluator(blocklist=["bad", "words"]), is_empty],
+)
+
+def my_model(inputs):
+    return "This is a bad model"
+
+client.run_on_dataset(
+    dataset_name="My Dataset",
+    llm_or_chain_factory=my_model,
+    evaluation=evaluation_config,
+)
+```
 
 ## Custom LangChain string evaluators
 
@@ -22,7 +142,7 @@ import re
 from typing import Any, Optional
 
 from langchain.chains import LLMChain
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.evaluation import StringEvaluator
 
 
@@ -110,78 +230,6 @@ You can also extend existing components from the library so you can focus on bui
 - Automatic tracing integrations to help you debug, compare, and improve your code
 - Easy sharing and mixing of components and results
 - Out-of-the-box support for sync and async evaluations for faster runs
-
-## Custom evaluators outside LangChain
-
-If you don't want to use the open-source LangChain library in your evaluation workflows, you can write your own `RunEvaluator`.
-
-In this section, you will create a custom evaluator that measures the [`perplexity`](https://huggingface.co/spaces/evaluate-metric/perplexity) of your run output.
-
-You will use the [evaluate](https://huggingface.co/docs/evaluate/index) package by HuggingFace, which contains numerous commonly used metrics for tasks such as text generation, machine translation, and more. Start by installing the `evaluate` package by running `pip install evaluate`.
-
-### Step 1. Define the custom `RunEvaluator`
-
-First, define your custom evaluator as a class `PerplexityEvaluator` that inherits from the base class `RunEvaluator`.
-
-```python
-from typing import Optional
-
-from evaluate import load
-from langsmith.evaluation import EvaluationResult, RunEvaluator
-from langsmith.schemas import Example, Run
-
-
-class PerplexityEvaluator(RunEvaluator):
-    def __init__(self, prediction_key: Optional[str] = None, model_id: str = "gpt-2"):
-        self.prediction_key = prediction_key
-        self.model_id = model_id
-        self.metric_fn = load("perplexity", module_type="metric")
-
-    def evaluate_run(
-        self, run: Run, example: Optional[Example] = None
-    ) -> EvaluationResult:
-        if run.outputs is None:
-            raise ValueError("Run outputs cannot be None")
-        prediction = run.outputs[self.prediction_key]
-        results = self.metric_fn.compute(
-            predictions=[prediction], model_id=self.model_id
-        )
-        ppl = results["perplexities"][0]
-        return EvaluationResult(key="Perplexity", score=ppl)
-```
-
-Let's break down what the `PerplexityEvaluator` is doing:
-
-- **Initialize**: In the constructor, we're setting up a few properties that will be needed later on.
-
-  - `prediction_key`: The key to find the model's prediction in the outputs of a run.
-  - `model_id`: The ID of the language model you want to use to compute the metric. In our example, we are using 'gpt-2'.
-  - `metric_fn`: The evaluation metric function, which is loaded from the HuggingFace `evaluate` package.
-
-- **Evaluate**: This method takes a run (and optionally an example) and returns an `EvaluationResult`.
-  - If the run outputs are `None`, the evaluator raises an error.
-  - Otherwise, the outputs are passed to the `metric_fn` to compute the perplexity. The perplexity score is then returned as part of an `EvaluationResult`.
-
-### Step 2: Evaluate runs
-
-Use the client to apply the `PerplexityEvaluator` to runs in a project:
-
-```python
-from langsmith import Client
-from langchain.smith import RunEvalConfig, run_on_dataset
-
-evaluation_config = RunEvalConfig(
-    custom_evaluators = [PerplexityEvaluator()],
-)
-
-run_on_dataset(
-    dataset_name="<my_dataset_name>",
-    llm_or_chain_factory=<llm or function constructing chain>,
-    client=client,
-    evaluation=evaluation_config,
-    project_name="<the name to assign to this test project>",
-)
-```
 
 ### Recap
 

@@ -24,7 +24,7 @@ The following are some frequently asked questions about logging runs to LangSmit
 
 ### What is a Run?
 
-A 'Run' represents a single unit of work or operation within your LLM application. This could be anything from single call to an LLM or chain, to a prompt formatting call, to a runnable lambda invocation. If you are familiar with Open Telemetry, this corresponds loosely to a [span](https://opentelemetry.io/docs/concepts/signals/traces/#spans).
+A 'Run' is a span representing a single unit of work or operation within your LLM application. This could be anything from single call to an LLM or chain, to a prompt formatting call, to a runnable lambda invocation. If you are familiar with Open Telemetry, a single run is analogous to a [span](https://opentelemetry.io/docs/concepts/signals/traces/#spans).
 
 A 'Trace' is a collection of runs organized in a tree or graph. The 'Root Run' is the top level run in a trace. It is the run that is directly invoked by the user or application. The root run is assigned an execution_order=1. The execution order of a run is the order in which it was called in the trace, if viewed as a sequence.
 
@@ -32,7 +32,7 @@ Each run contains a unique ID, run_type, name, run_type, inputs, start times, an
 
 The run_type indicates the kind of operation that was performed. Some common ones include "llm", "chain", "retriever", and "tool".
 
-### How do I group traces into a project?
+### How do I organize traces within a project?
 
 All runs are logged to a project. If left unspecified, the tracer project is set to `default`.
 You can set the `LANGCHAIN_PROJECT` environment variable to configure a custom project name for an entire application
@@ -80,34 +80,11 @@ await chain.invoke(
 The Python tracer also has a context manager you can use to set the project for anything within the context:
 
 ```python
-from langchain.callbacks import tracing_v2_enabled
+from langchain_core.tracers.context import tracing_v2_enabled
 
 with tracing_v2_enabled(project_name="My Project"):
     chain.invoke({"query": "How many people live in canada as of 2023?"})
 ```
-
-### How do I add tags to runs?
-
-The `LangChainTracer` supports adding tags to any run trace. These tags are visible in the UI and through the API and can be used to filter and analyze runs. You can tag a single object's runs by adding them when the object is initialized, or you can tag all nested runs by passing them to the object's function call. The following code snippet shows how to do both, assuming you've set the appropriate environment variables to log traces.
-
-<CodeTabs
-  tabs={[
-    PythonBlock(`from langchain.chat_models import ChatOpenAI
-from langchain.prompts import PromptTemplate\n
-llm = ChatOpenAI(temperature=0, tags=["my-llm-tag"])
-prompt = PromptTemplate.from_template("Say {input}")
-chain = (prompt | llm).with_config({"tags": ["my-bash-tag", "another-tag"]})\n
-chain.invoke({"input": "Hello, World!"}, {"tags": ["shared-tags"]})`),
-    TypeScriptBlock(`import { PromptTemplate } from "langchain/prompts";
-import { ChatOpenAI } from "langchain/chat_models/openai";\n
-const llm = new ChatOpenAI({ temperature: 0, tags: ["my-llm-tag"] });
-const prompt = PromptTemplate.fromTemplate("Say {input}");
-const chain = prompt.pipe(llm).withConfig( { tags: ["my-bash-tag", "another-tag"] });\n
-await chain.invoke({ input: "Hello, World!"}, { tags: ["shared-tags"] });
-`),
-  ]}
-  groupId="client-language"
-/>
 
 ### How do I add metadata to runs?
 
@@ -115,8 +92,8 @@ Similar to tags, LangSmith permits associating arbitrary key-value pairs as meta
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate\n
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate\n
 chat_model = ChatOpenAI()
 prompt = ChatPromptTemplate.from_messages([
   ("system", "You are a helpful AI."),
@@ -140,6 +117,140 @@ await chain.invoke(
   ]}
   groupId="client-language"
 />
+
+### How do I add tags to runs?
+
+The `LangChainTracer` supports adding tags to any run trace. These tags are visible in the UI and through the API and can be used to filter and analyze runs. You can tag a single object's runs by adding them when the object is initialized, or you can tag all nested runs by passing them to the object's function call. The following code snippet shows how to do both, assuming you've set the appropriate environment variables to log traces.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.prompts import PromptTemplate\n
+llm = ChatOpenAI(temperature=0, tags=["my-llm-tag"])
+prompt = PromptTemplate.from_template("Say {input}")
+chain = (prompt | llm).with_config({"tags": ["my-bash-tag", "another-tag"]})\n
+chain.invoke({"input": "Hello, World!"}, {"tags": ["shared-tags"]})`),
+    TypeScriptBlock(`import { PromptTemplate } from "langchain/prompts";
+import { ChatOpenAI } from "langchain/chat_models/openai";\n
+const llm = new ChatOpenAI({ temperature: 0, tags: ["my-llm-tag"] });
+const prompt = PromptTemplate.fromTemplate("Say {input}");
+const chain = prompt.pipe(llm).withConfig( { tags: ["my-bash-tag", "another-tag"] });\n
+await chain.invoke({ input: "Hello, World!"}, { tags: ["shared-tags"] });
+`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I group runs from multi-turn interactions?
+
+With chat bots, copilots, and other common LLM design patterns, users frequently interact with your model over multiple interactions. Each invocation of your model is logged as a separate trace, but you can group these traces together using metadata (see [how to add metadata to a run](#how-do-i-add-metadata-to-runs) above for more information). Below is a minimal example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_openai import ChatOpenAI\n
+chain = (
+    ChatPromptTemplate.from_messages(
+        [
+            ("system", "You are a helpful AI."),
+            MessagesPlaceholder(variable_name="chat_history"),
+            ("user", "{message}"),
+        ]
+    )
+    | ChatOpenAI(model="gpt-3.5-turbo")
+    | StrOutputParser()
+)\n
+conversation_id = "101e8e66-9c68-4858-a1b4-3b0e3c51a933"\n
+chat_history = []
+message = HumanMessage(content="Hi there")
+response = ""
+for chunk in chain.stream(
+    {
+        "message": message,
+        "chat_history": chat_history,
+    },
+    # highlight-next-line
+    config={"metadata": {"conversation_id": conversation_id}},
+):
+    print(chunk, end="")
+    response += chunk
+print()
+chat_history.extend(
+    [
+        message,
+        AIMessage(content=response),
+    ]
+)\n
+# ... Next message comes in
+next_message = HumanMessage(content="I don't need much assistance, actually.")
+for chunk in chain.stream(
+    {
+        "message": next_message,
+        "chat_history": chat_history,
+    },
+    # highlight-next-line
+    config={"metadata": {"conversation_id": conversation_id}},
+):
+    print(chunk, end="")
+    response += chunk
+`),
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";\n
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful AI."],
+  ["user", "{message}"],
+]);
+const chain = prompt
+  .pipe(new ChatOpenAI({ model: "gpt-3.5-turbo" }))
+  .pipe(new StringOutputParser());\n
+const conversationId = "101e8e66-9c68-4858-a1b4-3b0e3c51a933";
+const chatHistory = [];
+const message = { content: "Hi there" };
+let response = "";
+for await (const chunk of await chain.stream(
+  {
+    message,
+  },
+  {
+    // highlight-next-line
+    metadata: { conversation_id: conversationId },
+  }
+)) {
+  process.stdout.write(chunk);
+  response += chunk;
+}
+console.log();
+chatHistory.push(message, { content: response });\n
+// ... Next message comes in
+const nextMessage = { content: "I don't need much assistance, actually." };
+for await (const chunk of await chain.stream(
+  {
+    message: nextMessage,
+  },
+  {
+    // highlight-next-line
+    metadata: { conversation_id: conversationId },
+  }
+)) {
+  process.stdout.write(chunk);
+  response += chunk;
+}`),
+  ]}
+  groupId="client-language"
+/>
+
+To view all the traces from that conversation in LangSmith, you can query the project using a metadata filter:
+
+```bash
+has(metadata, '{"conversation_id":"101e8e66-9c68-4858-a1b4-3b0e3c51a933"}')
+```
+
+This will return all traces with the specified conversation ID.
+
+![Conversation Traces](./static/conversation_search.png)
 
 ### How do I customize the name of a run?
 
@@ -214,8 +325,8 @@ Inject the experiment ID or testing variant(s) in as metadata values, then use t
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
 chat_model = ChatOpenAI()
 prompt = ChatPromptTemplate.from_messages([
   ("system", "You are a helpful AI."),
@@ -264,94 +375,6 @@ for await (const run of client.listRuns({
   groupId="client-language"
 />
 
-### How do I group runs from multi-turn interactions?
-
-Many application experiences involve multiple interactions outside a single call to an agent or chain.
-By default, these are saved as separate runs (though the memory and chat history is logged where appropriate).
-
-To group these runs together, we offer convenience methods in both Python and JS that save all runs
-within a defined context beneath a virtual parent run.
-
-:::note New in 0.0.293
-The ability to add inputs and call `on_chain_end()` in python is only available in `langchain>=0.0.293`.
-:::
-
-<CodeTabs
-  tabs={[
-    PythonBlock(`from langchain.callbacks.manager import (
-    trace_as_chain_group,
-    atrace_as_chain_group,
-)\n
-with trace_as_chain_group("my_group_name", inputs={"input": "My Input"}) as group_manager:
-    """Pass the group_manager as a callback to group all runs
-    within this context"""\n
-    # ...
-    group_manager.on_chain_end({"output": "Final output"})
-# Or for async code
-async with atrace_as_chain_group("my_group_name", inputs={"input": "My Input"}) as async_group_manager:
-    """Async applications are better suited with the async callback manager"""
-    # ...
-    await async_group_manager.on_chain_end({"output": "Final output"})\n
-# Example usage:
-from langchain.chat_models.anthropic import ChatAnthropic
-from langchain.prompts import ChatPromptTemplate\n
-llm = ChatAnthropic()
-prompt = ChatPromptTemplate.from_messages(
-  [
-    ("system", "You are a helpful AI."),
-    ("human", "{question}")
-  ]
-)
-chain = prompt | llm\n
-question = "What is your name?"
-with trace_as_chain_group("my_group", inputs={"question": question}) as group_manager:
-    res1 = chain.invoke({"question": question}, config={"callbacks": group_manager})
-    res2 = chain.invoke({"question": "What is your quest?"}, config={"callbacks": group_manager})
-    group_manager.on_chain_end({"output": res2})`),
-    TypeScriptBlock(`import { CallbackManager, traceAsGroup, TraceGroup } from "langchain/callbacks";
-import { ChatOpenAI } from "langchain/chat_models/openai";
-import { PromptTemplate } from "langchain/prompts";\n
-// Initialize the Chain
-const llm = new ChatOpenAI({ temperature: 0.9 });
-const prompt = new PromptTemplate({
-  inputVariables: ["question"],
-  template: "What is the answer to {question}?",
-});
-const chain = prompt.pipe(llm);\n
-// You can group runs together using the traceAsGroup function
-const blockResult = await traceAsGroup(
-  { name: "my_group_name" },
-  async (manager: CallbackManager, questions: string[]) => {
-    await chain.invoke({ question: questions[0] }, { callbacks: manager });
-    await chain.invoke({ question: questions[1] }, { callbacks: manager });
-    const finalResult = await chain.invoke(
-      { question: questions[2] },
-      { callbacks: manager }
-    );
-    return finalResult;
-  },
-  ["What is your name?", "What is your quest?", "What is your favorite color?"]
-);
-console.log(blockResult);\n
-// Or you can manually control the start and end of the grouped run
-const traceGroup = new TraceGroup("my_group_name");
-const groupManager = await traceGroup.start();
-try {
-  await chain.invoke({ question: "What is your name?" }, { callbacks: groupManager });
-  await chain.invoke({ question: "What is your quest?" }, { callbacks: groupManager });
-  await chain.invoke(
-    { question: "What is the airspeed velocity of an unladen swallow?" },
-    { callbacks: groupManager }
-  );
-} finally {
-  // Code goes here
-  await traceGroup.end();
-}
-`),
-  ]}
-  groupId="client-language"
-/>
-
 ### How do I get the run ID from a call?
 
 In Typescript, the run ID is returned in the call response under the `__run` key. In python, we recommend using the run collector callback.
@@ -390,7 +413,7 @@ Example:
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain.callbacks import LangChainTracer
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langsmith import Client\n
 callbacks = [
   LangChainTracer(
@@ -503,7 +526,7 @@ Below is an example:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.chat_models import ChatOpenAI
+    PythonBlock(`from langchain_openai import ChatOpenAI
 from langchain.callbacks.tracers.langchain import wait_for_all_tracers\n
 llm = ChatOpenAI()
 try:

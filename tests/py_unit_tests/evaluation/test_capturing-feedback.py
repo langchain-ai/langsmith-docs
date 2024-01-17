@@ -41,15 +41,3 @@ async def test_code_block_0():
       # ... User clicks a thumbs up button
       client.create_feedback(run_id, "thumbs_up", score=True)
     
-
-@pytest.mark.asyncio
-async def test_code_block_1():
-    dataset = client.create_dataset(
-      "Thumbs Up Runs",
-      description="Runs that received a thumbs up from the user",
-    )
-    for run in runs:
-        client.create_example_from_run(
-          run=run,
-          dataset_id=dataset.id,
-        )

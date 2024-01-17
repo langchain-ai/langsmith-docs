@@ -23,7 +23,7 @@ run_id = response["__run"].run_id
 print(run_id)`;
 
   const chatModelPythonBlock = `from langchain.chat_models import ChatAnthropic
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
  
  chat_model = ChatAnthropic()
  

@@ -24,7 +24,7 @@ As a motivating example, we will show how we can use a few examples from a chain
 First, we will need to install LangChain and GPT4All
 
 ```bash
-pip install -U langchain openai langsmith gpt4all
+pip install -U langchain langchain_openai langsmith gpt4all
 ```
 
 Then configure your environment:
@@ -90,24 +90,20 @@ We will use a gpt-4 powered LLMChain and the async helper `arun_on_dataset` to k
 
 
 ```python
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain
-from langchain.smith import arun_on_dataset
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import PromptTemplate
 
 llm = ChatOpenAI(model="gpt-4", temperature=0.0)
-
-# Use constructor function to initialize for each input
-def construct_chain():
-    return LLMChain.from_string(
-        llm,
-        template="Help out as best you can.\nQuestion: {input}\nResponse: ",
-    )
+prompt = PromptTemplate.from_template(
+    template="Help out as best you can.\nQuestion: {input}\nResponse: ",
+)
+chain = llm | prompt
 
 prototype_project_name = "History Prototype Test"
 
-prototype_results = await arun_on_dataset(
+prototype_results = client.run_on_dataset(
     dataset_name=shared_dataset_name,
-    llm_or_chain_factory=construct_chain,
+    llm_or_chain_factory=chain,
     client=client,
     verbose=True,
     project_name=prototype_project_name,
@@ -171,22 +167,18 @@ dev_dataset_name = "History Dev Set"
 dev_dataset = client.create_dataset(
     dataset_name=dev_dataset_name, description="Some history questions.",
 )
-for q in dev_questions:
-    client.create_example(inputs={"input": q}, dataset_id=dev_dataset.id)
+client.create_examples(inputs=[{"input": q} for q in dev_questions], dataset_id=dev_dataset.id)
 ```
 
 #### Define the chain to benchmark
 
 ```python
-from langchain.llms import GPT4All
+from langchain_community.llms import GPT4All
 
 gpt4all_model = GPT4All(model="orca-mini-3b.ggmlv3.q4_0.bin")
-# Pass in a constructor function to run the chain
-def construct_dev_chain():
-    return LLMChain.from_string(
-        gpt4all_model,
-        template="Help out as best you can.\nQuestion: {input}\nResponse: ",
-    )
+dev_chain = PromptTemplate.from_template(
+    template="Help out as best you can.\nQuestion: {input}\nResponse: ",
+) | gpt4all_model
 ```
 
 #### Run the chain
@@ -195,7 +187,6 @@ Run the chain on the dev dataset and inspect the results. Define some AI-assiste
 
 
 ```python
-from langchain.smith import run_on_dataset, RunEvalConfig
 
 # Define the criteria we will use to compare these results with the
 # later variants of the chain
@@ -206,9 +197,9 @@ evaluators = [
     })
 ]
 
-original_dev_res = run_on_dataset(
+original_dev_res = client.run_on_dataset(
     dataset_name=dev_dataset_name,
-    llm_or_chain_factory=construct_dev_chain,
+    llm_or_chain_factory=dev_chain,
     evaluation=RunEvalConfig(
         evaluators=[
             RunEvalConfig.Criteria("helpfulness"),
@@ -216,7 +207,6 @@ original_dev_res = run_on_dataset(
                 "completeness": "Is the submission complete, providing adequate depth in its answer?"
             })
         ]),
-    client=client,
     verbose=True,
     project_name="zero-shot chain test",
 )
@@ -249,7 +239,7 @@ We will accomplish this with a few-shot example selector. In the example below, 
 
 
 ```python
-from langchain.prompts import SemanticSimilarityExampleSelector
+from langchain_core.prompts import SemanticSimilarityExampleSelector
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -281,7 +271,7 @@ The overall flow looks something like:
 - The selected examples are inserted between the prefix and suffix to form the final prompt.
 
 ```python
-from langchain.prompts import FewShotPromptTemplate, PromptTemplate
+from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
 
 # Define how each selected example will be formatted
 # when inserted into the whole prompt
@@ -305,20 +295,14 @@ few_shot_prompt = FewShotPromptTemplate(
 Now we can run the chain again, this time using the few-shot prompt template. We will use the same evaluators as before to compare the results.
 
 ```python
-def construct_few_shot_chain():
-    return LLMChain(
-        llm=gpt4all_model,
-        prompt=few_shot_prompt,
-    )
-
-few_shot_dev_res = run_on_dataset(
+few_shot_chain = few_shot_prompt | gpt4all_model
+few_shot_dev_res = client.run_on_dataset(
     dataset_name=dev_dataset_name,
-    llm_or_chain_factory=construct_few_shot_chain,
+    llm_or_chain_factory=few_shot_chain,
     evaluation=RunEvalConfig(
         evaluators=evaluators,
     ),
     verbose=True,
-    client=client,
     project_name="few-shot chain test",
 )
 ```
