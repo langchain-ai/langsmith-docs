@@ -18,7 +18,7 @@ export const LangChainInstallationCodeTabs = () => (
         value: 'python',
         label: 'pip',
         language: 'bash',
-        content: `pip install -U langchain`,
+        content: `pip install -U langchain_openai`,
       },
       {
         value: 'typescript',
