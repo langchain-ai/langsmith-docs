@@ -170,8 +170,9 @@ for chunk in chain.stream(
     {
         "message": message,
         "chat_history": chat_history,
-        "conversation_id": conversation_id,
-    }
+    },
+    # highlight-next-line
+    config={"metadata": {"conversation_id": conversation_id}},
 ):
     print(chunk, end="")
     response += chunk
@@ -188,44 +189,55 @@ for chunk in chain.stream(
     {
         "message": next_message,
         "chat_history": chat_history,
-        "conversation_id": conversation_id,
-    }
+    },
+    # highlight-next-line
+    config={"metadata": {"conversation_id": conversation_id}},
 ):
     print(chunk, end="")
     response += chunk
 `),
-    TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
-import { ChatPromptTemplate } from "langchain/prompts";\n
-const chain = new ChatPromptTemplate({
-  messages: [
-    ["system", "You are a helpful AI."],
-    ["user", "{message}"],
-  ],
-}).pipe(new ChatOpenAI({ model: "gpt-3.5-turbo" }));\n
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";\n
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful AI."],
+  ["user", "{message}"],
+]);
+const chain = prompt
+  .pipe(new ChatOpenAI({ model: "gpt-3.5-turbo" }))
+  .pipe(new StringOutputParser());\n
 const conversationId = "101e8e66-9c68-4858-a1b4-3b0e3c51a933";
 const chatHistory = [];
 const message = { content: "Hi there" };
 let response = "";
-for await (const chunk of chain.stream({
-  message,
-  chatHistory,
-  conversationId,
-})) {
-  console.log(chunk);
+for await (const chunk of await chain.stream(
+  {
+    message,
+  },
+  {
+    // highlight-next-line
+    metadata: { conversation_id: conversationId },
+  }
+)) {
+  process.stdout.write(chunk);
   response += chunk;
 }
+console.log();
 chatHistory.push(message, { content: response });\n
 // ... Next message comes in
 const nextMessage = { content: "I don't need much assistance, actually." };
-for await (const chunk of chain.stream({
-  message: nextMessage,
-  chatHistory,
-  conversationId,
-})) {
-  console.log(chunk);
+for await (const chunk of await chain.stream(
+  {
+    message: nextMessage,
+  },
+  {
+    // highlight-next-line
+    metadata: { conversation_id: conversationId },
+  }
+)) {
+  process.stdout.write(chunk);
   response += chunk;
-}
-`),
+}`),
   ]}
   groupId="client-language"
 />
