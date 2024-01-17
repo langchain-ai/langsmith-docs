@@ -49,7 +49,7 @@ export const HubPullCodeTabs = ({}) => {
 prompt = hub.pull("efriis/my-first-prompt")
 
 # create a model to use it with
-from langchain_openai import ChatOpenAI
+from langchain.chat_models import ChatOpenAI
 model = ChatOpenAI()
 
 # use it in a runnable
@@ -96,7 +96,7 @@ console.log(result);`
 
 export const HubPushCodeTabs = ({}) => {
   const pyBlock = `from langchain import hub
-from langchain_core.prompts.chat import ChatPromptTemplate
+from langchain.prompts.chat import ChatPromptTemplate
 
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
 
