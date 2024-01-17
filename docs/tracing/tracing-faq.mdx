@@ -92,7 +92,7 @@ The `LangChainTracer` supports adding tags to any run trace. These tags are visi
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.chat_models import ChatOpenAI
+    PythonBlock(`from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate\n
 llm = ChatOpenAI(temperature=0, tags=["my-llm-tag"])
 prompt = PromptTemplate.from_template("Say {input}")
@@ -115,7 +115,7 @@ Similar to tags, LangSmith permits associating arbitrary key-value pairs as meta
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.chat_models import ChatOpenAI
+    PythonBlock(`from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate\n
 chat_model = ChatOpenAI()
 prompt = ChatPromptTemplate.from_messages([
@@ -136,6 +136,95 @@ await chain.invoke(
   { input: "What is the meaning of life?" },
   { metadata: { myKey: "My Value" } }
 );
+`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I group runs from multi-turn interactions?
+
+With chat bots, copilots, and other common LLM design patterns, users frequently interact with your model over multiple interactions. Each invocation of your model is logged as a separate trace, but you can group these traces together using metadata (see [how to add metadata to a run](#how-do-i-add-metadata-to-runs) above for more information). Below is a minimal example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_openai import ChatOpenAI\n
+chain = (
+    ChatPromptTemplate.from_messages(
+        [
+            ("system", "You are a helpful AI."),
+            MessagesPlaceholder(variable_name="chat_history"),
+            ("user", "{message}"),
+        ]
+    )
+    | ChatOpenAI(model="gpt-3.5-turbo")
+    | StrOutputParser()
+)\n
+conversation_id = "101e8e66-9c68-4858-a1b4-3b0e3c51a933"\n
+chat_history = []
+message = HumanMessage(content="Hi there")
+response = ""
+for chunk in chain.stream(
+    {
+        "message": message,
+        "chat_history": chat_history,
+        "conversation_id": conversation_id,
+    }
+):
+    print(chunk, end="")
+    response += chunk
+print()
+chat_history.extend(
+    [
+        message,
+        AIMessage(content=response),
+    ]
+)\n
+# ... Next message comes in
+next_message = HumanMessage(content="I don't need much assistance, actually.")
+for chunk in chain.stream(
+    {
+        "message": next_message,
+        "chat_history": chat_history,
+        "conversation_id": conversation_id,
+    }
+):
+    print(chunk, end="")
+    response += chunk
+`),
+    TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
+import { ChatPromptTemplate } from "langchain/prompts";\n
+const chain = new ChatPromptTemplate({
+  messages: [
+    ["system", "You are a helpful AI."],
+    ["user", "{message}"],
+  ],
+}).pipe(new ChatOpenAI({ model: "gpt-3.5-turbo" }));\n
+const conversationId = "101e8e66-9c68-4858-a1b4-3b0e3c51a933";
+const chatHistory = [];
+const message = { content: "Hi there" };
+let response = "";
+for await (const chunk of chain.stream({
+  message,
+  chatHistory,
+  conversationId,
+})) {
+  console.log(chunk);
+  response += chunk;
+}
+chatHistory.push(message, { content: response });\n
+// ... Next message comes in
+const nextMessage = { content: "I don't need much assistance, actually." };
+for await (const chunk of chain.stream({
+  message: nextMessage,
+  chatHistory,
+  conversationId,
+})) {
+  console.log(chunk);
+  response += chunk;
+}
 `),
   ]}
   groupId="client-language"
@@ -214,7 +303,7 @@ Inject the experiment ID or testing variant(s) in as metadata values, then use t
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.chat_models import ChatOpenAI
+    PythonBlock(`from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 chat_model = ChatOpenAI()
 prompt = ChatPromptTemplate.from_messages([
@@ -264,94 +353,6 @@ for await (const run of client.listRuns({
   groupId="client-language"
 />
 
-### How do I group runs from multi-turn interactions?
-
-Many application experiences involve multiple interactions outside a single call to an agent or chain.
-By default, these are saved as separate runs (though the memory and chat history is logged where appropriate).
-
-To group these runs together, we offer convenience methods in both Python and JS that save all runs
-within a defined context beneath a virtual parent run.
-
-:::note New in 0.0.293
-The ability to add inputs and call `on_chain_end()` in python is only available in `langchain>=0.0.293`.
-:::
-
-<CodeTabs
-  tabs={[
-    PythonBlock(`from langchain.callbacks.manager import (
-    trace_as_chain_group,
-    atrace_as_chain_group,
-)\n
-with trace_as_chain_group("my_group_name", inputs={"input": "My Input"}) as group_manager:
-    """Pass the group_manager as a callback to group all runs
-    within this context"""\n
-    # ...
-    group_manager.on_chain_end({"output": "Final output"})
-# Or for async code
-async with atrace_as_chain_group("my_group_name", inputs={"input": "My Input"}) as async_group_manager:
-    """Async applications are better suited with the async callback manager"""
-    # ...
-    await async_group_manager.on_chain_end({"output": "Final output"})\n
-# Example usage:
-from langchain.chat_models.anthropic import ChatAnthropic
-from langchain.prompts import ChatPromptTemplate\n
-llm = ChatAnthropic()
-prompt = ChatPromptTemplate.from_messages(
-  [
-    ("system", "You are a helpful AI."),
-    ("human", "{question}")
-  ]
-)
-chain = prompt | llm\n
-question = "What is your name?"
-with trace_as_chain_group("my_group", inputs={"question": question}) as group_manager:
-    res1 = chain.invoke({"question": question}, config={"callbacks": group_manager})
-    res2 = chain.invoke({"question": "What is your quest?"}, config={"callbacks": group_manager})
-    group_manager.on_chain_end({"output": res2})`),
-    TypeScriptBlock(`import { CallbackManager, traceAsGroup, TraceGroup } from "langchain/callbacks";
-import { ChatOpenAI } from "langchain/chat_models/openai";
-import { PromptTemplate } from "langchain/prompts";\n
-// Initialize the Chain
-const llm = new ChatOpenAI({ temperature: 0.9 });
-const prompt = new PromptTemplate({
-  inputVariables: ["question"],
-  template: "What is the answer to {question}?",
-});
-const chain = prompt.pipe(llm);\n
-// You can group runs together using the traceAsGroup function
-const blockResult = await traceAsGroup(
-  { name: "my_group_name" },
-  async (manager: CallbackManager, questions: string[]) => {
-    await chain.invoke({ question: questions[0] }, { callbacks: manager });
-    await chain.invoke({ question: questions[1] }, { callbacks: manager });
-    const finalResult = await chain.invoke(
-      { question: questions[2] },
-      { callbacks: manager }
-    );
-    return finalResult;
-  },
-  ["What is your name?", "What is your quest?", "What is your favorite color?"]
-);
-console.log(blockResult);\n
-// Or you can manually control the start and end of the grouped run
-const traceGroup = new TraceGroup("my_group_name");
-const groupManager = await traceGroup.start();
-try {
-  await chain.invoke({ question: "What is your name?" }, { callbacks: groupManager });
-  await chain.invoke({ question: "What is your quest?" }, { callbacks: groupManager });
-  await chain.invoke(
-    { question: "What is the airspeed velocity of an unladen swallow?" },
-    { callbacks: groupManager }
-  );
-} finally {
-  // Code goes here
-  await traceGroup.end();
-}
-`),
-  ]}
-  groupId="client-language"
-/>
-
 ### How do I get the run ID from a call?
 
 In Typescript, the run ID is returned in the call response under the `__run` key. In python, we recommend using the run collector callback.
@@ -390,7 +391,7 @@ Example:
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain.callbacks import LangChainTracer
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langsmith import Client\n
 callbacks = [
   LangChainTracer(
@@ -503,7 +504,7 @@ Below is an example:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.chat_models import ChatOpenAI
+    PythonBlock(`from langchain_openai import ChatOpenAI
 from langchain.callbacks.tracers.langchain import wait_for_all_tracers\n
 llm = ChatOpenAI()
 try:

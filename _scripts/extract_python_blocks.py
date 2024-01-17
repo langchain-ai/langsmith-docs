@@ -69,7 +69,7 @@ if __name__ == "__main__":
     files = [
         (
             "tracing/tracing-faq.mdx",
-            """from langchain.chat_models import ChatOpenAI
+            """from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate\n
 chain = ChatPromptTemplate.from_messages([("human", "{query}")]) | ChatOpenAI()
 """,

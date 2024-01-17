@@ -49,7 +49,7 @@ export const HubPullCodeTabs = ({}) => {
 prompt = hub.pull("efriis/my-first-prompt")
 
 # create a model to use it with
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 model = ChatOpenAI()
 
 # use it in a runnable
