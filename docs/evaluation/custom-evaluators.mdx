@@ -140,8 +140,7 @@ We will use an [LLMChain](https://api.python.langchain.com/en/latest/chains/lang
 ```python
 import re
 from typing import Any, Optional
-
-from langchain.chains import LLMChain
+from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain.evaluation import StringEvaluator
 
@@ -160,7 +159,7 @@ class RelevanceEvaluator(StringEvaluator):
         --------
         Reason step by step about why the score is appropriate, then print the score at the end. At the end, repeat that score alone on a new line."""
 
-        self.eval_chain = LLMChain.from_string(llm=llm, template=template)
+        self.eval_chain = PromptTemplate.from_template(template) | llm
 
     @property
     def requires_input(self) -> bool:
@@ -181,8 +180,8 @@ class RelevanceEvaluator(StringEvaluator):
         reference: Optional[str] = None,
         **kwargs: Any
     ) -> dict:
-        evaluator_result = self.eval_chain(
-            dict(input=input, prediction=prediction), **kwargs
+        evaluator_result = self.eval_chain.invoke(
+            {"input": input, "prediction": prediction}, kwargs
         )
         reasoning, score = evaluator_result["text"].split("\n", maxsplit=1)
         score = re.search(r"\d+", score).group(0)
