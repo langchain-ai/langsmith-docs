@@ -70,7 +70,7 @@ if __name__ == "__main__":
         (
             "tracing/tracing-faq.mdx",
             """from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate\n
+from langchain_core.prompts import ChatPromptTemplate\n
 chain = ChatPromptTemplate.from_messages([("human", "{query}")]) | ChatOpenAI()
 """,
         ),

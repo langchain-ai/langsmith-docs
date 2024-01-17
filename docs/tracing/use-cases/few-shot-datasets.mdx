@@ -249,7 +249,7 @@ We will accomplish this with a few-shot example selector. In the example below, 
 
 
 ```python
-from langchain.prompts import SemanticSimilarityExampleSelector
+from langchain_core.prompts import SemanticSimilarityExampleSelector
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -281,7 +281,7 @@ The overall flow looks something like:
 - The selected examples are inserted between the prefix and suffix to form the final prompt.
 
 ```python
-from langchain.prompts import FewShotPromptTemplate, PromptTemplate
+from langchain_core.prompts import FewShotPromptTemplate, PromptTemplate
 
 # Define how each selected example will be formatted
 # when inserted into the whole prompt

@@ -85,7 +85,7 @@ so that all inferences will be traced.
       label: "Runnable",
       language: "python",
       content: `from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnableMap, RunnablePassthrough\n
 # Since chains and agents can be stateful (they can have memory),
 # create a constructor to pass in to the run_on_dataset method.

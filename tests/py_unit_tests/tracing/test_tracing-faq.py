@@ -1,6 +1,6 @@
 import pytest
-from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
 
 chain = ChatPromptTemplate.from_messages([("human", "{query}")]) | ChatOpenAI()
 
@@ -21,8 +21,8 @@ async def test_code_block_1():
 
 @pytest.mark.asyncio
 async def test_code_block_2():
-    from langchain.chat_models import ChatOpenAI
-    from langchain.prompts import PromptTemplate
+    from langchain_openai import ChatOpenAI
+    from langchain_core.prompts import PromptTemplate
     
     llm = ChatOpenAI(temperature=0, tags=["my-llm-tag"])
     prompt = PromptTemplate.from_template("Say {input}")
@@ -32,8 +32,8 @@ async def test_code_block_2():
 
 @pytest.mark.asyncio
 async def test_code_block_3():
-    from langchain.chat_models import ChatOpenAI
-    from langchain.prompts import ChatPromptTemplate
+    from langchain_openai import ChatOpenAI
+    from langchain_core.prompts import ChatPromptTemplate
     
     chat_model = ChatOpenAI()
     prompt = ChatPromptTemplate.from_messages([
@@ -51,8 +51,8 @@ async def test_code_block_4():
 
 @pytest.mark.asyncio
 async def test_code_block_5():
-    from langchain.chat_models import ChatOpenAI
-    from langchain.prompts import ChatPromptTemplate
+    from langchain_openai import ChatOpenAI
+    from langchain_core.prompts import ChatPromptTemplate
     chat_model = ChatOpenAI()
     prompt = ChatPromptTemplate.from_messages([
       ("system", "You are a helpful AI."),
@@ -83,7 +83,7 @@ async def test_code_block_6():
     
     # Example usage:
     from langchain.chat_models.anthropic import ChatAnthropic
-    from langchain.prompts import ChatPromptTemplate
+    from langchain_core.prompts import ChatPromptTemplate
     
     llm = ChatAnthropic()
     prompt = ChatPromptTemplate.from_messages(
@@ -103,7 +103,7 @@ async def test_code_block_6():
 @pytest.mark.asyncio
 async def test_code_block_7():
     from langchain.callbacks import LangChainTracer
-    from langchain.chat_models import ChatOpenAI
+    from langchain_openai import ChatOpenAI
     from langsmith import Client
     
     callbacks = [
@@ -122,7 +122,7 @@ async def test_code_block_7():
 
 @pytest.mark.asyncio
 async def test_code_block_8():
-    from langchain.chat_models import ChatOpenAI
+    from langchain_openai import ChatOpenAI
     from langchain.callbacks.tracers.langchain import wait_for_all_tracers
     
     llm = ChatOpenAI()

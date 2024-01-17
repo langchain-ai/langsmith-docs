@@ -63,7 +63,7 @@ Below is an example using an Anthropic model to run the evaluator, and a custom 
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain.chat_models import ChatAnthropic
-from langchain.prompts.prompt import PromptTemplate\n
+from langchain_core.prompts.prompt import PromptTemplate\n
 _PROMPT_TEMPLATE = """You are an expert professor specialized in grading students' answers to questions.
 You are grading the following question:
 {query}

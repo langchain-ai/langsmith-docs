@@ -24,7 +24,7 @@ The following are some frequently asked questions about logging runs to LangSmit
 
 ### What is a Run?
 
-A 'Run' represents a single unit of work or operation within your LLM application. This could be anything from single call to an LLM or chain, to a prompt formatting call, to a runnable lambda invocation. If you are familiar with Open Telemetry, this corresponds loosely to a [span](https://opentelemetry.io/docs/concepts/signals/traces/#spans).
+A 'Run' is a span representing a single unit of work or operation within your LLM application. This could be anything from single call to an LLM or chain, to a prompt formatting call, to a runnable lambda invocation. If you are familiar with Open Telemetry, a single run is analogous to a [span](https://opentelemetry.io/docs/concepts/signals/traces/#spans).
 
 A 'Trace' is a collection of runs organized in a tree or graph. The 'Root Run' is the top level run in a trace. It is the run that is directly invoked by the user or application. The root run is assigned an execution_order=1. The execution order of a run is the order in which it was called in the trace, if viewed as a sequence.
 
@@ -32,7 +32,7 @@ Each run contains a unique ID, run_type, name, run_type, inputs, start times, an
 
 The run_type indicates the kind of operation that was performed. Some common ones include "llm", "chain", "retriever", and "tool".
 
-### How do I group traces into a project?
+### How do I organize traces within a project?
 
 All runs are logged to a project. If left unspecified, the tracer project is set to `default`.
 You can set the `LANGCHAIN_PROJECT` environment variable to configure a custom project name for an entire application
@@ -80,34 +80,11 @@ await chain.invoke(
 The Python tracer also has a context manager you can use to set the project for anything within the context:
 
 ```python
-from langchain.callbacks import tracing_v2_enabled
+from langchain_core.tracers.context import tracing_v2_enabled
 
 with tracing_v2_enabled(project_name="My Project"):
     chain.invoke({"query": "How many people live in canada as of 2023?"})
 ```
-
-### How do I add tags to runs?
-
-The `LangChainTracer` supports adding tags to any run trace. These tags are visible in the UI and through the API and can be used to filter and analyze runs. You can tag a single object's runs by adding them when the object is initialized, or you can tag all nested runs by passing them to the object's function call. The following code snippet shows how to do both, assuming you've set the appropriate environment variables to log traces.
-
-<CodeTabs
-  tabs={[
-    PythonBlock(`from langchain_openai import ChatOpenAI
-from langchain.prompts import PromptTemplate\n
-llm = ChatOpenAI(temperature=0, tags=["my-llm-tag"])
-prompt = PromptTemplate.from_template("Say {input}")
-chain = (prompt | llm).with_config({"tags": ["my-bash-tag", "another-tag"]})\n
-chain.invoke({"input": "Hello, World!"}, {"tags": ["shared-tags"]})`),
-    TypeScriptBlock(`import { PromptTemplate } from "langchain/prompts";
-import { ChatOpenAI } from "langchain/chat_models/openai";\n
-const llm = new ChatOpenAI({ temperature: 0, tags: ["my-llm-tag"] });
-const prompt = PromptTemplate.fromTemplate("Say {input}");
-const chain = prompt.pipe(llm).withConfig( { tags: ["my-bash-tag", "another-tag"] });\n
-await chain.invoke({ input: "Hello, World!"}, { tags: ["shared-tags"] });
-`),
-  ]}
-  groupId="client-language"
-/>
 
 ### How do I add metadata to runs?
 
@@ -116,7 +93,7 @@ Similar to tags, LangSmith permits associating arbitrary key-value pairs as meta
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate\n
+from langchain_core.prompts import ChatPromptTemplate\n
 chat_model = ChatOpenAI()
 prompt = ChatPromptTemplate.from_messages([
   ("system", "You are a helpful AI."),
@@ -136,6 +113,29 @@ await chain.invoke(
   { input: "What is the meaning of life?" },
   { metadata: { myKey: "My Value" } }
 );
+`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I add tags to runs?
+
+The `LangChainTracer` supports adding tags to any run trace. These tags are visible in the UI and through the API and can be used to filter and analyze runs. You can tag a single object's runs by adding them when the object is initialized, or you can tag all nested runs by passing them to the object's function call. The following code snippet shows how to do both, assuming you've set the appropriate environment variables to log traces.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.prompts import PromptTemplate\n
+llm = ChatOpenAI(temperature=0, tags=["my-llm-tag"])
+prompt = PromptTemplate.from_template("Say {input}")
+chain = (prompt | llm).with_config({"tags": ["my-bash-tag", "another-tag"]})\n
+chain.invoke({"input": "Hello, World!"}, {"tags": ["shared-tags"]})`),
+    TypeScriptBlock(`import { PromptTemplate } from "langchain/prompts";
+import { ChatOpenAI } from "langchain/chat_models/openai";\n
+const llm = new ChatOpenAI({ temperature: 0, tags: ["my-llm-tag"] });
+const prompt = PromptTemplate.fromTemplate("Say {input}");
+const chain = prompt.pipe(llm).withConfig( { tags: ["my-bash-tag", "another-tag"] });\n
+await chain.invoke({ input: "Hello, World!"}, { tags: ["shared-tags"] });
 `),
   ]}
   groupId="client-language"
@@ -230,6 +230,16 @@ for await (const chunk of chain.stream({
   groupId="client-language"
 />
 
+To view all the traces from that conversation in LangSmith, you can query the project using a metadata filter:
+
+```bash
+has(metadata, '{"conversation_id":"101e8e66-9c68-4858-a1b4-3b0e3c51a933"}')
+```
+
+This will return all traces with the specified conversation ID.
+
+![Conversation Traces](./static/conversation_search.png)
+
 ### How do I customize the name of a run?
 
 When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
@@ -304,7 +314,7 @@ Inject the experiment ID or testing variant(s) in as metadata values, then use t
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 chat_model = ChatOpenAI()
 prompt = ChatPromptTemplate.from_messages([
   ("system", "You are a helpful AI."),

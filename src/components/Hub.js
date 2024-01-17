@@ -96,7 +96,7 @@ console.log(result);`
 
 export const HubPushCodeTabs = ({}) => {
   const pyBlock = `from langchain import hub
-from langchain.prompts.chat import ChatPromptTemplate
+from langchain_core.prompts.chat import ChatPromptTemplate
 
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
 
