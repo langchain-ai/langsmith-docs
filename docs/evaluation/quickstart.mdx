@@ -17,8 +17,8 @@ import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallat
 
 In this walkthrough, you will evaluate a chain over a dataset of examples. To do so, you will:
 
-- Create a dataset of example inputs
-- Define an LLM, chain, or agent to evaluate
+- Create a dataset
+- Define the system to evaluate
 - Configure and run the evaluation
 - Review the resulting traces and evaluation feedback in LangSmith
 
@@ -26,10 +26,27 @@ In this walkthrough, you will evaluate a chain over a dataset of examples. To do
 
 This walkthrough assumes you have already installed LangChain and `openai` and configured your environment to connect to LangSmith.
 
-```bash
-pip install -U "langchain[openai]"
+<CodeTabs
+    tabs={[
+        {
+        value: "python",
+        label: "Python",
+        language: "bash",
+        content: `pip install -U "langchain langchain_openai"`,
+        },
+        {
+        value: "typescript",
+        label: "TypeScript",
+        language: "bash",
+        content: `yarn add langchain @langchain/openai`,
+        },
+    ]}
+    groupId="client-language"
+/>
 
-export LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
+Then configure your API key.
+
+```bash
 export LANGCHAIN_API_KEY=<your api key>
 ```
 
@@ -42,87 +59,142 @@ For more information on other ways to create and use datasets, check out the [da
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client\n
-example_inputs = [
-  "a rap battle between Atticus Finch and Cicero",
+# Inputs are provided to your model, so it know what to generate
+dataset_inputs = [
+  a rap battle between Atticus Finch and Cicero",
   "a rap battle between Barbie and Oppenheimer",
-  "a Pythonic rap battle between two swallows: one European and one African",
-  "a rap battle between Aubrey Plaza and Stephen Colbert",
+  # ... add more as desired
 ]\n
+# Outputs are provided to the evaluator, so it knows what to compare to
+# Outputs are optional but recommended.
+dataset_outputs = [
+    {"must_mention": ["lawyer", "justice"]},
+    {"must_mention": ["plastic", "nuclear"]},
+]
 client = Client()
 dataset_name = "Rap Battle Dataset"\n
 # Storing inputs in a dataset lets us
 # run chains and LLMs over a shared set of examples.
 dataset = client.create_dataset(
-    dataset_name=dataset_name, description="Rap battle prompts.",
+    dataset_name=dataset_name,
+    description="Rap battle prompts.",
 )
 client.create_examples(
     inputs=[{"question": q} for q in example_inputs],
-    outputs=None,
+    outputs=dataset_outputs,
     dataset_id=dataset.id,
 )`),
+  TypeScriptBlock(`import { Client } from "langsmith";\n
+// Inputs are provided to your model, so it know what to generate
+const datasetInputs = [
+    {question: "a rap battle between Atticus Finch and Cicero"},
+    {question: "a rap battle between Barbie and Oppenheimer"},
+    // ... add more as desired
+];\n
+// Outputs are provided to the evaluator, so it knows what to compare to
+// Outputs are optional but recommended.
+const datasetOutputs = [
+    { must_mention: ["lawyer", "justice"] },
+    { must_mention: ["plastic", "nuclear"] },
+];
+const client = new Client();
+const datasetName = "Rap Battle Dataset";\n
+// Storing inputs in a dataset lets us
+// run chains and LLMs over a shared set of examples.
+const dataset = await client.createDataset(datasetName, {
+  description: "Rap battle prompts.",
+});
+await client.createExamples({
+    inputs: datasetInputs,
+    outputs: datasetOutputs,
+    datasetId: dataset.id,
+});`),
   ]}
   groupId="client-language"
 />
 
-## 2. Define cognitive architecture to evaluate
+## 2. System to evaluate
 
-LangSmith can evaluate any [Runnable](https://python.langchain.com/docs/expression_language/interface) LangChain component or any custom function over this dataset.
+The `run_on_dataset` test runner can evaluate __any__ function. This includes any [Runnable](https://python.langchain.com/docs/expression_language/interface) LangChain component.
 
-If your cognitive architecture uses state, such as conversational memory, you can provide a constructor function that creates a new
-instance of your object for each example row in the dataset. If your cognitive architecture is stateless, you can directly pass the object or function in.
+If your system is stateful (for instance, if it has chat memory) you can instead provide a _constructor_ for your system that creates a new
+instance for each example record in the dataset. If your system is stateless, you can directly pass it in without worrying about any constructors.
 
-Custom functions that are not LangChain components will be automatically wrapped in a [RunnableLambda](https://api.python.langchain.com/en/latest/schema/langchain.schema.runnable.base.RunnableLambda.html)
-so that all inferences will be traced.
 
+<Tabs
+  groupId="client-language"
+  defaultValue="python"
+  values={[
+    {label: 'Python', value: 'python'},
+    {label: 'TypeScript', value: 'typescript'},
+  ]}>
+<TabItem value="python">
 <CodeTabs
-  tabs={[
+tabs={[
     {
-      value: "runnable",
-      label: "Runnable",
-      language: "python",
-      content: `from langchain.schema.runnable import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI\n
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-prompt = ChatPromptTemplate.from_messages([("human", "Spit some bars about {input}.")])
-chain = prompt | llm | StrOutputParser()`,
-    },
-    {
-      value: "chain",
-      label: "Chain or Agent",
-      language: "python",
-      content: `from langchain_openai import ChatOpenAI
-from langchain.chains import LLMChain\n
-# Since chains and agents can be stateful (they can have memory),
-# create a constructor to pass in to the run_on_dataset method.
-def create_chain():
-    llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-    return LLMChain.from_string(llm, "Spit some bars about {input}.")
-`,
-    },
-    {
-      value: "llm",
-      label: "LLM or Chat Model",
-      language: "python",
-      content: `from langchain_openai import ChatOpenAI\n
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-`,
-    },
-    {
-      value: "custom-function",
-      label: "Custom function",
-      language: "python",
-      content: `# You can also evaluate any arbitrary function over the dataset.
+    value: "custom-function",
+    label: "Custom function",
+    language: "python",
+    content: `# You evaluate any arbitrary function over the dataset.
 # The input to the function will be the inputs dictionary for each example.
 def predict_result(input_: dict) -> dict:
     return {"output": "Bar Bar Bar"}`,
     },
     {
-      value: "custom-class",
-      label: "Custom class",
-      language: "python",
-      content: `# If your predictor is stateful (e.g. it has memory),
+    value: "runnable",
+    label: "Runnable",
+    language: "python",
+    content: `from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI\n
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+prompt = ChatPromptTemplate.from_messages([("human", "Spit some bars about {question}.")])
+chain = prompt | llm | StrOutputParser()`,
+    },
+    {
+    value: "agent",
+    label: "Agent",
+    language: "python",
+    content: `from langchain.agents import AgentExecutor, create_openai_functions_agent
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.tools import tool
+from langchain_openai import ChatOpenAI\n
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "Spit some bars about the topic\\n\\n{agent_scratchpad}"),
+        ("user", "{question}"),
+    ]
+)\n
+@tool
+def get_encouragement(request: str) -> str:
+    """Get some encouragement."""
+    return "You can do it!"\n
+tools = [get_encouragement]
+llm = ChatOpenAI(model="gpt-3.5-turbo")\n
+# Since chains and agents can be stateful (they can have memory),
+# create a constructor to pass in to the run_on_dataset method.
+def create_agent():
+    agent = create_openai_functions_agent(
+        llm,
+        tools=[get_encouragement],
+        prompt=prompt,
+    )
+    return AgentExecutor(agent=agent, tools=tools)
+`,
+    },
+    {
+    value: "llm",
+    label: "LLM or Chat Model",
+    language: "python",
+    content: `from langchain_openai import ChatOpenAI\n
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+`,
+    },
+    {
+    value: "custom-class",
+    label: "Custom class",
+    language: "python",
+    content: `# If your predictor is stateful (e.g. it has memory),
 # You can create a new instance of the predictor for each row in the dataset.
 class MyPredictor:
     def __init__(self):
@@ -137,17 +209,99 @@ def create_object() -> MyPredictor:
     predictor = MyPredictor()
     # Return the function that will be called on the next row
     return predictor.predict\n
-      `,
+    `,
     },
-  ]}
-  groupId="evaluated-component"
+]}
+groupId="evaluated-component"
 />
+</TabItem>
+<TabItem value="typescript">
+<CodeTabs
+tabs={[
+    {
+        value: "custom-function",
+        label: "Custom function",
+        language: "typescript",
+        content: `// You evaluate any arbitrary function over the dataset.
+// The input to the function will be the inputs dictionary for each example.
+async function predictResult(input_: Record<string, any>): Record<string, any> {
+    return {output: "Bar Bar Bar"};
+}`,
+    },
+    {
+    value: "runnable",
+    label: "Runnable",
+    language: "typescript",
+    content: `import { StringOutputParser } from "@langchain/core/output_parsers";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI } from "@langchain/openai";\n
+const llm = new ChatOpenAI({ modelName: "gpt-3.5-turbo", temperature: 0 });
+const prompt = ChatPromptTemplate.fromMessages([
+  ["human", "Spit some bars about {question}."],
+]);
+// This is what we will evaluate
+const chain = prompt.pipe(llm).pipe(new StringOutputParser());`,
+    },
+    {
+    value: "agent",
+    label: "Agent",
+    language: "typescript",
+    content: `import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI } from "@langchain/openai";
+import { AgentExecutor, createOpenAIFunctionsAgent } from "langchain/agents";
+import { DynamicStructuredTool } from "@langchain/core/tools";\n
+import { z } from "zod";\n
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "Spit some bars about the topic\\n\\n{agent_scratchpad}"],
+  ["user", "{question}"]
+]);\n
+const getEncouragementTool = new DynamicStructuredTool({
+  name: "get_encouragement",
+  description: "Get some encouragement.",
+  schema: z.object({
+    request: z.string()
+  }),
+  func: async ({ request }) => {
+    return "You can do it!";
+  }
+});\n
+const tools = [getEncouragementTool];
+const llm = new ChatOpenAI({modelName: "gpt-3.5-turbo"});\n
+// Define a constructor function to create an agent
+async function createAgent() {
+  const agent = await createOpenAIFunctionsAgent({llm, tools, prompt});
+  return new AgentExecutor({agent, tools});
+}`,
+    },
+    {
+    value: "llm",
+    label: "LLM or Chat Model",
+    language: "typescript",
+    content: `import { ChatOpenAI } from "@langchain/openai";\n
+const llm = new ChatOpenAI({modelName: "gpt-3.5-turbo", temperature: 0});
+`,
+    },
+]}
+groupId="evaluated-component"
+/>
+</TabItem>
+</Tabs>
 
 ## 3. Evaluate
 
-LangChain provides a convenient [run_on_dataset](https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.runner_utils.run_on_dataset.html#langchain.smith.evaluation.runner_utils.run_on_dataset) and async [arun_on_dataset](https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.runner_utils.arun_on_dataset.html#langchain.smith.evaluation.runner_utils.arun_on_dataset) method to generate predictions (and traces) over a dataset. When a [RunEvalConfig](https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.config.RunEvalConfig.html#langchain.smith.evaluation.config.RunEvalConfig) is provided, the configured evalutors will be applied to the predictions as well to generate automated feedback.
 
-Below, configure evaluation for some custom criteria. The feedback will be automatically logged within LangSmith. Since the input examples we created above lack "ground truth" reference labels, we will only select reference-free "Criteria" evaluators.
+<Tabs
+    groupId="client-language"
+    defaultValue="python"
+    values={[
+        {label: 'Python', value: 'python'},
+        {label: 'TypeScript', value: 'typescript'},
+    ]}>
+<TabItem value="python">
+
+<p>LangChain provides a convenient <a href="https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.runner_utils.run_on_dataset.html#langchain.smith.evaluation.runner_utils.run_on_dataset">run_on_dataset</a> and async <a href="https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.runner_utils.arun_on_dataset.html#langchain.smith.evaluation.runner_utils.arun_on_dataset">arun_on_dataset</a> method to generate predictions (and traces) over a dataset. When a <a href="https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.config.RunEvalConfig.html#langchain.smith.evaluation.config.RunEvalConfig">RunEvalConfig</a> is provided, the configured evalutors will be applied to the predictions as well to generate automated feedback.</p>
+
+Below, configure evaluation for some custom criteria. The feedback will be automatically logged within LangSmith.
 
 For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
 For more information on how to write a custom evaluator, check out the [custom evaluators](custom-evaluators) guide.
@@ -155,17 +309,59 @@ For more information on how to write a custom evaluator, check out the [custom e
 <CodeTabs
   tabs={[
     {
+      value: "custom-function",
+      label: "Custom function",
+      language: "python",
+      content: `from langchain.smith import RunEvalConfig, run_on_dataset
+from langsmith.evaluation import EvaluationResult, run_evaluator\n
+@run_evaluator
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs.get("output") or ""
+    required = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in required)
+    return EvaluationResult(key="must_mention", score=score)\n
+eval_config = RunEvalConfig(
+    custom_evaluators=[must_mention],
+    # You can also use a prebuilt evaluator
+    # by providing a name or RunEvalConfig.<configured evaluator>
+    evaluators=[
+        # You can specify an evaluator by name/enum.
+        # In this case, the default criterion is "helpfulness"
+        "criteria",
+        # Or you can configure the evaluator
+        RunEvalConfig.Criteria("harmfulness"),
+        RunEvalConfig.Criteria(
+            {
+                "cliche": "Are the lyrics cliche?"
+                " Respond Y if they are, N if they're entirely unique."
+            }
+        ),
+    ],
+)
+client.run_on_dataset(
+    dataset_name=dataset_name,
+    llm_or_chain_factory=predict_result,
+    evaluation=eval_config,
+    verbose=True,
+    project_name="custom-function-test-1",
+    # Any experiment metadata can be specified here
+    project_metadata={"version": "1.0.0"},
+)`,   },
+    {
       value: "runnable",
       label: "Runnable",
       language: "python",
       content: `from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.evaluation import EvaluationResult, run_evaluator\n
 @run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = bool(run.outputs is not None and run.outputs["output"].strip())
-    return EvaluationResult(key="not_empty", score=score)\n\n
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs.get("output") or ""
+    required = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in required)
+    return EvaluationResult(key="must_mention", score=score)\n
+    
 eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
+    custom_evaluators=[must_mention],
     # You can also use a prebuilt evaluator
     # by providing a name or RunEvalConfig.<configured evaluator>
     evaluators=[
@@ -188,20 +384,24 @@ client.run_on_dataset(
     evaluation=eval_config,
     verbose=True,
     project_name="runnable-test-1",
+    # Any experiment metadata can be specified here
+    project_metadata={"version": "1.0.0"},
 )`,
     },
     {
-      value: "chain",
-      label: "Chain or Agent",
+      value: "agent",
+      label: "Agent",
       language: "python",
       content: `from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.evaluation import EvaluationResult, run_evaluator\n
 @run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = run.outputs is not None and run.outputs["text"].strip()
-    return EvaluationResult(key="not_empty", score=score)\n
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs.get("text") or ""
+    required = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in required)
+    return EvaluationResult(key="must_mention", score=score)\n
 eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
+    custom_evaluators=[must_mention],
     # You can also use a prebuilt evaluator
     # by providing a name or RunEvalConfig.<configured evaluator>
     evaluators=[
@@ -220,10 +420,12 @@ eval_config = RunEvalConfig(
 )
 client.run_on_dataset(
     dataset_name=dataset_name,
-    llm_or_chain_factory=create_chain,
+    llm_or_chain_factory=create_agent,
     evaluation=eval_config,
     verbose=True,
-    project_name="chain-test-1",
+    project_name="agent-test-1",
+    # Any experiment metadata can be specified here
+    project_metadata={"version": "1.0.0"},
 )`,
     },
     {
@@ -233,11 +435,13 @@ client.run_on_dataset(
       content: `from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.evaluation import EvaluationResult, run_evaluator\n
 @run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = run.outputs and run.outputs["generations"][0][0]["text"].strip()
-    return EvaluationResult(key="not_empty", score=score)\n
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs["generations"][0][0]["text"]
+    required = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in required)
+    return EvaluationResult(key="must_mention", score=score)\n
 eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
+    custom_evaluators=[must_mention],
     # You can also use a prebuilt evaluator
     # by providing a name or RunEvalConfig.<configured evaluator>
     evaluators=[
@@ -262,42 +466,6 @@ client.run_on_dataset(
     project_name="chatopenai-test-1",
 )`,
     },
-    {
-      value: "custom-function",
-      label: "Custom function",
-      language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset
-from langsmith.evaluation import EvaluationResult, run_evaluator\n
-@run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = bool(run.outputs and run.outputs["output"])
-    return EvaluationResult(key="not_empty", score=score)\n
-eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
-    # You can also use a prebuilt evaluator
-    # by providing a name or RunEvalConfig.<configured evaluator>
-    evaluators=[
-        # You can specify an evaluator by name/enum.
-        # In this case, the default criterion is "helpfulness"
-        "criteria",
-        # Or you can configure the evaluator
-        RunEvalConfig.Criteria("harmfulness"),
-        RunEvalConfig.Criteria(
-            {
-                "cliche": "Are the lyrics cliche?"
-                " Respond Y if they are, N if they're entirely unique."
-            }
-        ),
-    ],
-)
-client.run_on_dataset(
-    dataset_name=dataset_name,
-    llm_or_chain_factory=predict_result,
-    evaluation=eval_config,
-    verbose=True,
-    project_name="custom-function-test-1",
-)`,
-    },
  {
       value: "custom-class",
       label: "Custom class",
@@ -305,11 +473,13 @@ client.run_on_dataset(
       content: `from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.evaluation import EvaluationResult, run_evaluator\n
 @run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = run.outputs and run.outputs["output"]
-    return EvaluationResult(key="not_empty", score=score)\n
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs.get("output") or ""
+    must_mention = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in must_mention)
+    return EvaluationResult(key="must_mention", score=score)\n
 eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
+    custom_evaluators=[must_mention],
     # You can also use a prebuilt evaluator
     # by providing a name or RunEvalConfig.<configured evaluator>
     evaluators=[
@@ -338,6 +508,313 @@ client.run_on_dataset(
   ]}
   groupId="evaluated-component"
 />
+</TabItem>
+<TabItem value="typescript">
+<p>LangChain provides a convenient <a href="https://api.js.langchain.com/functions/langchain_smith.runOnDataset.html">runOnDataset</a> function to trace and evaluate your system over a dataset. When a <a href="https://api.js.langchain.com/types/langchain_smith.RunEvalConfig.html">RunEvalConfig</a> is provided, the configured evalutors will be applied to the predictions as well to generate automated feedback.</p>
+
+Below, configure evaluation for some custom criteria. The feedback will be automatically logged within LangSmith.
+
+For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
+For more information on how to write a custom evaluator, check out the [custom evaluators](custom-evaluators) guide.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "custom-function",
+      label: "Custom function",
+      language: "typescript",
+      content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
+import { Run, Example } from "langsmith";
+import { EvaluationResult } from "langsmith/evaluation";\n
+// You can define any custom evaluator as a function
+// The 'run' contains the system outputs (and other trace information).
+// The 'example' contains the dataset inputs and outputs.
+const mustMention = async ({
+  run,
+  example,
+}: {
+  run: Run;
+  example?: Example;
+}): Promise<EvaluationResult> => {
+  // Check whether the prediction contains the required phrases
+  const mustMention: string[] = example?.outputs?.must_contain ?? [];
+  // Assert that the prediction contains the required phrases
+  const score = mustMention.every((phrase) =>
+    run?.outputs?.output.includes(phrase)
+  );
+  return {
+    key: "must_mention",
+    score: score,
+  };
+};\n
+const formatEvaluatorInputs = function ({
+    rawInput, // dataset inputs
+    rawPrediction, // model outputs
+    rawReferenceOutput, // dataset outputs
+}) {
+    return {
+        input: rawInput.question,
+        prediction: rawPrediction?.output,
+        reference: \`Must mention: \${rawReferenceOutput?.must_mention ?? [].join(", ")}\`,
+    };
+};
+const evalConfig: RunEvalConfig = {
+  // Custom evaluators can be user-defined RunEvaluator's
+  customEvaluators: [mustMention],
+  // Prebuilt evaluators
+  evaluators: [
+    {
+      evaluatorType: "labeled_criteria",
+      criteria: "helpfulness",
+      feedbackKey: "helpfulness",
+      // The off-the-shelf evaluators need to know how to interpret the data
+      // in the dataset and the model output.
+      formatEvaluatorInputs
+    },
+    {
+      evaluatorType: "criteria",
+      criteria: {
+        cliche: "Are the lyrics cliche?"
+      },
+      feedbackKey: "is_cliche",
+      formatEvaluatorInputs
+    },
+  ],
+};\n
+await runOnDataset(predictResult, datasetName, {
+  evaluationConfig: evalConfig,
+  // You can manually specify a project name
+  // or let the system generate one for you
+  // projectName: "custom-function-test-1",
+  projectMetadata: {
+    // Experiment metadata can be specified here
+    version: "1.0.0",
+  },
+});`, 
+  },
+  {
+      value: "runnable",
+      label: "Runnable",
+      language: "typescript",
+      content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
+import { Run, Example } from "langsmith";
+import { EvaluationResult } from "langsmith/evaluation";\n
+// The 'run' contains the system outputs (and other trace information).
+// The 'example' contains the dataset inputs and outputs.
+const mustMention = async ({
+  run,
+  example,
+}: {
+  run: Run;
+  example?: Example;
+}): Promise<EvaluationResult> => {
+  // Check whether the prediction contains the required phrases
+  const mustMention: string[] = example?.outputs?.must_contain ?? [];
+  // Assert that the prediction contains the required phrases
+  const score = mustMention.every((phrase) =>
+    run?.outputs?.output.includes(phrase)
+  );
+  return {
+    key: "must_mention",
+    score: score,
+  };
+};\n
+const formatEvaluatorInputs = function ({
+    rawInput, // dataset inputs
+    rawPrediction, // model outputs
+    rawReferenceOutput, // dataset outputs
+}) {
+    return {
+        input: rawInput.question,
+        prediction: rawPrediction?.output,
+        reference: \`Must mention: \${rawReferenceOutput?.must_mention ?? [].join(", ")}\`,
+    };
+};
+const evalConfig: RunEvalConfig = {
+  // Custom evaluators can be user-defined RunEvaluator's
+  customEvaluators: [mustMention],
+  // Prebuilt evaluators
+  evaluators: [
+    {
+      evaluatorType: "labeled_criteria",
+      criteria: "helpfulness",
+      feedbackKey: "helpfulness",
+      // The off-the-shelf evaluators need to know how to interpret the data
+      // in the dataset and the model output.
+      formatEvaluatorInputs
+    },
+    {
+      evaluatorType: "criteria",
+      criteria: {
+        cliche: "Are the lyrics cliche?"
+      },
+      feedbackKey: "is_cliche",
+      formatEvaluatorInputs
+    },
+  ],
+};\n
+await runOnDataset(chain, datasetName, {
+  evaluationConfig: evalConfig,
+  // You can manually specify a project name
+  // or let the system generate one for you
+  projectName: "custom-runnable-test-1",
+  projectMetadata: {
+    // Experiment metadata can be specified here
+    version: "1.0.0",
+  },
+});`, 
+  },
+  {
+      value: "agent",
+      label: "Agent",
+      language: "typescript",
+      content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
+import { Run, Example } from "langsmith";
+import { EvaluationResult } from "langsmith/evaluation";\n
+// The 'run' contains the system outputs (and other trace information).
+// The 'example' contains the dataset inputs and outputs.
+const mustMention = async ({
+  run,
+  example,
+}: {
+  run: Run;
+  example?: Example;
+}): Promise<EvaluationResult> => {
+  // Check whether the prediction contains the required phrases
+  const mustMention: string[] = example?.outputs?.must_contain ?? [];
+  // Assert that the prediction contains the required phrases
+  const score = mustMention.every((phrase) =>
+    run?.outputs?.output.includes(phrase)
+  );
+  return {
+    key: "must_mention",
+    score: score,
+  };
+};\n
+const formatEvaluatorInputs = function ({
+    rawInput, // dataset inputs
+    rawPrediction, // model outputs
+    rawReferenceOutput, // dataset outputs
+}) {
+    return {
+        input: rawInput.question,
+        prediction: rawPrediction?.output,
+        reference: \`Must mention: \${rawReferenceOutput?.must_mention ?? [].join(", ")}\`,
+    };
+};
+const evalConfig: RunEvalConfig = {
+  // Custom evaluators can be user-defined RunEvaluator's
+  customEvaluators: [mustMention],
+  // Prebuilt evaluators
+  evaluators: [
+    {
+      evaluatorType: "labeled_criteria",
+      criteria: "helpfulness",
+      feedbackKey: "helpfulness",
+      // The off-the-shelf evaluators need to know how to interpret the data
+      // in the dataset and the model output.
+      formatEvaluatorInputs
+    },
+    {
+      evaluatorType: "criteria",
+      criteria: {
+        cliche: "Are the lyrics cliche?"
+      },
+      feedbackKey: "is_cliche",
+      formatEvaluatorInputs
+    },
+  ],
+};\n
+await runOnDataset(createAgent, datasetName, {
+  evaluationConfig: evalConfig,
+  // You can manually specify a project name
+  // or let the system generate one for you
+  projectName: "custom-agent-test-1",
+  projectMetadata: {
+    // Experiment metadata can be specified here
+    version: "1.0.0",
+  },
+});`, 
+  },
+  {
+      value: "llm",
+      label: "LLM or Chat Model",
+      language: "typescript",
+      content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
+import { Run, Example } from "langsmith";
+import { EvaluationResult } from "langsmith/evaluation";\n
+// You can define any custom evaluator as a function
+// The 'run' contains the system outputs (and other trace information).
+// The 'example' contains the dataset inputs and outputs.
+const mustMention = async ({
+  run,
+  example,
+}: {
+  run: Run;
+  example?: Example;
+}): Promise<EvaluationResult> => {
+  // Check whether the prediction contains the required phrases
+  const mustMention: string[] = example?.outputs?.must_contain ?? [];
+  // Assert that the prediction contains the required phrases
+  const score = mustMention.every((phrase) =>
+    run?.outputs?.output.includes(phrase)
+  );
+  return {
+    key: "must_mention",
+    score: score,
+  };
+};\n
+const formatEvaluatorInputs = function ({
+    rawInput, // dataset inputs
+    rawPrediction, // model outputs
+    rawReferenceOutput, // dataset outputs
+}) {
+    return {
+        input: rawInput.input,
+        prediction: rawPrediction?.output,
+        reference: \`Must mention: \${rawReferenceOutput?.must_mention ?? [].join(", ")}\`,
+    };
+};
+const evalConfig: RunEvalConfig = {
+  // Custom evaluators can be user-defined RunEvaluator's
+  customEvaluators: [mustMention],
+  // Prebuilt evaluators
+  evaluators: [
+    {
+      evaluatorType: "labeled_criteria",
+      criteria: "helpfulness",
+      feedbackKey: "helpfulness",
+      // The off-the-shelf evaluators need to know how to interpret the data
+      // in the dataset and the model output.
+      formatEvaluatorInputs
+    },
+    {
+      evaluatorType: "criteria",
+      criteria: {
+        cliche: "Are the lyrics cliche?"
+      },
+      feedbackKey: "is_cliche",
+      formatEvaluatorInputs
+    },
+  ],
+};\n
+await runOnDataset(llm, datasetName, {
+  evaluationConfig: evalConfig,
+  // You can manually specify a project name
+  // or let the system generate one for you
+  projectName: "chatopenai-test-1",
+  projectMetadata: {
+    // Experiment metadata can be specified here
+    version: "1.0.0",
+  },
+});`, 
+  },
+  ]}
+    groupId="evaluated-component"
+/>
+
+</TabItem>
+</Tabs>
 
 ## 4. Review Results
 
