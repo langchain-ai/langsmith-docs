@@ -315,11 +315,13 @@ For more information on how to write a custom evaluator, check out the [custom e
       content: `from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.evaluation import EvaluationResult, run_evaluator\n
 @run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = bool(run.outputs and run.outputs["output"])
-    return EvaluationResult(key="not_empty", score=score)\n
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs.get("output") or ""
+    required = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in required)
+    return EvaluationResult(key="must_mention", score=score)\n
 eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
+    custom_evaluators=[must_mention],
     # You can also use a prebuilt evaluator
     # by providing a name or RunEvalConfig.<configured evaluator>
     evaluators=[
@@ -342,6 +344,8 @@ client.run_on_dataset(
     evaluation=eval_config,
     verbose=True,
     project_name="custom-function-test-1",
+    # Any experiment metadata can be specified here
+    project_metadata={"version": "1.0.0"},
 )`,   },
     {
       value: "runnable",
@@ -350,11 +354,14 @@ client.run_on_dataset(
       content: `from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.evaluation import EvaluationResult, run_evaluator\n
 @run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = bool(run.outputs is not None and run.outputs["output"].strip())
-    return EvaluationResult(key="not_empty", score=score)\n\n
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs.get("output") or ""
+    required = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in required)
+    return EvaluationResult(key="must_mention", score=score)\n
+    
 eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
+    custom_evaluators=[must_mention],
     # You can also use a prebuilt evaluator
     # by providing a name or RunEvalConfig.<configured evaluator>
     evaluators=[
@@ -377,6 +384,8 @@ client.run_on_dataset(
     evaluation=eval_config,
     verbose=True,
     project_name="runnable-test-1",
+    # Any experiment metadata can be specified here
+    project_metadata={"version": "1.0.0"},
 )`,
     },
     {
@@ -386,11 +395,13 @@ client.run_on_dataset(
       content: `from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.evaluation import EvaluationResult, run_evaluator\n
 @run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = run.outputs is not None and run.outputs["text"].strip()
-    return EvaluationResult(key="not_empty", score=score)\n
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs.get("text") or ""
+    required = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in required)
+    return EvaluationResult(key="must_mention", score=score)\n
 eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
+    custom_evaluators=[must_mention],
     # You can also use a prebuilt evaluator
     # by providing a name or RunEvalConfig.<configured evaluator>
     evaluators=[
@@ -409,10 +420,12 @@ eval_config = RunEvalConfig(
 )
 client.run_on_dataset(
     dataset_name=dataset_name,
-    llm_or_chain_factory=create_chain,
+    llm_or_chain_factory=create_agent,
     evaluation=eval_config,
     verbose=True,
-    project_name="chain-test-1",
+    project_name="agent-test-1",
+    # Any experiment metadata can be specified here
+    project_metadata={"version": "1.0.0"},
 )`,
     },
     {
@@ -422,11 +435,13 @@ client.run_on_dataset(
       content: `from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.evaluation import EvaluationResult, run_evaluator\n
 @run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = run.outputs and run.outputs["generations"][0][0]["text"].strip()
-    return EvaluationResult(key="not_empty", score=score)\n
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs["generations"][0][0]["text"]
+    required = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in required)
+    return EvaluationResult(key="must_mention", score=score)\n
 eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
+    custom_evaluators=[must_mention],
     # You can also use a prebuilt evaluator
     # by providing a name or RunEvalConfig.<configured evaluator>
     evaluators=[
@@ -458,11 +473,13 @@ client.run_on_dataset(
       content: `from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith.evaluation import EvaluationResult, run_evaluator\n
 @run_evaluator
-def not_empty(run, example) -> EvaluationResult:
-    score = run.outputs and run.outputs["output"]
-    return EvaluationResult(key="not_empty", score=score)\n
+def must_mention(run, example) -> EvaluationResult:
+    prediction = run.outputs.get("output") or ""
+    must_mention = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in must_mention)
+    return EvaluationResult(key="must_mention", score=score)\n
 eval_config = RunEvalConfig(
-    custom_evaluators=[not_empty],
+    custom_evaluators=[must_mention],
     # You can also use a prebuilt evaluator
     # by providing a name or RunEvalConfig.<configured evaluator>
     evaluators=[
@@ -526,7 +543,7 @@ const mustMention = async ({
     run?.outputs?.output.includes(phrase)
   );
   return {
-    key: "not_empty",
+    key: "must_mention",
     score: score,
   };
 };\n
@@ -598,7 +615,7 @@ const mustMention = async ({
     run?.outputs?.output.includes(phrase)
   );
   return {
-    key: "not_empty",
+    key: "must_mention",
     score: score,
   };
 };\n
@@ -670,7 +687,7 @@ const mustMention = async ({
     run?.outputs?.output.includes(phrase)
   );
   return {
-    key: "not_empty",
+    key: "must_mention",
     score: score,
   };
 };\n
@@ -743,7 +760,7 @@ const mustMention = async ({
     run?.outputs?.output.includes(phrase)
   );
   return {
-    key: "not_empty",
+    key: "must_mention",
     score: score,
   };
 };\n
