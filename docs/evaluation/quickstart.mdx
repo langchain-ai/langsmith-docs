@@ -510,19 +510,6 @@ For more information on how to write a custom evaluator, check out the [custom e
 import { Run, Example } from "langsmith";
 import { EvaluationResult } from "langsmith/evaluation";\n
 // You can define any custom evaluator as a function
-const notEmpty = async ({
-  run,
-  example,
-}: {
-  run: Run;
-  example?: Example;
-}): Promise<EvaluationResult> => {
-  const score = Boolean(run.outputs && run.outputs.output);
-  return {
-    key: "not_empty",
-    score: score,
-  };
-};\n
 // The 'run' contains the system outputs (and other trace information).
 // The 'example' contains the dataset inputs and outputs.
 const mustMention = async ({
@@ -556,7 +543,7 @@ const formatEvaluatorInputs = function ({
 };
 const evalConfig: RunEvalConfig = {
   // Custom evaluators can be user-defined RunEvaluator's
-  customEvaluators: [notEmpty, mustMention],
+  customEvaluators: [mustMention],
   // Prebuilt evaluators
   evaluators: [
     {
@@ -595,20 +582,6 @@ await runOnDataset(predictResult, datasetName, {
       content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
 import { Run, Example } from "langsmith";
 import { EvaluationResult } from "langsmith/evaluation";\n
-// You can define any custom evaluator as a function
-const notEmpty = async ({
-  run,
-  example,
-}: {
-  run: Run;
-  example?: Example;
-}): Promise<EvaluationResult> => {
-  const score = Boolean(run.outputs && run.outputs.output);
-  return {
-    key: "not_empty",
-    score: score,
-  };
-};\n
 // The 'run' contains the system outputs (and other trace information).
 // The 'example' contains the dataset inputs and outputs.
 const mustMention = async ({
@@ -642,7 +615,7 @@ const formatEvaluatorInputs = function ({
 };
 const evalConfig: RunEvalConfig = {
   // Custom evaluators can be user-defined RunEvaluator's
-  customEvaluators: [notEmpty, mustMention],
+  customEvaluators: [mustMention],
   // Prebuilt evaluators
   evaluators: [
     {
@@ -681,20 +654,6 @@ await runOnDataset(chain, datasetName, {
       content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
 import { Run, Example } from "langsmith";
 import { EvaluationResult } from "langsmith/evaluation";\n
-// You can define any custom evaluator as a function
-const notEmpty = async ({
-  run,
-  example,
-}: {
-  run: Run;
-  example?: Example;
-}): Promise<EvaluationResult> => {
-  const score = Boolean(run.outputs && run.outputs.output);
-  return {
-    key: "not_empty",
-    score: score,
-  };
-};\n
 // The 'run' contains the system outputs (and other trace information).
 // The 'example' contains the dataset inputs and outputs.
 const mustMention = async ({
@@ -728,7 +687,7 @@ const formatEvaluatorInputs = function ({
 };
 const evalConfig: RunEvalConfig = {
   // Custom evaluators can be user-defined RunEvaluator's
-  customEvaluators: [notEmpty, mustMention],
+  customEvaluators: [mustMention],
   // Prebuilt evaluators
   evaluators: [
     {
@@ -768,19 +727,6 @@ await runOnDataset(createAgent, datasetName, {
 import { Run, Example } from "langsmith";
 import { EvaluationResult } from "langsmith/evaluation";\n
 // You can define any custom evaluator as a function
-const notEmpty = async ({
-  run,
-  example,
-}: {
-  run: Run;
-  example?: Example;
-}): Promise<EvaluationResult> => {
-  const score = Boolean(run.outputs && run.outputs.output);
-  return {
-    key: "not_empty",
-    score: score,
-  };
-};\n
 // The 'run' contains the system outputs (and other trace information).
 // The 'example' contains the dataset inputs and outputs.
 const mustMention = async ({
@@ -814,7 +760,7 @@ const formatEvaluatorInputs = function ({
 };
 const evalConfig: RunEvalConfig = {
   // Custom evaluators can be user-defined RunEvaluator's
-  customEvaluators: [notEmpty, mustMention],
+  customEvaluators: [mustMention],
   // Prebuilt evaluators
   evaluators: [
     {
