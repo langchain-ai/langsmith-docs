@@ -596,3 +596,23 @@ LANGCHAIN_HIDE_OUTPUTS=true
 
 This will block input or output data from being transmitted to the LangSmith API. The latency and sequence of operation types will still be visible, but all the
 inputs and outputs will be unavailable. Token count tracking is not available in this setting.
+
+
+### How do I delete traces in a project?
+
+You can delete a project, along with all its associated traces and other information, in the UI or by using the LangSmith client.
+
+Below is an example using the SDK:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+client = Client()
+client.delete_project(project_name="<project_name>")`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client();
+await client.deleteProject({projectName: "<project_name>"});
+`),
+  ]}
+  groupId="client-language"
+/>
