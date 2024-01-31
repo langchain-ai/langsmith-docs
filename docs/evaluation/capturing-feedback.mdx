@@ -100,16 +100,14 @@ chain = (
   | output_parser.StrOutputParser()
 ) 
 client = Client()
-def main():
-  with callbacks.collect_runs() as cb:
+with callbacks.collect_runs() as cb:
     for tok in chain.stream({"input": "Hi, I'm Clara"}):
-      print(tok, end="", flush=True)
-      run_id = cb.traced_runs[0].ids
-  # ... User copies the generated response
-  client.create_feedback(run_id, "did_copy", score=True)
-  # ... User clicks a thumbs up button
-  client.create_feedback(run_id, "thumbs_up", score=True)
-`),
+        print(tok, end="", flush=True)
+    run_id = cb.traced_runs[0].id
+# ... User copies the generated response
+client.create_feedback(run_id, "did_copy", score=True)
+# ... User clicks a thumbs up button
+client.create_feedback(run_id, "thumbs_up", score=True)`),
     TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
 import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";
