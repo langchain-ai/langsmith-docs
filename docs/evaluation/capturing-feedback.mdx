@@ -74,7 +74,7 @@ In addition to general production observability, user feedback is a key ingredie
 
 Assuming you've already set up tracing in the [LangSmith quick start](/#quick-start), you can add user feedback to a run by returning the run ID and and including that in the `create_feedback` call.
 
-To use the run ID for a given call, use the "RunCollectorCallbackHandler" (or use the `collect_runs()`. In python, you will have to specify `include_run_info=True` when calling your chain or LLM. Below is an example:
+To fetch the run ID for a given call, use the "RunCollectorCallbackHandler" (or use the `collect_runs()`). Below is an example:
 
 ```bash
 export LANGCHAIN_TRACING_V2=true
@@ -100,15 +100,21 @@ chain = (
   | output_parser.StrOutputParser()
 ) 
 client = Client()
-def main():
-  with callbacks.collect_runs() as cb:
+with callbacks.collect_runs() as cb:
     for tok in chain.stream({"input": "Hi, I'm Clara"}):
-      print(tok, end="", flush=True)
-      run_id = cb.traced_runs[0].ids
-  # ... User copies the generated response
-  client.create_feedback(run_id, "did_copy", score=True)
-  # ... User clicks a thumbs up button
-  client.create_feedback(run_id, "thumbs_up", score=True)
+        print(tok, end="", flush=True)
+    run_id = cb.traced_runs[0].id
+# ... User copies the generated response
+client.create_feedback(run_id, "did_copy", score=True)
+# ... User clicks a thumbs up button
+client.create_feedback(run_id, "thumbs_up", score=True)
+# You can also add the expected output and comments, for human-in-the-loop evaluation
+client.create_feedback(
+    run_id, 
+    "manual_review",
+    correction={"output": "Hello, Clara!"},
+    comment="The output should have been more concise and enthusiastic."
+)
 `),
     TypeScriptBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
 import { LLMChain } from "langchain/chains";
@@ -128,12 +134,23 @@ async function main() {
     await client.createFeedback(runId, "did_copy", { score: true });
     // ... User clicks a thumbs up button
     await client.createFeedback(runId, "thumbs_up", { score: true });
+    // You can also add the expected output and comments, for human-in-the-loop evaluation
+    await client.createFeedback(
+      runId, 
+      "manual_review", 
+      { 
+        correction: { output: "Hello, Clara!" },
+        coment: "The output should have been more concise and enthusiastic."
+      }
+    );
 }
-main();
+await main();
 `),
   ]}
   groupId="client-language"
 />
+
+This is also one way to perform human-in-the-loop evaluation.
 
 ### 2. Filter runs based on feedback
 
