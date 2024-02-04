@@ -104,37 +104,32 @@ llm.invoke("Hello, world!")`}
 };
 
 
-const TraceableQuickStart = PythonBlock(`import datetime
-from typing import Any\n
+const TraceableQuickStart = PythonBlock(`from typing import Any, Iterable\n
 import openai
-from openai.openai_object import OpenAIObject
-from langsmith.run_helpers import traceable\n\n
-@traceable(run_type="llm", name="openai.ChatCompletion.create")
-def my_chat_model(*args: Any, **kwargs: Any) -> OpenAIObject:
-    return openai.ChatCompletion.create(*args, **kwargs)\n\n
+from langsmith import traceable
+from langsmith.wrappers import wrap_openai\n
+# Optional: wrap the openai client to add tracing directly
+client = wrap_openai(openai.Client())\n\n
 @traceable(run_type="tool")
-def my_tool(tool_input: str) -> str:
-    return tool_input.upper()\n\n
-@traceable(run_type="chain")
-def my_chain(prompt: str) -> str:
+def my_tool() -> str:
+    return "In the meeting, we solved all world conflict."\n\n
+@traceable
+def my_chat_bot(prompt: str) -> Iterable[str]:
+    tool_response = my_tool()
     messages = [
         {
             "role": "system",
-            "content": "You are an AI Assistant. The time is "
-            + str(datetime.datetime.now()),
+            "content": f"You are an AI Assistant.\n\nTool response: {tool_response}",
         },
         {"role": "user", "content": prompt},
     ]
-    return my_chat_model(model="gpt-3.5-turbo", messages=messages)\n\n
-@traceable(run_type="chain")
-def my_chat_bot(text: str) -> str:
-    generated = my_chain(text)
-
-    if "meeting" in generated:
-        return my_tool(generated)
-    else:
-        return generated\n\n
-my_chat_bot("Summarize this morning's meetings.")
+    chunks = client.chat.completions.create(
+        model="gpt-3.5-turbo", messages=messages, stream=True
+    )
+    for chunk in chunks:
+        yield chunk.choices[0].delta.content\n\n
+for tok in my_chat_bot("Summarize this morning's meetings."):
+    print(tok, end="")
 # See an example run at: https://smith.langchain.com/public/3e853ad8-77ce-404d-ad4c-05726851ad0f/r`);
 
 export const TraceableQuickStartCodeBlock = ({}) => (
@@ -156,23 +151,23 @@ import datetime
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List\n
 import openai
-from openai.openai_object import OpenAIObject
-from langsmith.run_helpers import traceable
-from langsmith.run_trees import RunTree\n\n
-@traceable(run_type="llm")
-def my_llm(prompt: str, temperature: float = 0.0, **kwargs: Any) -> OpenAIObject:
+from langsmith.wrappers import wrap_openai
+from langsmith import traceable, RunTree\n\n
+# Optional: wrap the openai client to add tracing directly
+client = wrap_openai(openai.Client())\n
+def call_llm(prompt: str, temperature: float = 0.0, **kwargs: Any):
     """Call a completion model."""
-    return openai.Completion.create(
-        model="gpt-3.5-turbo-instruct", prompt=prompt, temperature=temperature, **kwargs
-    )\n\n
+    \n\n
 @traceable(run_type="chain")
 def llm_chain(user_input: str, **kwargs: Any) -> str:
     """Select the text from the openai call."""
-    return my_llm(prompt=user_input, **kwargs).choices[0].text\n\n
+    return client.completions.create(
+        model="gpt-3.5-turbo-instruct", prompt=user_input, temperature=1.0, **kwargs
+    ).choices[0].text\n\n
 @traceable(run_type="llm")
-def my_chat_model(messages: List[Dict], temperature: float = 0.0, **kwargs: Any) -> OpenAIObject:
+def my_chat_model(messages: List[Dict], temperature: float = 0.0, **kwargs: Any):
     """Call a chat model."""
-    return openai.ChatCompletion.create(
+    return client.chat.completions.create(
         model="gpt-3.5-turbo", messages=messages, temperature=temperature, **kwargs
     )\n\n
 @traceable(run_type="chain")
