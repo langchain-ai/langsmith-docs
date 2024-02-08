@@ -119,7 +119,7 @@ def my_chat_bot(prompt: str) -> Iterable[str]:
     messages = [
         {
             "role": "system",
-            "content": f"You are an AI Assistant.\n\nTool response: {tool_response}",
+            "content": f"You are an AI Assistant.\\n\\nTool response: {tool_response}",
         },
         {"role": "user", "content": prompt},
     ]
