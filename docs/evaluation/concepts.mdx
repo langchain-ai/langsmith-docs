@@ -1,0 +1,85 @@
+---
+sidebar_label: Concepts
+sidebar_position: 2
+---
+
+
+# Concepts
+
+In this guide we will go over some of the import concepts to know when evaluating your application.
+
+## Examples
+
+At the heart of evaluation lies an example.
+An example is a particular datapoint to evaluate a chain, agent, or model on.
+An example contains the inputs and (optionally) expected outputs for a given interaction.
+
+## Datasets
+
+Datasets are collections of examples.
+All examples in the dataset should follow the same schema.
+
+There are a few different types of datasets. Dataset types communicate common input and output schemas. For almost all use cases, the default "kv" dataset type is sufficient. The other two types, "llm" and "chat", can be useful to conveniently export datasets into known fine-tuning formats.
+
+
+### Key-value datasets
+
+Datasets with the data type "kv" are the default type. For these datasets, inputs and outputs can be arbitrary key-value pairs. These are useful when evaluating chains and agents that require multiple inputs or that return multiple outputs.
+
+The tradeoff with these datasets is that running evaluations on them can be a bit more involved. If there are multiple keys, you will have to manually specify the input_key, reference_key, (and possibly output_key) in the `RunEvalConfig`.
+
+### LLM datasets
+
+Datasets with the "llm" data type correspond to the string inpts and outputs from the "completion" style LLMS (string in, string out).
+
+The `"inputs"` dictionary contains a single `"input"` key mapped to a single prompt string. Similarly, the `"outputs"` dictionary contains a single `"output"` key mapped to a single response string.
+
+
+### Chat datasets
+
+Datasets with the "chat" data type correspond to messages and generations from LLMs that expect structured "chat" messages as inputs and outputs. Each example row
+expects an `"inputs"` dictionary containing a single `"input"` key mapped to a list of serialized chat messages. The `"outputs"` dictionary contains a single `"output"` key mapped to a single list of serialized chat messages.
+
+## `llm_or_chain_factory`
+
+In order to evaluate your application, you will want to pass a 
+
+The "system to evaluate" is the application or logic that you wish to evaluate.
+This could be a single LLM, a prompt + LLM, a complex chain, an agent, or anything really!
+In order to evaluate this system you will run examples through this system and observe the output.
+
+## Evaluators
+
+Evaluators are functions that help score how well your system did on a particular example.
+They take in two things:
+
+1. An example (containing inputs and optionally expected outputs)
+2. Observed output (gathered from running the inputs through the system to evaluate)
+
+An evaluator will then return an `EvaluationResult`.
+
+## EvaluationResult
+
+An `EvaluationResult` contains the result of an evaluator on a particular datapoint.
+This is made up of:
+
+- `key`: The name the metric being evaluated
+- `score`: The value of the metric on this example
+
+
+## RunEvalConfig
+
+The `RunEvalConfig` contains configuration for an evaluation run.
+Typically, this consists of the evaluators to use.
+
+## Project Name
+
+Each test run has a name - this is usually set via the `project_name`.
+Guidelines for naming your test run:
+
+- Make it understandable. It's nice to be able to quickly glance at a test run and understand what you are testing by name.
+- Make it unique. This will NEED to be unique.
+
+A common suggestion for a name is something like `Anthropic - xyz123`.
+This contains an understandable start to the name, but also a random uuid to make it unique.
+
