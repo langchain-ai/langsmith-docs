@@ -1,0 +1,101 @@
+---
+sidebar_label: Quick Start
+sidebar_position: 2
+table_of_contents: true
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+import {
+CodeTabs,
+PythonBlock,
+TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+import {
+TypeScriptSDKTracingCodeTabs,
+LangChainInstallationCodeTabs,
+LangChainQuickStartCodeTabs,
+ConfigureEnvironmentCodeTabs,
+RunTreeQuickStartCodeTabs,
+PythonSDKTracingCodeTabs
+} from "@site/src/components/QuickStart";
+import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
+
+# Tracing Quick Start
+
+You can get started with LangSmith tracing using either LangChain, the Python SDK, the TypeScript SDK, or the API. The following sections provide a quick start guide for each of these options.
+
+<Tabs
+    groupId="tracing-quick-start"
+    defaultValue="python-sdk"
+    values={[
+        {label: 'Python SDK', value: 'python-sdk'},
+        {label: 'TypeScript SDK', value: 'typescript-sdk'},
+        {label: 'API', value: 'api'},
+        {label: 'LangChain', value: 'langchain'},
+    ]}>
+    <TabItem value="langchain">
+    If you use LangChain, you can connect to LangSmith in a few steps:
+    <ol>
+        <li>Create a <a href="https://smith.langchain.com/"> LangSmith account</a> using one of the supported login methods.</li>
+        <li>Create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</li>
+        <li>Install <code>LangChain</code> (or its OpenAI partner package) for your target environment and programming language.</li>
+        <LangChainInstallationCodeTabs />
+        <li> Configure runtime environment:
+            <ol style={{marginTop:7}}>
+                <li>Replace <code>"&lt;your-api-key&gt;"</code> with the API key generated in step 1</li>
+                <li>Replace <code>"&lt;your-openai-api-key&gt;"</code> with an OpenAI API Key from <a href="https://platform.openai.com/account/api-keys">here</a></li>
+            </ol>
+        </li>
+        <ConfigureEnvironmentCodeTabs />
+        <li>Run the example code below.</li>
+        <LangChainQuickStartCodeTabs />
+    </ol>
+</TabItem>
+    <TabItem value="no-langchain">
+
+    If you don't want to use LangChain in your LLM application, you can get started with LangSmith in just a few steps:
+
+    <ol>
+        <li>Create a <a href="https://smith.langchain.com/"> LangSmith account</a> using one of the supported login methods.</li>
+        <li>Create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</li>
+        <li>Install the LangSmith SDK for your target environment.</li>
+        <ClientInstallationCodeTabs />
+        <li> Configure runtime environment:
+            <ol style={{marginTop:7}}>
+                <li>Replace <code>"&lt;your-api-key&gt;"</code> with the API key generated in step 1</li>
+                <li>Replace <code>"&lt;your-openai-api-key&gt;"</code> with an OpenAI API Key from <a href="https://platform.openai.com/account/api-keys">here</a></li>
+            </ol>
+        </li>
+        <ConfigureEnvironmentCodeTabs />
+        <li>Run the example code below. So long as the environment is correctly configured, all your LangChain code will be traced.</li>
+        <RunTreeQuickStartCodeTabs localhost={false}  />
+    </ol>
+</TabItem>
+    <TabItem value="python-sdk">
+    <h2>1. Install the LangSmith Library</h2>
+    <p>Start by installing the Python library.</p>
+    <pre><code>pip install langsmith</code></pre>
+    <h2>2. Create an API Key</h2>
+    <p>Next, create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
+    <h2>3. Log a Trace</h2>
+    <p>We provide multiple ways to log traces to LangSmith.</p>
+    <PythonSDKTracingCodeTabs />
+</TabItem>
+    <TabItem value="typescript-sdk">
+    <h2>1. Install the LangSmith Library</h2>
+    <p>Start by installing the TypeScript library.</p>
+    <pre><code>npm install langsmith</code></pre>
+    or
+    <pre><code>yarn add langsmith</code></pre>
+    <h2>2. Create an API Key</h2>
+    <p>Next, create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
+    <h2>3. Log a Trace</h2>
+    <p>We provide multiple ways to log traces to LangSmith.</p>
+    <TypeScriptSDKTracingCodeTabs />
+</TabItem>
+    <TabItem value="api">
+    test
+</TabItem>
+</Tabs>

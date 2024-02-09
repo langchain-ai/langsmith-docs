@@ -10,6 +10,174 @@ import React from 'react';
 import TabItem from "@theme/TabItem";
 import Tabs from "@theme/Tabs";
 
+export const TypeScriptSDKTracingCodeTabs = () => (
+    <Tabs
+        groupId="tracing-methods"
+        defaultValue="run-tree"
+        values={[
+            { label: 'Traceable Decorator', value: 'traceable-decorator' },
+            { label: 'Run Tree', value: 'run-tree' },
+            { label: 'OpenAI Client', value: 'openai-client' },
+        ]}>
+
+        <TabItem value="traceable-decorator">
+            <p>Log traces using the <code>traceable</code> decorator.</p>
+            <CodeBlock language="typescript">
+                {`import { RunTree, RunTreeConfig } from "langsmith";
+const parentRunConfig: RunTreeConfig = {
+    name: "My Chat Bot",
+    run_type: "chain",
+    inputs: {
+        text: "Summarize this morning's meetings.",
+    },
+    serialized: {}
+};
+const parentRun = new RunTree(parentRunConfig);
+const childLlmRun = await parentRun.createChild({
+    name: "My Proprietary LLM",
+    run_type: "llm",
+    inputs: {
+        prompts: [
+        "You are an AI Assistant. Summarize this morning's meetings.",
+        ],
+    },
+});
+await childLlmRun.end({
+outputs: {
+    generations: [
+    "Summary of the meeting...",
+    ],
+},
+});
+await parentRun.end({
+outputs: {
+    output: ["The meeting notes are as follows:..."],
+},
+});
+// False means post all nested runs as a batch
+// (don't exclude child runs)
+await parentRun.postRun(false);
+  `}
+            </CodeBlock>
+        </TabItem>
+
+        <TabItem value="run-tree">
+            <p>Build up a trace using the `RunTree` Abstraction</p>
+            <CodeBlock language="python">
+                {`from langsmith.run_trees import RunTree
+parent_run = RunTree(
+    name="My Chat Bot",
+    run_type="chain",
+    inputs={"text": "Summarize this morning's meetings."},
+    serialized={}
+)
+child_llm_run = parent_run.create_child(
+    name="My Proprietary LLM",
+    run_type="llm",
+    inputs={
+        "prompts": [
+            "You are an AI Assistant. Summarize this morning's meetings."
+        ]
+    },
+)
+child_llm_run.end(outputs={"generations": ["Summary of the meeting..."]})
+parent_run.end(outputs={"output": ["The meeting notes are as follows:..."]})
+res = parent_run.post(exclude_child_runs=False)
+res.result()`}
+            </CodeBlock>
+        </TabItem>
+
+        <TabItem value="openai-client">
+            <p>Wrap the OpenAI Python client:</p>
+            <CodeBlock language="python">
+                {`from langsmith.wrappers import wrap_openai
+client = wrap_openai(openai.Client())`}
+            </CodeBlock>
+        </TabItem>
+
+    </Tabs>
+);
+
+export const PythonSDKTracingCodeTabs = () => (
+    <Tabs
+        groupId="tracing-methods"
+        defaultValue="traceable-decorator"
+        values={[
+            { label: 'Traceable Decorator', value: 'traceable-decorator' },
+            { label: 'Run Tree', value: 'run-tree' },
+            { label: 'OpenAI Client', value: 'openai-client' },
+        ]}>
+
+        <TabItem value="traceable-decorator">
+            <p>Log traces using the <code>traceable</code> decorator.</p>
+            <CodeBlock language="python">
+                {`from typing import Any, Iterable
+import openai
+from langsmith import traceable
+from langsmith.wrappers import wrap_openai
+# Optional: wrap the openai client to add tracing directly
+client = wrap_openai(openai.Client())
+@traceable(run_type="tool")
+def my_tool() -> str:
+    return "In the meeting, we solved all world conflict."
+@traceable
+def my_chat_bot(prompt: str) -> Iterable[str]:
+    tool_response = my_tool()
+    messages = [
+        {
+            "role": "system",
+            "content": f"You are an AI Assistant.
+Tool response: {tool_response}",
+        },
+        {"role": "user", "content": prompt},
+    ]
+    chunks = client.chat.completions.create(
+        model="gpt-3.5-turbo", messages=messages, stream=True
+    )
+    for chunk in chunks:
+        yield chunk.choices[0].delta.content
+for tok in my_chat_bot("Summarize this morning's meetings."):
+    print(tok, end="")`}
+            </CodeBlock>
+        </TabItem>
+
+        <TabItem value="run-tree">
+            <p>Build up a trace using the <code>RunTree</code> Abstraction</p>
+            <CodeBlock language="python">
+                {`from langsmith.run_trees import RunTree
+parent_run = RunTree(
+    name="My Chat Bot",
+    run_type="chain",
+    inputs={"text": "Summarize this morning's meetings."},
+    serialized={}
+)
+child_llm_run = parent_run.create_child(
+    name="My Proprietary LLM",
+    run_type="llm",
+    inputs={
+        "prompts": [
+            "You are an AI Assistant. Summarize this morning's meetings."
+        ]
+    },
+)
+child_llm_run.end(outputs={"generations": ["Summary of the meeting..."]})
+parent_run.end(outputs={"output": ["The meeting notes are as follows:..."]})
+res = parent_run.post(exclude_child_runs=False)
+res.result()`}
+            </CodeBlock>
+        </TabItem>
+
+        <TabItem value="openai-client">
+            <p>Wrap the OpenAI Python client:</p>
+            <CodeBlock language="python">
+                {`from langsmith.wrappers import wrap_openai
+client = wrap_openai(openai.Client())`}
+            </CodeBlock>
+        </TabItem>
+
+    </Tabs>
+);
+
 export const LangChainInstallationCodeTabs = () => (
   <CodeTabs
     groupId="client-language"
