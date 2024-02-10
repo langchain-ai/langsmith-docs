@@ -29,24 +29,6 @@ You can get started with LangSmith tracing using either LangChain, the Python SD
         {label: 'API', value: 'api'},
         {label: 'LangChain', value: 'langchain'},
     ]}>
-    <TabItem value="no-langchain">
-    If you use LangChain, you can connect to LangSmith in a few steps:
-    <ol>
-        <li>Create a <a href="https://smith.langchain.com/"> LangSmith account</a> using one of the supported login methods.</li>
-        <li>Create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</li>
-        <li>Install <code>LangChain</code> (or its OpenAI partner package) for your target environment and programming language.</li>
-        <LangChainInstallationCodeTabs />
-        <li> Configure runtime environment:
-            <ol style={{marginTop:7}}>
-                <li>Replace <code>"&lt;your-api-key&gt;"</code> with the API key generated in step 1</li>
-                <li>Replace <code>"&lt;your-openai-api-key&gt;"</code> with an OpenAI API Key from <a href="https://platform.openai.com/account/api-keys">here</a></li>
-            </ol>
-        </li>
-        <ConfigureEnvironmentCodeTabs />
-        <li>Run the example code below.</li>
-        <LangChainQuickStartCodeTabs />
-    </ol>
-</TabItem>
     <TabItem value="langchain">
     <h2>1. Install or upgrade LangChain</h2>
     <LangChainInstallationCodeTabs />
