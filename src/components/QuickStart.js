@@ -56,6 +56,74 @@ await pipeline.postRun();`}
     </CodeBlock>
 );
 
+export const PythonAPITracingCodeBlock = () => (
+    <CodeBlock language="python">
+        {`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
+import openai
+import requests
+from datetime import datetime
+from uuid import uuid4
+
+def post_run(run_id, name, run_type, inputs, parent_id=None):
+    """Function to post a new run to the API."""
+    data = {
+        "id": run_id.hex,
+        "name": name,
+        "run_type": run_type,
+        "inputs": inputs,
+        "start_time": datetime.utcnow().isoformat(),
+    }
+    if parent_id:
+        data["parent_run_id"] = parent_id.hex
+    requests.post(
+        "https://api.smith.langchain.com/runs",
+        json=data,
+        headers=headers
+    )
+
+def patch_run(run_id, outputs):
+    """Function to patch a run with outputs."""
+    requests.patch(
+        f"https://api.smith.langchain.com/runs/{run_id}",
+        json={
+            "outputs": outputs,
+            "end_time": datetime.utcnow().isoformat(),
+        },
+        headers=headers,
+    )
+
+# Send your API Key in the request headers
+headers = {"x-api-key": "<YOUR API KEY>"}
+
+# This can be a user input to your app
+question = "Can you summarize this morning's meetings?"
+
+# This can be retrieved in a retrieval step
+context = "During this morning's meeting, we solved all world conflict."
+messages = [
+    {"role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context."},
+    {"role": "user", "content": f"Question: {question}\\nContext: {context}"}
+]
+
+# Create parent run
+parent_run_id = uuid4()
+post_run(parent_run_id, "Chat Pipeline", "chain", {"question": question})
+
+# Create child run
+child_run_id = uuid4()
+post_run(child_run_id, "OpenAI Call", "llm", {"messages": messages}, parent_run_id)
+
+# Generate a completion
+client = openai.Client()
+chat_completion = client.chat.completions.create(model="gpt-3.5-turbo", messages=messages)
+
+# End runs
+patch_run(child_run_id, chat_completion.dict())
+patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})`}
+    </CodeBlock>
+);
+
+
 export const PythonSDKTracingCodeBlock = () => (
     <CodeBlock language="python">
                 {`# To run the example below, ensure the environment variable OPENAI_API_KEY is set

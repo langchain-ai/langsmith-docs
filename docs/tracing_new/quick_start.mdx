@@ -11,8 +11,8 @@ TypeScriptSDKTracingCodeBlock,
 LangChainInstallationCodeTabs,
 LangChainQuickStartCodeTabs,
 ConfigureEnvironmentCodeTabs,
-RunTreeQuickStartCodeTabs,
-PythonSDKTracingCodeBlock
+PythonSDKTracingCodeBlock,
+PythonAPITracingCodeBlock
 } from "@site/src/components/QuickStart";
 import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
 
@@ -85,6 +85,12 @@ You can get started with LangSmith tracing using either LangChain, the Python SD
     <p>You can view all the traces you've logged by navigating to the appropriate Projects details page. View the full run tree for a trace by clicking on the trace's name.</p>
 </TabItem>
     <TabItem value="api">
-    test
+    <h2>1. Create an API Key</h2>
+    <p>Create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
+    <h2>2. Log a Trace</h2>
+    <p>Log a trace using the <a href="./api-reference">LangSmith API</a>.</p>
+    <p>Here, we'll show you to use the <code>requests</code> library in Python to log a trace, but you can use any HTTP client in any language.</p>
+    <PythonAPITracingCodeBlock />
+    <h2>3. View the Trace</h2>
 </TabItem>
 </Tabs>
