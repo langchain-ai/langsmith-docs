@@ -3,240 +3,49 @@ sidebar_label: Overview
 sidebar_position: 2
 ---
 
-# LangSmith Overview and User Guide
+# LangSmith Overview and Use Cases
 
-Building reliable LLM applications can be challenging. LangChain simplifies the initial setup, but there is still work needed to bring the performance of prompts, chains and agents up the level where they are reliable enough to be used in production.
+LangSmith is a platform for LLM application development, monitoring, and testing. In this guide, we’ll highlight the breadth of workflows LangSmith supports and how they fit into each stage of the application development lifecycle. We hope this will inform users how to best utilize this powerful platform or give them something to consider if they’re just starting their journey.
 
-Over the past two months, we at LangChain have been building and using LangSmith with the goal of bridging this gap. This is our tactical user guide to outline effective ways to use LangSmith and maximize its benefits.
+## Prototyping
+Prototyping LLM applications often involves quick experimentation between prompts, model types, retrieval strategy and other parameters.
+The ability to rapidly understand how the model is performing — and debug where it is failing — is incredibly important for this phase.
 
-## On by default
+### Debugging
+When developing new LLM applications, we suggest having LangSmith tracing enabled by default.
+Oftentimes, it isn’t necessary to look at every single trace. However, when things go wrong (an unexpected end result, infinite agent loop, slower than expected execution, higher than expected token usage), it’s extremely helpful to debug by looking through the application traces. LangSmith gives clear visibility and debugging information at each step of an LLM sequence, making it much easier to identify and root-cause issues.
+We provide native rendering of chat messages, functions, and retrieve documents.
 
-At LangChain, all of us have LangSmith’s tracing running in the background by default. On the Python side, this is achieved by setting environment variables, which we establish whenever we launch a virtual environment or open our bash shell and leave them set. The same principle applies to most JavaScript environments through `process.env`[^1].
+LangSmith also provides opening up portions of a trace in a playground environment for rapid iteration.
 
-The benefit here is that all calls to LLMs, chains, agents, tools, and retrievers are logged to LangSmith. Around 90% of the time we don’t even look at the traces, but the 10% of the time that we do… it’s so helpful. We can use LangSmith to debug:
+### Initial Test Set
+While many developers still ship an initial version of their application based on “vibe checks”, we’ve seen an increasing number of engineering teams start to adopt a more test driven approach. LangSmith allows developers to create datasets, which are collections of inputs and reference outputs, and use these to run tests on their LLM applications.
+These test cases can be uploaded in bulk, created on the fly, or exported from application traces. LangSmith also makes it easy to run custom evaluations (both LLM and heuristic based) to score test results.
 
-- An unexpected end result
-- Why an agent is looping
-- Why a chain was slower than expected
-- How many tokens an agent used
+### Comparison View
+When prototyping different versions of your applications and making changes, it’s important to see whether or not you’ve regressed with respect to your initial test cases.
+Oftentimes, changes in the prompt, retrieval strategy, or model choice can have huge implications in responses produced by your application.
+In order to get a sense for which variant is performing better, it’s useful to be able to view results for different configurations on the same datapoints side-by-side. We’ve invested heavily in a user-friendly comparison view for test runs to track and diagnose regressions in test scores across multiple revisions of your application.
 
-## Debugging
+### Playground
+TODO
 
-<>
-  <div style={{ position: "relative", paddingBottom: "50%", height: 0 }}>
-    <iframe
-      src="https://www.loom.com/embed/0b92322a2c544129ab0b116db4632d7f?sid=01cf3594-8523-4027-a233-da09e35c0797"
-      frameBorder={0}
-      webkitallowfullscreen=""
-      mozallowfullscreen=""
-      allowFullScreen=""
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-      }}
-    />
-  </div>
-  <br />
-</>
+## Beta Testing
+Beta testing allows developers to collect more data on how their LLM applications are performing in real-world scenarios. In this phase, it’s important to develop an understanding for the types of inputs the app is performing well or poorly on and how exactly it’s breaking down in those cases. Both feedback collection and run annotation are critical for this workflow. This will help in curation of test cases that can help track regressions/improvements and development of automatic evaluations.
 
-Debugging LLMs, chains, and agents can be tough. LangSmith helps solve the following pain points:
+### Collecting Feedback
+When launching your application to an initial set of users, it’s important to gather human feedback on the responses it’s producing. This helps draw attention to the most interesting runs and highlight edge cases that are causing problematic responses. LangSmith allows you to attach feedback scores to logged traces (oftentimes, this is hooked up to a feedback button in your app), then filter on traces that have a specific feedback tag and score. A common workflow is to filter on traces that receive a poor user feedback score, then drill down into problematic points using the detailed trace view.
 
-### What was the exact input to the LLM?
+### Annotating Traces
+LangSmith also supports sending runs to annotation queues, which allow annotators to closely inspect interesting traces and annotate them with respect to different criteria. Annotators can be PMs, engineers, or even subject matter experts. This allows users to catch regressions across important evaluation criteria.
 
-LLM calls are often tricky and non-deterministic. The inputs/outputs may seem straightforward, given they are technically `string` → `string` (or `chat messages` → `chat message`), but this can be misleading as the input string is usually constructed from a combination of user input and auxiliary functions.
+### Adding Runs to a Dataset
+As your application progresses through the beta testing phase, it's essential to continue collecting data to refine and improve its performance. LangSmith enables you to add runs as examples to datasets (from both the project page and within an annotation queue), expanding your test coverage on real-world scenarios. This is a key benefit in having your logging system and your evaluation/testing system in the same platform.
 
-Most inputs to an LLM call are a combination of some type of fixed template along with input variables. These input variables could come directly from user input or from an auxiliary function (like retrieval). By the time these input variables go into the LLM they will have been converted to a string format, but often times they are not naturally represented as a string (they could be a list, or a Document object). Therefore, it is important to have visibility into what _exactly_ the final string going into the LLM is. This has helped us debug bugs in formatting logic, unexpected transformations to user input, and straight up missing user input.
+## Production
+Closely inspecting key data points, growing benchmarking datasets, annotating traces, and drilling down into important data in trace view are workflows you’ll also want to do once your app hits production. However, especially at the production stage, it’s crucial to get a high-level overview of application performance with respect to latency, cost, and feedback scores. This ensures that it's delivering desirable results at scale.
 
-To a much lesser extent, this is also true of the output of an LLM. Oftentimes the output of an LLM is technically a string but that string may contain some structure (json, yaml) that is intended to be parsed into a structured representation. Understanding what the exact output is can help determine if there may be a need for different parsing.
+### Monitoring and A/B Testing
+LangSmith provides monitoring charts that allow you to track key metrics over time. You can expand to view metrics for a given period and drill down into a specific data point to get a trace table for that time period — this is especially handy for debugging production issues.
 
-LangSmith provides a straightforward visualization of the exact inputs/outputs to all LLM calls, so you can easily understand them.
-
-### If I edit the prompt, how does that affect the output?
-
-So you notice a bad output, and you go into LangSmith to see what's going on. You find the faulty LLM call and are now looking at the exact input. You want to try changing a word or a phrase to see what happens -- what do you do?
-
-We constantly ran into this issue. Initially, we copied the prompt to a playground of sorts. But this got annoying, so we built a playground of our own! When examining an LLM call, you can click the `Open in Playground` button to access this playground. Here, you can modify the prompt and re-run it to observe the resulting changes to the output - as many times as needed!
-
-Currently, this feature supports only OpenAI and Anthropic models and works for LLM and Chat Model calls. We plan to extend its functionality to more LLM types, chains, agents, and retrievers in the future.
-
-### What is the exact sequence of events?
-
-In complicated chains and agents, it can often be hard to understand what is going on under the hood. What calls are being made? In what order? What are the inputs and outputs of each call?
-
-LangSmith's built-in tracing feature offers a visualization to clarify these sequences. This tool is invaluable for understanding intricate and lengthy chains and agents. For chains, it can shed light on the sequence of calls and how they interact. For agents, where the sequence of calls is non-deterministic, it helps visualize the specific sequence for a given run -- something that is impossible to know ahead of time.
-
-### Why did my chain take much longer than expected?
-
-If a chain takes longer than expected, you need to identify the cause. By tracking the latency of each step, LangSmith lets you identify and possibly eliminate the slowest components.
-
-### How many tokens were used?
-
-Building and prototyping LLM applications can be expensive. LangSmith tracks the total token usage for a chain and the token usage of each step. This makes it easy to identify potentially costly parts of the chain.
-
-### Collaborative debugging
-
-In the past, sharing a faulty chain with a colleague for debugging was challenging when performed locally. With LangSmith, we've added a “Share” button that makes the chain and LLM runs accessible to anyone with the shared link.
-
-## Collecting examples
-
-<>
-  <div
-    style={{
-      position: "relative",
-      paddingBottom: "64.67065868263472%",
-      height: 0,
-    }}
-  >
-    <iframe
-      src="https://www.loom.com/embed/6e29c025ecb54cb583788bdd5d10aac8?sid=0696439b-bb47-41dc-a44f-6e6ddac0fb19"
-      frameBorder={0}
-      webkitallowfullscreen=""
-      mozallowfullscreen=""
-      allowFullScreen=""
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-      }}
-    />
-  </div>
-  <br />
-</>
-
-Most of the time we go to debug, it's because something bad or unexpected outcome has happened in our application. These failures are valuable data points! By identifying how our chain can fail and monitoring these failures, we can test future chain versions against these known issues.
-
-Why is this so impactful? When building LLM applications, it’s often common to start without a dataset of any kind. This is part of the power of LLMs! They are amazing zero-shot learners, making it possible to get started as easily as possible. But this can also be a curse -- as you adjust the prompt, you're wandering blind. You don’t have any examples to benchmark your changes against.
-
-LangSmith addresses this problem by including an “Add to Dataset” button for each run, making it easy to add the input/output examples a chosen dataset. You can edit the example before adding them to the dataset to include the expected result, which is particularly useful for bad examples.
-
-This feature is available at every step of a nested chain, enabling you to add examples for an end-to-end chain, an intermediary chain (such as a LLM Chain), or simply the LLM or Chat Model.
-
-End-to-end chain examples are excellent for testing the overall flow, while single, modular LLM Chain or LLM/Chat Model examples can be beneficial for testing the simplest and most directly modifiable components.
-
-## Testing & evaluation
-
-<>
-  <div
-    style={{
-      position: "relative",
-      paddingBottom: "64.67065868263472%",
-      height: 0,
-    }}
-  >
-    <iframe
-      src="https://www.loom.com/embed/2787b88a975044f2962cc26d49e459f0?sid=c92f5aac-40dd-4c07-b8db-cade56ff3a57"
-      frameBorder={0}
-      webkitallowfullscreen=""
-      mozallowfullscreen=""
-      allowFullScreen=""
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-      }}
-    />
-  </div>
-  <br />
-</>
-
-Initially, we do most of our evaluation manually and ad hoc. We pass in different
-inputs, and see what happens. At some point though, our application is performing
-well and we want to be more rigorous about testing changes. We can use a dataset
-that we’ve constructed along the way (see above). Alternatively, we could spend some
-time constructing a small dataset by hand. For these situations, LangSmith simplifies
-dataset uploading.
-
-Once we have a dataset, how can we use it to test changes to a prompt or chain? The most basic approach is to run the chain over the data points and visualize the outputs. Despite technological advancements, there still is no substitute for looking at outputs by eye. Currently, running the chain over the data points needs to be done client-side. The LangSmith client makes it easy to pull down a dataset and then run a chain over them, logging the results to a new project associated with the dataset. From there, you can review them. We've made it easy to assign feedback to runs and mark them as correct or incorrect directly in the web app, displaying aggregate statistics for each test project.
-
-We also make it easier to evaluate these runs. To that end, we've added a set of evaluators to the open-source LangChain library. These evaluators can be specified when initiating a test run and will evaluate the results once the test run completes. If we’re being honest, most of these evaluators aren't perfect. We would not recommend that you trust them blindly. However, we do think they are useful for guiding your eye to examples you should look at. This becomes especially valuable as the number of data points increases and it becomes infeasible to look at each one manually.
-
-## Human Evaluation
-
-<>
-  <div
-    style={{
-      position: "relative",
-      paddingBottom: "49.791666666666664%",
-      height: 0,
-    }}
-  >
-    <iframe
-      src="https://www.loom.com/embed/55b46f54c1e04cf4867b8a2d4aa334c3?sid=ed073f2b-ba0b-4381-9ba2-237066b06205"
-      frameBorder={0}
-      webkitallowfullscreen=""
-      mozallowfullscreen=""
-      allowFullScreen=""
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-      }}
-    />
-  </div>
-  <br />
-</>
-
-Automatic evaluation metrics are helpful for getting consistent and scalable information about model behavior;
-however, there is still no complete substitute for human review to get the utmost quality and reliability from your application.
-LangSmith makes it easy to manually review and annotate runs through **annotation queues**.
-
-These queues allow you to select any runs based on criteria like model type or automatic evaluation scores, and queue them up for human review. As a reviewer, you can then quickly step through the runs, viewing the input, output, and any existing tags before adding your own feedback.
-
-We often use this for a couple of reasons:
-
-- To assess subjective qualities that automatic evaluators struggle with, like creativity or humor
-
-- To sample and validate a subset of runs that were auto-evaluated, ensuring the automatic metrics are still reliable and capturing the right information
-
-All the annotations made using the queue are assigned as "feedback" to the source runs, so you can easily filter and analyze them later.
-You can also quickly edit examples and add them to datasets to expand the surface area of your evaluation sets or to fine-tune a model for improved quality or reduced costs.
-
-## Monitoring
-
-<>
-  <div
-    style={{
-      position: "relative",
-      paddingBottom: "57.50798722044729%",
-      height: 0
-    }}
-  >
-    <iframe
-      src="https://www.loom.com/embed/67e2c0f138684b81b80149cc73a691ef?sid=6bc2fdd8-b6b7-4bf4-8c96-dd92b85e1b66"
-      frameBorder={0}
-      webkitallowfullscreen=""
-      mozallowfullscreen=""
-      allowFullScreen=""
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%"
-      }}
-    />
-  </div>
-  <br />
-</>
-
-
-After all this, your app might finally ready to go in production. LangSmith can also be used to monitor your application in much the same way that you used for debugging. You can log all traces, visualize latency and token usage statistics, and troubleshoot specific issues as they arise. Each run can also be assigned string tags or key-value metadata, allowing you to attach correlation ids or AB test variants, and filter runs accordingly.
-
-We’ve also made it possible to associate feedback programmatically with runs. This means that if your application has a thumbs up/down button on it, you can use that to log feedback back to LangSmith. This can be used to track performance over time and pinpoint under performing data points, which you can subsequently add to a dataset for future testing — mirroring the debug mode approach.
-
-We’ve provided several examples in the LangSmith documentation for extracting insights from logged runs. In addition to guiding you on performing this task yourself, we also provide examples of integrating with third parties for this purpose. We're eager to expand this area in the coming months! If you have ideas for either -- an open-source way to evaluate, or are building a company that wants to do analytics over these runs, please reach out.
-
-## Exporting datasets
-
-LangSmith makes it easy to curate datasets. However, these aren’t just useful inside LangSmith; they can be exported for use in other contexts. Notable applications include exporting for use in [OpenAI Evals](https://github.com/openai/evals) or fine-tuning, such as with [FireworksAI](https://www.fireworks.ai/).
-
-[^1]: _To set up tracing in Deno, web browsers, or other runtime environments without access to the environment, check out the [FAQs](tracing/tracing-faq)._
+LangSmith also allows for tag and metadata grouping, which allows users to mark different versions of their applications with different identifiers and view how they are performing side-by-side within each chart. This is helpful for A/B testing changes in prompt, model, or retrieval strategy.
