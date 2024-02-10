@@ -1,0 +1,61 @@
+---
+sidebar_label: How to list examples from the client
+sidebar_position: 4
+---
+
+import {
+  CodeTabs,
+  ShellBlock,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to list examples from the client
+
+Once you have a dataset created, you may want to download the examples. You can fetch dataset examples using the `list_examples` method on the LangSmith client. Below are some common calls:
+
+
+### List all examples for a dataset
+
+You can filter by dataset ID:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`examples = client.list_examples(dataset_id="c9ace0d8-a82c-4b6c-13d2-83401d68e9ab")`),
+    TypeScriptBlock(`const examples = await client.listExamples({datasetId: "c9ace0d8-a82c-4b6c-13d2-83401d68e9ab"});`),
+  ]}
+  groupId="client-language"
+/>
+
+Or you can filter by dataset name (this must exactly match the dataset name you want to query)
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`examples = client.list_examples(dataset_name="My Test Dataset")`),
+    TypeScriptBlock(`const examples = await client.listExamples({datasetName: "My test Dataset"});`),
+  ]}
+  groupId="client-language"
+/>
+
+### List examples by id
+
+You can also list multiple examples all by ID.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`example_ids = [
+ '734fc6a0-c187-4266-9721-90b7a025751a',
+ 'd6b4c1b9-6160-4d63-9b61-b034c585074f',
+ '4d31df4e-f9c3-4a6e-8b6c-65701c2fed13',
+]
+examples = client.list_examples(example_ids=example_ids)`),
+    TypeScriptBlock(`
+const exampleIds = [
+  "734fc6a0-c187-4266-9721-90b7a025751a",
+  "d6b4c1b9-6160-4d63-9b61-b034c585074f",
+  "4d31df4e-f9c3-4a6e-8b6c-65701c2fed13",
+];
+const examples = await client.listExamples({exampleIds: exampleIds});`),
+  ]}
+  groupId="client-language"
+/>
