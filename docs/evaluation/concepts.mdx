@@ -42,11 +42,17 @@ expects an `"inputs"` dictionary containing a single `"input"` key mapped to a l
 
 ## `llm_or_chain_factory`
 
-In order to evaluate your application, you will want to pass a 
+In order to evaluate your application, you will want to pass a parameter `llm_or_chain_factory`.
+Despite the intimidating name, this is a relatively simple concept.
 
-The "system to evaluate" is the application or logic that you wish to evaluate.
+This just refers to the application or logic you wish to evaluate.
 This could be a single LLM, a prompt + LLM, a complex chain, an agent, or anything really!
+This can be built using LangChain or without LangChain.
 In order to evaluate this system you will run examples through this system and observe the output.
+
+The reason this is called a `factory` is that sometimes chains, agents, and application are stateful.
+When running over multiple datapoints, we want them to be stateless.
+Therefore, if your application is stateful you should pass in a "factory" which constructs the chain or agent.
 
 ## Evaluators
 

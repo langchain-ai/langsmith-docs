@@ -1,0 +1,933 @@
+---
+sidebar_label: How-To Guides
+sidebar_position: 3
+---
+
+import {
+  CodeTabs,
+  ShellBlock,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# How To Guides
+
+The following are some how-to guides for evaluation with LangSmith
+
+## Managing datasets in the web app
+
+The easiest way to interact with datasets is directly in the LangSmith app. Here, you can create and edit datasets and example rows. Below are a few ways to interact with them.
+
+### How do I create a dataset from existing runs?
+
+We typically construct datasets over time by collecting representative examples from debugging or other runs. To do this, we first filter the runs to find the ones we want to add to the dataset. Then, we create a dataset and add the runs as examples.
+
+You can do this from any 'run' details page by clicking the 'Add to Dataset' button in the top right-hand corner.
+
+![Add to Dataset](static/add_to_dataset.png)
+
+From there, we select the dataset to organize it in and update the ground truth output values if necessary.
+
+![Modify example](static/modify_example.png)
+
+
+### How do I create dataset by uploading a CSV?
+
+The easiest way to create a dataset from your own data is by clicking the 'upload a CSV dataset' button on the home page or in the top right-hand corner of the 'Datasets & Testing' page.
+
+![Upload CSV](static/create_dataset_csv.png)
+
+Select a name and description for the dataset, and then confirm that the inferred input and output columns are correct.
+
+![Confirm Columns](static/select_columns.png)
+
+### How do I export a dataset to another format?
+
+You can export your LangSmith dataset to CSV or OpenAI evals format directly from the web application.
+
+To do so, click "Export Dataset" from the homepage.
+To do so, select a dataset, click on "Examples", and then click the "Export Dataset" button at the top of the examples table.
+
+![Export Dataset Button](static/export-dataset-button.png)
+
+This will open a modal where you can select the format you want to export to.
+
+![Export Dataset Modal](static/export-dataset-modal.png)
+
+## Creating datasets using the client
+
+You can create a dataset from existing runs or upload a CSV file (or pandas dataframe in python).
+
+Once you have a dataset created, you can continue to add new runs to it as examples. We recommend that you organize datasets to target a single "task", usually served by a single chain or LLM. For more discussions on datasets and evaluations, check out the [recommendations](additional-resources/recommendations).
+
+### How do I create a dataset from list of values
+
+The most flexible way to make a dataset using the client is by creating examples from a list of inputs and optional outputs. Below is an example.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+example_inputs = [
+  ("What is the largest mammal?", "The blue whale"),
+  ("What do mammals and birds have in common?", "They are both warm-blooded"),
+  ("What are reptiles known for?", "Having scales"),
+  ("What's the main characteristic of amphibians?", "They live both in water and on land"),
+]\n
+client = Client()
+dataset_name = "Elementary Animal Questions"\n
+# Storing inputs in a dataset lets us
+# run chains and LLMs over a shared set of examples.
+dataset = client.create_dataset(
+    dataset_name=dataset_name, description="Questions and answers about animal phylogenetics.",
+)
+for input_prompt, output_answer in example_inputs:
+    client.create_example(
+        inputs={"question": input_prompt},
+        outputs={"answer": output_answer},
+        dataset_id=dataset.id,
+    )`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client({
+  // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
+  // apiKey: "my_api_key", // Defaults to the LANGCHAIN_API_KEY env var
+  /* callerOptions: {
+         maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
+         maxRetries?: 6; // Maximum number of retries to make
+  }*/
+});\n
+const exampleInputs: [string, string][] = [
+  ["What is the largest mammal?", "The blue whale"],
+  ["What do mammals and birds have in common?", "They are both warm-blooded"],
+  ["What are reptiles known for?", "Having scales"],
+  ["What's the main characteristic of amphibians?", "They live both in water and on land"],
+];\n
+const datasetName = "Elementary Animal Questions";\n
+// Storing inputs in a dataset lets us
+// run chains and LLMs over a shared set of examples.
+const dataset = await client.createDataset(datasetName, {
+  description: "Questions and answers about animal phylogenetics",
+});\n
+for (const [inputPrompt, outputAnswer] of exampleInputs) {
+  await client.createExample(
+    { question: inputPrompt },
+    { answer: outputAnswer },
+    {
+      datasetId: dataset.id,
+    }
+  );
+}`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I create a dataset from existing runs
+
+To create datasets from existing runs, you can use the same approach. Below is an example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
+client = Client()
+dataset_name = "Example Dataset"\n
+# Filter runs to add to the dataset
+runs = client.list_runs(
+    project_name="my_project",
+    execution_order=1,
+    error=False,
+)\n
+dataset = client.create_dataset(dataset_name, description="An example dataset")
+for run in runs:
+    client.create_example(
+        inputs=run.inputs,
+        outputs=run.outputs,
+        dataset_id=dataset.id,
+    )`),
+    TypeScriptBlock(`import { Client, Run } from "langsmith";
+const client = new Client({
+  // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
+  // apiKey: "my_api_key", // Defaults to the LANGCHAIN_API_KEY env var
+  /* callerOptions: {
+         maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
+         maxRetries?: 6; // Maximum number of retries to make
+  }*/
+});\n
+const datasetName = "Example Dataset";
+// Filter runs to add to the dataset
+const runs: Run[] = [];
+for await (const run of client.listRuns({
+  projectName: "my_project",
+  executionOrder: 1,
+  error: false,
+})) {
+  runs.push(run);
+}\n
+const dataset = await client.createDataset(datasetName, {
+  description: "An example dataset",
+  dataType: "kv",
+});\n
+for (const run of runs) {
+  await client.createExample(run.inputs, run.outputs ?? {}, {
+    datasetId: dataset.id,
+  });
+}
+`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I create a dataset from a CSV
+
+In this section, we will demonstrate how you can create a dataset by uploading a CSV file.
+
+First, ensure your CSV file is properly formatted with columns that represent your input and output keys. These keys will be utilized to map your data properly during the upload. You can specify an optional name and description for your dataset. Otherwise, the file name will be used as the dataset name and no description will be provided.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+import os\n
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"\n
+client = Client()\n
+csv_file = 'path/to/your/csvfile.csv'
+input_keys = ['column1', 'column2'] # replace with your input column names
+output_keys = ['output1', 'output2'] # replace with your output column names\n
+dataset = client.upload_csv(
+    csv_file=csv_file,
+    input_keys=input_keys,
+    output_keys=output_keys,
+    name="My CSV Dataset",
+    description="Dataset created from a CSV file"
+    data_type="kv"
+)`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client();\n
+const csvFile = 'path/to/your/csvfile.csv';
+const inputKeys = ['column1', 'column2']; // replace with your input column names
+const outputKeys = ['output1', 'output2']; // replace with your output column names\n
+const dataset = await client.uploadCsv({
+    csvFile: csvFile,
+    fileName: "My CSV Dataset",
+    inputKeys: inputKeys,
+    outputKeys: outputKeys,
+    description: "Dataset created from a CSV file",
+    dataType: "kv"
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I create a dataset from a pandas dataframe
+
+The python client offers an additional convenience method to upload a dataset from a pandas dataframe.
+
+```python
+from langsmith import Client
+import os
+import pandas as pd
+
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
+client = Client()
+
+df = pd.read_parquet('path/to/your/myfile.parquet')
+input_keys = ['column1', 'column2'] # replace with your input column names
+output_keys = ['output1', 'output2'] # replace with your output column names
+
+dataset = client.upload_dataframe(
+    df=df,
+    input_keys=input_keys,
+    output_keys=output_keys,
+    name="My Parquet Dataset",
+    description="Dataset created from a parquet file",
+    data_type="kv" # The default
+)
+```
+
+
+## Listing datasets from the client
+
+You can programmatically fetch the datasets from LangSmith using the `list_datasets` method in the client. Below are some common examples:
+
+### How do I query all datasets?
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets()`),
+    TypeScriptBlock(`const datasets = await client.listDatasets();`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I list datasets by name
+
+If you want to search by the exact name, you can do the following:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets(dataset_name="My Test Dataset 1")`),
+    TypeScriptBlock(`const datasets = await client.listDatasets({datasetName: "My Test Dataset 1"});`),
+  ]}
+  groupId="client-language"
+/>
+
+If you want do do a case-invariant substring search, try the following:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets(dataset_name_contains="some substring")`),
+    TypeScriptBlock(`const datasets = await client.listDatasets({datasetNameContains: "some substring"});`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I list datasets by type
+
+You can filter datasets by type. Below is an example querying for chat datasets.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets(data_type="chat")`),
+    TypeScriptBlock(`const datasets = await client.listDatasets({dataType: "chat"});`),
+  ]}
+  groupId="client-language"
+/>
+
+
+## Listing dataset examples from the client
+
+Once you have a dataset created, you may want to download the examples. You can fetch dataset examples using the `list_examples` method on the LangSmith client. Below are some common calls:
+
+
+### How do I list all examples for a dataset
+
+You can filter by dataset ID:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`examples = client.list_examples(dataset_id="c9ace0d8-a82c-4b6c-13d2-83401d68e9ab")`),
+    TypeScriptBlock(`const examples = await client.listExamples({datasetId: "c9ace0d8-a82c-4b6c-13d2-83401d68e9ab"});`),
+  ]}
+  groupId="client-language"
+/>
+
+Or you can filter by dataset name (this must exactly match the dataset name you want to query)
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`examples = client.list_examples(dataset_name="My Test Dataset")`),
+    TypeScriptBlock(`const examples = await client.listExamples({datasetName: "My test Dataset"});`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I list examples by id
+
+You can also list multiple examples all by ID.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`example_ids = [
+ '734fc6a0-c187-4266-9721-90b7a025751a',
+ 'd6b4c1b9-6160-4d63-9b61-b034c585074f',
+ '4d31df4e-f9c3-4a6e-8b6c-65701c2fed13',
+]
+examples = client.list_examples(example_ids=example_ids)`),
+    TypeScriptBlock(`
+const exampleIds = [
+  "734fc6a0-c187-4266-9721-90b7a025751a",
+  "d6b4c1b9-6160-4d63-9b61-b034c585074f",
+  "4d31df4e-f9c3-4a6e-8b6c-65701c2fed13",
+];
+const examples = await client.listExamples({exampleIds: exampleIds});`),
+  ]}
+  groupId="client-language"
+/>
+
+## Custom Evaluators
+
+### How do I create a `RunEvaluator` with `@run_evaluator`
+
+Run evaluators return a score and feedback (metric) key for a given run. You can define them however you see fit. Common types include:
+
+1. Heuristics: Checking for regex matches, presence/absence of certain words or code, etc.
+2. AI-assisted: Instruct an LLM to grade the output of a run based on the prediction reference answer.
+
+
+We will demonstrate some simple ones below.
+
+```python
+from langsmith.evaluation import EvaluationResult, run_evaluator
+from langsmith.schemas import Example, Run
+
+
+@run_evaluator
+def is_empty(run: Run, example: Example | None = None):
+    model_outputs = run.outputs["output"]
+    score = not model_outputs.strip()
+    return EvaluationResult(key="is_empty", score=score)
+```
+
+### How do I create an evaluator by subclassing `RunEvaluator`
+
+You may want to parametrize your evaluator as a class. For this, you can use the RunEvaluator class, which is functionally equivalent to the decorator above.
+
+You may want to use statistical measures such as [`perplexity`](https://huggingface.co/spaces/evaluate-metric/perplexity) to grade your run output. Below is an example in which we use the [evaluate](https://huggingface.co/docs/evaluate/index) package by HuggingFace, which contains numerous commonly used metrics for tasks such as text generation, machine translation, and more. Start by installing the `evaluate` package by running `pip install evaluate`.
+
+```python
+from typing import Optional
+
+from evaluate import load
+from langsmith.evaluation import EvaluationResult, RunEvaluator
+from langsmith.schemas import Example, Run
+
+
+class PerplexityEvaluator(RunEvaluator):
+    def __init__(self, prediction_key: Optional[str] = None, model_id: str = "gpt-2"):
+        self.prediction_key = prediction_key
+        self.model_id = model_id
+        self.metric_fn = load("perplexity", module_type="metric")
+
+    def evaluate_run(
+        self, run: Run, example: Optional[Example] = None
+    ) -> EvaluationResult:
+        if run.outputs is None:
+            raise ValueError("Run outputs cannot be None")
+        prediction = run.outputs[self.prediction_key]
+        results = self.metric_fn.compute(
+            predictions=[prediction], model_id=self.model_id
+        )
+        ppl = results["perplexities"][0]
+        return EvaluationResult(key="Perplexity", score=ppl)
+```
+
+Let's break down what the `PerplexityEvaluator` is doing:
+
+- **Initialize**: In the constructor, we're setting up a few properties that will be needed later on.
+
+  - `prediction_key`: The key to find the model's prediction in the outputs of a run.
+  - `model_id`: The ID of the language model you want to use to compute the metric. In our example, we are using 'gpt-2'.
+  - `metric_fn`: The evaluation metric function, which is loaded from the HuggingFace `evaluate` package.
+
+- **Evaluate**: This method takes a run (and optionally an example) and returns an `EvaluationResult`.
+  - If the run outputs are `None`, the evaluator raises an error.
+  - Otherwise, the outputs are passed to the `metric_fn` to compute the perplexity. The perplexity score is then returned as part of an `EvaluationResult`.
+
+## How do I create a `StringEvaluator`?
+
+Any custom LangChain [StringEvaluator](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.schema.StringEvaluator.html#langchain.evaluation.schema.StringEvaluator) can be directly used for evaluation.
+
+In this section, you will create a LangChain string evaluator that grades the relevance of a model's response to the input. You can also consult the [reference documentation](https://api.python.langchain.com/en/latest/api_reference.html#module-langchain.smith) for more details.
+
+We will use an [LLMChain](https://api.python.langchain.com/en/latest/chains/langchain.chains.llm.LLMChain.html#langchain.chains.llm.LLMChain) to perform the grading. That logic can be any custom code. In this case, we will use an LLM call to output a grade from 0 to 100 based on how relevant the model thinks the output is to the input.
+
+```python
+import re
+from typing import Any, Optional
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain.evaluation import StringEvaluator
+
+
+class RelevanceEvaluator(StringEvaluator):
+    """An LLM-based relevance evaluator."""
+
+    def __init__(self):
+        llm = ChatOpenAI(model="gpt-4", temperature=0)
+
+        template = """On a scale from 0 to 100, how relevant is the following response to the input:
+        --------
+        INPUT: {input}
+        --------
+        OUTPUT: {prediction}
+        --------
+        Reason step by step about why the score is appropriate, then print the score at the end. At the end, repeat that score alone on a new line."""
+
+        self.eval_chain = PromptTemplate.from_template(template) | llm
+
+    @property
+    def requires_input(self) -> bool:
+        return True
+
+    @property
+    def requires_reference(self) -> bool:
+        return False
+
+    @property
+    def evaluation_name(self) -> str:
+        return "scored_relevance"
+
+    def _evaluate_strings(
+        self,
+        prediction: str,
+        input: Optional[str] = None,
+        reference: Optional[str] = None,
+        **kwargs: Any
+    ) -> dict:
+        evaluator_result = self.eval_chain.invoke(
+            {"input": input, "prediction": prediction}, kwargs
+        )
+        reasoning, score = evaluator_result["text"].split("\n", maxsplit=1)
+        score = re.search(r"\d+", score).group(0)
+        if score is not None:
+            score = float(score.strip()) / 100.0
+        return {"score": score, "reasoning": reasoning.strip()}
+```
+
+Let's break down what the `RelevanceEvaluator` is doing:
+
+- **Initialize**: In the constructor, we're instructing the LLMChain on how to grade the output.
+- **requires_input**: This makes sure the evaluation helper extracts the input string from your chain or LLM's input and handles additional validation.
+- **requires_reference**: This validator doesn't require a reference string to be passed in, meaning that your dataset doesn't even require outputs to be present.
+- **evaluation_name**: This is the key assigned to the feedback generated from your evaluator. You can look for runs with feedback by "scored_relevance" in the LangSmith app.
+- **\_evaluate_strings**: This is the function that actually evaluates the input and output strings. In this case, we're using the LLMChain to generate a score and reasoning for the score.
+
+## LangChain Evaluators
+
+### How do I evaluate correctness for QA apps?
+
+QA evaluators help to measure the correctness of a response to a user query or question. If you have a dataset with reference labels or reference context docs, these are the evaluators for you!
+
+Three QA evaluators you can load are: `"context_qa"`, `"qa"`, `"cot_qa"`. Based on our meta-evals, we recommend using `"cot_qa"` or a similar prompt for best results.
+
+- The `"context_qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.ContextQAEvalChain.html#langchain.evaluation.qa.eval_chain.ContextQAEvalChain)) instructs the LLM chain to use reference "context" (provided throught the example outputs) in determining correctness. This is useful if you have a larger corpus of grounding docs but don't have ground truth answers to a query.
+- The `"qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.QAEvalChain.html#langchain-evaluation-qa-eval-chain-qaevalchain)) instructs an LLMChain to directly grade a response as "correct" or "incorrect" based on the reference answer.
+- The `"cot_qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.CotQAEvalChain.html#langchain.evaluation.qa.eval_chain.CotQAEvalChain)) is similar to the "context_qa" evaluator, expect it instructs the LLMChain to use chain of thought "reasoning" before determining a final verdict. This tends to lead to responses that better correlate with human labels, for a slightly higher token and runtime cost.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        "qa",
+        "context_qa",
+        "cot_qa",
+    ]
+)\n
+client = Client()
+run_on_dataset(
+    dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
+    client=client,
+    evaluation=evaluation_config,
+    project_name="<the name to assign to this test project>",
+)`),
+  ]}
+  groupId="client-language"
+/>
+
+You can customize the evaluator by specifying the LLM used to power its LLM chain or even by customizing the prompt itself.
+Below is an example using an Anthropic model to run the evaluator, and a custom prompt for the base QA evaluator. Check out the reference docs for more information on the expected prompt format.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain.chat_models import ChatAnthropic
+from langchain_core.prompts.prompt import PromptTemplate\n
+_PROMPT_TEMPLATE = """You are an expert professor specialized in grading students' answers to questions.
+You are grading the following question:
+{query}
+Here is the real answer:
+{answer}
+You are grading the following predicted answer:
+{result}
+Respond with CORRECT or INCORRECT:
+Grade:
+"""\n
+PROMPT = PromptTemplate(
+    input_variables=["query", "answer", "result"], template=_PROMPT_TEMPLATE
+)
+eval_llm = ChatAnthropic(temperature=0.0)
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        RunEvalConfig.QA(llm=eval_llm, prompt=PROMPT),
+        RunEvalConfig.ContextQA(llm=eval_llm),
+        RunEvalConfig.CoTQA(llm=eval_llm),
+    ]
+)
+`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I use built-in LangChain evaluators to evaluate datapoints WITHOUT labels?
+
+If you don't have ground truth reference labels (i.e., if you are evaluating against production data or if your task doesn't involve factuality), you can evaluate your run against a custom set of criteria using the `"criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.CriteriaEvalChain.html)).
+
+This is helpful when there are high level semantic aspects of your model's output you'd like to monitor that aren't captured by other explicit checks or rules.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        # You can define an arbitrary criterion as a key: value pair in the criteria dict
+        RunEvalConfig.Criteria({"creativity": "Is this submission creative, imaginative, or novel?"}),
+        # We provide some simple default criteria like "conciseness" you can use as well
+        RunEvalConfig.Criteria("conciseness"),
+    ]
+)\n
+client = Client()
+run_on_dataset(
+   dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
+    evaluation=evaluation_config,
+    client=client,
+)`),
+  ]}
+  groupId="client-language"
+/>
+
+### How do I use built-in LangChain evaluators to evaluate datapoints WITH labels?
+
+Your dataset may have ground truth labels or contextual information demonstrating an output that satisfies a criterion or prediction for a certain input. You can use criteria in context with the `"labeled_criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.LabeledCriteriaEvalChain.html)).
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        # You can define an arbitrary criterion as a key: value pair in the criteria dict
+        RunEvalConfig.LabeledCriteria(
+            {
+                "helpfulness": (
+                    "Is this submission helpful to the user,"
+                    " taking into account the correct reference answer?"
+                )
+            }
+        ),
+    ]
+)\n
+client = Client()
+run_on_dataset(
+   dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
+    evaluation=evaluation_config,
+    client=client,
+)
+`),
+  ]}
+  groupId="client-language"
+/>
+
+::::tip Supported Criteria
+Default criteria are implemented for the following aspects: conciseness, relevance, correctness, coherence, harmfulness, maliciousness, helpfulness, controversiality, misogyny, and criminality.
+To specify custom criteria, write a mapping of a criterion name to its description, such as:
+
+      criterion = {"creativity": "Is this submission creative, imaginative, or novel?"}
+      eval_config = RunEvalConfig(evaluators=[RunEvalConfig.Criteria(criterion)])
+
+::::
+
+::::tip Interpreting the Score
+Evaluation scores don't have an inherent "direction" (i.e., higher is not necessarily better).
+The direction of the score depends on the criteria being evaluated. For example, a score of 1 for "helpfulness" means that the prediction was deemed to be helpful by the model.
+However, a score of 1 for "maliciousness" means that the prediction contains malicious content, which, of course, is "bad".
+::::
+
+# Embedding distance
+
+One way to quantify the semantic (dis-)similarity between a predicted output and a ground truth is via embedding distance.
+You can use the `embedding_distance` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.embedding_distance.base.EmbeddingDistanceEvalChain.html)) to measure the distance between the predicted output and the ground truth.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset
+from langchain.embeddings import HuggingFaceEmbeddings\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        # You can define an arbitrary criterion as a key: value pair in the criteria dict
+        "embedding_distance",
+        # Or to customize the embeddings:
+        # Requires 'pip install sentence_transformers'
+        # RunEvalConfig.EmbeddingDistance(embeddings=HuggingFaceEmbeddings(), distance_metric="cosine"),
+    ]
+)\n
+client = Client()
+run_on_dataset(
+   dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
+    evaluation=evaluation_config,
+    client=client,
+)`),
+  ]}
+  groupId="client-language"
+/>
+
+# String distance
+
+Another simple way to measure similarity is by computing a string edit distance like Levenshtein distance. You can use the `"string_distance"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.string_distance.base.StringDistanceEvalChain.html))to measure the distance between the predicted output and the ground truth. This depends on the `rapidfuzz` library.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+from langchain.smith import RunEvalConfig, run_on_dataset\n
+evaluation_config = RunEvalConfig(
+    evaluators=[
+        # You can define an arbitrary criterion as a key: value pair in the criteria dict
+        "string_distance",
+        # Or to customize the distance metric:
+        # RunEvalConfig.StringDistance(distance="levenshtein", normalize_score=True),
+    ]
+)\n
+client = Client()
+run_on_dataset(
+   dataset_name="<dataset_name>",
+    llm_or_chain_factory=<LLM or constructor for chain or agent>,
+    evaluation=evaluation_config,
+    client=client,
+)`),
+  ]}
+  groupId="client-language"
+/>
+
+## Extending Datasets
+
+If you're starting to prototype a new chain or agent, you may not have much data to use to check how the component will behave. Simulating data and using LLMs to augment your dataset can help you kickstart your development process. Below are a couple of approaches you could adapt to your use case.
+
+
+:::note Reliability
+Synthetic data generation is no full substitute for real data. The quality of the data generated by these methods will depend on many factors, including the model, prompt, and existing data. This approach may not be appropriate for the task you are trying to evaluate. Always inspect your datasets to ensure they capture the information you want to model.
+:::
+
+**Prerequisites**
+
+These guides assume you have already connected to LangSmith and have access to a dataset you want to expand.
+
+### How do I use paraphrasing to extend datasets?
+
+Once your chain has produces satisfactory results on a few example inputs, it's often helpful to check that this behavior is consistent across inputs are similar to what you already have. One way to do this is by prompting an LLM to paraphrase the input examples, generating multiple variants of each input. Since this is a semantically invariant transformation, we can assume that the outputs should be the same as the original. Below is some code doing exactly this.
+
+
+**Step 1: Define the paraphrase generator**
+
+The first step is to create a chain for generating paraphrases. We'll use the `ChatOpenAI` model and provide it with some system prompts containing instructions.
+
+```python
+import re
+from typing import List
+
+from langchain.chains import LLMChain
+from langchain_openai import ChatOpenAI
+from langchain.output_parsers import ListOutputParser
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    SystemMessagePromptTemplate,
+)
+
+
+class NumberedListOutputParser(ListOutputParser):
+    def parse(self, output: str) -> List[str]:
+        return re.findall(r"\d+\.\s+(.*?)\n", output)
+
+
+paraphrase_llm = ChatOpenAI(temperature=0.5)
+prompt_template = ChatPromptTemplate.from_messages(
+    [
+        SystemMessagePromptTemplate.from_template(
+            "You are a helpful paraphrasing assistant tasked with rephrasing text."
+        ),
+        SystemMessagePromptTemplate.from_template("Input: <INPUT>{query}</INPUT>"),
+        HumanMessagePromptTemplate.from_template(
+            "What are {n_paraphrases} different ways you could paraphrase the INPUT text?"
+            " Do not significantly change the meaning."
+            " Respond using numbered bullets. If you cannot think of any,"
+            " just say 'I don't know.'"
+        ),
+    ]
+)
+
+paraphrase_chain = LLMChain(
+    llm=paraphrase_llm,
+    prompt=prompt_template,
+    output_parser=NumberedListOutputParser(),
+)
+```
+
+**Step 2: Generate paraphrases concurrently**
+
+The next step is to write a function that will generate paraphrases for each example in your dataset. To speed up this process, we will use asyncio to generate paraphrases for different examples concurrently.
+
+```python
+import asyncio
+import re
+from typing import Any, Coroutine, Tuple
+
+from langsmith.schemas import Example
+
+
+async def gather_with_concurrency(n: int, *coros: Coroutine) -> list:
+    """
+    A helper function to run coroutines concurrently up to a specified limit.
+    """
+    semaphore = asyncio.Semaphore(n)
+
+    async def sem_coro(coro: Coroutine) -> Any:
+        async with semaphore:
+            return await coro
+
+    return await asyncio.gather(*(sem_coro(c) for c in coros))
+
+
+async def generate_paraphrases(
+    example: Example, n_paraphrases: int
+) -> Tuple[Example, List[str]]:
+    """
+    A function to generate paraphrases for a given string.
+    """
+    # Assumes the input is a string. Additional preprocessing might be needed.
+    example_input = next(iter(example.inputs.values()))
+    result = await paraphrase_chain.arun(
+        query=example_input, n_paraphrases=n_paraphrases
+    )
+
+    # Use regex to parse the result, getting just the text after the numbered bullets
+    return example, result
+```
+
+**Step 3: Paraphrase the dataset**
+
+Now you can use the `Client` from LangSmith to access your dataset and generate paraphrases for it.
+
+In the main function, examples contains the data from the dataset you want to expand. `coros `contains the coroutines for generating paraphrases for each example. For each generated example, we will create a _new_ examples with the same outputs as the original, assuming the meaning or expected response has not changed (we assume paraphrasing is a semantically invariant transformation).
+
+```python
+from langsmith import Client
+
+
+async def main(
+    client: Client, n_paraphrases: int, dataset_name: str, concurrency: int = 20
+) -> list:
+    """
+    The main function to generate paraphrases for a dataset.
+    """
+    dataset = client.read_dataset(dataset_name=dataset_name)
+    examples = client.list_examples(dataset_id=dataset.id)
+    coros = (generate_paraphrases(example, n_paraphrases) for example in examples)
+    results = await gather_with_concurrency(concurrency, *coros)
+    flattened_results = []
+    for example, batch_r in results:
+        input_key = next(iter(example.inputs))
+        for r in batch_r:
+            client.create_example(
+                inputs={input_key: r},
+                outputs=example.outputs,
+                dataset_id=dataset.id,
+            )
+            flattened_results.append(r)
+    return [r for res in results for r in res]
+```
+
+Now, run the main function to generate paraphrases for your dataset.
+
+```python
+client = Client()
+n_paraphrases = 3
+dataset_name = "Your Dataset Name"
+results = await main(client, n_paraphrases, dataset_name)
+```
+
+Replace "Your Dataset Name" with the name of your dataset. Once this is completed, your dataset should be roughly 3x the original size.
+
+**Considerations**
+
+Remember that the quality of the paraphrases will depend on the model and prompt used, and this approach may not be appropriate for the task you are trying to evaluate. Always check your paraphrased data to ensure it maintains the original meaning and is appropriate for your use case. This is mainly useful earlier on in the development process, when you are trying to get a sense of how sensitive your chain or model is to small changes in the input.
+
+
+### How do I use prompting to creating new inputs?
+
+Expanding the dataset to cover a broader semantic range requires more than just paraphrasing. We need to generate completely new and plausible inputs. Here, we will demonstrate a simple method to achieve this by examining a random set of 5 examples and striving to create 6 novel ones that not only align with the inferred system but are also distinct enough to have likely originated from different individuals.
+
+**Step 1: Define the generator for new inputs**
+
+Firstly, we will create a chain for generating new inputs. Similar to the paraphrasing chain, we'll use the `ChatOpenAI` model and provide it with system prompts containing instructions. We also will reuse the `NumberedListOutputParser` to parse the output into a list of strings.
+
+```python
+input_gen_llm = ChatOpenAI(temperature=0.5)
+input_gen_prompt_template = ChatPromptTemplate.from_messages(
+    [
+        SystemMessagePromptTemplate.from_template(
+            "You are a creative assistant tasked with coming up with new inputs for an application."
+        ),
+        SystemMessagePromptTemplate.from_template("The following are some examples of inputs: \n{examples}"),
+        HumanMessagePromptTemplate.from_template(
+            "Can you generate {n_inputs} unique and plausible inputs that could be asked by different users?"
+        ),
+    ]
+)
+
+input_gen_chain = LLMChain(
+    llm=input_gen_llm,
+    prompt=input_gen_prompt_template,
+    output_parser=NumberedListOutputParser(),
+)
+```
+
+**Step 2: Generate new inputs concurrently**
+
+Next, write a function that will generate new inputs based on a set of example inputs. We'll once again use asyncio to speed up this process.
+
+```python
+async def generate_new_inputs(
+    example_inputs: List[str], n_inputs: int
+) -> List[str]:
+    """
+    A function to generate new inputs based on a list of example inputs.
+    """
+    example_inputs_str = '\n'.join(f"- {input}" for input in example_inputs)
+    return await input_gen_chain.arun(
+        examples=example_inputs_str, n_inputs=n_inputs
+    )
+```
+
+
+**Step 3: Generate new inputs for the dataset**
+
+Now you can use the Client from LangSmith to access your dataset and generate new inputs for it. Note that unlike paraphrasing, new inputs do not come with corresponding outputs. Therefore, you might need to manually label them or use a separate model to generate the outputs.
+
+In the main function, example_inputs contains a random sample of 5 inputs from your dataset. We then call generate_new_inputs to create 6 new inputs based on these examples.
+
+```python
+import random
+
+
+async def main_input_gen(
+    client: Client, n_inputs: int, dataset_name: str, sample_size: int = 5
+) -> list:
+    """
+    The main function to generate new inputs for a dataset.
+    """
+    dataset = client.read_dataset(dataset_name=dataset_name)
+    examples = list(client.list_examples(dataset_id=dataset.id))
+    example_inputs = [next(iter(example.inputs.values())) for example in random.sample(examples, sample_size)]
+    new_inputs = await generate_new_inputs(example_inputs, n_inputs)
+    for input in new_inputs:
+        # As we don't have corresponding outputs for new inputs, we leave outputs as an empty dict.
+        client.create_example(
+            inputs={"input": input},
+            outputs={},
+            dataset_id=dataset.id,
+        )
+    return new_inputs
+```
+
+Now, run the main function to generate new inputs for your dataset.
+
+```python
+n_inputs = 6
+results = await main_input_gen(client, n_inputs, dataset_name)
+```
+
+Once this is completed, your dataset should be populated with new examples that differ to a greater extend from the original ones.
+
+
+**Considerations**
+
+Remember that the quality and relevance of the generated inputs will highly depend on the model and prompt used, and this approach may not be suitable for all use cases. Always verify your generated inputs to ensure they align with the system's context and are appropriate for your application.
+
+By using a combination of paraphrasing,  generating new inputs, and other augmentation methods, you can expand and diversify your dataset effectively in the early stages of development to verify whether a feature is technically feasible and robust enough to be deployed in production.
