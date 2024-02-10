@@ -10,172 +10,97 @@ import React from 'react';
 import TabItem from "@theme/TabItem";
 import Tabs from "@theme/Tabs";
 
-export const TypeScriptSDKTracingCodeTabs = () => (
-    <Tabs
-        groupId="tracing-methods"
-        defaultValue="run-tree"
-        values={[
-            { label: 'Traceable Decorator', value: 'traceable-decorator' },
-            { label: 'Run Tree', value: 'run-tree' },
-            { label: 'OpenAI Client', value: 'openai-client' },
-        ]}>
+export const TypeScriptSDKTracingCodeBlock = () => (
+    <CodeBlock language="typescript">
+                {`// To run the example below, ensure the environment variable OPENAI_API_KEY is set
+import OpenAI from "npm:openai";
+import { Client, RunTree, RunTreeConfig } from "langsmith";
 
-        <TabItem value="traceable-decorator">
-            <p>Log traces using the <code>traceable</code> decorator.</p>
-            <CodeBlock language="typescript">
-                {`import { RunTree, RunTreeConfig } from "langsmith";
-const parentRunConfig: RunTreeConfig = {
-    name: "My Chat Bot",
+// This can be a user input to your app
+const question = "Can you summarize this morning's meetings?";
+
+const pipeline = new RunTree({
+    name: "Chat Pipeline",
     run_type: "chain",
-    inputs: {
-        text: "Summarize this morning's meetings.",
-    },
-    serialized: {}
-};
-const parentRun = new RunTree(parentRunConfig);
-const childLlmRun = await parentRun.createChild({
-    name: "My Proprietary LLM",
+    inputs: { question }
+});
+
+// This can be retrieved in a retrieval step
+const context = "During this morning's meeting, we solved all world conflict.";
+
+const messages = [
+    { role: "system", content: "You are a helpful assistant. Please respond to the user's request only based on the given context." },
+    { role: "user", content: \`Question: \${question}\\nContext: \${context}\` }
+];
+
+// Create a child run
+const childRun = await pipeline.createChild({
+    name: "OpenAI Call",
     run_type: "llm",
-    inputs: {
-        prompts: [
-        "You are an AI Assistant. Summarize this morning's meetings.",
-        ],
-    },
+    inputs: { messages },
 });
-await childLlmRun.end({
-outputs: {
-    generations: [
-    "Summary of the meeting...",
-    ],
-},
+
+// Generate a completion
+const client = new OpenAI();
+const chatCompletion = await client.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: messages,
 });
-await parentRun.end({
-outputs: {
-    output: ["The meeting notes are as follows:..."],
-},
-});
-// False means post all nested runs as a batch
-// (don't exclude child runs)
-await parentRun.postRun(false);
-  `}
-            </CodeBlock>
-        </TabItem>
 
-        <TabItem value="run-tree">
-            <p>Build up a trace using the `RunTree` Abstraction</p>
-            <CodeBlock language="python">
-                {`from langsmith.run_trees import RunTree
-parent_run = RunTree(
-    name="My Chat Bot",
-    run_type="chain",
-    inputs={"text": "Summarize this morning's meetings."},
-    serialized={}
-)
-child_llm_run = parent_run.create_child(
-    name="My Proprietary LLM",
-    run_type="llm",
-    inputs={
-        "prompts": [
-            "You are an AI Assistant. Summarize this morning's meetings."
-        ]
-    },
-)
-child_llm_run.end(outputs={"generations": ["Summary of the meeting..."]})
-parent_run.end(outputs={"output": ["The meeting notes are as follows:..."]})
-res = parent_run.post(exclude_child_runs=False)
-res.result()`}
-            </CodeBlock>
-        </TabItem>
+// End the runs and log them
+childRun.end(chatCompletion);
+await childRun.postRun();
 
-        <TabItem value="openai-client">
-            <p>Wrap the OpenAI Python client:</p>
-            <CodeBlock language="python">
-                {`from langsmith.wrappers import wrap_openai
-client = wrap_openai(openai.Client())`}
-            </CodeBlock>
-        </TabItem>
-
-    </Tabs>
+pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
+await pipeline.postRun();`}
+    </CodeBlock>
 );
 
-export const PythonSDKTracingCodeTabs = () => (
-    <Tabs
-        groupId="tracing-methods"
-        defaultValue="traceable-decorator"
-        values={[
-            { label: 'Traceable Decorator', value: 'traceable-decorator' },
-            { label: 'Run Tree', value: 'run-tree' },
-            { label: 'OpenAI Client', value: 'openai-client' },
-        ]}>
-
-        <TabItem value="traceable-decorator">
-            <p>Log traces using the <code>traceable</code> decorator.</p>
-            <CodeBlock language="python">
-                {`from typing import Any, Iterable
+export const PythonSDKTracingCodeBlock = () => (
+    <CodeBlock language="python">
+                {`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
 import openai
-from langsmith import traceable
-from langsmith.wrappers import wrap_openai
-# Optional: wrap the openai client to add tracing directly
-client = wrap_openai(openai.Client())
-@traceable(run_type="tool")
-def my_tool() -> str:
-    return "In the meeting, we solved all world conflict."
-@traceable
-def my_chat_bot(prompt: str) -> Iterable[str]:
-    tool_response = my_tool()
-    messages = [
-        {
-            "role": "system",
-            "content": f"You are an AI Assistant.
-Tool response: {tool_response}",
-        },
-        {"role": "user", "content": prompt},
-    ]
-    chunks = client.chat.completions.create(
-        model="gpt-3.5-turbo", messages=messages, stream=True
-    )
-    for chunk in chunks:
-        yield chunk.choices[0].delta.content
-for tok in my_chat_bot("Summarize this morning's meetings."):
-    print(tok, end="")`}
-            </CodeBlock>
-        </TabItem>
 
-        <TabItem value="run-tree">
-            <p>Build up a trace using the <code>RunTree</code> Abstraction</p>
-            <CodeBlock language="python">
-                {`from langsmith.run_trees import RunTree
-parent_run = RunTree(
-    name="My Chat Bot",
+from langsmith.run_trees import RunTree
+
+# This can be a user input to your app
+question = "Can you summarize this morning's meetings?"
+
+# Create a top-level run
+pipeline = RunTree(
+    name="Chat Pipeline",
     run_type="chain",
-    inputs={"text": "Summarize this morning's meetings."},
-    serialized={}
+    inputs={"question": question}
 )
-child_llm_run = parent_run.create_child(
-    name="My Proprietary LLM",
+
+# This can be retrieved in a retrieval step
+context = "During this morning's meeting, we solved all world conflict."
+
+messages = [
+    { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
+    { "role": "user", "content": f"Question: {question}\\nContext: {context}"}
+]
+
+# Create a child run
+child_llm_run = pipeline.create_child(
+    name="OpenAI Call",
     run_type="llm",
-    inputs={
-        "prompts": [
-            "You are an AI Assistant. Summarize this morning's meetings."
-        ]
-    },
+    inputs={"messages": messages},
 )
-child_llm_run.end(outputs={"generations": ["Summary of the meeting..."]})
-parent_run.end(outputs={"output": ["The meeting notes are as follows:..."]})
-res = parent_run.post(exclude_child_runs=False)
-res.result()`}
-            </CodeBlock>
-        </TabItem>
 
-        <TabItem value="openai-client">
-            <p>Wrap the OpenAI Python client:</p>
-            <CodeBlock language="python">
-                {`from langsmith.wrappers import wrap_openai
-client = wrap_openai(openai.Client())`}
-            </CodeBlock>
-        </TabItem>
+# Generate a completion
+client = openai.Client()
+chat_completion = client.chat.completions.create(
+    model="gpt-3.5-turbo", messages=messages
+)
 
-    </Tabs>
+# End the runs and log them
+child_llm_run.end(outputs=chat_completion)
+child_llm_run.post()
+
+pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
+pipeline.post()`}
+            </CodeBlock>
 );
 
 export const LangChainInstallationCodeTabs = () => (
@@ -214,9 +139,7 @@ export const ConfigureEnvironmentCodeTabs = ({}) => (
   <CodeTabs
     tabs={[
       ShellBlock(`export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 export LANGCHAIN_API_KEY=<your-api-key>
-export LANGCHAIN_PROJECT=<your-project>  # if not specified, defaults to "default"
 
 # The below examples use the OpenAI API, so you will need
 export OPENAI_API_KEY=<your-openai-api-key>`),
@@ -226,9 +149,22 @@ export OPENAI_API_KEY=<your-openai-api-key>`),
 );
 
 export const LangChainQuickStartCodeTabs = ({}) => {
-  const simpleTSBlock = `import { ChatOpenAI } from "langchain/chat_models/openai";\n
-const llm = new ChatOpenAI()
-await llm.invoke("Hello, world!");`;
+  const simpleTSBlock = `import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful assistant. Please respnod to the user's request only based on the given context."],
+  ["user", "Question: {question}\\nContext: {context}"],
+]);
+const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const outputParser = new StringOutputParser();
+
+const chain = prompt.pipe(model).pipe(outputParser);
+
+const question = "Can you summarize this morning's meetings?"
+const context = "During this morning's meeting, we solved all world conflict."
+await chain.invoke({ question: question, context: context });`;
 
   const alternativeTSBlock = `import { Client } from "langsmith";
 import { LangChainTracer } from "langchain/callbacks";
@@ -253,18 +189,27 @@ await model.invoke("Hello, world!", { callbacks: [tracer] })`;
     <Tabs groupId="client-language">
       <TabItem key="python" value="python" label="Python">
         <CodeBlock className="python" language="python">
-          {`from langchain_openai import ChatOpenAI\n
-llm = ChatOpenAI()
-llm.invoke("Hello, world!")`}
+          {`from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
+    ("user", "Question: {question}\\nContext: {context}")
+])
+model = ChatOpenAI(model="gpt-3.5-turbo")
+output_parser = StrOutputParser()
+
+chain = prompt | model | output_parser
+
+question = "Can you summarize this morning's meetings?"
+context = "During this morning's meeting, we solved all world conflict."
+chain.invoke({"question": question, "context": context})`}
         </CodeBlock>
       </TabItem>
       <TabItem key="typescript" value="typescript" label="TypeScript">
         <CodeBlock className="typescript" language="typescript">
           {simpleTSBlock}
-        </CodeBlock>
-        <p>For environments where process.env is not defined, initialize by explicitly passing keys:</p>
-        <CodeBlock className="typescript" language="typescript">
-          {alternativeTSBlock}
         </CodeBlock>
       </TabItem>
     </Tabs>
