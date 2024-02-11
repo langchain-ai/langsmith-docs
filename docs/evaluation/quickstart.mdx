@@ -61,7 +61,7 @@ For more information on other ways to create and use datasets, check out the [ho
     PythonBlock(`from langsmith import Client\n
 # Inputs are provided to your model, so it know what to generate
 dataset_inputs = [
-  a rap battle between Atticus Finch and Cicero",
+  "a rap battle between Atticus Finch and Cicero",
   "a rap battle between Barbie and Oppenheimer",
   # ... add more as desired
 ]\n
@@ -80,7 +80,7 @@ dataset = client.create_dataset(
     description="Rap battle prompts.",
 )
 client.create_examples(
-    inputs=[{"question": q} for q in example_inputs],
+    inputs=[{"question": q} for q in dataset_inputs],
     outputs=dataset_outputs,
     dataset_id=dataset.id,
 )`),
@@ -135,10 +135,14 @@ tabs={[
     value: "custom-function",
     label: "Custom function",
     language: "python",
-    content: `# You evaluate any arbitrary function over the dataset.
+    content: `import openai
+
+# You evaluate any arbitrary function over the dataset.
 # The input to the function will be the inputs dictionary for each example.
 def predict_result(input_: dict) -> dict:
-    return {"output": "Bar Bar Bar"}`,
+    messages = [{"role": "user", "content": input_["question"]}]
+    response = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo")
+    return {"output": response}`,
     },
     {
     value: "runnable",
@@ -222,10 +226,17 @@ tabs={[
         value: "custom-function",
         label: "Custom function",
         language: "typescript",
-        content: `// You evaluate any arbitrary function over the dataset.
-// The input to the function will be the inputs dictionary for each example.
-async function predictResult(input_: Record<string, any>): Record<string, any> {
-    return {output: "Bar Bar Bar"};
+        content: `import OpenAI from "openai";
+
+const client = new OpenAI();
+
+async function predictResult({ question }: { question: string }) {
+    const messages = [{ "role": "user", "content": question }];
+    const output = await client.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: messages
+    });
+    return { output };
 }`,
     },
     {
