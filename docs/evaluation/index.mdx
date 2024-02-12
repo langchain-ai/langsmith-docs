@@ -1,6 +1,6 @@
 ---
-sidebar_label: Overview
-sidebar_position: 1
+sidebar_label: Evaluation
+sidebar_position: 0
 ---
 
 import {
@@ -8,36 +8,27 @@ import {
   PythonBlock,
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
-import DocCardList from "@theme/DocCardList";
 
-# Testing & Evaluation
+# Evaluation
 
-Many challenges hinder the creation of a high-quality, production-grade LLM applications, including:
+LLM applications involve putting a probablistic model at the center of your system.
+Due to the non-deterministic nature of LLMs, it is important to be able to properly evaluate your application.
+Having a proper evaluation framework that you trust will allow you to:
 
-- Non-deterministic Outputs: models are probabilistic and can produce different outputs for the same prompt (even with a 0 temperature setting as model weights are not guaranteed to be static over time).
-- API opacity: Models behind APIs change over time
-- Security: LLMs are vulnerable to prompt injections
-- Bias: LLMs encode biases that can create negative experiences
-- Cost: State-of-the-art models can be expensive
-- Latency: Most experiences need to be fast
+- Experiment with different prompts and accurately determine if changes improve performance
+- Iterate on aspects your RAG architecture without guesswork
+- Quickly decide if it is worth upgrading to a new, recently release model
+- Determine if you can use a cheaper, faster model in place of a more expensive one and get similar performance
+- Flag with a model behind an API changed suddenly in an unexpected way
+- Have confidence your application will not produce biased or unwanted responses
 
-Testing and evaluation help expose issues, so you can decide how to best address them, be that through different design choices, better models or prompts, additional code checks, or other means.
-
-We don't have all the answers! We provide a number of tools and reference materials to help you get started, including automated evaluators of various types that help detect issues you face when scaling up LLM applications. No single tool is perfect, and we want to encourage experimentation and innovation in this space by providing these tools and guides as a starting point. We welcome your feedback and collaboration!
-
-Check out the [Quick Start Guide](/evaluation/quickstart) for a brief walkthrough evaluating your chain or LLM, or read on for more details.
-
-For a higher-level set of recommendations on how to think about testing and evaluating your LLM app, check out the [evaluation recommendations](/evaluation/additional-resources/recommendations) page.
+Testing and evaluation help expose issues, so you can decide how to best address them, be that through different architectural choices, better models or prompts, additional code checks, or other means.
 
 
-## LangChain benchmarks
+To get started, check out the [Quick Start Guide](/evaluation/quickstart).
 
-We have published a number of benchmark tasks within the [LangChain Benchmarks](https://langchain-ai.github.io/langchain-benchmarks/) package to grade different LLM systems on shared tasks such as:
+After that, peruse the [Concepts Section](/evaluation/concepts) to better understand the different components involved.
 
-- Agent tool use
-- Retrieval-augmented question-answering
-- Structured Extraction 
+If you want to learn how to accomplish a particular task, check out our comprehensive [How-To Guides](/evaluation/faq)
 
-Check out the docs for examples and leaderboard information.
-
-<DocCardList />
+For a higher-level set of recommendations on how to think about testing and evaluating your LLM app, check out the [evaluation recommendations](/evaluation/recommendations) page.
