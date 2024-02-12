@@ -226,9 +226,7 @@ tabs={[
         label: "Custom function",
         language: "typescript",
         content: `import OpenAI from "openai";
-
 const client = new OpenAI();
-
 async function predictResult({ question }: { question: string }) {
     const messages = [{ "role": "user", "content": question }];
     const output = await client.chat.completions.create({
