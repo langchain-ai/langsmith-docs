@@ -1,0 +1,84 @@
+---
+sidebar_label: Quick Start
+sidebar_position: 2
+table_of_contents: true
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import {
+TypeScriptSDKTracingCodeBlock,
+LangChainInstallationCodeTabs,
+LangChainQuickStartCodeTabs,
+ConfigureEnvironmentCodeTabs,
+PythonSDKTracingCodeBlock,
+PythonAPITracingCodeBlock,
+ConfigureSDKEnvironmentCodeTabs
+} from "@site/src/components/QuickStart";
+import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
+
+# Tracing Quick Start
+
+You can get started with LangSmith tracing using either LangChain, the Python SDK, the TypeScript SDK, or the API. The following sections provide a quick start guide for each of these options.
+
+<Tabs
+    groupId="tracing-quick-start"
+    defaultValue="python-sdk"
+    values={[
+        {label: 'Python SDK', value: 'python-sdk'},
+        {label: 'TypeScript SDK', value: 'typescript-sdk'},
+        {label: 'API', value: 'api'},
+        {label: 'LangChain', value: 'langchain'},
+    ]}>
+    <TabItem value="langchain">
+    <h2>1. Install or upgrade LangChain</h2>
+    <LangChainInstallationCodeTabs />
+    <h2>2. Create an API key</h2>
+    <p>Next, create an API key by logging in and navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
+    <h2>3. Configure your environment</h2>
+    <ConfigureEnvironmentCodeTabs />
+    <h2>4. Log a trace</h2>
+    <p>No extra code is needed to log a trace to LangSmith. Just run your LangChain code as you normally would.</p>
+    <LangChainQuickStartCodeTabs />
+    <h2>5. View the trace</h2>
+</TabItem>
+    <TabItem value="python-sdk">
+    <h2>1. Install the LangSmith library</h2>
+    <p>Start by installing the Python library.</p>
+    <pre><code>pip install langsmith</code></pre>
+    <h2>2. Create an API key</h2>
+    <p>Next, create an API key by logging in and navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
+    <h2>3. Configure your environment</h2>
+    <ConfigureSDKEnvironmentCodeTabs />
+    <h2>4. Log a trace</h2>
+    <p>We provide multiple ways to log traces to LangSmith. Below, we'll highlight how to use our most explicit <code>RunTree</code> API. See more in the <a href="./integrations">Integrations</a> section.</p>
+    <PythonSDKTracingCodeBlock />
+    <h2>5. View the trace</h2>
+    <p>You can view all the traces you've logged by navigating to the appropriate Projects details page. View the full run tree for a trace by clicking on the trace's name.</p>
+</TabItem>
+    <TabItem value="typescript-sdk">
+    <h2>1. Install the LangSmith library</h2>
+    <p>Start by installing the TypeScript library.</p>
+    <pre><code>npm install langsmith</code></pre>
+    or
+    <pre><code>yarn add langsmith</code></pre>
+    <h2>2. Create an API key</h2>
+    <p>Next, create an API key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
+    <h2>3. Configure your environment</h2>
+    <ConfigureSDKEnvironmentCodeTabs />
+    <h2>4. Log a Trace</h2>
+    <p>We provide multiple ways to log traces to LangSmith. Below, we'll highlight how to use our most explicit <code>RunTree</code> API. See more in the <a href="./integrations">Integrations</a> section.</p>
+    <TypeScriptSDKTracingCodeBlock />
+    <h2>5. View the trace</h2>
+    <p>You can view all the traces you've logged by navigating to the appropriate Projects details page. View the full run tree for a trace by clicking on the trace's name.</p>
+</TabItem>
+    <TabItem value="api">
+    <h2>1. Create an API key</h2>
+    <p>Create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
+    <h2>2. Log a trace</h2>
+    <p>Log a trace using the <a href="./api-reference">LangSmith API</a>.</p>
+    <p>Here, we'll show you to use the <code>requests</code> library in Python to log a trace, but you can use any HTTP client in any language.</p>
+    <PythonAPITracingCodeBlock />
+    <h2>3. View the trace</h2>
+</TabItem>
+</Tabs>
