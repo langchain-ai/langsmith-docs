@@ -1,0 +1,178 @@
+---
+sidebar_label: Kubernetes
+sidebar_position: 1
+table_of_contents: true
+---
+
+# Self-hosting LangSmith on Kubernetes
+
+This guide will walk you through the process of deploying LangSmith to a Kubernetes cluster. We will use Helm to install LangSmith and its dependencies.
+
+We've successfully tested LangSmith on the following Kubernetes distributions:
+* Google Kubernetes Engine (GKE)
+* Amazon Elastic Kubernetes Service (EKS)
+* Azure Kubernetes Service (AKS)
+* OpenShift
+* Minikube and Kind (for development purposes)
+
+:::important Enterprise License Required
+Self-hosting LangSmith requires an enterprise license. Please contact us at <a href="mailto:support@langchain.dev">support@langchain.dev</a> for more information.
+:::
+
+## Prerequisites
+Ensure you have the following tools/items ready. Some items are marked optional but :
+
+1. A working Kubernetes cluster that you can access via `kubectl`. Your cluster should have the following minimum requirements:
+    1. Recommended: At least 4 vCPUs, 16GB Memory available
+        * You may need to tune resource requests/limits for all of our different services based off of organization size/usage
+    2. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
+       ```bash
+      kubectl get storageclass
+       ```
+
+      The output should show at least one storage class with a provisioner that supports dynamic provisioning. For example:
+
+     ```bash
+        NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+        gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  161d
+     ```
+2. Helm
+    1. `brew install helm`
+3. LangSmith License Key
+    1. You can get this from your Langchain representative. Contact us at support@langchain.dev for more information.
+4. SSL(optional)
+    1. This should be attachable to a load balancer that will be provisioned by your cloud provider. This will be used for the frontend service.
+5. OpenAI API Key(optional).
+    1. Used for natural language search feature(beta). Can specify OpenAI key in browser as well for the playground feature.
+6. OAuth Configuration(optional).
+    1. You can configure oauth using the `values.yaml` file. You will need to provide a `client_id` and `client_issuer_url` for your OAuth provider.
+    2. Note, we do rely on the OIDC Authorization Code with PKCE flow. We currently support almost anything that is OIDC compliant however Google does not support this flow.
+    3. Without OAuth, you will not be able to create users or organizations.
+7. External Postgres(optional).
+    1. You can configure external postgres using the `values.yaml` file. You will need to provide connection parameters for your postgres instance.
+    2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled, or you must include that in your search path.
+    3. Note: We do only officially support Postgres versions >= 14.
+8. External Redis(optional).
+    1. You can configure external redis using the `values.yaml` file. You will need to provide a connection url for your redis instance.
+    2. Currently, we do not support using Redis with TLS. We will be supporting this shortly.
+    3. We only official support Redis versions >= 6.
+
+## Configure your Helm Charts:
+
+1. Create a copy of `values.yaml`
+2. Override any values in the file. Refer to the documentation for the [<u>LangSmith Helm Chart</u>](#https://github.com/langchain-ai/helm/tree/main/charts/langsmith) to see all configurable values. Some values we recommend setting:
+    1. Resources
+    2. SSL(If on EKS or some other cloud provider)
+        1. Add an annotation to the `frontend.service` object to tell your cloud provider to provision a load balancer with said certificate attached
+    3. OpenAI Api Key
+    4. Images
+    5. Oauth
+
+
+An example bare minimum config file `langsmith_config.yaml`:
+
+```yaml
+config:
+  langsmithLicenseKey: ""
+```
+
+## Deploying to Kubernetes:
+
+1. Verify that you can connect to your Kubernetes cluster(note: We highly suggest installing into an empty namespace)
+    1. Run `kubectl get pods`
+
+        Output should look something like:
+
+        ```bash
+        kubectl get pods                                                                                                                                                                     ⎈ langsmith-eks-2vauP7wf 21:07:46
+        No resources found in default namespace.
+        ```
+
+2. Ensure you have the Langchain Helm repo added. (skip this step if you are using local charts)
+
+        helm repo add langchain https://langchain-ai.github.io/helm/
+        "langchain" has been added to your repositories
+
+3. Run `helm install langsmith langchain/langsmith --values langsmith_config.yaml --namespace <your-namespace> --version <version>`
+
+    Output should look something like:
+
+    ```bash
+    NAME: langsmith
+    LAST DEPLOYED: Fri Sep 17 21:08:47 2021
+    NAMESPACE: langsmith
+    STATUS: deployed
+    REVISION: 1
+    TEST SUITE: None
+    ```
+4. Run `kubectl get pods`
+    Output should now look something like:
+
+    ```bash
+    langsmith-backend-6ff46c99c4-wz22d       1/1     Running   0          3h2m
+    langsmith-frontend-6bbb94c5df-8xrlr      1/1     Running   0          3h2m
+    langsmith-hub-backend-5cc68c888c-vppjj   1/1     Running   0          3h2m
+    langsmith-playground-6d95fd8dc6-x2d9b    1/1     Running   0          3h2m
+    langsmith-postgres-0                     1/1     Running   0          9h
+    langsmith-queue-5898b9d566-tv6q8         1/1     Running   0          3h2m
+    langsmith-redis-0                        1/1     Running   0          9h
+    ```
+
+## Validate your deployment:
+
+1. Run `kubectl get services`
+
+    Output should look something like:
+
+    ```bash
+    NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP                                                               PORT(S)        AGE
+    langsmith-backend       ClusterIP      172.20.140.77    <none>                                                                    1984/TCP       35h
+    langsmith-frontend      LoadBalancer   172.20.253.251   <external ip>                                                             80:31591/TCP   35h
+    langsmith-hub-backend   ClusterIP      172.20.112.234   <none>                                                                    1985/TCP       35h
+    langsmith-playground    ClusterIP      172.20.153.194   <none>                                                                    3001/TCP       9h
+    langsmith-postgres      ClusterIP      172.20.244.82    <none>                                                                    5432/TCP       35h
+    langsmith-redis         ClusterIP      172.20.81.217    <none>                                                                    6379/TCP       35h
+    ```
+
+2. Curl the external ip of the `langsmith-frontend` service:
+
+    ```bash
+    curl <external ip>/api/tenants
+    [{"id":"00000000-0000-0000-0000-000000000000","has_waitlist_access":true,"created_at":"2023-09-13T18:25:10.488407","display_name":"Personal","config":{"is_personal":true,"max_identities":1},"tenant_handle":"default"}]%
+    ```
+
+3. Visit the external ip for the `langsmith-frontend` service on your browser
+
+    The LangSmith UI should be visible/operational
+
+    ![./static/langsmith_ui.png](./static/langsmith_ui.png)
+
+## Using LangSmith
+Now that LangSmith is running, you can start using it to trace your code. You can find more information on how to use self-hosted LangSmith in the [Self-Hosted Usage Guide](/self_hosting/usage).
+
+## FAQ:
+
+1. How can we upgrade our application?
+    - We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to follow the upgrade instructions in the Helm README and run a `helm upgrade langsmith --values <values file>`
+2. How can we back up our application?
+    - Currently, we rely on PVCs/PV to power storage for our application. We strongly encourage setting up `Persistent Volume` backups or moving to a managed service for `Postgres` to support disaster recovery
+3. How does load balancing work/ingress work?
+    - Currently, our application spins up one load balancer using a k8s service of type `LoadBalancer` for our frontend. If you do not want to set up a load balancer you can simply port-forward the frontend and use that as your external ip for the application.
+    - We also have an option for the chart to provision an ingress resource for the application.
+4. How can we authenticate to the application?
+    - Currently, our self-hosted solution supports oauth as an authn solution.
+    - Note, we do offer a no-auth solution but highly recommend setting up oauth before moving into production.
+5. How can I use External `Postgres` or `Redis`?
+    - You can configure external postgres or redis using the external sections in the `values.yaml` file. You will need to provide the connection url/params for the database/redis instance. Look at the configuration above example for more information.
+6. What networking configuration is needed for the application?
+    - Our deployment only needs egress for a few things:
+        - Fetching images (If mirroring your images, this may not be needed)
+        - Talking to any LLMs
+        - Talking to any external services you may have configured
+        - Fetching OAuth information
+    - Your VPC can set up rules to limit any other access.
+    - Note: We require the X-Tenant-Id to be allowed to be passed through to the backend service. This is used to determine which tenant the request is for.
+7. What resources should we allocate to the application?
+    - We recommend at least 4 vCPUs and 16GB of memory for our application.
+    - We have some default resources set in our `values.yaml` file. You can override these values to tune resource usage for your organization.
+    - If the metrics server is enabled in your cluster, we also recommend enabling autoscaling on all deployments.
