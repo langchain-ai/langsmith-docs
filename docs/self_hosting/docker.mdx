@@ -136,17 +136,17 @@ Now that LangSmith is running, you can start using it to trace your code. You ca
 
 ## FAQ:
 
-1. How can we upgrade our application?
-    - We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to restart your LangSmith instance specifying the new version.
-2. How can we back up our application?
-    - The docker solution uses docker volumes to store data. You can back up the data by backing up the volumes.
-3. How can we authenticate to the application?
-    - Currently, our docker solution does not include any authentication. We recommend setting up a proxy to handle authentication.
-4. What networking configuration is needed for the application?
-    - Our deployment only needs egress for a few things:
-        - Fetching images (If mirroring your images, this may not be needed)
-        - Talking to any LLMs
-    - Your VPC can set up rules to limit any other access.
-    - Note: We require the X-Tenant-Id to be allowed to be passed through to the backend service. This is used to determine which tenant the request is for.
-5. What resources should we allocate to the application?
-    - We recommend at least 4 vCPUs and 16GB of memory for our application. This is a rough estimate and can vary based on the number of users and the size of the data you are working with.
+### How can we upgrade our application?
+We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to restart your LangSmith instance specifying the new version.
+### How can we back up our application?
+The docker solution uses docker volumes to store data. You can back up the data by backing up the volumes.
+### How can we authenticate to the application?
+Currently, our docker solution does not include any authentication. We recommend setting up a proxy to handle authentication.
+### What networking configuration is needed for the application?
+- Our deployment only needs egress for a few things:
+    - Fetching images (If mirroring your images, this may not be needed)
+    - Talking to any LLMs
+- Your VPC can set up rules to limit any other access.
+- Note: We require the X-Tenant-Id to be allowed to be passed through to the backend service. This is used to determine which tenant the request is for.
+### What resources should we allocate to the application?
+We recommend at least 4 vCPUs and 16GB of memory for our application. This is a rough estimate and can vary based on the number of users and the size of the data you are working with.
