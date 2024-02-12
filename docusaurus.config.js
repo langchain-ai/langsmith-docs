@@ -89,6 +89,11 @@ const config = {
             position: "left",
           },
           {
+            href: "https://api.smith.langchain.com/redoc",
+            label: "LangSmith API Docs",
+            position: "left",
+          },
+          {
             type: "search",
             position: "right",
           },
