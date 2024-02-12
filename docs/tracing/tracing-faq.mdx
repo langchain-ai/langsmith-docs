@@ -618,7 +618,7 @@ await client.deleteProject({projectName: "<project_name>"});
 />
 
 
-### How do I reduce my trace count?
+### How do I send up a sample of traces to LangSmith instead of all of them?
 
 To downsample the number of traces logged to LangSmith, set the `LANGCHAIN_TRACING_SAMPLING_RATE` environment variable to
 any float between 0 (no traces) and 1 (all traces). This requires a python SDK version >= 0.0.84, and a JS SDK version >= 0.0.64.
@@ -628,3 +628,5 @@ For instance, setting the following environment variable will filter out 25% of 
 ```bash
 export LANGCHAIN_TRACING_SAMPLING_RATE=0.75
 ```
+
+This works for the `traceable` decorator and `RunTree` objects.
