@@ -13,8 +13,8 @@ import Tabs from "@theme/Tabs";
 export const TypeScriptSDKTracingCodeBlock = () => (
     <CodeBlock language="typescript">
                 {`// To run the example below, ensure the environment variable OPENAI_API_KEY is set
-import OpenAI from "npm:openai";
-import { Client, RunTree, RunTreeConfig } from "langsmith";
+import OpenAI from "openai";
+import { RunTree } from "langsmith";
 
 // This can be a user input to your app
 const question = "Can you summarize this morning's meetings?";
@@ -30,7 +30,7 @@ const context = "During this morning's meeting, we solved all world conflict.";
 
 const messages = [
     { role: "system", content: "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-    { role: "user", content: \`Question: \${question}\\nContext: \${context}\` }
+    { role: "user", content: \`Question: \${question}\nContext: \${context}\` }
 ];
 
 // Create a child run
@@ -203,6 +203,18 @@ export const LangChainInstallationCodeTabs = () => (
   />
 );
 
+export const ConfigureSDKEnvironmentCodeTabs = ({}) => (
+    <CodeTabs
+        tabs={[
+            ShellBlock(`export LANGCHAIN_API_KEY=<your-api-key>
+
+# The below examples use the OpenAI API, so you will need
+export OPENAI_API_KEY=<your-openai-api-key>`),
+        ]}
+        groupId="client-language"
+    />
+);
+
 export const ConfigureEnvironmentCodeTabs = ({}) => (
   <CodeTabs
     tabs={[
@@ -222,7 +234,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 
 const prompt = ChatPromptTemplate.fromMessages([
-  ["system", "You are a helpful assistant. Please respnod to the user's request only based on the given context."],
+  ["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
   ["user", "Question: {question}\\nContext: {context}"],
 ]);
 const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });

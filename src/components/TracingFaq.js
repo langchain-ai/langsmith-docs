@@ -68,7 +68,7 @@ const response = await chain.invoke({ name: "Clara" });
 console.log(response.__run);`;
   return (
     <Tabs groupId="client-language">
-      <TabItem key="python" value="python" label="Python">
+      <TabItem key="python" value="python" label="LangChain (Python)">
         <CodeBlock className="python" language="python">
           {callbackPythonBlock}
         </CodeBlock>
@@ -92,7 +92,7 @@ console.log(response.__run);`;
           {llmModelPythonBlock}
         </CodeBlock>
       </TabItem>
-      <TabItem key="typescript" value="typescript" label="TypeScript">
+      <TabItem key="typescript" value="typescript" label="LangChain (JS)">
         <p>For newer versions of Langchain ({`>=`}0.0.139), you can use the `RunCollectorCallbackHandler` for any chain or runnable.</p>
         <CodeBlock className="typescript" language="typescript">
           {callbackTypeScriptBlock}
