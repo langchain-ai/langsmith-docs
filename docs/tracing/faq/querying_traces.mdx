@@ -19,7 +19,7 @@ Using the `list_runs` method in the SDK or [`/runs/query`](https://api.smith.lan
 - `run_type`: The type of run to get, such as `llm`, `chain`, `tool`, `retriever`, etc.
 - `dataset_name` / `dataset_id`: Fetch runs that are associated with an example row in the specified dataset. This is useful for comparing prompts or models over a given dataset.
 - `reference_example_id`: Fetch runs that are associated with a specific example row. This is useful for comparing prompts or models on a given input.
-- `parent_run_id` - Fetch runs that are children of a given run. This is useful for fetching [runs grouped together](../../tracing-faq#how-do-i-group-runs-from-multi-turn-interactions) using the context manager or for fetching an agent trajectory.
+- `parent_run_id` - Fetch runs that are children of a given run. This is useful for fetching runs grouped together using the context manager or for fetching an agent trajectory.
 - `error`: Fetch runs that errored or did not error.
 - `run_ids`: Fetch runs with a given list of run ids. Note: **This will ignore all other filtering arguments.**
 - `filter`: Fetch runs that match a given structured filter statement. See the [run filtering guide](#run-filtering) below for more information.
@@ -27,7 +27,7 @@ Using the `list_runs` method in the SDK or [`/runs/query`](https://api.smith.lan
 
 ## Using keyword arguments
 
-For simple queries, such as filtering by project, run time, name, or run ID's, you can directly use keyword arguments in the list_runs method. These correspond dirctly to query params in the REST API. All the examples below assume you have created a LangSmith client and configured it with your API key to connect to the LangSmith server.
+For simple queries, such as filtering by project, run time, name, or run ID's, you can directly use keyword arguments in the list_runs method. These correspond directly to query params in the REST API. All the examples below assume you have created a LangSmith client and configured it with your API key to connect to the LangSmith server.
 
 <CodeTabs
     tabs={[
