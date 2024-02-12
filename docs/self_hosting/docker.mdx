@@ -4,13 +4,149 @@ sidebar_position: 2
 table_of_contents: true
 ---
 
-# Self-hosting LangSmith with Docker
+#  Self-hosting LangSmith with Docker
 
-This guide will walk you through the process of setting up LangSmith on your own infrastructure using Docker.
+This guide provides instructions for installing and setting up your environment to run LangSmith locally using Docker. You can do this either by using the LangSmith SDK or by using Docker Compose directly.
 
 :::important Enterprise License Required
 Self-hosting LangSmith requires an enterprise license. Please contact us at <a href="mailto:support@langchain.dev">support@langchain.dev</a> for more information.
 :::
-:::important Migrating from LangSmith 0.1.0 to 0.2.0
-LangSmith 0.2.0 introduces a new dependency on Clickhouse for run storage. If you wish to retain runs in LangSmith from versions of LangSmith prior to 0.2.0, you will need to complete a migration process. You can view the upgrade guide here. If you need assistance, please reach out to support@langchain.dev.
-:::
+
+## Prerequisites
+
+1. Ensure Docker is installed and running on your system. You can verify this by running:
+    ```bash
+    docker info
+    ```
+
+    If you don't see any server information in the output, make sure Docker is installed correctly
+    and launch the Docker daemon.
+2. LangSmith License Key
+    1. You can get this from your Langchain representative. Contact us at support@langchain.dev for more information.
+3. LangSmith Version
+    1. We default to the latest version of LangSmith. In a production environment, you may want to specify a specific version. Contact us at <a href="mailto:support@langchain.dev">support@langchain.dev</a> for more information.
+4. OpenAI API Key(optional).
+    1. Used for natural language search feature. Can specify OpenAI key in browser as well for the playground feature.
+
+## Running via the LangSmith SDK
+
+The following explains how to run the LangSmith using the LangSmith SDK.
+
+### 1. Install the LangSmith SDK
+
+Both the Python and TypeScript LangSmith SDKs expose a `langsmith` command line tool.
+
+First, install a recent version of the `langsmith` package:
+
+- Python/Pip: `pip install -U langsmith`
+- TypeScript/yarn: `yarn add langsmith`
+- TypeScript/npm: `npm install -S langsmith`
+- TypeScript/pnpm: `pnpm add langsmith`
+
+This will install the LangSmith Client and the bundled command line tool.
+
+### 2. Start server
+
+Start the LangSmith tracing server by executing the following command in your terminal:
+
+```bash
+langsmith start --langsmith-license-key=<YOUR_LANGSMITH_LICENSE_KEY> --version=<LANGSMITH_VERSION> --openai-api-key=<YOUR_OPENAI_API_KEY>
+```
+
+If you installed the JS SDK locally, the binary won't be automatically added to your path. In this case, you can start the server from the node_modules directory:
+
+```bash
+node_modules/.bin/langchain
+```
+
+If the server starts correctly, it will open up the UI in your browser at [http://localhost](http://localhost).
+
+  The LangSmith UI should be visible/operational and look like this:
+
+  ![./static/langsmith_ui.png](./static/langsmith_ui.png)
+
+### Stopping the server
+To stop the server, run the following command:
+```bash
+langsmith stop
+```
+
+### Checking the logs
+If, at any point, you want to check if the server is running and see the logs, run
+
+```bash
+langsmith logs
+```
+
+## Running via Docker Compose
+
+The following explains how to run the LangSmith using the LangSmith SDK.
+
+### 1. Copy the LangSmith `docker-compose.yml` file
+
+Copy the `docker-compose.yml` file from the LangSmith SDK to your project directory.
+
+You can find the `docker-compose.yml` file in the LangSmith SDK at the following here: [LangSmith Docker Compose File](#https://github.com/langchain-ai/langsmith-sdk/blob/main/python/langsmith/cli/docker-compose.yaml)
+
+### 2. Export or set the required environment variables
+
+```bash
+export LANGSMITH_LICENSE_KEY=<YOUR_LANGSMITH_LICENSE_KEY>
+export _LANGSMITH_IMAGE_VERSION=<LANGSMITH_VERSION>
+export OPENAI_API_KEY=<YOUR_OPEN
+```
+
+You can also set these environment variables in the `docker-compose.yml` file directly.
+
+### 2. Start server
+
+Start the LangSmith application by executing the following command in your terminal:
+
+```bash
+docker-compose up
+```
+
+You can also run the server in the background by running:
+
+```bash
+docker-compose up -d
+```
+
+If the server starts correctly, it will open up the UI in your browser at [http://localhost](http://localhost/).
+
+  The LangSmith UI should be visible/operational and look like this:
+
+  ![./static/langsmith_ui.png](./static/langsmith_ui.png)
+
+### Stopping the server
+
+```bash
+docker-compose down
+```
+
+### Checking the logs
+If, at any point, you want to check if the server is running and see the logs, run
+
+```bash
+docker-compose logs
+```
+
+## Using LangSmith
+Now that LangSmith is running, you can start using it to trace your code. You can find more information on how to use self-hosted LangSmith in the [Self-Hosted Usage Guide](/self_hosting/usage).
+
+## FAQ:
+
+1. How can we upgrade our application?
+    - We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to restart your LangSmith instance specifying the new version.
+2. How can we back up our application?
+    - The docker solution uses docker volumes to store data. You can back up the data by backing up the volumes.
+3. How can we authenticate to the application?
+    - Currently, our docker solution does not include any authentication. We recommend setting up a proxy to handle authentication.
+4. What networking configuration is needed for the application?
+    - Our deployment only needs egress for a few things:
+        - Fetching images (If mirroring your images, this may not be needed)
+        - Talking to any LLMs
+    - Your VPC can set up rules to limit any other access.
+    - Note: We require the X-Tenant-Id to be allowed to be passed through to the backend service. This is used to determine which tenant the request is for.
+5. What resources should we allocate to the application?
+    - We recommend at least 4 vCPUs and 16GB of memory for our application. This is a rough estimate and can vary based on the number of users and the size of the data you are working with.
