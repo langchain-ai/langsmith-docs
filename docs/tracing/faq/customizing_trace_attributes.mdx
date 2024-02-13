@@ -29,6 +29,26 @@ When global environment variables are too broad, you can also set the project na
 
 <CodeTabs
     tabs={[
+        LangChainPyBlock(`# You can set the project name for a specific tracer instance:
+from langchain.callbacks.tracers import LangChainTracer\n
+tracer = LangChainTracer(project_name="My Project")
+chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"callbacks": [tracer]})\n\n
+# LangChain python also supports a context manager for tracing a specific block of code.
+# You can set the project name using the project_name parameter.
+from langchain_core.tracers.context import tracing_v2_enabled
+with tracing_v2_enabled(project_name="My Project"):
+    chain.invoke({"query": "How many people live in canada as of 2023?"})
+`),
+        LangChainJSBlock(`// You can set the project name for a specific tracer instance:
+import { LangChainTracer } from "langchain/callbacks";\n
+const tracer = new LangChainTracer({ projectName: "My Project" });
+await chain.invoke(
+  {
+    query: "How many people live in canada as of 2023?"
+  },
+  { callbacks: [tracer] }
+);
+`),
         PythonBlock(`import openai
 from langsmith import traceable
 from langsmith.run_trees import RunTree\n
@@ -93,26 +113,6 @@ const chatCompletion = await client.chat.completions.create({
 // End and submit the run
 rt.end(chatCompletion)
 await rt.postRun()`),
-        LangChainPyBlock(`# You can set the project name for a specific tracer instance:
-from langchain.callbacks.tracers import LangChainTracer\n
-tracer = LangChainTracer(project_name="My Project")
-chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"callbacks": [tracer]})\n\n
-# LangChain python also supports a context manager for tracing a specific block of code.
-# You can set the project name using the project_name parameter.
-from langchain_core.tracers.context import tracing_v2_enabled
-with tracing_v2_enabled(project_name="My Project"):
-    chain.invoke({"query": "How many people live in canada as of 2023?"})
-`),
-        LangChainJSBlock(`// You can set the project name for a specific tracer instance:
-import { LangChainTracer } from "langchain/callbacks";\n
-const tracer = new LangChainTracer({ projectName: "My Project" });
-await chain.invoke(
-  {
-    query: "How many people live in canada as of 2023?"
-  },
-  { callbacks: [tracer] }
-);
-`),
     ]}
     groupId="client-language"
 />
@@ -124,6 +124,32 @@ For more information on metadata and tags, see the [Concepts](/tracing/concepts)
 
 <CodeTabs
     tabs={[
+        LangChainPyBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser\n
+prompt = ChatPromptTemplate.from_messages([
+  ("system", "You are a helpful AI."),
+  ("user", "{input}")
+])
+chat_model = ChatOpenAI()
+output_parser = StrOutputParser()\n
+# Tags and metadata can be configured with RunnableConfig
+chain = (prompt | chat_model | output_parser).with_config({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}})\n
+# Tags and metadata can also be passed at runtime
+chain.invoke({"input": "What is the meaning of life?"}, {"tags": ["shared-tags"], "metadata": {"shared-key": "shared-value"}})`),
+        LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";\n
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful AI."],
+  ["user", "{input}"]
+])
+const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const outputParser = new StringOutputParser();\n
+// Tags and metadata can be configured with RunnableConfig
+const chain = (prompt.pipe(model).pipe(outputParser)).withConfig({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}});\n
+// Tags and metadata can also be passed at runtime
+await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags"], metadata: {"shared-key": "shared-value"}})`),
         PythonBlock(`import openai
 from langsmith import traceable
 from langsmith.run_trees import RunTree\n
@@ -191,32 +217,6 @@ const chatCompletion = await client.chat.completions.create({
 // End and submit the run
 rt.end(chatCompletion)
 await rt.postRun()`),
-        LangChainPyBlock(`from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser\n
-prompt = ChatPromptTemplate.from_messages([
-  ("system", "You are a helpful AI."),
-  ("user", "{input}")
-])
-chat_model = ChatOpenAI()
-output_parser = StrOutputParser()\n
-# Tags and metadata can be configured with RunnableConfig
-chain = (prompt | chat_model | output_parser).with_config({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}})\n
-# Tags and metadata can also be passed at runtime
-chain.invoke({"input": "What is the meaning of life?"}, {"tags": ["shared-tags"], "metadata": {"shared-key": "shared-value"}})`),
-        LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";\n
-const prompt = ChatPromptTemplate.fromMessages([
-  ["system", "You are a helpful AI."],
-  ["user", "{input}"]
-])
-const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
-const outputParser = new StringOutputParser();\n
-// Tags and metadata can be configured with RunnableConfig
-const chain = (prompt.pipe(model).pipe(outputParser)).withConfig({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}});\n
-// Tags and metadata can also be passed at runtime
-await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags"], metadata: {"shared-key": "shared-value"}})`),
     ]}
     groupId="client-language"
 />
@@ -227,6 +227,17 @@ When you create a run, you can specify a name for the run. This name is used to 
 
 <CodeTabs
     tabs={[
+        LangChainPyBlock(`# When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
+# (Note: this is not currently supported directly on LLM objects.)
+...
+configured_chain = chain.with_config({"run_name": "MyCustomChain"})
+configured_chain.invoke({"query": "What is the meaning of life?"})`),
+        LangChainJSBlock(`// When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
+// (Note: this is not currently supported directly on LLM objects.)
+...
+const configuredChain = chain.withConfig({ runName: "MyCustomChain" });
+await configuredChain.invoke({query: "What is the meaning of life?"});
+`),
         PythonBlock(`import openai
 from langsmith import traceable
 from langsmith.run_trees import RunTree\n
@@ -285,17 +296,6 @@ const chatCompletion = await client.chat.completions.create({
 // End and submit the run
 rt.end(chatCompletion)
 await rt.postRun()`),
-        LangChainPyBlock(`# When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
-# (Note: this is not currently supported directly on LLM objects.)
-...
-configured_chain = chain.with_config({"run_name": "MyCustomChain"})
-configured_chain.invoke({"query": "What is the meaning of life?"})`),
-        LangChainJSBlock(`// When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
-// (Note: this is not currently supported directly on LLM objects.)
-...
-const configuredChain = chain.withConfig({ runName: "MyCustomChain" });
-await configuredChain.invoke({query: "What is the meaning of life?"});
-`),
     ]}
     groupId="client-language"
 />

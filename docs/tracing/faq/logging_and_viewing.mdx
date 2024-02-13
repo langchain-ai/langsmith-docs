@@ -36,6 +36,36 @@ Additionally, you will need to set `LANGCHAIN_TRACING_V2='true'` if you plan to 
 
 <CodeTabs
     tabs={[
+        LangChainPyBlock(`# No extra code is needed to log a trace to LangSmith when using LangChain Python.
+# Just run your LangChain code as you normally would with the LANGCHAIN_TRACING_V2 environment variable set to 'true' and the LANGCHAIN_API_KEY environment variable set to your API key.
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser\n
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
+    ("user", "Question: {question}\nContext: {context}")
+])
+model = ChatOpenAI(model="gpt-3.5-turbo")
+output_parser = StrOutputParser()\n
+chain = prompt | model | output_parser\n
+question = "Can you summarize this morning's meetings?"
+context = "During this morning's meeting, we solved all world conflict."
+chain.invoke({"question": question, "context": context})`),
+        LangChainJSBlock(`// No extra code is needed to log a trace to LangSmith when using LangChain JS.
+// Just run your LangChain code as you normally would with the LANGCHAIN_TRACING_V2 environment variable set to 'true' and the LANGCHAIN_API_KEY environment variable set to your API key.
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";\n
+const prompt = ChatPromptTemplate.fromMessages([
+["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
+["user", "Question: {question}\\nContext: {context}"],
+]);
+const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const outputParser = new StringOutputParser();\n
+const chain = prompt.pipe(model).pipe(outputParser);\n
+const question = "Can you summarize this morning's meetings?"
+const context = "During this morning's meeting, we solved all world conflict."
+await chain.invoke({ question: question, context: context });`),
         PythonBlock(`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
 from typing import Any, Iterable
 import openai
@@ -125,36 +155,6 @@ childRun.end(chatCompletion);
 await childRun.postRun();\n
 pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
 await pipeline.postRun();`),
-        LangChainPyBlock(`# No extra code is needed to log a trace to LangSmith when using LangChain Python.
-# Just run your LangChain code as you normally would with the LANGCHAIN_TRACING_V2 environment variable set to 'true' and the LANGCHAIN_API_KEY environment variable set to your API key.
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser\n
-prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
-    ("user", "Question: {question}\nContext: {context}")
-])
-model = ChatOpenAI(model="gpt-3.5-turbo")
-output_parser = StrOutputParser()\n
-chain = prompt | model | output_parser\n
-question = "Can you summarize this morning's meetings?"
-context = "During this morning's meeting, we solved all world conflict."
-chain.invoke({"question": question, "context": context})`),
-LangChainJSBlock(`// No extra code is needed to log a trace to LangSmith when using LangChain JS.
-// Just run your LangChain code as you normally would with the LANGCHAIN_TRACING_V2 environment variable set to 'true' and the LANGCHAIN_API_KEY environment variable set to your API key.
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";\n
-const prompt = ChatPromptTemplate.fromMessages([
-["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
-["user", "Question: {question}\\nContext: {context}"],
-]);
-const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
-const outputParser = new StringOutputParser();\n
-const chain = prompt.pipe(model).pipe(outputParser);\n
-const question = "Can you summarize this morning's meetings?"
-const context = "During this morning's meeting, we solved all world conflict."
-await chain.invoke({ question: question, context: context });`),
 APIBlock(`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
 # Here, we'll show you to use the requests library in Python to log a trace, but you can use any HTTP client in any language.
 import openai

@@ -179,25 +179,25 @@ export const LangChainInstallationCodeTabs = () => (
         value: 'python',
         label: 'pip',
         language: 'bash',
-        content: `pip install langchain_openai`,
+        content: `pip install langchain_openai langchain_core`,
       },
       {
         value: 'typescript',
         label: 'yarn',
         language: 'bash',
-        content: `yarn add langchain`,
+        content: `yarn add @langchain/openai @langchain/core`,
       },
       {
         value: 'npm',
         label: 'npm',
         language: 'bash',
-        content: `npm install langchain`,
+        content: `npm install @langchain/openai @langchain/core`,
       },
       {
         value: 'pnpm',
         label: 'pnpm',
         language: 'bash',
-        content: `pnpm add langchain`,
+        content: `pnpm add @langchain/openai @langchain/core`,
       },
     ]}
   />
