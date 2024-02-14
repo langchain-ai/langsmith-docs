@@ -66,6 +66,7 @@ def main(mdx_file: str, output_file: str, boilerplate: str = "") -> None:
 
 if __name__ == "__main__":
     root = Path(__file__).parent.parent.absolute()
+    # Files and some boilerplate code to be added to the test file
     files = [
         (
             "tracing/tracing-faq.mdx",
