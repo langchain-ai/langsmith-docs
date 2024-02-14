@@ -608,10 +608,10 @@ Below is an example using the SDK:
   tabs={[
     PythonBlock(`from langsmith import Client\n
 client = Client()
-client.delete_project(project_name="<project_name>")`),
+client.delete_project(project_name="<your_project>")`),
     TypeScriptBlock(`import { Client } from "langsmith";\n
 const client = new Client();
-await client.deleteProject({projectName: "<project_name>"});
+await client.deleteProject({projectName: "<your_project>"});
 `),
   ]}
   groupId="client-language"

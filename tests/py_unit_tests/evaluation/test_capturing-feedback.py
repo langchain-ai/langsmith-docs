@@ -31,13 +31,19 @@ async def test_code_block_0():
       | output_parser.StrOutputParser()
     ) 
     client = Client()
-    def main():
-      with callbacks.collect_runs() as cb:
+    with callbacks.collect_runs() as cb:
         for tok in chain.stream({"input": "Hi, I'm Clara"}):
-          print(tok, end="", flush=True)
-          run_id = cb.traced_runs[0].ids
-      # ... User copies the generated response
-      client.create_feedback(run_id, "did_copy", score=True)
-      # ... User clicks a thumbs up button
-      client.create_feedback(run_id, "thumbs_up", score=True)
+            print(tok, end="", flush=True)
+        run_id = cb.traced_runs[0].id
+    # ... User copies the generated response
+    client.create_feedback(run_id, "did_copy", score=True)
+    # ... User clicks a thumbs up button
+    client.create_feedback(run_id, "thumbs_up", score=True)
+    # You can also add the expected output and comments, for human-in-the-loop evaluation
+    client.create_feedback(
+        run_id, 
+        "manual_review",
+        correction={"output": "Hello, Clara!"},
+        comment="The output should have been more concise and enthusiastic."
+    )
     

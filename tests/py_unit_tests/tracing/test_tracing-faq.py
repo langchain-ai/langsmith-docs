@@ -72,8 +72,9 @@ async def test_code_block_4():
         {
             "message": message,
             "chat_history": chat_history,
-            "conversation_id": conversation_id,
-        }
+        },
+        # highlight-next-line
+        config={"metadata": {"conversation_id": conversation_id}},
     ):
         print(chunk, end="")
         response += chunk
@@ -91,8 +92,9 @@ async def test_code_block_4():
         {
             "message": next_message,
             "chat_history": chat_history,
-            "conversation_id": conversation_id,
-        }
+        },
+        # highlight-next-line
+        config={"metadata": {"conversation_id": conversation_id}},
     ):
         print(chunk, end="")
         response += chunk
