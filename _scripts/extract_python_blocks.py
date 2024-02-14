@@ -1,5 +1,26 @@
 import re
 from pathlib import Path
+import ast
+
+class ReplaceListRunsVisitor(ast.NodeTransformer):
+    def visit_Call(self, node):
+        self.generic_visit(node)  # First, apply transformation to children
+        if isinstance(node.func, ast.Attribute) and node.func.attr == "list_runs":
+            # Wrap the original call in `list(...)`
+            return ast.Call(
+                func=ast.Name(id="list", ctx=ast.Load()),
+                args=[node],
+                keywords=[]
+            )
+        return node
+
+def _call_list_on_list_runs(code_block: str):
+    tree = ast.parse(code_block)
+    transformer = ReplaceListRunsVisitor()
+    transformed_tree = transformer.visit(tree)
+
+    return  ast.unparse(transformed_tree)
+
 
 
 def extract_code_blocks(mdx_file: str) -> list[str]:
@@ -18,13 +39,16 @@ def extract_code_blocks(mdx_file: str) -> list[str]:
             c.strip() for c in re.findall(r"```python\n(.*?)\n```", content, re.DOTALL)
         ]
         code_blocks = [
-            code_block.replace("\\n", "\n").replace("\\\\", "\\")
+            _call_list_on_list_runs(
+                code_block.replace("\\n", "\n").replace("\\\\", "\\")
+            )
             for code_block in code_blocks
             # Skip because we don't have the actual UUID to run in the test.
             if "<run_id>" not in code_block
             and "<your_project>" not in code_block
             and "create_dataset" not in code_block
         ]
+
         return code_blocks
 
 
@@ -68,27 +92,11 @@ if __name__ == "__main__":
     root = Path(__file__).parent.parent.absolute()
     files = [
         (
-            "tracing/tracing-faq.mdx",
-            """from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate\n
-chain = ChatPromptTemplate.from_messages([("human", "{query}")]) | ChatOpenAI()
+            "tracing/faq/querying_traces.mdx",
+            """from langsmith import Client
+    
+client = Client()
 """,
-        ),
-        (
-            "evaluation/capturing-feedback.mdx",
-            """import uuid
-from langsmith import Client, schemas
-runs = [schemas.Run(
-    name="my_run",
-    inputs={"prompt": "Hello world!"},
-    execution_order=1,
-    run_type="llm",
-    outputs={"generation": "Hi!"},
-    start_time=0,
-    id=uuid.uuid4(),
-    end_time=100,
-)]
-client = Client()\n""",
         ),
     ]
     for file, boilerplate in files:
