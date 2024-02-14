@@ -215,16 +215,6 @@ The following examples assume you have configured your environment appropriately
     groupId="client-language"
 />
 
-#### List all runs with `execution_order` less than 10
-
-<CodeTabs
-    tabs={[
-        PythonBlock(`client.list_runs(project_name="<your_project>", filter='lt(execution_order, 10)')`),
-        TypeScriptBlock(`client.listRuns({projectName: "<your_project>", filter: 'lt(execution_order, 10)'})`),
-    ]}
-    groupId="client-language"
-/>
-
 #### List all runs where `start_time` is greater than a specific timestamp
 
 <CodeTabs
@@ -318,25 +308,34 @@ The following examples assume you have configured your environment appropriately
 
 #### Check for presence of metadata
 
-If you want to check for the presence of metadata, you can use the `has` operator. This is useful if you want to log more structured information
+If you want to check for the presence of metadata, you can use the `eq` operator, optionally with an `and` statement to match by value. This is useful if you want to log more structured information
 about your runs.
 
 <CodeTabs
     tabs={[
-        PythonBlock(`import json\n
+        PythonBlock(`
 to_search = {
-    "user_id": "4070f233-f61e-44eb-bff1-da3c163895a3"
+    "user_id": ""
 }\n
+# Check for any run with the "user_id" metadata key
 client.list_runs(
   project_name="default",
-  filter=f"has(metadata, '{json.dumps(to_search)}')"
+  filter="eq(metadata_key, 'user_id')"
+)
+# Check for runs with user_id=4070f233-f61e-44eb-bff1-da3c163895a3
+client.list_runs(
+  project_name="default",
+  filter="and(eq(metadata_key, 'user_id'), eq(metadata_value, '4070f233-f61e-44eb-bff1-da3c163895a3'))"
 )`),
-        TypeScriptBlock(`const toSearch = {
-  user_id: '4070f233-f61e-44eb-bff1-da3c163895a3'
-}\n
+        TypeScriptBlock(`// Check for any run with the "user_id" metadata key
 client.listRuns({
   projectName: 'default',
-  filter: \`has(metadata, '\${JSON.stringify(toSearch)}')\`
+  filter: \`eq(metadata_key, 'user_id')\`
+});
+// Check for runs with user_id=4070f233-f61e-44eb-bff1-da3c163895a3
+client.listRuns({
+  projectName: 'default',
+  filter: \`and(eq(metadata_key, 'user_id'), eq(metadata_value, '4070f233-f61e-44eb-bff1-da3c163895a3'))\`
 });`),
     ]}
     groupId="client-language"
@@ -349,20 +348,13 @@ containing environment metadata, you can use the same pattern as above:
 
 <CodeTabs
     tabs={[
-        PythonBlock(`import json\n
-to_search = {
-    "environment": "production"
-}\n
-client.list_runs(
+        PythonBlock(`client.list_runs(
   project_name="default",
-  filter=f"has(metadata, '{json.dumps(to_search)}')"
+  filter="and(eq(metadata_key, 'environment'), eq(metadata_value, 'production'))"
 )`),
-        TypeScriptBlock(`const toSearch = {
-  environment: 'production'
-}\n
-client.listRuns({
+        TypeScriptBlock(`client.listRuns({
   projectName: 'default',
-  filter: \`has(metadata, '\${JSON.stringify(toSearch)}')\`
+  filter: \`and(eq(metadata_key, 'environment'), eq(metadata_value, 'production'))\`
 });`),
     ]}
     groupId="client-language"
@@ -376,20 +368,13 @@ If you want to filter runs based on a conversation ID in this way, you can searc
 
 <CodeTabs
     tabs={[
-        PythonBlock(`import json\n
-to_search = {
-    "conversation_id": "a1b2c3d4-e5f6-7890"
-}\n
-client.list_runs(
+        PythonBlock(`client.list_runs(
   project_name="default",
-  filter=f"has(metadata, '{json.dumps(to_search)}')"
+  filter="and(eq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
 )`),
-        TypeScriptBlock(`const toSearch = {
-  conversation_id: 'a1b2c3d4-e5f6-7890'
-}\n
-client.listRuns({
+        TypeScriptBlock(`client.listRuns({
   projectName: 'default',
-  filter: \`has(metadata, '\${JSON.stringify(toSearch)}')\`
+  filter: \`and(eq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))\`
 });`),
     ]}
     groupId="client-language"
@@ -402,20 +387,13 @@ Here's how you can search for runs named "ChatOpenAI" that also have a specific 
 
 <CodeTabs
     tabs={[
-        PythonBlock(`import json\n
-to_search = {
-    "conversation_id": "69b12c91-b1e2-46ce-91de-794c077e8151"
-}\n
-client.list_runs(
+        PythonBlock(`client.list_runs(
   project_name="default",
-  filter=f"and(has(metadata, '{json.dumps(to_search)}'), eq(name, 'ChatOpenAI'))"
+  filter="and(eq(name, 'ChatOpenAI'), eq(metadata_key, 'conversation_id'), eq(metadata_value, '69b12c91-b1e2-46ce-91de-794c077e8151'))"
 )`),
-        TypeScriptBlock(`const toSearch = {
-  conversation_id: '69b12c91-b1e2-46ce-91de-794c077e8151'
-}\n
-client.listRuns({
+        TypeScriptBlock(`client.listRuns({
   projectName: 'default',
-  filter: \`and(has(metadata, '\${JSON.stringify(toSearch)}'), eq(name, 'ChatOpenAI'))\`
+  filter: \`and(eq(name, 'ChatOpenAI'), eq(metadata_key, 'conversation_id'), eq(metadata_value, '69b12c91-b1e2-46ce-91de-794c077e8151'))\`
 });`),
     ]}
     groupId="client-language"
