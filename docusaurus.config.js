@@ -80,12 +80,17 @@ const config = {
         items: [
           {
             href: "https://python.langchain.com/en/latest/",
-            label: "Python Docs",
+            label: "LangChain Python Docs",
             position: "left",
           },
           {
             href: "https://js.langchain.com/docs/",
-            label: "JS/TS Docs",
+            label: "LangChain JS/TS Docs",
+            position: "left",
+          },
+          {
+            href: "https://api.smith.langchain.com/redoc",
+            label: "LangSmith API Docs",
             position: "left",
           },
           {

@@ -1,56 +1,23 @@
 ---
 sidebar_label: Overview
-sidebar_position: 1
+sidebar_position: 0
 ---
 
-import {
-  LangChainQuickStartCodeTabs,
-  ConfigureEnvironmentCodeTabs,
-} from "@site/src/components/QuickStart";
+# Tracing Overview
 
-# Overview
+Tracing is a powerful tool for understanding the behavior of your LLM application.
+LangSmith has best-in-class tracing capabilities, regardless of whether or not you are using LangChain.
 
-LangSmith helps you visualize, debug, and improve your LLM apps. This section reviews some functionality LangSmith provides around logging and tracing.
+Tracing can help you track down issues like:
+- An unexpected end result
+- Why an agent is looping
+- Why a chain was slower than expected
+- How many tokens an agent used at each step
 
-<!-- TODO overview -->
+To get started, check out the [Quick Start Guide](/tracing/quick_start).
 
-## Log runs
+After that, peruse the [Concepts Section](/tracing/concepts) to better understand the different components involved with tracing.
 
-LLM applications can get complicated quickly, especially if you are building working with agents or complex chains where there could be many layers of LLMs and other components. LangSmith makes it easy to log runs of your LLM applications so you can inspect the inputs and outputs of each component in the chain. This is especially useful when you are trying to debug your application or understand how a given component is behaving. This is done in two steps.
+If you want to learn how to accomplish a particular task, check out our comprehensive [How-To Guides](/tracing/faq)
 
-1. Configure environment
-
-<ConfigureEnvironmentCodeTabs />
-
-2. Run application
-
-<LangChainQuickStartCodeTabs />
-
-## Organize your work
-
-Runs are saved to projects. Root level runs are called `traces` and are saved to the `default` project if you don't specify a project name. You can also view all of your runs un-nested.
-You can create as many projects as you like to help you organize your work by context. For instance, you might have a project for each of your production LLM application environments, or you might have a project to separate runs on different days. You can also create projects for specific experiments or debugging sessions.
-
-## Visualize your runs
-
-Every time you run a LangChain component with tracing enabled or use the LangSmith SDK to save run trees directly, the call hierarchy for the run is saved and can be visualized in the app. You can drill down into the components inputs and outputs, invocation parameters, response time, feedback, token usage, and other important information to help you inspect your run. You can even rate the run to help you keep collect data for training, testing, and other analysis.
-
-![Run Details](static/run_details.png)
-
-## Running in the playground
-
-Once you have a run trace, you can directly modify the prompts and parameters of supported chains, LLMs, and chat models to see how they impact the output. This is a great way to quickly iterate on model and prompt configurations without having to switch contexts. All playground runs are logged to a "playground" project for safe keeping.
-
-![Replay Run](static/playground.png)
-
-## Share your work
-
-You can share any of the runs you've logged to LangSmith. This makes it easy to publish and reproduce your work. For instance, if you find a bug or unexpected output for a given setup, you can share it with your team or in an Issue on LangChain to make it easier to address.
-
-![Share Run](static/share_run.png)
-
-## Create datasets for testing and evaluation
-
-Add any representative runs from your debug projects to a dataset and use them for [testing and evaluation](../evaluation).
-
-![Add Example](static/add_example.png)
+For example use cases, check out the [Use Cases](/tracing/use_cases) page.

@@ -10,6 +10,167 @@ import React from 'react';
 import TabItem from "@theme/TabItem";
 import Tabs from "@theme/Tabs";
 
+export const TypeScriptSDKTracingCodeBlock = () => (
+    <CodeBlock language="typescript">
+                {`// To run the example below, ensure the environment variable OPENAI_API_KEY is set
+import OpenAI from "openai";
+import { RunTree } from "langsmith";
+
+// This can be a user input to your app
+const question = "Can you summarize this morning's meetings?";
+
+const pipeline = new RunTree({
+    name: "Chat Pipeline",
+    run_type: "chain",
+    inputs: { question }
+});
+
+// This can be retrieved in a retrieval step
+const context = "During this morning's meeting, we solved all world conflict.";
+
+const messages = [
+    { role: "system", content: "You are a helpful assistant. Please respond to the user's request only based on the given context." },
+    { role: "user", content: \`Question: \${question}\nContext: \${context}\` }
+];
+
+// Create a child run
+const childRun = await pipeline.createChild({
+    name: "OpenAI Call",
+    run_type: "llm",
+    inputs: { messages },
+});
+
+// Generate a completion
+const client = new OpenAI();
+const chatCompletion = await client.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: messages,
+});
+
+// End the runs and log them
+childRun.end(chatCompletion);
+await childRun.postRun();
+
+pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
+await pipeline.postRun();`}
+    </CodeBlock>
+);
+
+export const PythonAPITracingCodeBlock = () => (
+    <CodeBlock language="python">
+        {`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
+import openai
+import requests
+from datetime import datetime
+from uuid import uuid4
+
+def post_run(run_id, name, run_type, inputs, parent_id=None):
+    """Function to post a new run to the API."""
+    data = {
+        "id": run_id.hex,
+        "name": name,
+        "run_type": run_type,
+        "inputs": inputs,
+        "start_time": datetime.utcnow().isoformat(),
+    }
+    if parent_id:
+        data["parent_run_id"] = parent_id.hex
+    requests.post(
+        "https://api.smith.langchain.com/runs",
+        json=data,
+        headers=headers
+    )
+
+def patch_run(run_id, outputs):
+    """Function to patch a run with outputs."""
+    requests.patch(
+        f"https://api.smith.langchain.com/runs/{run_id}",
+        json={
+            "outputs": outputs,
+            "end_time": datetime.utcnow().isoformat(),
+        },
+        headers=headers,
+    )
+
+# Send your API Key in the request headers
+headers = {"x-api-key": "<YOUR API KEY>"}
+
+# This can be a user input to your app
+question = "Can you summarize this morning's meetings?"
+
+# This can be retrieved in a retrieval step
+context = "During this morning's meeting, we solved all world conflict."
+messages = [
+    {"role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context."},
+    {"role": "user", "content": f"Question: {question}\\nContext: {context}"}
+]
+
+# Create parent run
+parent_run_id = uuid4()
+post_run(parent_run_id, "Chat Pipeline", "chain", {"question": question})
+
+# Create child run
+child_run_id = uuid4()
+post_run(child_run_id, "OpenAI Call", "llm", {"messages": messages}, parent_run_id)
+
+# Generate a completion
+client = openai.Client()
+chat_completion = client.chat.completions.create(model="gpt-3.5-turbo", messages=messages)
+
+# End runs
+patch_run(child_run_id, chat_completion.dict())
+patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})`}
+    </CodeBlock>
+);
+
+
+export const PythonSDKTracingCodeBlock = () => (
+    <CodeBlock language="python">
+                {`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
+import openai
+
+from langsmith.run_trees import RunTree
+
+# This can be a user input to your app
+question = "Can you summarize this morning's meetings?"
+
+# Create a top-level run
+pipeline = RunTree(
+    name="Chat Pipeline",
+    run_type="chain",
+    inputs={"question": question}
+)
+
+# This can be retrieved in a retrieval step
+context = "During this morning's meeting, we solved all world conflict."
+
+messages = [
+    { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
+    { "role": "user", "content": f"Question: {question}\\nContext: {context}"}
+]
+
+# Create a child run
+child_llm_run = pipeline.create_child(
+    name="OpenAI Call",
+    run_type="llm",
+    inputs={"messages": messages},
+)
+
+# Generate a completion
+client = openai.Client()
+chat_completion = client.chat.completions.create(
+    model="gpt-3.5-turbo", messages=messages
+)
+
+# End the runs and log them
+child_llm_run.end(outputs=chat_completion)
+child_llm_run.post()
+
+pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
+pipeline.post()`}
+            </CodeBlock>
+);
+
 export const LangChainInstallationCodeTabs = () => (
   <CodeTabs
     groupId="client-language"
@@ -18,37 +179,47 @@ export const LangChainInstallationCodeTabs = () => (
         value: 'python',
         label: 'pip',
         language: 'bash',
-        content: `pip install -U langchain_openai`,
+        content: `pip install langchain_openai langchain_core`,
       },
       {
         value: 'typescript',
         label: 'yarn',
         language: 'bash',
-        content: `yarn add langchain`,
+        content: `yarn add @langchain/openai @langchain/core`,
       },
       {
         value: 'npm',
         label: 'npm',
         language: 'bash',
-        content: `npm install -S langchain`,
+        content: `npm install @langchain/openai @langchain/core`,
       },
       {
         value: 'pnpm',
         label: 'pnpm',
         language: 'bash',
-        content: `pnpm add langchain`,
+        content: `pnpm add @langchain/openai @langchain/core`,
       },
     ]}
   />
+);
+
+export const ConfigureSDKEnvironmentCodeTabs = ({}) => (
+    <CodeTabs
+        tabs={[
+            ShellBlock(`export LANGCHAIN_API_KEY=<your-api-key>
+
+# The below examples use the OpenAI API, so you will need
+export OPENAI_API_KEY=<your-openai-api-key>`),
+        ]}
+        groupId="client-language"
+    />
 );
 
 export const ConfigureEnvironmentCodeTabs = ({}) => (
   <CodeTabs
     tabs={[
       ShellBlock(`export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 export LANGCHAIN_API_KEY=<your-api-key>
-export LANGCHAIN_PROJECT=<your-project>  # if not specified, defaults to "default"
 
 # The below examples use the OpenAI API, so you will need
 export OPENAI_API_KEY=<your-openai-api-key>`),
@@ -58,9 +229,22 @@ export OPENAI_API_KEY=<your-openai-api-key>`),
 );
 
 export const LangChainQuickStartCodeTabs = ({}) => {
-  const simpleTSBlock = `import { ChatOpenAI } from "langchain/chat_models/openai";\n
-const llm = new ChatOpenAI()
-await llm.invoke("Hello, world!");`;
+  const simpleTSBlock = `import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
+  ["user", "Question: {question}\\nContext: {context}"],
+]);
+const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const outputParser = new StringOutputParser();
+
+const chain = prompt.pipe(model).pipe(outputParser);
+
+const question = "Can you summarize this morning's meetings?"
+const context = "During this morning's meeting, we solved all world conflict."
+await chain.invoke({ question: question, context: context });`;
 
   const alternativeTSBlock = `import { Client } from "langsmith";
 import { LangChainTracer } from "langchain/callbacks";
@@ -85,18 +269,27 @@ await model.invoke("Hello, world!", { callbacks: [tracer] })`;
     <Tabs groupId="client-language">
       <TabItem key="python" value="python" label="Python">
         <CodeBlock className="python" language="python">
-          {`from langchain_openai import ChatOpenAI\n
-llm = ChatOpenAI()
-llm.invoke("Hello, world!")`}
+          {`from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
+    ("user", "Question: {question}\\nContext: {context}")
+])
+model = ChatOpenAI(model="gpt-3.5-turbo")
+output_parser = StrOutputParser()
+
+chain = prompt | model | output_parser
+
+question = "Can you summarize this morning's meetings?"
+context = "During this morning's meeting, we solved all world conflict."
+chain.invoke({"question": question, "context": context})`}
         </CodeBlock>
       </TabItem>
       <TabItem key="typescript" value="typescript" label="TypeScript">
         <CodeBlock className="typescript" language="typescript">
           {simpleTSBlock}
-        </CodeBlock>
-        <p>For environments where process.env is not defined, initialize by explicitly passing keys:</p>
-        <CodeBlock className="typescript" language="typescript">
-          {alternativeTSBlock}
         </CodeBlock>
       </TabItem>
     </Tabs>

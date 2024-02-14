@@ -19,6 +19,7 @@ import {
   RunTreeQuickStartCodeTabs,
 } from "@site/src/components/QuickStart";
 import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
+import DocCardList from "@theme/DocCardList";
 
 # LangSmith
 
@@ -28,120 +29,32 @@ import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallat
 
 It lets you debug, test, evaluate, and monitor chains and intelligent agents built on **any LLM framework** and seamlessly integrates with **LangChain**, the go-to open source framework for building with LLMs.
 
-LangSmith is developed by LangChain, the company behind the open source LangChain framework.
+LangSmith is developed by [LangChain](https://www.langchain.com), the company behind the open source LangChain framework.
 
-:::note Waitlist
-LangSmith is currently in private beta. If you'd like to be added to the waitlist, please sign up for an account [here](https://smith.langchain.com/).
-:::
-
-:::note Active Development
-LangSmith is an early product in beta. If you run into any urgent issues or bugs, please reach out to us at <a href="mailto:support@langchain.dev">support@langchain.dev</a>.
-
-We appreciate your patience.
-:::
+![Trace](static/rendered_trace.png)
 
 ## Quick Start
-
-:::tip Interactive Tutorial
-If following along with code is more your thing, we've set up [a Jupyter notebook at this link](https://python.langchain.com/docs/langsmith/walkthrough) to help you get started with LangSmith.
-:::
-<>
-  <div
-    style={{
-      position: "relative",
-      paddingBottom: "64.67065868263472%",
-      height: 0
-    }}
-  >
-    <iframe
-      src="https://www.loom.com/embed/b8e1027ffe174830b119121de1b020f1?sid=6a554cf3-b83f-40bb-addd-4dca66440231"
-      frameBorder={0}
-      webkitallowfullscreen=""
-      mozallowfullscreen=""
-      allowFullScreen=""
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%"
-      }}
-    />
-  </div>
-  <br />
-</>
-
-<Tabs
-  groupId="langchain-user"
-  defaultValue="langchain"
-  values={[
-    {label: 'LangChain', value: 'langchain'},
-    {label: 'Without LangChain', value: 'no-langchain'},
-  ]}>
-  <TabItem value="langchain">
-
-If you already use LangChain, you can connect to LangSmith in a few steps:
-
-<ol>
-<li>Create a <a href="https://smith.langchain.com/"> LangSmith account</a> using one of the supported login methods.</li>
-<li>Create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</li>
-<li>Install <code>LangChain</code> (or its OpenAI partner package) for your target environment and programming language.</li>
-<LangChainInstallationCodeTabs />
-<li> Configure runtime environment:
-  <ol style={{marginTop:7}}>
-    <li>Replace <code>"&lt;your-api-key&gt;"</code> with the API key generated in step 1</li>
-    <li>Replace <code>"&lt;your-openai-api-key&gt;"</code> with an OpenAI API Key from <a href="https://platform.openai.com/account/api-keys">here</a></li>
-  </ol>
-</li>
-<ConfigureEnvironmentCodeTabs />
-<li>Run the example code below.</li>
-<LangChainQuickStartCodeTabs />
-</ol>
-  </TabItem>
-  <TabItem value="no-langchain">
-
-If you don't want to use LangChain in your LLM application, you can get started with LangSmith in just a few steps:
-
-<ol>
-<li>Create a <a href="https://smith.langchain.com/"> LangSmith account</a> using one of the supported login methods.</li>
-<li>Create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</li>
-<li>Install the LangSmith SDK for your target environment.</li>
-<ClientInstallationCodeTabs />
-<li> Configure runtime environment:
-  <ol style={{marginTop:7}}>
-    <li>Replace <code>"&lt;your-api-key&gt;"</code> with the API key generated in step 1</li>
-    <li>Replace <code>"&lt;your-openai-api-key&gt;"</code> with an OpenAI API Key from <a href="https://platform.openai.com/account/api-keys">here</a></li>
-  </ol>
-</li>
-<ConfigureEnvironmentCodeTabs />
-<li>Run the example code below. So long as the environment is correctly configured, all your LangChain code will be traced.</li>
-<RunTreeQuickStartCodeTabs localhost={false}  />
-</ol>
-</TabItem>
-</Tabs>
-
-Congratulations! Your first run is now visible in LangSmith! Navigate to the [projects page](https://smith.langchain.com/projects) to view your "Hello, world!" trace.
-
+- **Tracing**: Get started with the [tracing quick start](/tracing/quick_start).
+- **Evaluation**: Get started with the [evaluation quick start](/evaluation/quickstart).
 
 ## Next Steps
+Check out the following sections to learn more about LangSmith:
 
-Read the [LangSmith Overview](overview) to learn more about what LangSmith has to offer.
-
-To learn how to best take advantage of the visualization and replay capabilities within LangSmith, check out the [tracing documentation](tracing).
-
-To start testing and evaluating your LLMs, chains, and agents, check out the [testing & evaluation quickstart](evaluation/quickstart) and related documentation.
+- **[User Guide](/user_guide)**: Learn about the workflows LangSmith supports at each stage of the LLM application lifecycle.
+- **[Setup](/setup)**: Learn how to create an account, obtain an API key, and configure your environment.
+- **[Pricing](/pricing)**: Learn about the pricing model for LangSmith.
+- **[Self-Hosting](/category/self-hosting)**: Learn about self-hosting options for LangSmith.
+- **[Tracing](/tracing)**: Learn about the tracing capabilities of LangSmith.
+- **[Evaluation](/evaluation)**: Learn about the evaluation capabilities of LangSmith.
+- **[Prompt Hub](/category/prompt-hub)** Learn about the Prompt Hub, a prompt management tool built into LangSmith.
 
 ## Additional Resources
 
-- [LangSmith Cookbook](https://github.com/langchain-ai/langsmith-cookbook/tree/main) A collection of tutorials and end-to-end walkthroughs using LangSmith.
-
-- [LangChain Python](https://python.langchain.com/en/latest/) Docs for the Python LangChain library.
-
-- [LangChain Python API Reference](https://api.python.langchain.com/en/latest/) documentation to review the core APIs of LangChain.
-
-- [LangChain JS](https://js.langchain.com/docs/) Docs for the TypeScript LangChain library
-
-- [Discord](https://discord.gg/6adMQxSpJS): Join us on our Discord to discuss all things LangChain!
+- **[LangSmith Cookbook](https://github.com/langchain-ai/langsmith-cookbook/tree/main)**: A collection of tutorials and end-to-end walkthroughs using LangSmith.
+- **[LangChain Python](https://python.langchain.com/)**: Docs for the Python LangChain library.
+- **[LangChain Python API Reference](https://api.python.langchain.com/)**: documentation to review the core APIs of LangChain.
+- **[LangChain JS](https://js.langchain.com/docs/)**: Docs for the TypeScript LangChain library
+- **[Discord](https://discord.gg/6adMQxSpJS)**: Join us on our Discord to discuss all things LangChain!
 
 :::tip Contact Sales
 If you're interested in enterprise support and LangSmith access for larger team, fill out [this form](https://airtable.com/appwQzlErAS2qiP0L/shrGtGaVBVAz7NcV2) to speak with sales.

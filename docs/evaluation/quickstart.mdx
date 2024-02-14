@@ -54,14 +54,14 @@ export LANGCHAIN_API_KEY=<your api key>
 
 Upload a dataset to LangSmith to use for evaluation. For this example, we will upload a pre-made list of input examples.
 
-For more information on other ways to create and use datasets, check out the [datasets](datasets) guide.
+For more information on other ways to create and use datasets, check out the [how-to](faq) guides.
 
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client\n
 # Inputs are provided to your model, so it know what to generate
 dataset_inputs = [
-  a rap battle between Atticus Finch and Cicero",
+  "a rap battle between Atticus Finch and Cicero",
   "a rap battle between Barbie and Oppenheimer",
   # ... add more as desired
 ]\n
@@ -80,7 +80,7 @@ dataset = client.create_dataset(
     description="Rap battle prompts.",
 )
 client.create_examples(
-    inputs=[{"question": q} for q in example_inputs],
+    inputs=[{"question": q} for q in dataset_inputs],
     outputs=dataset_outputs,
     dataset_id=dataset.id,
 )`),
@@ -135,10 +135,13 @@ tabs={[
     value: "custom-function",
     label: "Custom function",
     language: "python",
-    content: `# You evaluate any arbitrary function over the dataset.
+    content: `import openai
+# You evaluate any arbitrary function over the dataset.
 # The input to the function will be the inputs dictionary for each example.
 def predict_result(input_: dict) -> dict:
-    return {"output": "Bar Bar Bar"}`,
+    messages = [{"role": "user", "content": input_["question"]}]
+    response = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo")
+    return {"output": response}`,
     },
     {
     value: "runnable",
@@ -222,10 +225,15 @@ tabs={[
         value: "custom-function",
         label: "Custom function",
         language: "typescript",
-        content: `// You evaluate any arbitrary function over the dataset.
-// The input to the function will be the inputs dictionary for each example.
-async function predictResult(input_: Record<string, any>): Record<string, any> {
-    return {output: "Bar Bar Bar"};
+        content: `import OpenAI from "openai";
+const client = new OpenAI();
+async function predictResult({ question }: { question: string }) {
+    const messages = [{ "role": "user", "content": question }];
+    const output = await client.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: messages
+    });
+    return { output };
 }`,
     },
     {
@@ -303,8 +311,8 @@ groupId="evaluated-component"
 
 Below, configure evaluation for some custom criteria. The feedback will be automatically logged within LangSmith.
 
-For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
-For more information on how to write a custom evaluator, check out the [custom evaluators](custom-evaluators) guide.
+For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](faq/evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
+For more information on how to write a custom evaluator, check out the [custom evaluators](faq/custom-evaluators) guide.
 
 <CodeTabs
   tabs={[
@@ -514,8 +522,8 @@ client.run_on_dataset(
 
 Below, configure evaluation for some custom criteria. The feedback will be automatically logged within LangSmith.
 
-For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
-For more information on how to write a custom evaluator, check out the [custom evaluators](custom-evaluators) guide.
+For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](faq/evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
+For more information on how to write a custom evaluator, check out the [custom evaluators](faq/custom-evaluators) guide.
 
 <CodeTabs
   tabs={[
@@ -835,4 +843,4 @@ To compare to another test on this dataset, you can click "Compare Tests".
 ## More on evaluation
 
 Congratulations! You've now created a dataset and used it to evaluate your agent or LLM.
-To learn more about evaluation chains available out of the box, check out the [LangChain Evaluators](evaluator-implementations) guide. To learn how to make your own custom evaluators, review the [Custom Evaluator](custom-evaluators) guide.
+To learn more about evaluation chains available out of the box, check out the [LangChain Evaluators](faq/evaluator-implementations) guide. To learn how to make your own custom evaluators, review the [Custom Evaluator](faq) guide.

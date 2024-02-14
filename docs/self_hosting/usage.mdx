@@ -1,0 +1,47 @@
+---
+sidebar_label: Usage
+sidebar_position: 3
+table_of_contents: true
+---
+
+# How to use your self-hosted instance of LangSmith
+
+This guide will walk you through the process of using your self-hosted instance of LangSmith.
+
+:::important Self-Hosted LangSmith Instance Required
+This guide assumes you have already deployed a self-hosted LangSmith instance. If you have not, please refer to the [kubernetes deployment guide](/self_hosting/kubernetes) or the [docker deployment guide](/self_hosting/docker).
+:::
+
+### Using your deployment:
+
+1. Once you have deployed your instance, you can access the LangSmith UI at `http://<external ip>`.
+2. The backend API will be available at `http://<external ip>/api` and the hub API will be available at `http://<external ip>/api-hub`.
+
+To use the LangSmith API, you will need to set the following environment variables in your application:
+
+```bash
+LANGCHAIN_ENDPOINT=http://<external ip>/api
+LANGCHAIN_HUB_API_URL=http://<external ip>/api-hub
+LANGCHAIN_API_KEY=foo # Set to a legitimate API key if using OAuth
+```
+
+You can also configure these variables directly in the LangSmith SDK client:
+
+```python
+import langsmith
+
+langsmith_client = langsmith.Client(
+    api_key='<api_key>',
+    api_url='http://<external ip>/api',
+)
+
+import langchainhub
+
+langchainhub.Client(
+    api_key='<api_key>',
+    api_url='http://<external ip>/api-hub'
+)
+```
+
+After setting the above, you should be able to run your code and see the results in your self-hosted instance.
+We recommend running through the [<u>quickstart guide</u>](#https://docs.smith.langchain.com/#quick-start) to get a feel for how to use LangSmith.

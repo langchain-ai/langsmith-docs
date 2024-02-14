@@ -1,0 +1,93 @@
+---
+sidebar_label: Pricing (Coming Soon)
+sidebar_position: 4
+---
+
+# Pricing
+
+## Plans
+
+
+| Developer | Plus  | Enterprise | 
+| ----------| ----- | ----------- | 
+| Designed for hobbyists who want to start their adventure solo | Everything in Developer, plus team features, higher rate limits, and longer data retention | Designed for teams with more security, deployment, and support needs |
+| <ul><li>Free for 1 user</li><li>3,000 free traces per month</li><li>Additional traces billed @ $0.005/trace</li></ul> | <ul><li>$39/user</li><li>8,000 free traces per month</li><li>Additional traces billed @ $0.005/trace</li></ul> | Custom |
+| Key features:<ul><li>1 Developer seat</li><li>Debugging traces</li><li>Dataset collection</li><li>Testing and evaluation</li><li>Prompt management</li><li>Monitoring</li></ul> | Key features:<ul><li>All features in Developer tier</li><li>Up to 10 seats</li><li>Hosted LangServe (beta)</li><li>Longer data retention</li><li>Higher rate limits</li><li>Email support</li></ul> | Key features:<ul><li>All features in Plus tier</li><li>Single Sign On (SSO)</li><li>SLA</li><li>Deployment options in customer’s environment</li><li>Higher rate limits</li><li>Team trainings</li><li>Shared Slack channel</li><li>Architectural guidance</li><li>Dedicated customer success manager</li></ul> |
+
+## Plan Comparison
+
+|  | Developer | Plus | Enterprise |
+| --- | :---: | :---: | :---: |
+| <b>Features</b> |  |  |  |
+| Debugging Traces | ✅ | ✅ | ✅ |
+| Dataset Collection | ✅ | ✅ | ✅ |
+| Human Labeling | ✅ | ✅ | ✅ |
+| Testing and Evaluation | ✅ | ✅ | ✅ |
+| Prompt Management | ✅ | ✅ | ✅ |
+| Hosted LangServe | -- | ✅ | ✅ |
+| Monitoring | ✅ | ✅ | ✅ |
+| <b>Team</b> |  |  |  |
+| Developer Seats | 1 Free Seat | Maximum 10 seats<br />$39 per seat/month<sup>1</sup> | Unlimited seats<br />Custom pricing |
+Collaborator Seats | -- | -- | Coming Soon! 
+| <b>Rates</b> |  |  |  |
+| Traces | First 3k traces per month for free.<br />$0.005 per trace thereafter<sup>2</sup> | First 8k traces per month for free.<br />$0.005 per trace thereafter<sup>2</sup> | Custom |
+| Max runs / hour | 100,000<sup>3</sup> | 100,000<sup>3</sup> | Custom
+Total trace size storage / hour | 1GB<sup>3</sup> | 1GB<sup>3</sup> | Custom
+| <b>Security Controls</b> |  |  |  |
+| Single Sign On | -- | -- | ✅ |
+| Deployment | Hosted in US | Hosted in US | Add-on for self-hosted<br /> deployment in customer's VPC |
+| <b>Support</b> |  |  |  |
+| Support Channels | Community | Email | Email<br />Shared Slack Channel |
+| Shared Slack Channel | -- | -- | ✅ |
+| Team Training | -- | -- | ✅ |
+| Application Architectural Guidance | -- | -- | ✅ |
+| Dedicated Customer Success Manager | -- | -- | ✅ |
+| SLA | -- | -- | ✅ |
+| <b>Procurement</b> |  |  |  |
+| Billing | Monthly, self-serve<br />Credit Card | Monthly, self-serve<br />Credit Card | Annual Invoice<br />ACH
+| Custom Terms and Data Privacy Agreement | -- | -- | ✅ |
+| Infosec Review | -- | -- | ✅ |
+
+<sup>1</sup> Seats are billed monthly on the first of the month or pro-rated if additional seats are purchased in the middle of the month. Seats removed mid-month won’t get credited. 
+
+<sup>2</sup> You can purchase LangSmith credits for your tracing usage. As long as you have credits in your account, we’ll service your traces and deduct from your credit balance. You’ll be able to set alerts and auto top-ups on credits if you choose.
+
+<sup>3</sup> Usage limits are approximate and are not a hard limit on billed traces.  Billing will be based on actual traces submitted.
+
+## Questions and Answers
+### I’ve been using the LangSmith beta. When will pricing go into effect?
+If you’ve been using LangSmith already, you have until April until pricing will be enforced. At that point if you want to add seats or use more than the monthly allotment of free traces, you will need to put a credit card down or contact sales. We will update this page and the application with a banner giving an exact date closer to April. If you are interested in the enterprise plan with special deployment options, you can purchase by reaching out to sales@langchain.dev.
+
+### Which plan is right for me?
+If you’re an individual developer, the Developer plan is a great choice for small projects. For teams that want to self-serve LangSmith, check out the Plus plan. If you need more advanced administration, authentication and authorization, deployment options, support, or annual invoicing, the Enterprise plan is right for you.
+
+### What is a seat?
+Seats are named to a specific developer. All accepted invitations to an account will be counted as a seat.
+
+### What is a trace?
+A trace is one complete invocation of your application chain or agent, evaluator run, or playground run. Here is an [example](https://smith.langchain.com/public/17c24270-9f74-47e7-b70c-d508afc448fa/r) of a single trace.
+
+### I’ve hit my rate limits. What can I do?
+If you’ve consumed the monthly allotment of free traces in your account, you can purchase credits via credit card on the Developer and Plus plans to continue sending traces to LangSmith. If you’ve hit the  rate limits on your tier, you can upgrade to a higher plan to get better limits, or reach out to [support@langchain.dev](mailto:support@langchain.dev) with questions.
+
+### I have a developer account, can I upgrade my account to the Plus or Enterprise plan?
+Every user will have a unique personal account on the Developer plan. <b>We cannot upgrade a Developer account to use the Plus or Enterprise plans.</b> If you’re interested in working as a team, create a separate LangSmith Organization.  This organization can be upgraded to the Plus or Enterprise plan.
+
+### How will billing work?
+Seats are billed monthly on the first of the month or pro-rated if additional seats are purchased in the middle of the month. Churned seats mid month won’t get credited. You can purchase LangSmith credits for your tracing usage. As long as you have credits in your account, we’ll service your traces and deduct from your credit balance. You’ll be able to set alerts and auto-top ups on credits if you choose.
+
+Enterprise plan customers are billed annually by invoice.
+
+### What can I expect from Support?
+On the Plus plan, you receive preferential, email support at support@langchain.dev for LangSmith-related questions. 
+
+On the Enterprise plan, you’ll get white-glove support with a Slack channel, a dedicated customer success manager, and monthly check-ins to go over LangSmith and LangChain questions. We can help with anything from debugging, agent and RAG techniques, evaluation approaches, and cognitive architecture reviews. If you purchase the add-on to run LangSmith in your environment, we’ll also support deployments and new releases with our infra engineering team on-call.
+
+### Where is my data stored?
+When using LangSmith hosted at smith.langchain.com, data is stored in GCP region `us-central-1`. If you’re on the Enterprise plan, we can deliver LangSmith to run on your kubernetes cluster in AWS, GCP, or Azure so that data never leaves your environment.
+
+### Is LangSmith SOC 2 compliant?
+We are in the process of getting our getting our SOC 2 certification. We will update the page when we’re certified.
+
+### Will you train on the data that I send LangSmith?
+We will not train on your data, and you own all rights to your data. See [LangSmith Terms of Service](https://langchain.dev/terms-of-service) for more information.
