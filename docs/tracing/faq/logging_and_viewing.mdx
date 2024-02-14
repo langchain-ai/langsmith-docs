@@ -26,6 +26,8 @@ When using the Python SDK, take special note of the `traceable` decorator and `w
 
 :::note
 Please follow the [Setup](/setup) guide to learn how to sign up and create an API key.
+By default, the traces will be logged to a project named `default`.
+To log traces to a different project, see [this section](/tracing/faq/customizing_trace_attributes#logging-to-a-specific-project).
 :::
 :::note
 Please make sure to set the `LANGCHAIN_API_KEY` environment variable to your API key before running the examples below.
@@ -212,7 +214,11 @@ patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})
     groupId="client-language"
 />
 
-### Viewing Traces [TODO]
+### Viewing Traces
+To view traces, navigate to the project details page for your project (by default, all traces are logged to the "default" project).
+Then, click on a row in the traces table to expand the trace. This will bring up a run tree, which shows the parent-child relationships between runs, as well as the inputs and outputs of each run.
+You can also view feedback, metadata, and other information in the tabs.
+![Trace](../static/faq/trace.png)
 
 ### Setting a sampling rate for tracing
 
