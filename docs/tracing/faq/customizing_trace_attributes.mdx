@@ -74,13 +74,10 @@ chat_completion = client.chat.completions.create(
 rt.end(outputs=chat_completion)
 rt.post()\n
 # You can also use the @traceable decorator to log traces to LangSmith
-# You can specify the Project via the project_name parameter
 # Ensure that the LANGCHAIN_TRACING_V2 environment variables are set for @traceable to work
 @traceable(
     run_type="llm",
     name="OpenAI Call Decorator",
-    # highlight-next-line
-    project_name="My Project"
 )
 def call_openai(
     messages: list[dict], model: str = "gpt-3.5-turbo"
@@ -89,8 +86,24 @@ def call_openai(
         model=model,
         messages=messages,
     ).choices[0].message.content\n
-call_openai(messages)`),
-        TypeScriptBlock(`import OpenAI from "openai";
+# You can specify the Project via the project_name parameter
+call_openai(
+    messages,
+    # highlight-next-line
+    langsmith_extra={"project_name": "My Project"},
+)\n
+# The wrapped OpenAI client accepts all the same langsmith_extra parameters
+# as @traceable decorated functions
+from langsmith import wrappers
+wrapped_client = wrappers.wrap_openai(client)
+wrapped_client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=messages,
+    # highlight-next-line
+    langsmith_extra={"project_name": "My Project"},
+)
+`),
+    TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";\n
 const client = new OpenAI()\n
 const messages = [
@@ -192,7 +205,13 @@ def call_openai(
         model=model,
         messages=messages,
     ).choices[0].message.content\n
-call_openai(messages)`),
+call_openai(
+    messages,
+    # You can provide tags and metadata at invocation time 
+    # via the langsmith_extra parameter
+    # highlight-next-line
+    langsmith_extra={"tags": ["my-other-tag"], "metadata": {"my-other-key": "my-value"}}
+)`),
         TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";\n
 const client = new OpenAI();\n
