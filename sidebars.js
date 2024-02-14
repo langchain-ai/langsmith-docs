@@ -58,6 +58,7 @@ module.exports = {
           id: "evaluation/index",
         }
     },
+    "monitoring",
     {
       type: "category",
       label: "Prompt Hub",
