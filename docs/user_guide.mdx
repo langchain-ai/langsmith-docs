@@ -18,8 +18,6 @@ When developing new LLM applications, we suggest having LangSmith tracing enable
 Oftentimes, it isn’t necessary to look at every single trace. However, when things go wrong (an unexpected end result, infinite agent loop, slower than expected execution, higher than expected token usage), it’s extremely helpful to debug by looking through the application traces. LangSmith gives clear visibility and debugging information at each step of an LLM sequence, making it much easier to identify and root-cause issues.
 We provide native rendering of chat messages, functions, and retrieve documents.
 
-LangSmith also provides opening up portions of a trace in a playground environment for rapid iteration.
-
 #### Initial Test Set
 While many developers still ship an initial version of their application based on “vibe checks”, we’ve seen an increasing number of engineering teams start to adopt a more test driven approach. LangSmith allows developers to create datasets, which are collections of inputs and reference outputs, and use these to run tests on their LLM applications.
 These test cases can be uploaded in bulk, created on the fly, or exported from application traces. LangSmith also makes it easy to run custom evaluations (both LLM and heuristic based) to score test results.
@@ -30,7 +28,9 @@ Oftentimes, changes in the prompt, retrieval strategy, or model choice can have 
 In order to get a sense for which variant is performing better, it’s useful to be able to view results for different configurations on the same datapoints side-by-side. We’ve invested heavily in a user-friendly comparison view for test runs to track and diagnose regressions in test scores across multiple revisions of your application.
 
 #### Playground
-TODO
+LangSmith provides a playground environment for rapid iteration and experimentation.
+This allows you to quickly test out different prompts and models. You can open the playground from any prompt or model run in your trace.
+Every playground run is logged in the system and can be used to create test cases or compare with other runs.
 
 ## Beta Testing
 Beta testing allows developers to collect more data on how their LLM applications are performing in real-world scenarios. In this phase, it’s important to develop an understanding for the types of inputs the app is performing well or poorly on and how exactly it’s breaking down in those cases. Both feedback collection and run annotation are critical for this workflow. This will help in curation of test cases that can help track regressions/improvements and development of automatic evaluations.
