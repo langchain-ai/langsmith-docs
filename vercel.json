@@ -3,6 +3,10 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/organizations",
+      "destination": "/setup"
+    },
+    {
       "source": "/docs/:path*",
       "destination": "/:path*"
     }
