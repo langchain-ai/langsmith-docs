@@ -3,6 +3,10 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/evaluation/custom-evaluators",
+      "destination": "/evaluation/faq/custom-evaluators"
+    },
+    {
       "source": "/category/tracing",
       "destination": "/tracing"
     },
