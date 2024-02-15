@@ -1,10 +1,9 @@
 ---
-sidebar_label: Integrations
-sidebar_position: 3
+sidebar_label: Python
 table_of_contents: true
 ---
 
-# Integrations
+# Python Integrations
 
 LangSmith allows you to log traces in various ways.
 
@@ -54,7 +53,7 @@ client.chat.completions.create(
 
 Oftentimes, you use the OpenAI client inside of other functions.
 You can get nested traces by using this wrapped client and decorating those functions with `@traceable`.
-See [this documentation](faq/logging_and_viewing) for more documentation how to use this decorator
+See [this documentation](/tracing/faq/logging_and_viewing) for more documentation how to use this decorator
 
 ```python
 from langsmith import traceable
@@ -69,10 +68,9 @@ def my_function(text: str):
 my_function("hello world")
 ```
 
-
 ## Instructor
 
-We provide a convenient integration with [Instructor](https://jxnl.github.io/instructor/), largely by virtue of it essentially just using the OpenAI SDK.
+We provide a convenient integration with [Instructor](https://jxnl.github.io/instructor/).
 
 In order to use, you first need to set your LangSmith API key.
 
@@ -125,7 +123,7 @@ user = client.chat.completions.create(
 
 Oftentimes, you use `instructor` inside of other functions.
 You can get nested traces by using this wrapped client and decorating those functions with `@traceable`.
-See [this documentation](faq/logging_and_viewing) for more documentation how to use this decorator
+See [this documentation](/tracing/faq/logging_and_viewing) for more documentation how to use this decorator
 
 ```python
 @traceable()
