@@ -100,7 +100,7 @@ const stream = await createCompletion({
 });
 ```
 
-```
+```ts
 for await (const chunk of stream) {
   console.log(chunk);
 }
@@ -220,7 +220,7 @@ and token usage information.
 The [Vercel AI SDK](https://sdk.vercel.ai/docs) contains integrations with a variety of model providers.
 Here's an example of how you can trace outputs in a Next.js handler:
 
-```
+```ts
 import { traceable } from 'langsmith/traceable';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 
