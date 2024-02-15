@@ -58,7 +58,7 @@ See [this documentation](/tracing/faq/logging_and_viewing) for more documentatio
 ```python
 from langsmith import traceable
 
-@traceable()
+@traceable
 def my_function(text: str):
     return client.chat.completions.create(
         model="gpt-4",
@@ -126,7 +126,9 @@ You can get nested traces by using this wrapped client and decorating those func
 See [this documentation](/tracing/faq/logging_and_viewing) for more documentation how to use this decorator
 
 ```python
-@traceable()
+# You can customize the run name with the `name` keyword argument
+# highlight-next-line
+@traceable(name="Extract User Details")
 def my_function(text: str) -> UserDetail:
     return client.chat.completions.create(
         model="gpt-3.5-turbo",
