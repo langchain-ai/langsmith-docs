@@ -3,6 +3,10 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/category/organizations",
+      "destination": "/setup"
+    },
+    {
       "source": "/organizations",
       "destination": "/setup"
     },
