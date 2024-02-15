@@ -3,6 +3,10 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/category/tracing",
+      "destination": "/tracing"
+    },
+    {
       "source": "/tracing/tracing-faq",
       "destination": "/tracing/faq"
     },
@@ -13,6 +17,10 @@
     {
       "source": "/organizations",
       "destination": "/setup"
+    },
+    {
+      "source": "/category/organizations/:path*",
+      "destination": ":path*"
     },
     {
       "source": "/docs/:path*",
