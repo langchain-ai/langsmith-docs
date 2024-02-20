@@ -24,7 +24,7 @@ This guide provides instructions for installing and setting up your environment 
 2. LangSmith License Key
     1. You can get this from your Langchain representative. Contact us at support@langchain.dev for more information.
 3. LangSmith Version
-    1. We default to the latest version of LangSmith. In a production environment, you may want to specify a specific version. Contact us at <a href="mailto:support@langchain.dev">support@langchain.dev</a> for more information.
+    1. We default to the latest version of LangSmith. In a production environment, you should specify a specific version. Contact us at <a href="mailto:support@langchain.dev">support@langchain.dev</a> for more information.
 4. OpenAI API Key(optional).
     1. Used for natural language search feature. Can specify OpenAI key in browser as well for the playground feature.
 
@@ -86,14 +86,14 @@ The following explains how to run the LangSmith using the LangSmith SDK.
 
 Copy the `docker-compose.yml` file from the LangSmith SDK to your project directory.
 
-You can find the `docker-compose.yml` file in the LangSmith SDK at the following here: [LangSmith Docker Compose File](#https://github.com/langchain-ai/langsmith-sdk/blob/main/python/langsmith/cli/docker-compose.yaml)
+You can find the `docker-compose.yml` file in the LangSmith SDK here: [<u>LangSmith Docker Compose File</u>](https://github.com/langchain-ai/langsmith-sdk/blob/main/python/langsmith/cli/docker-compose.yaml)
 
 ### 2. Export or set the required environment variables
 
 ```bash
 export LANGSMITH_LICENSE_KEY=<YOUR_LANGSMITH_LICENSE_KEY>
 export _LANGSMITH_IMAGE_VERSION=<LANGSMITH_VERSION>
-export OPENAI_API_KEY=<YOUR_OPEN
+export OPENAI_API_KEY=<YOUR_OPEN_OPENAI_API_KEY> # Optional, used for natural language search feature
 ```
 
 You can also set these environment variables in the `docker-compose.yml` file directly.

@@ -60,7 +60,7 @@ Ensure you have the following tools/items ready. Some items are marked optional 
 ## Configure your Helm Charts:
 
 1. Create a copy of `values.yaml`
-2. Override any values in the file. Refer to the documentation for the [<u>LangSmith Helm Chart</u>](#https://github.com/langchain-ai/helm/tree/main/charts/langsmith) to see all configurable values. Some values we recommend setting:
+2. Override any values in the file. Refer to the documentation for the [<u>LangSmith Helm Chart</u>](https://github.com/langchain-ai/helm/tree/main/charts/langsmith) to see all configurable values. Some values we recommend setting:
     1. Resources
     2. SSL(If on EKS or some other cloud provider)
         1. Add an annotation to the `frontend.service` object to tell your cloud provider to provision a load balancer with said certificate attached
