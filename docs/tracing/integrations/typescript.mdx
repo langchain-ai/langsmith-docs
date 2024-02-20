@@ -24,8 +24,8 @@ After that, you can use LangChain as you normally would and all traces will get 
 
 ## OpenAI SDK
 
-The easiest ways to trace calls from the [OpenAI SDK](https://platform.openai.com/docs/api-reference) with LangSmith
-is using the `traceable` wrapper function available in LangSmith 0.1.0 and up.
+The easiest way to trace calls from the [OpenAI SDK](https://platform.openai.com/docs/api-reference) with LangSmith
+is using the `wrapOpenAI` wrapper function available in LangSmith 0.1.3 and up.
 
 In order to use, you first need to set your LangSmith API key:
 
@@ -39,33 +39,20 @@ Next, you will need to install the LangSmith SDK and the OpenAI SDK:
 npm install langsmith openai
 ```
 
-After that, initialize your OpenAI client:
+Then, you can import and wrap the client using the `wrapOpenAI` method like this:
 
 ```ts
 import { OpenAI } from "openai";
+import { wrapOpenAI } from "langsmith/wrappers";
 
-const client = new OpenAI();
+const openai = wrapOpenAI(new OpenAI());
 ```
 
-Then, you can wrap the client methods you want to use by passing it to the `traceable` function like this:
+This new client takes the same exact arguments and has the same return type as the original method,
+but will log everything to LangSmith.
 
 ```ts
-import { traceable } from "langsmith/traceable";
-
-const createCompletion = traceable(
-  openai.chat.completions.create.bind(openai.chat.completions),
-  { name: "OpenAI Chat Completion", run_type: "llm" }
-);
-```
-
-Note the use of `.bind` to preserve the function's context. The `run_type` field in the extra config object
-marks the function as an LLM call, and enables token usage tracking for OpenAI.
-
-This new method takes the same exact arguments and has the same return type as the original method,
-but will log everything to LangSmith!
-
-```ts
-await createCompletion({
+await openai.chat.completions.create({
   model: "gpt-3.5-turbo",
   messages: [{ content: "Hi there!", role: "user" }],
 });
@@ -90,6 +77,28 @@ await createCompletion({
 }
 ```
 
+Alternatively, you can use the `traceable` function to wrap the client methods you want to use:
+
+```ts
+import { OpenAI } from "openai";
+import { traceable } from "langsmith/traceable";
+
+const openai = new OpenAI();
+
+const createCompletion = traceable(
+  openai.chat.completions.create.bind(openai.chat.completions),
+  { name: "OpenAI Chat Completion", run_type: "llm" }
+);
+
+await createCompletion({
+  model: "gpt-3.5-turbo",
+  messages: [{ content: "Hi there!", role: "user" }],
+});
+```
+
+Note the use of `.bind` to preserve the function's context. The `run_type` field in the extra config object marks the function as an LLM call,
+and enables token usage tracking for OpenAI.
+
 This also works for streaming:
 
 ```ts
@@ -105,6 +114,8 @@ for await (const chunk of stream) {
   console.log(chunk);
 }
 ```
+
+### Nested tracing
 
 Oftentimes, you use the OpenAI client inside of other functions or as part of a longer
 sequence. You can automatically get nested traces by using this wrapped method
