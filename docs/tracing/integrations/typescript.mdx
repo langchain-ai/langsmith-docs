@@ -39,7 +39,8 @@ Next, you will need to install the LangSmith SDK and the OpenAI SDK:
 npm install langsmith openai
 ```
 
-Then, you can import and wrap the client using the `wrapOpenAI` method like this:
+After that, initialize your OpenAI client and wrap the client with `wrapOpenAI` method to
+enable tracing for the completions and chat completions methods:
 
 ```ts
 import { OpenAI } from "openai";
