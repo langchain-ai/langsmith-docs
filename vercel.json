@@ -27,6 +27,10 @@
       "destination": ":path*"
     },
     {
+      "source": "/overview",
+      "destination": "/"
+    },
+    {
       "source": "/docs/:path*",
       "destination": "/:path*"
     }
