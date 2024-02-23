@@ -94,12 +94,12 @@ from langsmith import wrappers
 client = wrappers.wrap_openai(OpenAI())
 ```
 
-After this, you can patch the OpenAI client using `instructor`:
+After this, you can patch the wrapped OpenAI client using `instructor`:
 
 ```python
 import instructor
 
-client = instructor.patch(OpenAI())
+client = instructor.patch(client)
 ```
 
 Now, you can use `instructor` as you normally would, but now everything is logged to LangSmith!
