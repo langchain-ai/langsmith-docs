@@ -5,13 +5,13 @@ sidebar_position: 4
 
 # LangSmith Release Notes
 
+:::note
+All versions of LangSmith after v0.2 require `langsmith-sdk` version ≥ `0.0.71` (Python) and  ≥ `0.0.56` (JS/TS) to support changes in pagination of API results.  Older versions will return an http status 405 error.  We strongly encourage use of the latest versions of the SDK for the best performance.
+:::
+
 ## Week of Februrary 21, 2024 - LangSmith v0.3
 
 LangSmith 0.3 improves performance and reliability, adds improved monitoring charts group by metadata and tag, and adds cost tracking.
-
-### Requirements
-
-- This release requires `langsmith-sdk` version ≥ `0.0.71` (Python) and  ≥ `0.0.56` (JS/TS) to support changes in pagination of API results.  Older versions will return an http status 405 error.
 
 ### Breaking changes
 
@@ -38,7 +38,7 @@ LangSmith 0.3 improves performance and reliability, adds improved monitoring cha
 
 ### LangSmith SDK Changes
 
-- [Trace sampling](https://docs.smith.langchain.com/tracing/tracing-faq#how-do-i-reduce-my-trace-count) has been added to the LangSmith SDK as of python SDK version >= 0.0.84 and JS SDK version >= 0.0.64.
+- [Trace sampling](https://docs.smith.langchain.com/tracing/tracing-faq#how-do-i-reduce-my-trace-count) has been added to the LangSmith SDK as of python SDK version >= `0.0.84` and JS SDK version >= `0.0.64`.
 
 ### Performance and Reliability Changes
 
