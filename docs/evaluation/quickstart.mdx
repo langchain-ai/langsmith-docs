@@ -115,12 +115,6 @@ await client.createExamples({
 
 ## 2. System to evaluate
 
-The `run_on_dataset` test runner can evaluate __any__ function. This includes any [Runnable](https://python.langchain.com/docs/expression_language/interface) LangChain component.
-
-If your system is stateful (for instance, if it has chat memory) you can instead provide a _constructor_ for your system that creates a new
-instance for each example record in the dataset. If your system is stateless, you can directly pass it in without worrying about any constructors.
-
-
 <Tabs
   groupId="client-language"
   defaultValue="python"
@@ -129,6 +123,12 @@ instance for each example record in the dataset. If your system is stateless, yo
     {label: 'TypeScript', value: 'typescript'},
   ]}>
 <TabItem value="python">
+
+The `run_on_dataset` test runner can evaluate __any__ function. This includes any [Runnable](https://python.langchain.com/docs/expression_language/interface) LangChain component.
+
+If your system is stateful (for instance, if it has chat memory) you can instead provide a _constructor_ for your system that creates a new
+instance for each example record in the dataset. If your system is stateless, you can directly pass it in without worrying about any constructors.
+
 <CodeTabs
 tabs={[
     {
@@ -219,6 +219,12 @@ groupId="client-language"
 />
 </TabItem>
 <TabItem value="typescript">
+
+The `runOnDataset` test runner can evaluate __any__ function. This includes any [Runnable](https://js.langchain.com/docs/expression_language/interface) LangChain component.
+
+If your system is stateful (for instance, if it has chat memory) you can instead provide a _constructor_ for your system that creates a new
+instance for each example record in the dataset. If your system is stateless, you can directly pass it in without worrying about any constructors.
+
 <CodeTabs
 tabs={[
     {
@@ -522,7 +528,7 @@ client.run_on_dataset(
 
 Below, configure evaluation for some custom criteria. The feedback will be automatically logged within LangSmith.
 
-For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](faq/evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/langchain_api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
+For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](faq/evaluator-implementations) docs or the [reference documentation](https://api.js.langchain.com/modules/langchain_evaluation.html) for LangChain's evalution module.
 For more information on how to write a custom evaluator, check out the [custom evaluators](faq/custom-evaluators) guide.
 
 <CodeTabs
