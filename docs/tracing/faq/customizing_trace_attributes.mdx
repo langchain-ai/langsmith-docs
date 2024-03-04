@@ -4,12 +4,12 @@ sidebar_position: 2
 ---
 
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
-    LangChainPyBlock,
-    LangChainJSBlock,
-    APIBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+  LangChainPyBlock,
+  LangChainJSBlock,
+  APIBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # How to customize attributes of traces
@@ -25,11 +25,12 @@ export LANGCHAIN_PROJECT="My Project"
 ```
 
 ### Changing the destination project at runtime
+
 When global environment variables are too broad, you can also set the project name at program runtime. This is useful when you want to log traces to different projects within the same application.
 
 <CodeTabs
-    tabs={[
-        LangChainPyBlock(`# You can set the project name for a specific tracer instance:
+  tabs={[
+    LangChainPyBlock(`# You can set the project name for a specific tracer instance:
 from langchain.callbacks.tracers import LangChainTracer\n
 tracer = LangChainTracer(project_name="My Project")
 chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"callbacks": [tracer]})\n\n
@@ -39,7 +40,7 @@ from langchain_core.tracers.context import tracing_v2_enabled
 with tracing_v2_enabled(project_name="My Project"):
     chain.invoke({"query": "How many people live in canada as of 2023?"})
 `),
-        LangChainJSBlock(`// You can set the project name for a specific tracer instance:
+    LangChainJSBlock(`// You can set the project name for a specific tracer instance:
 import { LangChainTracer } from "langchain/callbacks";\n
 const tracer = new LangChainTracer({ projectName: "My Project" });
 await chain.invoke(
@@ -49,7 +50,7 @@ await chain.invoke(
   { callbacks: [tracer] }
 );
 `),
-        PythonBlock(`import openai
+    PythonBlock(`import openai
 from langsmith import traceable
 from langsmith.run_trees import RunTree\n
 client = openai.Client()\n
@@ -126,8 +127,8 @@ const chatCompletion = await client.chat.completions.create({
 // End and submit the run
 rt.end(chatCompletion)
 await rt.postRun()`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### Adding metadata and tags to traces
@@ -136,8 +137,8 @@ LangSmith supports sending arbitrary metadata and tags along with traces. This i
 For more information on metadata and tags, see the [Concepts](/tracing/concepts) page. For information on how to query traces and runs by metadata and tags, see the [Querying Traces](/tracing/faq/querying_traces) page.
 
 <CodeTabs
-    tabs={[
-        LangChainPyBlock(`from langchain_openai import ChatOpenAI
+  tabs={[
+    LangChainPyBlock(`from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser\n
 prompt = ChatPromptTemplate.from_messages([
@@ -150,7 +151,7 @@ output_parser = StrOutputParser()\n
 chain = (prompt | chat_model | output_parser).with_config({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}})\n
 # Tags and metadata can also be passed at runtime
 chain.invoke({"input": "What is the meaning of life?"}, {"tags": ["shared-tags"], "metadata": {"shared-key": "shared-value"}})`),
-        LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
+    LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";\n
 const prompt = ChatPromptTemplate.fromMessages([
@@ -163,7 +164,7 @@ const outputParser = new StringOutputParser();\n
 const chain = (prompt.pipe(model).pipe(outputParser)).withConfig({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}});\n
 // Tags and metadata can also be passed at runtime
 await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags"], metadata: {"shared-key": "shared-value"}})`),
-        PythonBlock(`import openai
+    PythonBlock(`import openai
 from langsmith import traceable
 from langsmith.run_trees import RunTree\n
 client = openai.Client()\n
@@ -212,7 +213,7 @@ call_openai(
     # highlight-next-line
     langsmith_extra={"tags": ["my-other-tag"], "metadata": {"my-other-key": "my-value"}}
 )`),
-        TypeScriptBlock(`import OpenAI from "openai";
+    TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";\n
 const client = new OpenAI();\n
 const messages = [
@@ -236,8 +237,8 @@ const chatCompletion = await client.chat.completions.create({
 // End and submit the run
 rt.end(chatCompletion)
 await rt.postRun()`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### Customizing the run name
@@ -245,19 +246,19 @@ await rt.postRun()`),
 When you create a run, you can specify a name for the run. This name is used to identify the run in LangSmith and can be used to filter and group runs. The name is also used as the title of the run in the LangSmith UI.
 
 <CodeTabs
-    tabs={[
-        LangChainPyBlock(`# When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
+  tabs={[
+    LangChainPyBlock(`# When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
 # (Note: this is not currently supported directly on LLM objects.)
 ...
 configured_chain = chain.with_config({"run_name": "MyCustomChain"})
 configured_chain.invoke({"query": "What is the meaning of life?"})`),
-        LangChainJSBlock(`// When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
+    LangChainJSBlock(`// When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
 // (Note: this is not currently supported directly on LLM objects.)
 ...
 const configuredChain = chain.withConfig({ runName: "MyCustomChain" });
 await configuredChain.invoke({query: "What is the meaning of life?"});
 `),
-        PythonBlock(`import openai
+    PythonBlock(`import openai
 from langsmith import traceable
 from langsmith.run_trees import RunTree\n
 client = openai.Client()\n
@@ -294,7 +295,7 @@ def call_openai(
         messages=messages,
     ).choices[0].message.content\n
 call_openai(messages)`),
-        TypeScriptBlock(`import OpenAI from "openai";
+    TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";\n
 const client = new OpenAI();\n
 const messages = [
@@ -315,8 +316,8 @@ const chatCompletion = await client.chat.completions.create({
 // End and submit the run
 rt.end(chatCompletion)
 await rt.postRun()`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 For more examples of with LangChain, check out the [recipe on customizing run names](https://github.com/langchain-ai/langsmith-cookbook/blob/main/tracing-examples/runnable-naming/run-naming.ipynb).
@@ -332,7 +333,9 @@ The following fields can be updated when patching a run with the SDK or API.
 
 ### Masking inputs and outputs
 
-If you need to completely hide the inputs and outputs of your traces, you can set the following environment variables when running your application:
+In some situations, you may need to hide the inputs and outputs of your traces for privacy or security reasons. LangSmith provides a way to filter the inputs and outputs of your traces before they are sent to the LangSmith backend, so our servers never see the original values.
+
+If you want to completely hide the inputs and outputs of your traces, you can set the following environment variables when running your application:
 
 ```bash
 LANGCHAIN_HIDE_INPUTS=true
@@ -340,3 +343,107 @@ LANGCHAIN_HIDE_OUTPUTS=true
 ```
 
 This works for both the LangSmith SDK and LangChain.
+
+You can also customize and override this behavior for a given Client instance.  This can be done by setting the `hide_inputs` and `hide_outputs` parameters on the `Client` object.
+
+<CodeTabs
+    tabs={[
+        LangChainPyBlock(`from langchain_core.tracers.context import tracing_v2_enabled
+from langchain_openai import ChatOpenAI
+from langsmith import Client\n\n
+def filter_inputs(inputs: dict):
+    # You can define custom filtering here
+    return {}\n\n
+def filter_outputs(outputs: dict):
+    # You can define custom filtering here
+    return {}\n\n
+llm = ChatOpenAI()\n
+# You can configure tracing using the context manager below
+# or by directly creating a LangChainTracer object
+with tracing_v2_enabled(
+    "test-filtering",
+    client=Client(hide_inputs=filter_inputs, hide_outputs=filter_outputs),
+) as cb:
+    llm.invoke("Say foo")
+    # The linked run will have its metadata present, but the inputs will be hidden
+    print(cb.get_run_url())\n
+with tracing_v2_enabled("test-filtering", client=Client()) as cb:
+    llm.invoke("Say bar")
+    # The linked run will not have hidden inputs and outputs
+    print(cb.get_run_url())
+`),
+        LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";
+import { Client} from "langsmith";\n
+(async () => {
+    const llm = new ChatOpenAI();
+    const client = new Client({
+        hideInputs: (inputs) => ({}),
+        hideOutputs: (outputs) => ({}),
+    })
+    const tracer = new LangChainTracer({ client });
+    // The traced run will have its metadata present, but the inputs will be hidden
+    await llm.invoke("Say foo", { callbacks: [tracer] });
+    const unfilteredTracer = new LangChainTracer();
+    // The traced run will not have hidden inputs and outputs
+    await llm.invoke("Say bar", { callbacks: [unfilteredTracer] });
+})();
+`),
+        PythonBlock(`import openai
+from langsmith import Client
+from langsmith.wrappers import wrap_openai\n
+openai_client = wrap_openai(openai.Client())
+langsmith_client = Client(
+    hide_inputs=lambda inputs: {}, hide_outputs=lambda outputs: {}
+)\n
+# The linked run will have its metadata present, but the inputs will be hidden
+openai_client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Hello!"},
+    ],
+    langsmith_extra={"client": langsmith_client},
+)\n
+# The linked run will not have hidden inputs and outputs
+openai_client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Hello!"},
+    ],
+)
+`),
+    TypeScriptBlock(`import { Client } from "langsmith";
+import { wrapOpenAI } from "langsmith/wrappers";
+import OpenAI from "openai";\n
+const langsmithClient = new Client({
+  hideInputs: (inputs) => ({}),
+  hideOutputs: (outputs) => ({}),
+});\n
+(async () => {
+  // The linked run will have its metadata present, but the inputs will be hidden
+  const filteredOAIClient = wrapOpenAI(new OpenAI(), {
+    client: langsmithClient,
+  });
+  await filteredOAIClient.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: "Hello!" },
+    ],
+  });
+  const openaiClient = wrapOpenAI(new OpenAI());
+  // The linked run will not have hidden inputs and outputs
+  await openaiClient.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: "Hello!" },
+    ],
+  });
+})();
+`),
+]}
+groupId="client-language"
+/>
