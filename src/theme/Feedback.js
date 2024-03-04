@@ -177,7 +177,7 @@ export default function Feedback() {
                 handleFeedback("yes");
               }}
             >
-              Good <SvgThumbsUp />
+              <SvgThumbsUp />
             </div>
             <div
               {...defaultFields}
@@ -195,7 +195,7 @@ export default function Feedback() {
                 handleFeedback("no");
               }}
             >
-              Needs improvement <SvgThumbsDown />
+              <SvgThumbsDown />
             </div>
           </div>
         </>
