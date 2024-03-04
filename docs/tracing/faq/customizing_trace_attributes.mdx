@@ -379,7 +379,7 @@ import { Client} from "langsmith";\n
         hideInputs: (inputs) => ({}),
         hideOutputs: (outputs) => ({}),
     })
-    const tracer = new LangChainTracer();
+    const tracer = new LangChainTracer({ client });
     // The traced run will have its metadata present, but the inputs will be hidden
     await llm.invoke("Say foo", { callbacks: [tracer] });
     const unfilteredTracer = new LangChainTracer();
