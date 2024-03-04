@@ -358,6 +358,8 @@ def filter_outputs(outputs: dict):
     # You can define custom filtering here
     return {}\n\n
 llm = ChatOpenAI()\n
+# You can configure tracing using the context manager below
+# or by directly creating a LangChainTracer object
 with tracing_v2_enabled(
     "test-filtering",
     client=Client(hide_inputs=filter_inputs, hide_outputs=filter_outputs),
