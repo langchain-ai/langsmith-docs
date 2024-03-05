@@ -171,6 +171,13 @@ const config = {
         contextualSearch: true,
       },
     }),
+    scripts: [
+      "/js/google_analytics.js",
+      {
+        src: "https://www.googletagmanager.com/gtag/js?id=G-62DTR64PQZ",
+        async: true,
+      },
+    ],
 };
 
 module.exports = config;
