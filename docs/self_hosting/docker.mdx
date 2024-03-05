@@ -18,19 +18,94 @@ This guide provides instructions for installing and setting up your environment 
     ```bash
     docker info
     ```
-
-    If you don't see any server information in the output, make sure Docker is installed correctly
-    and launch the Docker daemon.
+    If you don't see any server information in the output, make sure Docker is installed correctly and launch the Docker daemon.
 2. LangSmith License Key
-    1. You can get this from your Langchain representative. Contact us at support@langchain.dev for more information.
+    1. You can get this from your Langchain representative. Contact us at sales@langchain.dev for more information.
 3. LangSmith Version
-    1. We default to the latest version of LangSmith. In a production environment, you should specify a specific version. Contact us at <a href="mailto:support@langchain.dev">support@langchain.dev</a> for more information.
+    1. Our Docker Compose files are pegged to the latest self-hosted release of LangSmith. If you want to use a different version, you can specify it in the `.env` file or in the `docker-compose.yml` file.
 4. OpenAI API Key(optional).
     1. Used for natural language search feature. Can specify OpenAI key in browser as well for the playground feature.
+5. Oauth Configuration(optional).
+    1. You can configure oauth using the `.env` file. You will need to provide a `client_id` and `client_issuer_url` for your oauth provider.
+    2. Note, we do rely on the OIDC Authorization Code with PKCE flow. We currently support almost anything that is OIDC compliant however Google does not support this flow.
+6. External Postgres(optional).
+    1. You can configure external postgres using the `.env` file. You will need to set the `POSTGRES_DATABASE_URI` environment variable to the connection string for your postgres instance.
+    2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled or you must include that in your search path.
+    3. Note: We do only officially support Postgres versions >= 14.
+7. External Redis(optional).
+    1. You can configure external redis using the `.env` file. You will need to set the `REDIS_DATABASE_URI` environment variable to the connection string for your redis instance.
+    2. Currently, we do not support using Redis with TLS. We will be supporting this shortly.
+    3. We only official support Redis versions >= 6.
+
+
+## Running via Docker Compose
+
+The following explains how to run the LangSmith using Docker Compose. This is the most flexible way to run LangSmith without Kubernetes. In production, we highly recommend using Kubernetes.
+
+### 1. Fetch the LangSmith `docker-compose.yml` file
+
+You can find the `docker-compose.yml` file and related files in the LangSmith SDK repository here: [<u>LangSmith Docker Compose File</u>](https://github.com/langchain-ai/langsmith-sdk/blob/main/python/langsmith/cli/docker-compose.yaml)
+
+Copy the `docker-compose.yml` file from the LangSmith SDK to your project directory. Make sure to copy the other files in the same directory as well.
+
+### 2. Configure environment variables
+
+Copy the `.env.example` file from the LangSmith SDK to your project directory and rename it to `.env`. Then, set the following environment variables in the `.env` file:
+
+```bash
+# Don't change this file. Instead, copy it to .env and change the values there. The default values will work out of the box as long as you provide your license key.
+_LANGSMITH_VERSION=0.1.12 # Change to your desired LangSmith version. Required. Typically you should use the latest version defined in the .env file.
+LANGSMITH_LICENSE_KEY=your-license-key # Change to your Langsmith license key. Required
+OPENAI_API_KEY=your-openai-api-key # Needed for Online Evals and Magic Query features
+AUTH_TYPE=none # Set to "oauth" if you want to use OAuth2.0
+OAUTH_CLIENT_ID=your-client-id # Required if AUTH_TYPE=oauth
+OAUTH_ISSUER_URL=https://your-issuer-url # Required if AUTH_TYPE=oauth
+API_KEY_SALT=super # Change to your desired API key salt. Can be any random value. Must be set if AUTH_TYPE=oauth
+POSTGRES_DATABASE_URI=postgres:postgres@langchain-db:5432/postgres # Change to your database URI if using external postgres. Otherwise, leave it as is
+REDIS_DATABASE_URI=redis://langchain-redis:6379 # Change to your Redis URI if using external Redis. Otherwise, leave it as is
+LOG_LEVEL=warning # Change to your desired log level
+MAX_ASYNC_JOBS_PER_WORKER=10 # Change to your desired maximum async jobs per worker. We recommend 10/suggest spinning up more replicas of the queue worker if you need more throughput.
+```
+
+You can also set these environment variables in the `docker-compose.yml` file directly or export them in your terminal. We recommend setting them in the `.env` file.
+
+### 2. Start server
+
+Start the LangSmith application by executing the following command in your terminal:
+
+```bash
+docker-compose up
+```
+
+You can also run the server in the background by running:
+
+```bash
+docker-compose up -d
+```
+
+If the server starts correctly, it will open up the UI in your browser at [http://localhost](http://localhost/).
+
+  The LangSmith UI should be visible/operational and look like this:
+
+  ![./static/langsmith_ui.png](./static/langsmith_ui.png)
+
+### Stopping the server
+
+```bash
+docker-compose down
+```
+
+### Checking the logs
+If, at any point, you want to check if the server is running and see the logs, run
+
+```bash
+docker-compose logs
+```
 
 ## Running via the LangSmith SDK
 
-The following explains how to run the LangSmith using the LangSmith SDK.
+The following explains how to run the LangSmith using the LangSmith SDK. This is a convenient wrapper around the `docker-compose` command.
+We recommend only using this in a local setting as it is not as flexible as using `docker-compose` directly.
 
 ### 1. Install the LangSmith SDK
 
@@ -78,75 +153,31 @@ If, at any point, you want to check if the server is running and see the logs, r
 langsmith logs
 ```
 
-## Running via Docker Compose
-
-The following explains how to run the LangSmith using the LangSmith SDK.
-
-### 1. Copy the LangSmith `docker-compose.yml` file
-
-Copy the `docker-compose.yml` file from the LangSmith SDK to your project directory.
-
-You can find the `docker-compose.yml` file in the LangSmith SDK here: [<u>LangSmith Docker Compose File</u>](https://github.com/langchain-ai/langsmith-sdk/blob/main/python/langsmith/cli/docker-compose.yaml)
-
-### 2. Export or set the required environment variables
-
-```bash
-export LANGSMITH_LICENSE_KEY=<YOUR_LANGSMITH_LICENSE_KEY>
-export _LANGSMITH_IMAGE_VERSION=<LANGSMITH_VERSION>
-export OPENAI_API_KEY=<YOUR_OPEN_OPENAI_API_KEY> # Optional, used for natural language search feature
-```
-
-You can also set these environment variables in the `docker-compose.yml` file directly.
-
-### 2. Start server
-
-Start the LangSmith application by executing the following command in your terminal:
-
-```bash
-docker-compose up
-```
-
-You can also run the server in the background by running:
-
-```bash
-docker-compose up -d
-```
-
-If the server starts correctly, it will open up the UI in your browser at [http://localhost](http://localhost/).
-
-  The LangSmith UI should be visible/operational and look like this:
-
-  ![./static/langsmith_ui.png](./static/langsmith_ui.png)
-
-### Stopping the server
-
-```bash
-docker-compose down
-```
-
-### Checking the logs
-If, at any point, you want to check if the server is running and see the logs, run
-
-```bash
-docker-compose logs
-```
-
 ## Using LangSmith
 Now that LangSmith is running, you can start using it to trace your code. You can find more information on how to use self-hosted LangSmith in the [Self-Hosted Usage Guide](/self_hosting/usage).
 
-## FAQ:
+### Frequently Asked Questions
 
-### How can we upgrade our application?
-We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to restart your LangSmith instance specifying the new version.
-### How can we back up our application?
-The docker solution uses docker volumes to store data. You can back up the data by backing up the volumes.
-### How can we authenticate to the application?
-Currently, our docker solution does not include any authentication. We recommend setting up a proxy to handle authentication.
-### What networking configuration is needed for the application?
+#### How can we upgrade our application?
+- We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to restart your LangSmith instance specifying the new version.
+#### How can we back up our application?
+- The docker solution uses docker volumes to store data. You can back up the data by backing up the volumes.
+#### How can we authenticate to the application?
+- Currently, our self-hosted solution supports oauth as an authn solution.
+- Note, we do offer a no-auth solution but highly recommend setting up oauth before moving into production.
+#### How can I use External `Postgres` or `Redis`?
+- You can configure external postgres or redis using the external sections in the `.env` file. You will need to provide the connection url/params for the database/redis instance. Look at the `.env.example` file for more information.
+#### What networking configuration is needed for the application?
 - Our deployment only needs egress for a few things:
     - Fetching images (If mirroring your images, this may not be needed)
     - Talking to any LLMs
 - Your VPC can set up rules to limit any other access.
 - Note: We require the X-Tenant-Id to be allowed to be passed through to the backend service. This is used to determine which tenant the request is for.
-### What resources should we allocate to the application?
-We recommend at least 4 vCPUs and 16GB of memory for our application. This is a rough estimate and can vary based on the number of users and the size of the data you are working with.
+#### What resources should we allocate to the application?
+- We recommend at least 4 vCPUs and 16GB of memory for our application. This is a rough estimate and can vary based on the number of users and the size of the data you are working with.
+#### Increasing the number of replicas
+- If you need more throughput, you can increase the number of replicas of the queue worker by running the following command:
+  ```bash
+  docker-compose up --scale langchain-queue=5
+  ```
+  This will start 5 replicas of the queue worker. You can change the number to whatever you need. Note that these containers are fairly CPU intensive, and you should ensure you have enough resources to support the number of replicas you are starting.
