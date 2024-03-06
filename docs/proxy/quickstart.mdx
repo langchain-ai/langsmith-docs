@@ -1,0 +1,121 @@
+---
+sidebar_label: Quick Start
+sidebar_position: 1
+---
+
+# Quick Start
+
+## What is the LangSmith Proxy
+
+The LangSmith Proxy is intended to be a drop-in replacement for your LLM apis with some additional features. It is designed to be a simple, easy-to-use, and easy-to-configure tool that adds minimal overhead to your existing LLM API usage.
+
+* **Easy to use**: The LangSmith LLM Proxy is designed to be easy to use. You can run it as a sidecar to your existing app
+* **Cache support**: The LangSmith LLM Proxy supports caching of requests/responses(with streaming support) from the LLM API. This allows you to cache responses for a configurable amount of time, reducing the number of requests to the LLM API and improving response times. This can be especially useful if you are using the LLM API in a high-traffic environment or running CI(in cases like evals)
+* **Minimal overhead**: We use NGINX as a reverse proxy to minimize the overhead of the LangSmith LLM Proxy. Requests are passed through the proxy with minimal processing, and responses are passed back to the client with minimal processing.
+* **Streaming support**: The LangSmith LLM Proxy supports streaming responses from the LLM API. This allows you to start processing the response as soon as it is available, rather than waiting for the entire response to be received.
+* **Tracing support**: The LangSmith LLM Proxy supports tracing of LLM calls via LangSmith. This allows you to trace calls to your LLM without any configuration changes to your app.
+
+## Models Supported
+
+The LangSmith Proxy supports the following APIS:
+
+* OpenAI(Chat and Completion)
+* AzureOpenAI(Chat and Completion)
+
+Coming soon:
+
+* Anthropic
+* Google Vertex
+* Gemini
+
+If you would like to see support for a specific model, please message us at support@langchain.dev
+
+
+The steps in this guide will acquaint you with deploying the LangSmith Proxy and using it to make requests to OpenAI.
+
+1. Launch the LangSmith Proxy container in your environment
+2. Edit your app to make requests to the LangSmith Proxy
+3. Forcefully turn off caching for the LangSmith Proxy
+4. Turn on tracing while using the LangSmith Proxy
+
+## Prerequisites
+
+1. Docker installed on your local machine
+2. An OpenAI API Key
+3. If Configuring tracing, a LangSmith API Key
+
+## 1. Deploy the LangSmith Proxy
+
+The LangSmith Proxy is available as a Docker container. You can run it in your environment by running the following command:
+
+```bash
+docker pull docker.io/langchain/langsmith-proxy:latest # Force pull the latest version of the LangSmith Proxy
+docker run -p 8080:8080 docker.io/langchain/langsmith-proxy:latest -p 8080:8080 # Run the LangSmith Proxy on port 8080 and publish it to the host
+```
+
+
+## 2. Update your app to make requests to the LangSmith Proxy
+
+For this example, we'll use the following prompt: [https://smith.langchain.com/hub/langchain/my-first-prompt](https://smith.langchain.com/hub/efriis/my-first-prompt)
+
+![Hub Prompt](static/hub-repo.png)
+
+To start, you can get a sense of what the prompt does just by looking at it (this one is pretty straightforward).
+Below the contents of the prompt, you can see a code snippet of how to use it in Python. For more information on
+using hub prompts from code, finish this guide and check out the [developer guide](dev-setup).
+
+Next, let's try out the object in the playground by clicking the [playground button](https://smith.langchain.com/hub/efriis/my-first-prompt/playground) in the top-right.
+
+The playground should look like this:
+
+![Hub Playground](static/hub-playground.png)
+
+On the left, we see an editable view of our Chat Prompt.
+
+To the right, we can configure our inputs and model, and above that, you can add API Keys for playground-supported model providers.
+
+Let's try it out! First, fill out your OpenAI API Key in "Secrets", and fill out a profession (e.g. biologist) and question (e.g. "what is 1 fun fact about parrots?"). Now click "Run"!
+The output should look something like this:
+
+![Hub Playground after running](static/hub-playground-complete.png)
+
+## 3. Log in and set a handle (One-Time Setup)
+
+:::note
+You must log into an account, where the "Personal" organization is not waitlisted, in order to proceed with steps 3 and 4.
+:::
+
+Now that we've tried out a prompt, let's log in and set a handle. This will allow us to commit changes to the prompt back to the hub under our own user!
+
+First, let's click that "Login" button in the top-right and log in. If you find yourself on the waitlist, you can enter your access code if you have one, or hang tight! We're letting people off every week.
+
+Second, go to the [hub home](https://smith.langchain.com/hub). If you haven't set a handle yet, you'll be prompted to add one, so people can associate your prompts with you! 
+
+The handle reserves a namespace for all of your prompts, so everything you add will be saved under `your-handle/prompt-name`.
+
+![Hub Set Handle](static/hub-handle.png)
+
+
+## 4. Commit to a new repo under your user
+
+
+Staying on [efriis/my-first-prompt's playground](https://smith.langchain.com/hub/efriis/my-first-prompt/playground), let's make some changes and commit it back to a
+repository under your user. To start, let's modify the prompt to change the style of the response. Instead of answering "cheerfully," pick a new adverb (e.g. "angrily").
+
+Once you've run it, we can commit it directly to a new prompt under your user. Click the "Commit" button in the top-right, and you should see a modal like this:
+
+**Note:** you may have to return to the repo page and click the "Playground" button in order to see the "Commit" button.
+
+![Hub Playground Commit](static/hub-playground-commit.png)
+
+Here, you can create a new repo called `my-first-prompt` and use this as a first commit! Once you've done that, you'll be redirected to your new prompt.
+
+
+## 5. Create an example for your repo
+
+To show off potential use cases for the prompt, let's add an example to our new repo! Fill out another profession and question and click "Run" again.
+When the run has finished, click "Save as Example" to move it into the left panel as an example. Now commit to your repo again and click on your repo's name at the top of the screen to navigate back to your repo's home page.
+
+There, you should see your new example! These examples are publicly shown on your repo page.
+
+![Hub Set Handle](static/hub-example.png)
