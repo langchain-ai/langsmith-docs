@@ -9,9 +9,9 @@ sidebar_position: 1
 
 The LangSmith Proxy is intended to be a drop-in replacement for your LLM apis with some additional features. It is designed to be a simple, easy-to-use, and easy-to-configure tool that adds minimal overhead to your existing LLM API usage.
 
-* **Easy to use**: The LangSmith LLM Proxy is designed to be easy to use. You can run it as a sidecar to your existing app
+* **Easy to use**: The LangSmith LLM Proxy is designed to be easy to use. You can run it as a sidecar to your existing app and start using it immediately. Besides changing the URL of your LLM API, you don't need to make any changes to your app to start using the LangSmith Proxy.
 * **Cache support**: The LangSmith LLM Proxy supports caching of requests/responses(with streaming support) from the LLM API. This allows you to cache responses for a configurable amount of time, reducing the number of requests to the LLM API and improving response times. This can be especially useful if you are using the LLM API in a high-traffic environment or running CI(in cases like evals)
-* **Minimal overhead**: We use NGINX as a reverse proxy to minimize the overhead of the LangSmith LLM Proxy. Requests are passed through the proxy with minimal processing, and responses are passed back to the client with minimal processing.
+* **Minimal overhead**: We use NGINX as a reverse proxy to minimize the overhead of the LangSmith LLM Proxy. Requests are passed through the proxy with minimal processing, and responses are passed back to the client with minimal additional processing.
 * **Streaming support**: The LangSmith LLM Proxy supports streaming responses from the LLM API. This allows you to start processing the response as soon as it is available, rather than waiting for the entire response to be received.
 * **Tracing support**: The LangSmith LLM Proxy supports tracing of LLM calls via LangSmith. This allows you to trace calls to your LLM without any configuration changes to your app.
 
@@ -22,7 +22,7 @@ The LangSmith Proxy supports the following APIS:
 * OpenAI(Chat and Completion)
 * AzureOpenAI(Chat and Completion)
 
-Coming soon:
+We are actively working on adding support for the following models:
 
 * Anthropic
 * Google Vertex
@@ -36,7 +36,8 @@ The steps in this guide will acquaint you with deploying the LangSmith Proxy and
 1. Launch the LangSmith Proxy container in your environment
 2. Edit your app to make requests to the LangSmith Proxy
 3. Forcefully turn off caching for the LangSmith Proxy
-4. Turn on tracing while using the LangSmith Proxy
+4. Cache a streamed request
+5. Turn on tracing while using the LangSmith Proxy
 
 ## Prerequisites
 
@@ -53,69 +54,215 @@ docker pull docker.io/langchain/langsmith-proxy:latest # Force pull the latest v
 docker run -p 8080:8080 docker.io/langchain/langsmith-proxy:latest -p 8080:8080 # Run the LangSmith Proxy on port 8080 and publish it to the host
 ```
 
+You should see the following output:
+
+```bash
+2024-03-06 12:59:57,458 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-03-06 12:59:57,467 INFO supervisord started with pid 1
+2024-03-06 12:59:58,503 INFO spawned: 'nginx' with pid 8
+2024-03-06 12:59:58,552 INFO spawned: 'trace-processor' with pid 10
+2024-03-06 12:59:59,562 INFO success: nginx entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-03-06 12:59:59,563 INFO success: trace-processor entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+Couldn't create langsmith client: API key must be provided when using hosted LangSmith API, will skip creating runs
+Listening for traces at 0.0.0.0:9999
+Connection from ('127.0.0.1', 47370)
+```
+Ignore the `Couldn't create langsmith client` message if you are not configuring tracing.
 
 ## 2. Update your app to make requests to the LangSmith Proxy
 
-For this example, we'll use the following prompt: [https://smith.langchain.com/hub/langchain/my-first-prompt](https://smith.langchain.com/hub/efriis/my-first-prompt)
+For this example, we'll be using your local proxy running on `localhost:8080`. You can replace this with the address of your proxy if it's running on a different machine.
 
-![Hub Prompt](static/hub-repo.png)
+You may need to install some packages for this example:
 
-To start, you can get a sense of what the prompt does just by looking at it (this one is pretty straightforward).
-Below the contents of the prompt, you can see a code snippet of how to use it in Python. For more information on
-using hub prompts from code, finish this guide and check out the [developer guide](dev-setup).
+```bash
+pip install langchain-openai
+pip install asyncio
+```
 
-Next, let's try out the object in the playground by clicking the [playground button](https://smith.langchain.com/hub/efriis/my-first-prompt/playground) in the top-right.
+Now, you can use the LangSmith Proxy to make requests to OpenAI. Here's an example of how you can do this in Python:
+Let's create a file called `openai_test.py` and add the following code:
+```python
+import time
 
-The playground should look like this:
+from langchain_openai import ChatOpenAI
 
-![Hub Playground](static/hub-playground.png)
+# Different models can be accessed by changing the /proxy/openai to /proxy/<model>
+OPENAI_API_URL = "http://localhost:8080/proxy/openai"
 
-On the left, we see an editable view of our Chat Prompt.
+start = time.time()
+llm = ChatOpenAI(openai_api_key="", openai_api_base=OPENAI_API_URL)
+resp = llm.invoke("What is the meaning of life?")
+print(resp)
+print(f"Time taken: {time.time() - start}")
+```
 
-To the right, we can configure our inputs and model, and above that, you can add API Keys for playground-supported model providers.
+Run the file using the following command:
+```bash
+python openai_test.py
 
-Let's try it out! First, fill out your OpenAI API Key in "Secrets", and fill out a profession (e.g. biologist) and question (e.g. "what is 1 fun fact about parrots?"). Now click "Run"!
-The output should look something like this:
+content='The meaning of life is a deeply philosophical and existential question that has been pondered by humans for centuries. There is no definitive answer to this question as it can vary greatly depending on individual beliefs, values, and perspectives. Some may find meaning in spiritual or religious beliefs, others may find it in personal relationships, achievements, or experiences. Ultimately, the meaning of life is subjective and can be different for everyone.'Time taken: 1.9526588916778564
+Time taken: 1.9526588916778564
+```
 
-![Hub Playground after running](static/hub-playground-complete.png)
+There will also be a corresponding Cache Miss log entry in your proxy.
+```bash
+"POST /proxy/openai/chat/completions HTTP/1.1" 200 20418 "-" "OpenAI/Python 1.12.0" "CACHE: MISS"
+````
 
-## 3. Log in and set a handle (One-Time Setup)
+Pretty slow! Let's try running this again.
 
-:::note
-You must log into an account, where the "Personal" organization is not waitlisted, in order to proceed with steps 3 and 4.
-:::
+```bash
+python openai_test.py
 
-Now that we've tried out a prompt, let's log in and set a handle. This will allow us to commit changes to the prompt back to the hub under our own user!
+content='The meaning of life is a deeply philosophical question that has been pondered by humans for centuries. Different people and cultures have different beliefs about the purpose and meaning of life. Some believe that the meaning of life is to seek happiness, fulfillment, and personal growth, while others believe that it is to serve a higher power or contribute to the greater good of humanity. Ultimately, the meaning of life is a question that each individual must grapple with and find their own answer to.'
+Time taken: 0.07127499580383301
+```
 
-First, let's click that "Login" button in the top-right and log in. If you find yourself on the waitlist, you can enter your access code if you have one, or hang tight! We're letting people off every week.
+Cache hit! Our request hits the cache and the response time is much faster. You will also see a Cache Hit log entry in your proxy.
+```bash
+"POST /proxy/openai/chat/completions HTTP/1.1" 200 24915 "-" "OpenAI/Python 1.12.0" "CACHE: HIT"
+```
 
-Second, go to the [hub home](https://smith.langchain.com/hub). If you haven't set a handle yet, you'll be prompted to add one, so people can associate your prompts with you! 
+## 3. Forcefully turn off caching for the LangSmith Proxy
+In some scenarios, you may want to forcefully turn off caching for the LangSmith Proxy. You can do this by adding a Cache-Control header `{"Cache-Control": "no-cache"}` header to your request. This will force the LangSmith Proxy to make a request to the LLM API and bypass the cache.
 
-The handle reserves a namespace for all of your prompts, so everything you add will be saved under `your-handle/prompt-name`.
+```python
+import time
 
-![Hub Set Handle](static/hub-handle.png)
+from langchain_openai import ChatOpenAI
+
+# Different models can be accessed by changing the /proxy/openai to /proxy/<model>
+OPENAI_API_URL = "http://localhost:8080/proxy/openai"
+
+start = time.time()
+llm_no_cache = ChatOpenAI(openai_api_key="", openai_api_base=OPENAI_API_URL, default_headers={"Cache-Control": "no-cache"})
+resp = llm_no_cache.invoke("What is the meaning of life?")
+print(resp)
+print(f"Time taken: {time.time() - start}")
+```
+
+There will also be a corresponding Cache Bypass log entry in your proxy.
+```bash
+"POST /proxy/openai/chat/completions HTTP/1.1" 200 24376 "-" "OpenAI/Python 1.12.0" "CACHE: BYPASS"
+````
+
+As you can see, the request takes a longer time to complete as the LangSmith Proxy is making a request to the LLM API. You will also see a Bypass Header in your response.
+
+## 4. Support for Streaming
+
+The LangSmith Proxy supports streaming responses from the LLM API. This allows you to start processing the response as soon as it is available, rather than waiting for the entire response to be received.
+This will still work with caching!
+
+```python
+import time
+
+from langchain_openai import ChatOpenAI
+
+# Different models can be accessed by changing the /proxy/openai to /proxy/<model>
+OPENAI_API_URL = "http://localhost:8080/proxy/openai"
+
+start = time.time()
+llm = ChatOpenAI(openai_api_key="", openai_api_base=OPENAI_API_URL)
+chunks = llm.stream("What is the meaning of life?")
+for chunk in chunks:
+    print(chunk)
+print(f"Time taken: {time.time() - start}")
+```
+
+```bash
+python openai_test.py
+
+content=''
+content='The'
+content=' meaning'
+content=' of'
+content=' life'
+content=' is'
+content=' a'
+content=' philosophical'
+content=' question'
+content=' that'
+content=' has'
+content=' been'
+content=' debated'
+content=' for'
+content=' centuries'
+content='.'
+...
+Time taken: 3.4340438842773438
+```
+
+Let's run this again and see how the response time changes.
+
+```bash
+content=''
+content='The'
+content=' meaning'
+content=' of'
+content=' life'
+content=' is'
+content=' a'
+content=' philosophical'
+content=' question'
+content=' that'
+content=' has'
+content=' been'
+content=' debated'
+content=' for'
+content=' centuries'
+content='.'
+content=' Different'
+content=' people'
+content=' and'
+content=' cultures'
+content=' have'
+content=' different'
+content=' beliefs'
+content=' and'
+content=' interpretations'
+content=' of'
+content=' the'
+content=' meaning'
+content=' of'
+content=' life'
+content='.'
+...
+Time taken: 0.07226419448852539
+```
+
+Again, much faster! The corresponding miss and hit logs will also be present in your proxy.
+```
+"POST /proxy/openai/chat/completions HTTP/1.1" 200 17761 "-" "OpenAI/Python 1.12.0" "CACHE: MISS"
+"POST /proxy/openai/chat/completions HTTP/1.1" 200 17745 "-" "OpenAI/Python 1.12.0" "CACHE: HIT"
+```
 
 
-## 4. Commit to a new repo under your user
+## 5. Turn on tracing while using the LangSmith Proxy
 
+Requests made to the LangSmith proxy can also be traced.
+You can do this by running the docker image with the `LANGSMITH_API_KEY` environment variable set to your LangSmith API Key.
 
-Staying on [efriis/my-first-prompt's playground](https://smith.langchain.com/hub/efriis/my-first-prompt/playground), let's make some changes and commit it back to a
-repository under your user. To start, let's modify the prompt to change the style of the response. Instead of answering "cheerfully," pick a new adverb (e.g. "angrily").
+```bash
+docker run -p 8080:8080 -e LANGCHAIN_API_KEY=<your_langsmith_api_key> -e  docker.io/langchain/langsmith-proxy:latest -p 8080:8080
+```
 
-Once you've run it, we can commit it directly to a new prompt under your user. Click the "Commit" button in the top-right, and you should see a modal like this:
+Run the script again and you should see a trace in your LangSmith dashboard.
 
-**Note:** you may have to return to the repo page and click the "Playground" button in order to see the "Commit" button.
+```bash
+python openai_test.py
 
-![Hub Playground Commit](static/hub-playground-commit.png)
+# In nginx logs
+Created run with inputs: {'messages': [{'role': 'user', 'content': 'What is the meaning of life?'}], 'model': 'gpt-3.5-turbo', 'n': 1, 'stream': True, 'temperature': 0.7}
+```
 
-Here, you can create a new repo called `my-first-prompt` and use this as a first commit! Once you've done that, you'll be redirected to your new prompt.
+The corresponding trace also appears in your LangSmith dashboard!
 
+[![LangSmith Trace](./static/trace.png)](./static/trace.png)
 
-## 5. Create an example for your repo
+## Next Steps
 
-To show off potential use cases for the prompt, let's add an example to our new repo! Fill out another profession and question and click "Run" again.
-When the run has finished, click "Save as Example" to move it into the left panel as an example. Now commit to your repo again and click on your repo's name at the top of the screen to navigate back to your repo's home page.
-
-There, you should see your new example! These examples are publicly shown on your repo page.
-
-![Hub Set Handle](static/hub-example.png)
+- In this guide, you learned how to deploy the LangSmith Proxy and use it to proxy requests to OpenAI.
+- We highly recommend trying this out with your own applications and models.
+- Note that proxy is intended to run near your application to minimize latency. You can run it as a sidecar to your application or as a separate service.
+- We also bundle this into the LangSmith Self-Hosted deployment by default. If you are using LangSmith Self-Hosted, you can use your LangSmith url as the proxy url.
