@@ -20,7 +20,20 @@ const config = {
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
 
-  plugins: [],
+  plugins: [
+    [
+      '@scalar/docusaurus',
+      {
+        label: 'LangSmith API Docs',
+        route: '/api-docs',
+        configuration: {
+          spec: {
+            url: 'https://api.smith.langchain.com/openapi.json',
+          },
+        },
+      },
+    ],
+  ],
 
   presets: [
     [
@@ -86,11 +99,6 @@ const config = {
           {
             href: "https://js.langchain.com/docs/",
             label: "LangChain JS/TS Docs",
-            position: "left",
-          },
-          {
-            href: "https://api.smith.langchain.com/redoc",
-            label: "LangSmith API Docs",
             position: "left",
           },
           {
