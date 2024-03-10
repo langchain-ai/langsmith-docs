@@ -2624,17 +2624,17 @@
     pretty-bytes "^6.1.1"
     pretty-ms "^8.0.0"
 
-"@scalar/api-reference-react@0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@scalar/api-reference-react/-/api-reference-react-0.0.5.tgz#75f3a7f54d35ac57cdf3aed60970980c2b1b2713"
-  integrity sha512-mHO3tvLmkEllc/XCvz61owuMPE3axdx+1HN43Wk3LF64T5xh4IXNuaZE6KLO1pWySassTqzO+nQ4bqiXTJfT5g==
+"@scalar/api-reference-react@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@scalar/api-reference-react/-/api-reference-react-0.0.7.tgz#604487cc988333744a5870928bb0a8e4b59a955b"
+  integrity sha512-aZPexbII9nOhfEJjxxDaaZEv6gyvs7iQadK7NWpbPbn5PE4UznH3SAIs8MB+glhAVIHzcdKV+Hg+kPl8kV/G6A==
   dependencies:
-    "@scalar/api-reference" "1.18.4"
+    "@scalar/api-reference" "1.18.6"
 
-"@scalar/api-reference@1.18.4":
-  version "1.18.4"
-  resolved "https://registry.yarnpkg.com/@scalar/api-reference/-/api-reference-1.18.4.tgz#ad198f66cbadaaf45a31e75c86ef211d02334d35"
-  integrity sha512-IT/36Oy2F9FErx9lNuaC34WtwiMQkxy4apz7f1tiLBRh1Ue1RAhUsWUyyDgyRNQcnWTI5nwurmYQg0cC4aXV9Q==
+"@scalar/api-reference@1.18.6":
+  version "1.18.6"
+  resolved "https://registry.yarnpkg.com/@scalar/api-reference/-/api-reference-1.18.6.tgz#a3f174845bb91055d983fa9ab3e13ae2fb3048a0"
+  integrity sha512-JNoyJURk37rg/4xe+z7pW6jMZvd8XNHN6MQ1zB5Wckw59vFa3T230DMnSiOzxJKSl9uTOS2hWVYumc79uXyo0g==
   dependencies:
     "@floating-ui/vue" "^1.0.2"
     "@headlessui/vue" "^1.7.16"
@@ -2684,12 +2684,12 @@
     prismjs "^1.29.0"
     tailwind-merge "^2.0.0"
 
-"@scalar/docusaurus@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@scalar/docusaurus/-/docusaurus-0.0.3.tgz#acf76249092ec94f4579a8cf90eb49dac844b51a"
-  integrity sha512-uarFsAMjrJmdM+hfK2gsZbtTSOML9mdCTamoIa7K9fWGy0/tFvCTJXb33u3Oui/pK5WBiB9Kg96rB/OOaM+6UQ==
+"@scalar/docusaurus@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@scalar/docusaurus/-/docusaurus-0.0.5.tgz#50b4e3422aaf69cb5b6a7e0b12765da7dbb1c01e"
+  integrity sha512-bPCbexmYg3R8GUkROuSlKneukpn6//qhVO/j9sBDlWzd9lsvXNMmMGGjOmaOX9sY+3tcxsBBlJMpLudxyiNeLA==
   dependencies:
-    "@scalar/api-reference-react" "0.0.5"
+    "@scalar/api-reference-react" "0.0.7"
 
 "@scalar/snippetz-core@0.1.3":
   version "0.1.3"
