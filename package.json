@@ -7,7 +7,7 @@
     "docusaurus": "docusaurus",
     "test": "jest",
     "start": "rm -rf ./docs/api && docusaurus start",
-    "build": "rm -rf ./build && yarn gen && docusaurus build",
+    "build": "rm -rf ./build && docusaurus build",
     "vercel-build": "git submodule update --init && pip3 install -r subdirectories/scripts/requirements.txt && python3 subdirectories/scripts/build_cookbook.py && ls docs && npm run build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
