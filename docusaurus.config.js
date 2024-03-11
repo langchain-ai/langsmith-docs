@@ -1,4 +1,5 @@
 /* eslint-disable global-require,import/no-extraneous-dependencies */
+require("dotenv").config();
 
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
@@ -24,14 +25,7 @@ const config = {
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
 
-  plugins: [
-    [
-      "docusaurus2-dotenv",
-      {
-        systemvars: true,
-      },
-    ],
-  ],
+  plugins: [],
 
   presets: [
     [
