@@ -19,7 +19,9 @@
     "lint:fix": "yarn lint --fix",
     "precommit": "lint-staged",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,mdx}\"",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,md,mdx}\""
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,md,mdx}\"",
+    "gen": "yarn gen:supabase",
+    "gen:supabase": "npx supabase gen types typescript --project-id 'xsqpnijvmbodcxyapnyq' --schema public > ./src/supabase.d.ts"
   },
   "dependencies": {
     "@docusaurus/core": "2.4.0",
@@ -30,6 +32,7 @@
     "@mdx-js/react": "^1.6.22",
     "@mui/icons-material": "^5.11.16",
     "@mui/joy": "^5.0.0-alpha.81",
+    "@supabase/supabase-js": "^2.39.7",
     "clsx": "^1.2.1",
     "json-loader": "^0.5.7",
     "process": "^0.11.10",
@@ -43,6 +46,7 @@
     "@tsconfig/docusaurus": "^1.0.7",
     "@types/jest": "^29.5.3",
     "docusaurus-plugin-typedoc": "next",
+    "dotenv": "^16.4.5",
     "eslint": "^8.19.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -55,6 +59,7 @@
     "langchain": "^0.0.179",
     "langsmith": "^0.0.47",
     "prettier": "^2.7.1",
+    "supabase": "^1.148.6",
     "ts-jest": "^29.1.1",
     "typedoc": "^0.24.4",
     "typedoc-plugin-markdown": "next",

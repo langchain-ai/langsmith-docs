@@ -8,6 +8,7 @@
 .docusaurus
 .cache-loader
 docs/api
+src/supabase.d.ts
 
 # Misc
 .DS_Store

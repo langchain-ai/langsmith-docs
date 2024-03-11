@@ -1,4 +1,5 @@
 /* eslint-disable global-require,import/no-extraneous-dependencies */
+require("dotenv").config();
 
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
@@ -9,7 +10,11 @@ const config = {
   title: "🦜️🛠️ LangSmith",
   tagline: "LangSmith",
   favicon: "img/favicon.ico",
-  customFields: {},
+  customFields: {
+    NEXT_PUBLIC_SUPABASE_PUBLIC_KEY:
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  },
   // Set the production url of your site here
   url: "https://smith.langchain.com/", // TODO: also make configurable with dev deployment
   // Set the /<baseUrl>/ pathname under which your site is served
