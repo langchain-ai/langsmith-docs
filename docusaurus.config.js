@@ -11,8 +11,8 @@ const config = {
   tagline: "LangSmith",
   favicon: "img/favicon.ico",
   customFields: {
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,
-    supabasePublicKey: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    supabasePublicKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,
   },
   // Set the production url of your site here
   url: "https://smith.langchain.com/", // TODO: also make configurable with dev deployment
