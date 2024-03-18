@@ -16,7 +16,7 @@
     },
     {
       "source": "/category/langsmith-cookbook",
-      "destination": "https://docs.smith.langchain.com/cookbook"
+      "destination": "/cookbook"
     },
     {
       "source": "/tracing/tracing-faq",
