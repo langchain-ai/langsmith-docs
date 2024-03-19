@@ -8,7 +8,7 @@
     "test": "jest",
     "start": "rm -rf ./docs/api && docusaurus start",
     "build": "rm -rf ./build && docusaurus build",
-    "vercel-build": "git submodule update --init && pip3 install -r subdirectories/scripts/requirements.txt && python3 subdirectories/scripts/build_cookbook.py && ls docs && npm run build",
+    "vercel-build": "git submodule update --init && python3 -m ensurepip --default-pip && python3 -m pip install -r subdirectories/scripts/requirements.txt && python3 subdirectories/scripts/build_cookbook.py && ls docs && npm run build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
