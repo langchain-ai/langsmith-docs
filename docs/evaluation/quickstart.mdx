@@ -537,7 +537,7 @@ For more information on how to write a custom evaluator, check out the [custom e
       value: "custom-function",
       label: "Custom function",
       language: "typescript",
-      content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
+      content: `import { EvaluatorInputFormatter, RunEvalConfig, runOnDataset } from "langchain/smith";
 import { Run, Example } from "langsmith";
 import { EvaluationResult } from "langsmith/evaluation";\n
 // You can define any custom evaluator as a function
@@ -561,7 +561,7 @@ const mustMention = async ({
     score: score,
   };
 };\n
-const formatEvaluatorInputs = function ({
+const formatEvaluatorInputs: EvaluatorInputFormatter = function ({
     rawInput, // dataset inputs
     rawPrediction, // model outputs
     rawReferenceOutput, // dataset outputs
@@ -610,7 +610,7 @@ await runOnDataset(predictResult, datasetName, {
       value: "runnable",
       label: "Runnable",
       language: "typescript",
-      content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
+      content: `import { EvaluatorInputFormatter, RunEvalConfig, runOnDataset } from "langchain/smith";
 import { Run, Example } from "langsmith";
 import { EvaluationResult } from "langsmith/evaluation";\n
 // The 'run' contains the system outputs (and other trace information).
@@ -633,7 +633,7 @@ const mustMention = async ({
     score: score,
   };
 };\n
-const formatEvaluatorInputs = function ({
+const formatEvaluatorInputs: EvaluatorInputFormatter = function ({
     rawInput, // dataset inputs
     rawPrediction, // model outputs
     rawReferenceOutput, // dataset outputs
@@ -682,7 +682,7 @@ await runOnDataset(chain, datasetName, {
       value: "agent",
       label: "Agent",
       language: "typescript",
-      content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
+      content: `import { EvaluatorInputFormatter, RunEvalConfig, runOnDataset } from "langchain/smith";
 import { Run, Example } from "langsmith";
 import { EvaluationResult } from "langsmith/evaluation";\n
 // The 'run' contains the system outputs (and other trace information).
@@ -705,7 +705,7 @@ const mustMention = async ({
     score: score,
   };
 };\n
-const formatEvaluatorInputs = function ({
+const formatEvaluatorInputs: EvaluatorInputFormatter = function ({
     rawInput, // dataset inputs
     rawPrediction, // model outputs
     rawReferenceOutput, // dataset outputs
@@ -754,7 +754,7 @@ await runOnDataset(createAgent, datasetName, {
       value: "llm",
       label: "LLM or Chat Model",
       language: "typescript",
-      content: `import { RunEvalConfig, runOnDataset } from "langchain/smith";
+      content: `import { EvaluatorInputFormatter, RunEvalConfig, runOnDataset } from "langchain/smith";
 import { Run, Example } from "langsmith";
 import { EvaluationResult } from "langsmith/evaluation";\n
 // You can define any custom evaluator as a function
@@ -778,7 +778,7 @@ const mustMention = async ({
     score: score,
   };
 };\n
-const formatEvaluatorInputs = function ({
+const formatEvaluatorInputs: EvaluatorInputFormatter = function ({
     rawInput, // dataset inputs
     rawPrediction, // model outputs
     rawReferenceOutput, // dataset outputs
