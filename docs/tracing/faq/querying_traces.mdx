@@ -438,6 +438,7 @@ runs based on a conversation ID in this way, you can search for that ID in the m
 If you want to combine multiple conditions to refine your search, you can use the `and` operator along with other
 filtering functions. Here's how you can search for runs named "ChatOpenAI" that also
 have a specific `conversation_id` in their metadata:
+
 <CodeTabs
   tabs={[
     PythonBlock(`client.list_runs(
@@ -450,4 +451,32 @@ have a specific `conversation_id` in their metadata:
 });`),
   ]}
   groupId="client-language"
+/>
+
+
+
+#### Tree Filter
+
+
+List all runs named "RetrieveDocs" whose root run has a "user_score" feedback of 1 and any run in the full trace is named "ExpandQuery".
+
+This type of query is useful if you want to extract a specific run conditional on various states or steps being reached within the trace.
+
+
+<CodeTabs
+    tabs={[
+        PythonBlock(`client.list_runs(
+    project_name="<your_project>",
+    filter='eq(name, "RetrieveDocs")',
+    trace_filter='and(eq(feedback_key, "user_score"), eq(feedback_score, 1))',
+    tree_filter='eq(name, "ExpandQuery")'
+)`),
+        TypeScriptBlock(`client.listRuns({
+  projectName: "<your_project>",
+  filter: 'eq(name, "RetrieveDocs")',
+  traceFilter: 'and(eq(feedback_key, "user_score"), eq(feedback_score, 1))',
+  treeFilter: 'eq(name, "ExpandQuery")'
+})`),
+    ]}
+    groupId="client-language"
 />
