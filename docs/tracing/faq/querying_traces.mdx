@@ -280,7 +280,9 @@ The following examples assume you have configured your environment appropriately
   ]}
   groupId="client-language"
 />
+
 #### List all runs that are tagged with the git hash "2aa1cf4"
+
 <CodeTabs
   tabs={[
     PythonBlock(
@@ -292,8 +294,10 @@ The following examples assume you have configured your environment appropriately
   ]}
   groupId="client-language"
 />
-#### Complex query: List all "chain" type runs that took more than 10 seconds and
+
+#### List all "chain" type runs that took more than 10 seconds and
 had `total_tokens` greater than 5000
+
 <CodeTabs
   tabs={[
     PythonBlock(`client.list_runs(
@@ -307,8 +311,10 @@ had `total_tokens` greater than 5000
   ]}
   groupId="client-language"
 />
-#### Complex query: List all runs that started after a specific timestamp and either
+
+####  List all runs that started after a specific timestamp and either
 have "error" not equal to null or a "Correctness" feedback score equal to 0
+
 <CodeTabs
   tabs={[
     PythonBlock(
@@ -326,8 +332,10 @@ have "error" not equal to null or a "Correctness" feedback score equal to 0
   ]}
   groupId="client-language"
 />
+
 #### Complex query: List all runs where `tags` include "experimental" or "beta" and
 `latency` is greater than 2 seconds
+
 <CodeTabs
   tabs={[
     PythonBlock(
@@ -345,9 +353,11 @@ have "error" not equal to null or a "Correctness" feedback score equal to 0
   ]}
   groupId="client-language"
 />
+
 #### Search trace trees by full text You can use the `search()` function without
 any specific field to do a full text search across all string fields in a run. This
 allows you to quickly find traces that match a search term.
+
 <CodeTabs
   tabs={[
     PythonBlock(
@@ -400,9 +410,13 @@ client.listRuns({
   ]}
   groupId="client-language"
 />
-#### Check for environment details in metadata A common pattern is to add environment
+
+#### Check for environment details in metadata.
+
+A common pattern is to add environment
 information to your traces via metadata. If you want to filter for runs containing
 environment metadata, you can use the same pattern as above:
+
 <CodeTabs
   tabs={[
     PythonBlock(`client.list_runs(
@@ -416,9 +430,13 @@ environment metadata, you can use the same pattern as above:
   ]}
   groupId="client-language"
 />
-#### Check for conversation ID in metadata Another common way to associate traces
+
+#### Check for conversation ID in metadata
+
+Another common way to associate traces
 in the same conversation is by using a shared conversation ID. If you want to filter
 runs based on a conversation ID in this way, you can search for that ID in the metadata.
+
 <CodeTabs
   tabs={[
     PythonBlock(`client.list_runs(
