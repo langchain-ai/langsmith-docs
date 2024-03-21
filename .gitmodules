@@ -1,3 +1,4 @@
 [submodule "subdirectories/langsmith-cookbook"]
 	path = subdirectories/langsmith-cookbook
 	url = https://github.com/langchain-ai/langsmith-cookbook.git
+	branch = main

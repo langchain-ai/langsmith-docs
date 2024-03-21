@@ -11,6 +11,14 @@
       "destination": "/tracing"
     },
     {
+      "source": "category/testing--evaluation",
+      "destination": "/evaluation"
+    },
+    {
+      "source": "/category/langsmith-cookbook",
+      "destination": "/cookbook"
+    },
+    {
       "source": "/tracing/tracing-faq",
       "destination": "/tracing/faq"
     },
