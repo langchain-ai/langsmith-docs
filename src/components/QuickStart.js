@@ -12,54 +12,29 @@ import Tabs from "@theme/Tabs";
 
 export const TypeScriptSDKTracingCodeBlock = () => (
     <CodeBlock language="typescript">
-                {`// To run the example below, ensure the environment variable OPENAI_API_KEY is set
-import OpenAI from "openai";
-import { RunTree } from "langsmith";
-
-// This can be a user input to your app
-const question = "Can you summarize this morning's meetings?";
-
-const pipeline = new RunTree({
-    name: "Chat Pipeline",
-    run_type: "chain",
-    inputs: { question }
+                {`import { OpenAI } from "openai";
+import { traceable } from "langsmith/traceable";
+import { wrapOpenAI } from "langsmith/wrappers";
+// Auto-trace LLM calls in-context
+const client = wrapOpenAI(new OpenAI());
+// Auto-trace this function
+const pipeline = traceable(async (user_input) => {
+    const result = await client.chat.completions.create({
+        messages: [{ role: "user", content: user_input }],
+        model: "gpt-3.5-turbo",
+    });
+    return result.choices[0].message.content;
 });
 
-// This can be retrieved in a retrieval step
-const context = "During this morning's meeting, we solved all world conflict.";
-
-const messages = [
-    { role: "system", content: "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-    { role: "user", content: \`Question: \${question}\nContext: \${context}\` }
-];
-
-// Create a child run
-const childRun = await pipeline.createChild({
-    name: "OpenAI Call",
-    run_type: "llm",
-    inputs: { messages },
-});
-
-// Generate a completion
-const client = new OpenAI();
-const chatCompletion = await client.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: messages,
-});
-
-// End the runs and log them
-childRun.end(chatCompletion);
-await childRun.postRun();
-
-pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
-await pipeline.postRun();`}
+await pipeline("Hello, world!")
+// Out: Hello there! How can I assist you today?
+// See trace: https://smith.langchain.com/public/3603e52b-5d92-4cac-a267-34004a755843/r`}
     </CodeBlock>
 );
 
 export const PythonAPITracingCodeBlock = () => (
     <CodeBlock language="python">
-        {`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
-import openai
+        {`import openai
 import requests
 from datetime import datetime
 from uuid import uuid4
@@ -126,48 +101,21 @@ patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})
 
 export const PythonSDKTracingCodeBlock = () => (
     <CodeBlock language="python">
-                {`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
-import openai
-
-from langsmith.run_trees import RunTree
-
-# This can be a user input to your app
-question = "Can you summarize this morning's meetings?"
-
-# Create a top-level run
-pipeline = RunTree(
-    name="Chat Pipeline",
-    run_type="chain",
-    inputs={"question": question}
-)
-
-# This can be retrieved in a retrieval step
-context = "During this morning's meeting, we solved all world conflict."
-
-messages = [
-    { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-    { "role": "user", "content": f"Question: {question}\\nContext: {context}"}
-]
-
-# Create a child run
-child_llm_run = pipeline.create_child(
-    name="OpenAI Call",
-    run_type="llm",
-    inputs={"messages": messages},
-)
-
-# Generate a completion
-client = openai.Client()
-chat_completion = client.chat.completions.create(
-    model="gpt-3.5-turbo", messages=messages
-)
-
-# End the runs and log them
-child_llm_run.end(outputs=chat_completion)
-child_llm_run.post()
-
-pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
-pipeline.post()`}
+                {`import openai
+from langsmith.wrappers import wrap_openai
+from langsmith import traceable\n
+# Auto-trace LLM calls in-context
+client = wrap_openai(openai.Client())\n
+@traceable # Auto-trace this function
+def pipeline(user_input: str):
+    result = client.chat.completions.create(
+        messages=[{"role": "user", "content": user_input}],
+        model="gpt-3.5-turbo"
+    )
+    return result.choices[0].message.content\n
+pipeline("Hello, world!")
+# Out:  Hello there! How can I assist you today?
+# See trace: https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r`}
             </CodeBlock>
 );
 
@@ -206,9 +154,10 @@ export const LangChainInstallationCodeTabs = () => (
 export const ConfigureSDKEnvironmentCodeTabs = ({}) => (
     <CodeTabs
         tabs={[
-            ShellBlock(`export LANGCHAIN_API_KEY=<your-api-key>
+            ShellBlock(`export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_API_KEY=<your-api-key>
 
-# The below examples use the OpenAI API, so you will need
+# The below examples use the OpenAI API, though it's not necessary in general
 export OPENAI_API_KEY=<your-openai-api-key>`),
         ]}
         groupId="client-language"
@@ -221,7 +170,7 @@ export const ConfigureEnvironmentCodeTabs = ({}) => (
       ShellBlock(`export LANGCHAIN_TRACING_V2=true
 export LANGCHAIN_API_KEY=<your-api-key>
 
-# The below examples use the OpenAI API, so you will need
+# The below examples use the OpenAI API, though it's not necessary in general
 export OPENAI_API_KEY=<your-openai-api-key>`),
     ]}
     groupId="client-language"
