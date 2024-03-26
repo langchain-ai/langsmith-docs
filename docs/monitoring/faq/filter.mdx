@@ -1,0 +1,41 @@
+---
+sidebar_label: Filter
+sidebar_position: 2
+---
+
+# How to filter
+
+This page contains a series of guides for how to filter runs.
+Being able to accurately filter runs is important for both manual inspection as well as setting up automations.
+
+## How to create a filter
+
+There are two ways to create a filter.
+First, you can create a filter from the high level nav bar. By default there is one filter applied: `IsRoot` is `true`. This restricts all runs to be top level traces.
+
+![Filtering](../static/filter.png)
+
+You can also define a filter from the `Filter Shortcuts` on the sidebar. This contains commonly used filters.
+
+![Filtering](../static/filter_shortcuts.png)
+
+## How to filter for sub runs
+
+In order to filter for sub runs, you first need to remove the default filter of `IsRoot` is `true`. After that, you can apply any filter you wish. A common way to do this is to filter by name for sub runs.
+This relies on good naming for all parts of your pipeline - see [here](/tracing/faq/customizing_trace_attributes#customizing-the-run-name) for more details on how to do that.
+
+## How to filter for sub runs whose parent traces have some attribute
+
+A common concept is to filter for sub runs whose parent traces have some attribute. An example is filtering for sub runs of a particular type whose parent trace has positive (or negative) feedback associated with it.
+
+In order to do this, first set up a filter for sub runs (per the above section). After that, you can then add another filter rule. You can then click the `Trace Run` button all the way at the bottom of the filter. This will make the rule you specific apply to all trace runs of the individual runs you've already filtered for.
+
+![Filtering](../static/trace_filter.png)
+
+## How to filter for runs whose child runs have some attribute
+
+This is the opposite of the above. You may want to search for runs who have specific types of sub runs. An example of this could be searching for all traces that had a sub run with name `Foo`. This is useful when `Foo` is not always called, but you want to analyze the cases where it is.
+
+In order to do this, you can then click the `Child Run` button all the way at the bottom of the filter. This will make the rule you specific apply to all child runs of the individual runs you've already filtered for.
+
+![Filtering](../static/child_runs.png)

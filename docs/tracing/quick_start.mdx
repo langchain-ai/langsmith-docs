@@ -21,42 +21,27 @@ import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallat
 
 You can get started with LangSmith tracing using either LangChain, the Python SDK, the TypeScript SDK, or the API. The following sections provide a quick start guide for each of these options.
 
+First, create an API key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>, then follow the instructions below:
+
 <Tabs
     groupId="client-language"
-    defaultValue="langchain"
+    defaultValue="python-sdk"
     values={[
-        {label: 'LangChain', value: 'langchain'},
         {label: 'Python SDK', value: 'python-sdk'},
         {label: 'TypeScript SDK', value: 'typescript-sdk'},
+        {label: 'LangChain', value: 'langchain'},
         {label: 'API', value: 'api'},
     ]}>
-    <TabItem value="langchain">
-    <h2>1. Install or upgrade LangChain</h2>
-    <LangChainInstallationCodeTabs />
-    <h2>2. Create an API key</h2>
-    <p>Next, create an API key by logging in and navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
-    <h2>3. Configure your environment</h2>
-    <ConfigureEnvironmentCodeTabs />
-    <h2>4. Log a trace</h2>
-    <p>No extra code is needed to log a trace to LangSmith. Just run your LangChain code as you normally would.</p>
-    <LangChainQuickStartCodeTabs />
-    <h2>5. View the trace</h2>
-    <p>By default, the trace will be logged to the project with the name <code>default</code>. You can change the project you log to by following the instructions <a href="/tracing/faq/customizing_trace_attributes#logging-to-a-specific-project">here</a>.
-    An example of a trace logged using the above code is made public and can be viewed <a href="https://smith.langchain.com/public/e6a46eb2-d785-4804-a1e3-23f167a04300/r">here</a>.
-    </p>
-    </TabItem>
     <TabItem value="python-sdk">
     <h2>1. Install the LangSmith library</h2>
     <p>Start by installing the Python library.</p>
     <pre><code>pip install langsmith</code></pre>
-    <h2>2. Create an API key</h2>
-    <p>Next, create an API key by logging in and navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
-    <h2>3. Configure your environment</h2>
+    <h2>2. Configure your environment</h2>
     <ConfigureSDKEnvironmentCodeTabs />
     <h2>4. Log a trace</h2>
     <p>We provide multiple ways to log traces to LangSmith. Below, we'll highlight how to use our simple <code>@traceable</code> decorator. See more in the <a href="./integrations">Integrations</a> section.</p>
     <PythonSDKTracingCodeBlock />
-    <h2>5. View the trace</h2>
+    <h2>4. View the trace</h2>
     <p>By default, the trace will be logged to the project with the name <code>default</code>. You can change the project you log to by following the instructions <a href="/tracing/faq/customizing_trace_attributes#logging-to-a-specific-project">here</a>.
         An example of a trace logged using the above code is made public and can be viewed <a href="https://smith.langchain.com/public/279036f1-a06c-487a-bf74-d5d72af5fd9f/r">here</a>.
     </p>
@@ -67,26 +52,36 @@ You can get started with LangSmith tracing using either LangChain, the Python SD
     <pre><code>npm install langsmith</code></pre>
     or
     <pre><code>yarn add langsmith</code></pre>
-    <h2>2. Create an API key</h2>
-    <p>Next, create an API key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
-    <h2>3. Configure your environment</h2>
+    
+    <h2>2. Configure your environment</h2>
     <ConfigureSDKEnvironmentCodeTabs />
     <h2>4. Log a Trace</h2>
     <p>We provide multiple ways to log traces to LangSmith. Below, we'll highlight how to use our simple <code>traceable</code> higher order function (HOF). See more in the <a href="./integrations">Integrations</a> section.</p>
     <TypeScriptSDKTracingCodeBlock />
-    <h2>5. View the trace</h2>
+    <h2>4. View the trace</h2>
     <p>By default, the trace will be logged to the project with the name <code>default</code>. You can change the project you log to by following the instructions <a href="/tracing/faq/customizing_trace_attributes#logging-to-a-specific-project">here</a>.
         An example of a trace logged using the above code is made public and can be viewed <a href="https://smith.langchain.com/public/90baed21-d367-442b-9448-5066a3fe71ab/r">here</a>.
     </p>
 </TabItem>
+    <TabItem value="langchain">
+    <h2>1. Install or upgrade LangChain</h2>
+    <LangChainInstallationCodeTabs />
+    <h2>2. Configure your environment</h2>
+    <ConfigureEnvironmentCodeTabs />
+    <h2>3. Log a trace</h2>
+    <p>No extra code is needed to log a trace to LangSmith. Just run your LangChain code as you normally would.</p>
+    <LangChainQuickStartCodeTabs />
+    <h2>4. View the trace</h2>
+    <p>By default, the trace will be logged to the project with the name <code>default</code>. You can change the project you log to by following the instructions <a href="/tracing/faq/customizing_trace_attributes#logging-to-a-specific-project">here</a>.
+    An example of a trace logged using the above code is made public and can be viewed <a href="https://smith.langchain.com/public/e6a46eb2-d785-4804-a1e3-23f167a04300/r">here</a>.
+    </p>
+</TabItem>
     <TabItem value="api">
-    <h2>1. Create an API key</h2>
-    <p>Create an API Key by navigating to the <a href="https://smith.langchain.com/settings">settings page</a>.</p>
-    <h2>2. Log a trace</h2>
+    <h2>1. Log a trace</h2>
     <p>Log a trace using the <a href="https://api.smith.langchain.com/redoc">LangSmith API</a>.</p>
     <p>Here, we'll show you to use the <code>requests</code> library in Python to log a trace, but you can use any HTTP client in any language.</p>
     <PythonAPITracingCodeBlock />
-    <h2>3. View the trace</h2>
+    <h2>2. View the trace</h2>
     <p>By default, the trace will be logged to the project with the name <code>default</code>. You can change the project you log to by following the instructions <a href="/tracing/faq/customizing_trace_attributes#logging-to-a-specific-project">here</a>.
         An example of a trace logged using the above code is made public and can be viewed <a href="https://smith.langchain.com/public/c0fcc401-f163-4546-aad8-1641e9fd6e91/r">here</a>.
     </p>
