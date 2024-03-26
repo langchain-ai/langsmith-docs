@@ -63,7 +63,11 @@ For more information, see [here](faq/annotation_queue)
 
 Often times you may want to use an LLM to annotate or leave feedback on datapoints. This can be for the purpose of trying to get some initial feedback on the LLM answer (vague, not vague) or to classify user input, or both! This can be done with `Online Evaluation`.
 
-When clicking on this option, a panel is opened to configure the evaluator. The evaluator is determined by three components: the model, the prompt template, and the criteria.
+NOTE: before clicking on this option, make sure to set up secrets to have access to any API keys for the LLMs you will use. You can do this by clicking `Settings -> Secrets -> Add secret`.
+
+![Filtering](static/secrets.png)
+
+After doing this, you can set up an automation and then select the `Online Evaluation` option. When clicking on this option, a panel is opened to configure the evaluator. The evaluator is determined by three components: the model, the prompt template, and the criteria.
 
 ![Filtering](static/evaluator.png)
 
