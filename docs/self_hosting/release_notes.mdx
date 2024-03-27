@@ -22,7 +22,7 @@ LangSmith 0.4 improves performance and reliability, implements a new asynchronou
 
 - Some our image repositories have been updated. You can see the root repositories in our `values.yaml` file and may need to update mirrors to pick up the new images.
 - Clickhouse persistence now uses 50Gi of storage by default. You can adjust this by changing the `clickhouse.statefulSet.persistence.size` value in your `values.yaml` file.
-    - If your existing configuration cannot support 50Gi, uou may need to resize your existing storage class or set `clickhouse.statefulSet.persistence.size` to the previous default value of `8Gi`.
+    - If your existing configuration cannot support 50Gi, you may need to resize your existing storage class or set `clickhouse.statefulSet.persistence.size` to the previous default value of `8Gi`.
 - The default URL path is now `/api/v1`
 - Consolidation of hubBackend and backend services. We now use one service to serve both of these endpoints. This should not impact your application.
 
