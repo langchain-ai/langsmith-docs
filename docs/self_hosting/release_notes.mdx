@@ -6,8 +6,44 @@ sidebar_position: 4
 # LangSmith Release Notes
 
 :::note
-All versions of LangSmith after v0.2 require `langsmith-sdk` version ≥ `0.0.71` (Python) and  ≥ `0.0.56` (JS/TS) to support changes in pagination of API results.  Older versions will return an http status 405 error.  We strongly encourage use of the latest versions of the SDK for the best performance.
+All versions of the `langsmith-sdk` version ≥ `0.0.71` (Python) and  ≥ `0.0.56` (JS/TS) require LangSmith v0.2 or greater to support changes in pagination of API results.  Older versions of LangSmith will return an http status 405 error.  We strongly encourage use of the latest versions of LangChain, LangSmith, and the LangSmith SDK for the best performance.
 :::
+
+## Week of Marh 25, 2024 - LangSmith v0.4
+
+LangSmith 0.4 improves performance and reliability, implements a new asynchronous queue worker to optimize run ingests, and an API key salt parameter.
+
+### Breaking changes
+
+- This release adds an API key salt parameter. This previously defaulted to your LangSmith License Key. **For updates from earlier versions you should set you should set this param to your license key to ensure backwards compatibility. Using a new api key salt will invalidate all existing api keys.**
+**
+
+### Infrastructure changes
+
+- Some our image repositories have been updated. You can see the root repositories in our `values.yaml` file and may need to update mirrors to pick up the new images.
+- Clickhouse persistence now uses 50Gi of storage by default. You can adjust this by changing the `clickhouse.statefulSet.persistence.size` value in your `values.yaml` file.
+    - If your existing configuration cannot support 50Gi, uou may need to resize your existing storage class or set `clickhouse.statefulSet.persistence.size` to the previous default value of `8Gi`.
+- The default URL path is now `/api/v1`
+- Consolidation of hubBackend and backend services. We now use one service to serve both of these endpoints. This should not impact your application.
+
+### Performance and Reliability Changes
+
+- Implemented a new asynchronous queue worker and cached token encodings to improve performance when ingesting traces, reducing the delay between ingest and display in the LangSmith UI.
+
+### Admin changes
+
+- Added an API key salt parameter in `values.yml`.  This can be set to a custom value and changing it will invalidate all existing api keys.
+- Changed the OAuth flow to leverage Access Tokens instead of OIDC ID tokens.  This change should not impact the end user experience. 
+- Added scripts to enable feature flags in self-hosted environments for use in previewing pre-release features.
+
+### Deprecation notices
+
+With the release of 0.4:
+
+- LangSmith 0.3.x and earlier are now in maintenance mode and may only receive critical security fixes.
+
+
+
 
 ## Week of Februrary 21, 2024 - LangSmith v0.3
 
@@ -15,30 +51,7 @@ LangSmith 0.3 improves performance and reliability, adds improved monitoring cha
 
 ### Breaking changes
 
-- This release will drop the postgres run tables - if you are making a migration from LangSmith v0.1 and with to retain run data, you must first update to v0.2 and perform a data migration.  See https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md for additional details
-
-### LangSmith UEX Changes
-
-**Tracing** 
-
-- Users can see how much they’ve spent on LLM calls in their traces and in the monitoring tab.
-
-**Monitoring**
-
-- We now have grouped monitoring charts in LangSmith by metadata and by tag. Read how to set up tags and metadata, and learn about the kinds of visibility this feature unlocks on this [blog](https://blog.langchain.dev/grouped-monitoring-charts/).
-- Charts are now available in the testing view, so you can now see how performance changes visually on different iterations of your application.
-
-**Annotation Queues***
-
--  We’ve added a structured feedback rubric to help make annotations easier. This feature enables users to create custom feedback keys with predefined categories. The rubric will show up across your LangSmith organization in annotation queues, and feedback will then be validated on submission.
-
-**Playground**
-
-- Support for HuggingFace 🤗 models in the Playground. 
-
-### LangSmith SDK Changes
-
-- [Trace sampling](https://docs.smith.langchain.com/tracing/tracing-faq#how-do-i-reduce-my-trace-count) has been added to the LangSmith SDK as of python SDK version >= `0.0.84` and JS SDK version >= `0.0.64`.
+- This release will drop the postgres run tables - if you are making a migration from LangSmith v0.1 and wish to retain run data, you must first update to v0.2 and perform a data migration.  See https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md for additional details
 
 ### Performance and Reliability Changes
 
@@ -68,27 +81,6 @@ LangSmith 0.2 improves performance and reliability, adds a updated interface for
 ### Breaking changes
 
 - The search syntax for metadata in runs has changed and limits support for nested JSON to a single level.  If you are supplying custom metadata in traces, you should flatten your metadata structure in order to allow it to be searchable, (e.g. `{"user_id": ..., "user_name":...,}`) and then search using `has(metadata, '{"user_name": ...}')`
-
-### LangSmith UEX Changes
-
-**Tracing** 
-
-- We refreshed the run tree so that the most important calls are displayed in the default view with the ability to show all steps in an expanded view.
-- Better rendering for tools, function calls, and documents in the trace view and playground.
-- Keyboard shortcuts (J, K) to navigate to the previous or next run while in the trace history view.
-- Trace histories now have infinite scroll, so you can get more context.
-- Trace to playground access for all LLM types.
-
-**Monitoring**
-
-- Drill downs and dynamic stat calculations by tag or metadata on the monitoring tab, so you can filter charts by a segment.
-
-### LangSmith SDK Changes
-
-**LangSmith JS SDK**
-
-- This release adds support for batch ingest of traces and runs to reduce ingest latency and the number of API calls to the Langsmith service.  This feature is currently in pre-release for `langchain` and `langsmith-sdk`.
-- Support for `runOverDataset` in JS to allow for bulk evaluation of your app over a reference dataset in LangSmith.
 
 ### Performance and Reliability Changes
 
