@@ -1,0 +1,30 @@
+---
+sidebar_label: Monitoring
+sidebar_position: 2
+---
+
+# How to monitor
+
+LangSmith has a collection of monitoring charts. These can be accessed on the `Monitor` tab within a particular project.
+
+## How to change the time period
+
+You can view monitors over differing time periods. This can be controlled by the tabs at the top of the page. By default, it is set to seven days.
+
+## How to view monitors by subsets
+
+By default, the monitor tab shows results for all runs. However, you can group runs in order to see how different subsets perform.
+This can be useful to compare how two different prompts or models are performing.
+
+In order to do this, you first need to make sure you are [attaching appropriate tags or metadata](/tracing/faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces) to these runs when logging them.
+After that, you can click the `Tag` or `Metadata` tab at the top to group runs accordingly.
+
+![Subsets Monitor](../static/subsets_monitor.png)
+
+## How to drill into specific subsets
+
+Monitoring charts can be useful to idea when spikes in errors or latency may be occurring. When you observe those spikes in a monitoring dashboard, you can easily drill into the runs causing those issues by clicking on the dot in the dashboard.
+
+From there, you will be brought back to the `Traces` tab, with a filter applied so you are only viewing the runs that occurred in the time bucket that you clicked into.
+
+![Drill Monitor](../static/drill_monitor.png)
