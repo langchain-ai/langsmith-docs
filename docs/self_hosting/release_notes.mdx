@@ -6,7 +6,7 @@ sidebar_position: 4
 # LangSmith Release Notes
 
 :::note
-If you are upgrading directly from LangSmith v0.1.x and you wish to retain access to run data in the Langsmith UI after updating, you must first update to v0.2.x and perform a data migration.  **Updating directly from v0.1.x to v0.3.x or later will result in data loss as the `runs` table in postgres will be dropped when deploying LangSmith v0.3.x or higher.**  Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
+If you are upgrading directly from LangSmith v0.1.x and you wish to retain access to run data in the Langsmith UI after updating, you must first update to v0.2.x and perform a data migration. **Updating directly from v0.1.x to v0.3.x or later will result in data loss as the `runs` table in postgres will be dropped when deploying LangSmith v0.3.x or higher.**  Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
 :::
 
 ## Week of March 25, 2024 - LangSmith v0.4
@@ -32,9 +32,9 @@ LangSmith 0.4 improves performance and reliability, implements a new asynchronou
 
 ### Admin changes
 
-- Added an API key salt parameter in `values.yml`.  This can be set to a custom value and changing it will invalidate all existing api keys.
-- Changed the OAuth flow to leverage Access Tokens instead of OIDC ID tokens.  This change should not impact the end user experience. 
-- Added scripts to enable feature flags in self-hosted environments for use in previewing pre-release features.
+- Added an API key salt parameter in `values.yml`. This can be set to a custom value and changing it will invalidate all existing api keys.
+- Changed the OAuth flow to leverage Access Tokens instead of OIDC ID tokens. This change should not impact the end user experience. 
+- Added scripts to enable feature flags in self-hosted environments for use in previewing pre-release features. Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/ADD-FEATURE-FLAG.md
 
 ### Deprecation notices
 
@@ -51,7 +51,7 @@ LangSmith 0.3 improves performance and reliability, adds improved monitoring cha
 
 ### Breaking changes
 
-- This release will drop the postgres run tables - if you are making a migration from LangSmith v0.1 and wish to retain run data, you must first update to v0.2 and perform a data migration.  See https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md for additional details
+- This release will drop the postgres run tables - if you are making a migration from LangSmith v0.1 and wish to retain run data, you must first update to v0.2 and perform a data migration. See https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md for additional details
 
 ### Performance and Reliability Changes
 
@@ -76,11 +76,11 @@ LangSmith 0.2 improves performance and reliability, adds a updated interface for
 
 ### Requirements
 
-- This release requires `langsmith-sdk` version ≥ `0.0.71` (Python) and  ≥ `0.0.56` (JS/TS) to support changes in pagination of API results.  Older versions will only return the first 100 results when querying an endpoint.
+- This release requires `langsmith-sdk` version ≥ `0.0.71` (Python) and  ≥ `0.0.56` (JS/TS) to support changes in pagination of API results. Older versions will only return the first 100 results when querying an endpoint.
 
 ### Breaking changes
 
-- The search syntax for metadata in runs has changed and limits support for nested JSON to a single level.  If you are supplying custom metadata in traces, you should flatten your metadata structure in order to allow it to be searchable, (e.g. `{"user_id": ..., "user_name":...,}`) and then search using `has(metadata, '{"user_name": ...}')`
+- The search syntax for metadata in runs has changed and limits support for nested JSON to a single level. If you are supplying custom metadata in traces, you should flatten your metadata structure in order to allow it to be searchable, (e.g. `{"user_id": ..., "user_name":...,}`) and then search using `has(metadata, '{"user_name": ...}')`
 
 ### Performance and Reliability Changes
 
@@ -91,8 +91,8 @@ LangSmith 0.2 improves performance and reliability, adds a updated interface for
 
 ### Infrastructure Changes
 
-- Added the `clickhouse` database service.  Run results will now be stored in ClickHouse instead of Postgres to improve performance and scalability and reduce delays in the time it takes for runs to appear in LangSmith.
-    - Note that if you wish to retain access to run data in the Langsmith UI after updating, a data migration will need to be performed.  Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
+- Added the `clickhouse` database service. Run results will now be stored in ClickHouse instead of Postgres to improve performance and scalability and reduce delays in the time it takes for runs to appear in LangSmith.
+    - Note that if you wish to retain access to run data in the Langsmith UI after updating, a data migration will need to be performed. Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
 
 ### Admin changes
 
