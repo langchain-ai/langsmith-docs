@@ -6,7 +6,7 @@ sidebar_position: 4
 # LangSmith Release Notes
 
 :::note
-All versions of the `langsmith-sdk` version ≥ `0.0.71` (Python) and  ≥ `0.0.56` (JS/TS) require LangSmith v0.2 or greater to support changes in pagination of API results.  Older versions of LangSmith will return an http status 405 error.  We strongly encourage use of the latest versions of LangChain, LangSmith, and the LangSmith SDK for the best performance.
+If you are upgrading directly from LangSmith v0.1.x and you wish to retain access to run data in the Langsmith UI after updating, you must first update to v0.2.x and perform a data migration.  **Updating directly from v0.1.x to v0.3.x or later will result in data loss as the `runs` table in postgres will be dropped when deploying LangSmith v0.3.x or higher.  Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
 :::
 
 ## Week of Marh 25, 2024 - LangSmith v0.4
@@ -16,7 +16,7 @@ LangSmith 0.4 improves performance and reliability, implements a new asynchronou
 ### Breaking changes
 
 - This release adds an API key salt parameter. This previously defaulted to your LangSmith License Key. **For updates from earlier versions you should set you should set this param to your license key to ensure backwards compatibility. Using a new api key salt will invalidate all existing api keys.**
-**
+- If you are migrating from LangSmith version v0.1.x, you must first update to v0.2.x prior to updating to ensure retention of 
 
 ### Infrastructure changes
 
@@ -76,7 +76,7 @@ LangSmith 0.2 improves performance and reliability, adds a updated interface for
 
 ### Requirements
 
-- This release requires `langsmith-sdk` version ≥ `0.0.71` (Python) and  ≥ `0.0.56` (JS/TS) to support changes in pagination of API results.  Older versions will return an http status 405 error.
+- This release requires `langsmith-sdk` version ≥ `0.0.71` (Python) and  ≥ `0.0.56` (JS/TS) to support changes in pagination of API results.  Older versions will only return the first 100 results when querying an endpoint.
 
 ### Breaking changes
 
