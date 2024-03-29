@@ -29,7 +29,7 @@ If you want to evaluate a LangChain object (runnable, etc.), you can directly ca
 
 3. `RunEvalConfig` has been deprecated. Instead, directly provide a list of evaluators to the `evaluators` argument.
 
-    a. Custom evaluators can simply be functions that take a `Run` and an `Example` and return a dictionary with the evaluation results. For example:
+    a. Custom evaluators are simple functions that take a `Run` and an `Example` and return a dictionary with the evaluation results. For example:
 
 ```python
 def exact_match(run: Run, example: Example) -> dict:
@@ -76,6 +76,29 @@ evaluators=[
         },
     ),
 ]
+```
+
+   c. For evaluating multi-key datasets using off-the-shelf LangChain evaluators, replace any `input_key`, `reference_key`, `prediction_key` with a custom `prepare_data` function.
+   
+If your dataset has a single key for the inputs and reference answer, and if your target pipeline returns a response in a single key, the evaluators can automatically use these responses directly without any additional configuration.
+
+For multi-key datasets, you must explain which values to use for the model prediction, (and optionally for the expected answer and/or inputs). This is done by providing a `prepare_data` function that converts a run and example to a dictionary of {"input": ..., "prediction": ..., "reference": ...}.
+
+```python
+def prepare_data(run: Run, example: Example) -> dict:
+    # Run is the trace of your pipeline
+    # Example is a dataset record
+    return {
+        "prediction": run.outputs["output"],
+        "input": example.inputs["input"],
+        "reference": example.outputs["answer"],
+    }
+
+qa_evaluator = LangChainStringEvaluator(
+    "qa",
+    prepare_data=prepare_data,
+    config={"llm": my_qa_llm},
+)
 ```
 
 
