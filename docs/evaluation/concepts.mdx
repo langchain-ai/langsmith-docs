@@ -26,7 +26,7 @@ There are a few different types of datasets. Dataset types communicate common in
 
 Datasets with the data type "kv" are the default type. For these datasets, inputs and outputs can be arbitrary key-value pairs. These are useful when evaluating chains and agents that require multiple inputs or that return multiple outputs.
 
-The tradeoff with these datasets is that running evaluations on them can be a bit more involved. If there are multiple keys, you will have to manually specify the input_key, reference_key, (and possibly output_key) in the `RunEvalConfig`.
+The tradeoff with these datasets is that running evaluations on them can be a bit more involved. If there are multiple keys, you will have to manually specify the `prepare_data` function in any off-the-shelf evaluators so they know what information to consider in generating a score.
 
 ### LLM datasets
 
