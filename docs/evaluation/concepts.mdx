@@ -59,10 +59,25 @@ Therefore, if your application is stateful you should pass in a "factory" which 
 Evaluators are functions that help score how well your system did on a particular example.
 They take in two things:
 
-1. An example (containing inputs and optionally expected outputs)
+1. An example (containing inputs for your pipeline and optionally the reference outputs or labels)
 2. Observed output (gathered from running the inputs through the system to evaluate)
 
-An evaluator will then return an `EvaluationResult`.
+An evaluator will then return an `EvaluationResult` (or similarly shaped dictionary).
+
+#### Run Object
+
+The key `Run` object fields are as follows:
+
+- `outputs`: `Dict[str, Any]` - The outputs of your pipeline
+- `inputs`: `Dict[str, Any]` - The inputs to your pipeline. These are the same as the inputs in the example.
+- `child_runs`: `List[Run]` - If your pipeline has nested steps, these can be accessed and used in your evaluator
+
+#### Example Object
+
+The key `Example` object fields are as follows:
+- `outputs`: `Dict[str, Any]` - The reference labels or other context found in your dataset
+- `inputs`: `Dict[str, Any]` - The inputs to your pipeline
+- `metadata`: `Dict[str, Any]` - Any other metadata you have stored in that example within the dataset
 
 ## EvaluationResult
 
@@ -71,21 +86,16 @@ This is made up of:
 
 - `key`: The name the metric being evaluated
 - `score`: The value of the metric on this example
+- `comment`: the reasoning trajectory or other string information motivating the score
 
 
-## RunEvalConfig
+## Experiment Prefix
 
-The `RunEvalConfig` contains configuration for an evaluation run.
-Typically, this consists of the evaluators to use.
+Each experiment has a name - this is usually set via the `experiment_prefix`. This should be an interpretable name that helps you understand what the experiment is testing.
 
-## Project Name
+The test runner will automatically add a unique identifier to the end of the experiment name to make it unique.
 
-Each test run has a name - this is usually set via the `project_name`.
-Guidelines for naming your test run:
+A common suggestion for a name is something like `ClaudeWithRRF`.
 
-- Make it understandable. It's nice to be able to quickly glance at a test run and understand what you are testing by name.
-- Make it unique. This will NEED to be unique.
-
-A common suggestion for a name is something like `Anthropic - xyz123`.
 This contains an understandable start to the name, but also a random uuid to make it unique.
 
