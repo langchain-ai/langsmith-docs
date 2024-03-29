@@ -206,7 +206,7 @@ class MyPredictor:
     
     def predict(self, input_: dict) -> dict:
         if self.state > 0:
-            raise ValueError("This predictor is stateful and can only be called once."")
+            raise ValueError("This predictor is stateful and can only be called once.")
         self.state += 1
         return {"output": f"Bar Bar Bar {self.state}"}\n
 def predict(inputs: dict) -> dict:
@@ -352,7 +352,7 @@ evaluators = [
 ]\n
 experiment_results = evaluate(
     predict,
-    data=predict,
+    data=dataset_name,
     evaluators=evaluators,
     experiment_prefix="custom-rap-generator",
     # Any experiment metadata can be specified here
@@ -391,7 +391,7 @@ evaluators = [
 ]\n
 experiment_results = evaluate(
     predict,
-    data=predict,
+    data=dataset_name,
     evaluators=evaluators,
     experiment_prefix="runnable-rap-generator",
     # Any experiment metadata can be specified here
@@ -430,7 +430,7 @@ evaluators = [
 ]\n
 experiment_results = evaluate(
     predict,
-    data=predict,
+    data=dataset_name,
     evaluators=evaluators,
     experiment_prefix="agent-rap-generator",
     # Any experiment metadata can be specified here
@@ -469,7 +469,7 @@ evaluators = [
 ]\n
 experiment_results = evaluate(
     predict,
-    data=predict,
+    data=dataset_name,
     evaluators=evaluators,
     experiment_prefix="llm-rap-generator",
     # Any experiment metadata can be specified here
@@ -508,7 +508,7 @@ evaluators = [
 ]\n
 experiment_results = evaluate(
     predict,
-    data=predict,
+    data=dataset_name,
     evaluators=evaluators,
     experiment_prefix="class-rap-generator",
     # Any experiment metadata can be specified here
