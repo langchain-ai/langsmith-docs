@@ -102,7 +102,7 @@ You could also add or filter by feedback to make sure the dataset(s) capture the
 few_shot_dataset_name = "History Few Shot Dataset"
 few_shot_dataset = client.create_dataset(few_shot_dataset_name)
 runs = client.list_runs(
-    project_name=prototype_project_name,
+    project_name=prototype_results.experiment_name,
     run_type="chain",
 )
 for run in runs:
