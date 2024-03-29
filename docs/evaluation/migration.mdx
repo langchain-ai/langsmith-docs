@@ -11,7 +11,10 @@ This guide will walk you through the process of migrating your existing code fro
 
 ## Key Differences
 
-1. The "thing you are evaluating" (pipeline, target, model, chain, agent, etc.) is **always** the first positional argument and **always** has the following signature:
+
+#### 1. `llm_or_chain_factory` -> first positional argument
+
+The "thing you are evaluating" (pipeline, target, model, chain, agent, etc.) is **always** the first positional argument and **always** has the following signature:
 
 ```python
 def predict(inputs: dict) -> dict:
@@ -25,9 +28,27 @@ def predict(inputs: dict) -> dict:
 No need to specify the confusing "`llm_or_chain_factory`". If you need to create a new version of your object for each data point, initialize it within the `predict()` function.
 If you want to evaluate a LangChain object (runnable, etc.), you can directly call `evaluate(chain.invoke, data: ...,...)`.
 
-2. `dataset_name` is now `data` and accepts a broader range of inputs, including dataset names, ids, or an iterator over examples. This lets you easily evaluate over a subset of the data to quickly debug.
+#### 2. `dataset_name` -> `data`
 
-3. `RunEvalConfig` has been deprecated. Instead, directly provide a list of evaluators to the `evaluators` argument.
+The data field accepts a broader range of inputs, including the dataset name, id, or an iterator over examples. This lets you easily evaluate over a subset of the data to quickly debug.
+
+If you were previously specifying a `dataset_version`, you can directly pass the target version like so:
+
+```python
+dataset_version = "lates" # your tagged version
+
+results = evaluate(
+    ...,
+    data=client.list_examples(dataset_name="my_dataset", as_of=dataset_version),
+    ...
+)
+
+```
+
+
+#### 3. `RunEvalConfig` -> `List[RunEvaluator]`
+
+The config has been deprecated (removing the LangChain dependency). Instead, directly provide a list of evaluators to the `evaluators` argument.
 
     a. Custom evaluators are simple functions that take a `Run` and an `Example` and return a dictionary with the evaluation results. For example:
 
@@ -44,10 +65,12 @@ evaluate(
 
 )
 ```
-    
-    b. LangChain evaluators can be incorporated using the `LangChainStringEvaluator` wrapper class.
 
-For example, this evaluation:
+Anything that subclasses `RunEvaluator` still works as they did before, we just will automatically promote your compatible functions to `RunEvaluator` instances.
+    
+    b. `LangChain` evaluators can be incorporated using the `LangChainStringEvaluator` wrapper.
+
+For example, if you were previously using the "Criteria" evaluator, this evaluation:
 
 ```python
 eval_config = RunEvalConfig(
@@ -60,7 +83,7 @@ eval_config = RunEvalConfig(
 client.run_on_dataset(..., eval_config=eval_config)
 ```
 
-Becomes:
+becomes:
 
 ```python
 from langsmith.evaluation import LangChainStringEvaluator
@@ -102,7 +125,9 @@ qa_evaluator = LangChainStringEvaluator(
 ```
 
 
-4. `batch_evaluators` are now `summary_evaluators`. These let you compute custom metrics over the whole dataset. For example, precision:
+#### 4. `batch_evaluators` -> `summary_evaluators`. 
+
+These let you compute custom metrics over the whole dataset. For example, precision:
 
 ```python
 def precision(runs: List[Run], examples: List[Example]) -> dict:
@@ -114,21 +139,24 @@ def precision(runs: List[Run], examples: List[Example]) -> dict:
     return {"score": tp / (tp + fp), "key": "precision"}
 ```
 
-5. `project_metadata` is now simply `metadata`. 
+#### 5. `project_metadata` -> `metadata`. 
 
-6. `project_name` is replaced by `experiment_prefix`. `evaluate()` always appends an experiment uuid to the prefix to ensure uniqueness.
+#### 6. `project_name` -> `experiment_prefix`.
 
-7. `concurrency_level` is now `max_concurrency`.
+`evaluate()` always appends an experiment uuid to the prefix to ensure uniqueness, so you don't have to
+run into those confusing "project already exists" errors.
+
+#### 7. `concurrency_level` -> `max_concurrency`.
 
 ## Migration Steps
 
-1. Update your imports:
+#### 1. Update your imports:
 
 ```python
 from langsmith.evaluation import evaluate
 ```
 
-2. Change your `run_on_dataset` call to `evaluate`:
+#### 2. Change your `run_on_dataset` call to `evaluate`:
 
 ```python
 results = evaluate(
@@ -142,7 +170,7 @@ results = evaluate(
 )
 ```
 
-3. If you were using a factory function, replace it with a direct invocation:
+#### 3. If you were using a factory function, replace it with a direct invocation:
 
 ```python
 def predict(inputs: dict):
@@ -150,16 +178,7 @@ def predict(inputs: dict):
     return my_pipeline.invoke(inputs)
 ```
 
-4. Update your evaluators to use the new format:
-
-```python
-def accuracy(run: Run, example: Example):
-    pred = run.outputs["output"]
-    expected = example.outputs["answer"]
-    return {"score": expected.lower() == pred.lower()}
-```
-
-5. If you were using LangChain evaluators, wrap them with `LangChainStringEvaluator`:
+####4.  If you were using LangChain evaluators, wrap them with `LangChainStringEvaluator`:
 
 ```python
 from langsmith.evaluation import LangChainStringEvaluator
@@ -174,20 +193,7 @@ evaluators=[
 ]
 ```
 
-6. Update any references to `project_metadata`, `project_name`, and `concurrency_level` to use the new argument names.
-
-7. If you were specifying a `dataset_version`, you can directly pass the dataset at the expected version like so:
-
-```python
-dataset_version = "lates" # your tagged version
-
-results = evaluate(
-    ...,
-    data=client.list_examples(dataset_name="my_dataset", as_of=dataset_version),
-    ...
-)
-
-```
+#### 5. Update any references to `project_metadata`, `project_name`, `dataset_version`, and `concurrency_level` to use the new argument names.
 
 ## Support
 
