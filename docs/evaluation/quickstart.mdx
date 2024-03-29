@@ -18,13 +18,14 @@ import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallat
 In this walkthrough, you will evaluate a chain over a dataset of examples. To do so, you will:
 
 - Create a dataset
-- Define the system to evaluate
-- Configure and run the evaluation
-- Review the resulting traces and evaluation feedback in LangSmith
+- Define the pipeline to evaluate
+- Define the evaluators
+- Review the resulting experiment in LangSmith
 
 ## Prerequisites
 
-This walkthrough assumes you have already installed LangChain and `openai` and configured your environment to connect to LangSmith.
+This walkthrough assumes you have already installed `langsmith` and `openai` and configured your environment to connect to LangSmith.
+If you want to also use an off-the-shelf LangChain evaluator, you can install `langchain` as well.
 
 <CodeTabs
     tabs={[
@@ -32,7 +33,7 @@ This walkthrough assumes you have already installed LangChain and `openai` and c
         value: "python",
         label: "Python",
         language: "bash",
-        content: `pip install -U "langchain langchain_openai"`,
+        content: `pip install -U "langsmith openai"\npip install -U langchain langchain_openai # If you want to use pre-built LangChain evaluators`,
         },
         {
         value: "typescript",
@@ -52,7 +53,7 @@ export LANGCHAIN_API_KEY=<your api key>
 
 ## 1. Create a dataset
 
-Upload a dataset to LangSmith to use for evaluation. For this example, we will upload a pre-made list of input examples.
+The dataset defines the types of information your pipeline should be expected to handle well. For this example, we will upload a pre-made list of input examples.
 
 For more information on other ways to create and use datasets, check out the [how-to](faq) guides.
 
@@ -124,10 +125,7 @@ await client.createExamples({
   ]}>
 <TabItem value="python">
 
-The `run_on_dataset` test runner can evaluate __any__ function. This includes any [Runnable](https://python.langchain.com/docs/expression_language/interface) LangChain component.
-
-If your system is stateful (for instance, if it has chat memory) you can instead provide a _constructor_ for your system that creates a new
-instance for each example record in the dataset. If your system is stateless, you can directly pass it in without worrying about any constructors.
+The `evaluate` test runner can evaluate __any__ function. The function accepts a dictionary (the `example.inputs` from your dataset) and should return a dictionary (containing the prediction outputs).
 
 <CodeTabs
 tabs={[
@@ -136,11 +134,13 @@ tabs={[
     label: "Custom function",
     language: "python",
     content: `import openai
+from langsmith.wrappers import wrap_openai\n
+openai_client = wrap_openai(openai.Client())\n
 # You evaluate any arbitrary function over the dataset.
 # The input to the function will be the inputs dictionary for each example.
-def predict_result(input_: dict) -> dict:
-    messages = [{"role": "user", "content": input_["question"]}]
-    response = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo")
+def predict(inputs: dict) -> dict:
+    messages = [{"role": "user", "content": inputs["question"]}]
+    response = openai_client.chat.completions.create(messages=messages, model="gpt-3.5-turbo")
     return {"output": response}`,
     },
     {
@@ -152,7 +152,9 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI\n
 llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 prompt = ChatPromptTemplate.from_messages([("human", "Spit some bars about {question}.")])
-chain = prompt | llm | StrOutputParser()`,
+chain = prompt | llm | StrOutputParser()
+def predict(inputs: dict) -> dict:
+    return {"output": chain.invoke(inputs)}`,
     },
     {
     value: "agent",
@@ -174,16 +176,14 @@ def get_encouragement(request: str) -> str:
     return "You can do it!"\n
 tools = [get_encouragement]
 llm = ChatOpenAI(model="gpt-3.5-turbo")\n
-# Since chains and agents can be stateful (they can have memory),
-# create a constructor to pass in to the run_on_dataset method.
-def create_agent():
+def predict(inputs: dict) -> dict:
     agent = create_openai_functions_agent(
         llm,
         tools=[get_encouragement],
         prompt=prompt,
     )
-    return AgentExecutor(agent=agent, tools=tools)
-`,
+    executor = AgentExecutor(agent=agent, tools=tools)
+    return executor.invoke(inputs)`,
     },
     {
     value: "llm",
@@ -191,7 +191,8 @@ def create_agent():
     language: "python",
     content: `from langchain_openai import ChatOpenAI\n
 llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-`,
+def predict(inputs: dict):
+    return {"output": llm.invoke(inputs['question']).content}`,
     },
     {
     value: "custom-class",
@@ -205,13 +206,13 @@ class MyPredictor:
     
     def predict(self, input_: dict) -> dict:
         if self.state > 0:
-            raise ValueError("This predictor is stateful and can only be called once."")
+            raise ValueError("This predictor is stateful and can only be called once.")
         self.state += 1
         return {"output": f"Bar Bar Bar {self.state}"}\n
-def create_object() -> MyPredictor:
+def predict(inputs: dict) -> dict:
     predictor = MyPredictor()
     # Return the function that will be called on the next row
-    return predictor.predict\n
+    return predictor.predict(inputs)\n
     `,
     },
 ]}
@@ -326,203 +327,202 @@ For more information on how to write a custom evaluator, check out the [custom e
       value: "custom-function",
       label: "Custom function",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset
-from langsmith.evaluation import EvaluationResult, run_evaluator\n
-@run_evaluator
-def must_mention(run, example) -> EvaluationResult:
+      content: `from langsmith.schemas import Run, Example\n
+from langsmith.evaluation import evaluate, LangChainStringEvaluator\n
+def must_mention(run: Run, example: Example) -> dict:
     prediction = run.outputs.get("output") or ""
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
-    return EvaluationResult(key="must_mention", score=score)\n
-eval_config = RunEvalConfig(
-    custom_evaluators=[must_mention],
-    # You can also use a prebuilt evaluator
-    # by providing a name or RunEvalConfig.<configured evaluator>
-    evaluators=[
-        # You can specify an evaluator by name/enum.
-        # In this case, the default criterion is "helpfulness"
-        "criteria",
-        # Or you can configure the evaluator
-        RunEvalConfig.Criteria("harmfulness"),
-        RunEvalConfig.Criteria(
-            {
-                "cliche": "Are the lyrics cliche?"
-                " Respond Y if they are, N if they're entirely unique."
-            }
-        ),
-    ],
-)
-client.run_on_dataset(
-    dataset_name=dataset_name,
-    llm_or_chain_factory=predict_result,
-    evaluation=eval_config,
-    verbose=True,
-    project_name="custom-function-test-1",
+    return {"key":"must_mention", "score": score}\n
+evaluators = [
+  must_mention,
+  LangChainStringEvaluator(
+    "criteria",
+    config={"criteria":  "harmfulness"}
+  ),
+  LangChainStringEvaluator(
+    "criteria",
+    config={
+      "criteria": {
+        "cliche": "Are the lyrics cliche?"
+        " Respond Y if they are, N if they're entirely unique."
+      }
+    },
+  ),
+]\n
+experiment_results = evaluate(
+    predict,
+    data=dataset_name,
+    evaluators=evaluators,
+    experiment_prefix="custom-rap-generator",
     # Any experiment metadata can be specified here
-    project_metadata={"version": "1.0.0"},
-)`,   },
+    metadata={
+      "version": "1.0.0",
+      "variant": "custom-function",
+    },
+)`,   
+},
     {
       value: "runnable",
       label: "Runnable",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset
-from langsmith.evaluation import EvaluationResult, run_evaluator\n
-@run_evaluator
-def must_mention(run, example) -> EvaluationResult:
+      content: `from langsmith.schemas import Run, Example\n
+from langsmith.evaluation import evaluate, LangChainStringEvaluator\n
+def must_mention(run: Run, example: Example) -> dict:
     prediction = run.outputs.get("output") or ""
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
-    return EvaluationResult(key="must_mention", score=score)\n
-    
-eval_config = RunEvalConfig(
-    custom_evaluators=[must_mention],
-    # You can also use a prebuilt evaluator
-    # by providing a name or RunEvalConfig.<configured evaluator>
-    evaluators=[
-        # You can specify an evaluator by name/enum.
-        # In this case, the default criterion is "helpfulness"
-        "criteria",
-        # Or you can configure the evaluator
-        RunEvalConfig.Criteria("harmfulness"),
-        RunEvalConfig.Criteria(
-            {
-                "cliche": "Are the lyrics cliche?"
-                " Respond Y if they are, N if they're entirely unique."
-            }
-        ),
-    ],
-)
-client.run_on_dataset(
-    dataset_name=dataset_name,
-    llm_or_chain_factory=chain,
-    evaluation=eval_config,
-    verbose=True,
-    project_name="runnable-test-1",
+    return {"key":"must_mention", "score": score}\n
+evaluators = [
+  must_mention,
+  LangChainStringEvaluator(
+    "criteria",
+    config={"criteria":  "harmfulness"}
+  ),
+  LangChainStringEvaluator(
+    "criteria",
+    config={
+      "criteria": {
+        "cliche": "Are the lyrics cliche?"
+        " Respond Y if they are, N if they're entirely unique."
+      }
+    },
+  ),
+]\n
+experiment_results = evaluate(
+    predict,
+    data=dataset_name,
+    evaluators=evaluators,
+    experiment_prefix="runnable-rap-generator",
     # Any experiment metadata can be specified here
-    project_metadata={"version": "1.0.0"},
+    metadata={
+      "version": "1.0.0",
+      "variant": "runnable",
+    },
 )`,
     },
     {
       value: "agent",
       label: "Agent",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset
-from langsmith.evaluation import EvaluationResult, run_evaluator\n
-@run_evaluator
-def must_mention(run, example) -> EvaluationResult:
-    prediction = run.outputs.get("text") or ""
+      content: `from langsmith.schemas import Run, Example\n
+from langsmith.evaluation import evaluate, LangChainStringEvaluator\n
+def must_mention(run: Run, example: Example) -> dict:
+    prediction = run.outputs.get("output") or ""
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
-    return EvaluationResult(key="must_mention", score=score)\n
-eval_config = RunEvalConfig(
-    custom_evaluators=[must_mention],
-    # You can also use a prebuilt evaluator
-    # by providing a name or RunEvalConfig.<configured evaluator>
-    evaluators=[
-        # You can specify an evaluator by name/enum.
-        # In this case, the default criterion is "helpfulness"
-        "criteria",
-        # Or you can configure the evaluator
-        RunEvalConfig.Criteria("harmfulness"),
-        RunEvalConfig.Criteria(
-            {
-                "cliche": "Are the lyrics cliche?"
-                " Respond Y if they are, N if they're entirely unique."
-            }
-        ),
-    ],
-)
-client.run_on_dataset(
-    dataset_name=dataset_name,
-    llm_or_chain_factory=create_agent,
-    evaluation=eval_config,
-    verbose=True,
-    project_name="agent-test-1",
+    return {"key":"must_mention", "score": score}\n
+evaluators = [
+  must_mention,
+  LangChainStringEvaluator(
+    "criteria",
+    config={"criteria":  "harmfulness"}
+  ),
+  LangChainStringEvaluator(
+    "criteria",
+    config={
+      "criteria": {
+        "cliche": "Are the lyrics cliche?"
+        " Respond Y if they are, N if they're entirely unique."
+      }
+    },
+  ),
+]\n
+experiment_results = evaluate(
+    predict,
+    data=dataset_name,
+    evaluators=evaluators,
+    experiment_prefix="agent-rap-generator",
     # Any experiment metadata can be specified here
-    project_metadata={"version": "1.0.0"},
+    metadata={
+      "version": "1.0.0",
+      "variant": "agent",
+    },
 )`,
     },
     {
       value: "llm",
       label: "LLM or Chat Model",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset
-from langsmith.evaluation import EvaluationResult, run_evaluator\n
-@run_evaluator
-def must_mention(run, example) -> EvaluationResult:
-    prediction = run.outputs["generations"][0][0]["text"]
+      content: `from langsmith.schemas import Run, Example\n
+from langsmith.evaluation import evaluate, LangChainStringEvaluator\n
+def must_mention(run: Run, example: Example) -> dict:
+    prediction = run.outputs.get("output") or ""
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
-    return EvaluationResult(key="must_mention", score=score)\n
-eval_config = RunEvalConfig(
-    custom_evaluators=[must_mention],
-    # You can also use a prebuilt evaluator
-    # by providing a name or RunEvalConfig.<configured evaluator>
-    evaluators=[
-        # You can specify an evaluator by name/enum.
-        # In this case, the default criterion is "helpfulness"
-        "criteria",
-        # Or you can configure the evaluator
-        RunEvalConfig.Criteria("harmfulness"),
-        RunEvalConfig.Criteria(
-            {
-                "cliche": "Are the lyrics cliche?"
-                " Respond Y if they are, N if they're entirely unique."
-            }
-        ),
-    ],
-)
-client.run_on_dataset(
-    dataset_name=dataset_name,
-    llm_or_chain_factory=llm,
-    evaluation=eval_config,
-    verbose=True,
-    project_name="chatopenai-test-1",
+    return {"key":"must_mention", "score": score}\n
+evaluators = [
+  must_mention,
+  LangChainStringEvaluator(
+    "criteria",
+    config={"criteria":  "harmfulness"}
+  ),
+  LangChainStringEvaluator(
+    "criteria",
+    config={
+      "criteria": {
+        "cliche": "Are the lyrics cliche?"
+        " Respond Y if they are, N if they're entirely unique."
+      }
+    },
+  ),
+]\n
+experiment_results = evaluate(
+    predict,
+    data=dataset_name,
+    evaluators=evaluators,
+    experiment_prefix="llm-rap-generator",
+    # Any experiment metadata can be specified here
+    metadata={
+      "version": "1.0.0",
+      "variant": "raw-llm",
+    },
 )`,
     },
  {
       value: "custom-class",
       label: "Custom class",
       language: "python",
-      content: `from langchain.smith import RunEvalConfig, run_on_dataset
-from langsmith.evaluation import EvaluationResult, run_evaluator\n
-@run_evaluator
-def must_mention(run, example) -> EvaluationResult:
+      content: `from langsmith.schemas import Run, Example\n
+from langsmith.evaluation import evaluate, LangChainStringEvaluator\n
+def must_mention(run: Run, example: Example) -> dict:
     prediction = run.outputs.get("output") or ""
-    must_mention = example.outputs.get("must_mention") or []
-    score = all(phrase in prediction for phrase in must_mention)
-    return EvaluationResult(key="must_mention", score=score)\n
-eval_config = RunEvalConfig(
-    custom_evaluators=[must_mention],
-    # You can also use a prebuilt evaluator
-    # by providing a name or RunEvalConfig.<configured evaluator>
-    evaluators=[
-        # You can specify an evaluator by name/enum.
-        # In this case, the default criterion is "helpfulness"
-        "criteria",
-        # Or you can configure the evaluator
-        RunEvalConfig.Criteria("harmfulness"),
-        RunEvalConfig.Criteria(
-            {
-                "cliche": "Are the lyrics cliche?"
-                " Respond Y if they are, N if they're entirely unique."
-            }
-        ),
-    ],
-)
-client.run_on_dataset(
-    dataset_name=dataset_name,
-    # We are passing the "factory" function in this case.
-    llm_or_chain_factory=create_object,
-    evaluation=eval_config,
-    verbose=True,
-    project_name="custom-class-test-1",
+    required = example.outputs.get("must_mention") or []
+    score = all(phrase in prediction for phrase in required)
+    return {"key":"must_mention", "score": score}\n
+evaluators = [
+  must_mention,
+  LangChainStringEvaluator(
+    "criteria",
+    config={"criteria":  "harmfulness"}
+  ),
+  LangChainStringEvaluator(
+    "criteria",
+    config={
+      "criteria": {
+        "cliche": "Are the lyrics cliche?"
+        " Respond Y if they are, N if they're entirely unique."
+      }
+    },
+  ),
+]\n
+experiment_results = evaluate(
+    predict,
+    data=dataset_name,
+    evaluators=evaluators,
+    experiment_prefix="class-rap-generator",
+    # Any experiment metadata can be specified here
+    metadata={
+      "version": "1.0.0",
+      "variant": "custom-class",
+    },
 )`,
     },
   ]}
   groupId="client-language"
 />
 </TabItem>
+
 <TabItem value="typescript">
 <p>LangChain provides a convenient <a href="https://api.js.langchain.com/functions/langchain_smith.runOnDataset.html">runOnDataset</a> function to trace and evaluate your system over a dataset. When a <a href="https://api.js.langchain.com/types/langchain_smith.RunEvalConfig.html">RunEvalConfig</a> is provided, the configured evalutors will be applied to the predictions as well to generate automated feedback.</p>
 
@@ -832,7 +832,7 @@ await runOnDataset(llm, datasetName, {
 
 ## 4. Review Results
 
-The evaluation results will be streamed to a new test project linked to your "Rap Battle Dataset". You can view the results by clicking on the link printed by the `run_on_dataset` function or by navigating to the [Datasets & Testing](https://smith.langchain.com/datasets) page, clicking "Rap Battle Dataset", and viewing the latest test run.
+The evaluation results will be streamed to a new test project linked to your "Rap Battle Dataset". You can view the results by clicking on the link printed by the `evaluate` function or by navigating to the [Datasets & Testing](https://smith.langchain.com/datasets) page, clicking "Rap Battle Dataset", and viewing the latest test run.
 
 There, you can inspect the traces and feedback generated from the evaluation configuration.
 
@@ -849,4 +849,4 @@ To compare to another test on this dataset, you can click "Compare Tests".
 ## More on evaluation
 
 Congratulations! You've now created a dataset and used it to evaluate your agent or LLM.
-To learn more about evaluation chains available out of the box, check out the [LangChain Evaluators](faq/evaluator-implementations) guide. To learn how to make your own custom evaluators, review the [Custom Evaluator](faq) guide.
+To learn how to make your own custom evaluators, review the [Custom Evaluator](faq) guide. To learn more about some pre-built evaluators available in the LangChain open-source library, check out the [LangChain Evaluators](faq/evaluator-implementations) guide. 
