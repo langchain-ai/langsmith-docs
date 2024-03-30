@@ -19,6 +19,12 @@ A `Trace` is a collection of runs that are related to a single operation. For ex
 ## Filter
 A `Filter` is a rule that applies to all runs in a project. The default filter you see on the main page selects only top-level runs (`IsRoot` is `true`) but you can filter for sub-runs as well.
 
+## Threads
+
+A `Thread` is a sequence of traces representing a conversation. Each response is represented as it's own trace, but these traces are linked together by being part of the same conversation.
+
+You can track threads by attaching a special metadata key to runs (one of `session_id`, `thread_id` or `conversation_id`).
+
 ## Monitoring Dashboard
 
 Monitoring dashboard are aggregate statistics. We track LLM related statistics like latency, feedback, time-to-first-token, cost, and more. You can see these dashboard by going to the `Monitors` tab.
