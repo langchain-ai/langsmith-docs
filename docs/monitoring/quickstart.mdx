@@ -6,19 +6,19 @@ table_of_contents: true
 
 # Quick Start
 
-Production logging largely builds on top of [tracing](/tracing). In order to get started with monitoring, you should first set up tracing for your project. See the tracing section for details on how to do that.
+Production monitoring starts by configuring tracing for your application. See the [tracing section](/tracing) for details on how to do that.
 
 Compared to tracing while prototyping applications, you want to pay attention to a few particular points:
 
 - [Sampling](/tracing/faq/logging_and_viewing#setting-a-sampling-rate-for-tracing): When logging production workloads, you may only want to log a subset of the datapoints flowing through your system.
-- [Adding Metadata](/tracing/faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces): As we'll see with automations, attaching relevant metadata to runs is particularly important.
+- [Adding Metadata](/tracing/faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces): As we'll see with automations, attaching relevant metadata to runs is particularly important to enable filtering and grouping your data.
 - [Feedback](/tracing/faq/logging_feedback): When an application is in production you can't always look at all datapoints. Capturing user feedback is helpful to draw your attention to particular datapoints.
 
 So - now you've got your logs flowing into LangSmith. What can you do with that data?
 
 ## Filtering
 
-If you want to dive into particular datapoints, you can use the filtering functionality. By default, this select all top level runs (where `IsRoot` is `True`). You can filter based on name, metadata attribute, feedback, or even do a full text search.
+If you want to dive into particular datapoints, you can use the filtering functionality. By default, this selects all top level runs (where `Is Root` is `True`). You can filter based on name, metadata attribute, feedback, or even do a full text search.
 
 ![Filtering](static/filter.png)
 
@@ -43,7 +43,7 @@ If your traces are part of the same conversation, you can track them using `Thre
 
 ## Automations
 
-You'll likely want to spend time looking at datapoints by hand. That's still the best way to get an intuition for what is happening in your data! At some point, you will want to automate some of actions you are taking on those datapoints. That is where `Automations` come in handy.
+Although you'll likely want to spend time looking at traces by hand to gain an intuition for what's happening with your LLM pipelines, at some point, you will want to automate some of actions you are taking on those traces. That is where `Automations` come in handy.
 
 The first step for defining an automation is to define the filter you want to use to select the datapoints to apply that automation to. You can do this with the filtering capability above. After doing that, you can then hit the `Rules` button.
 
@@ -55,7 +55,7 @@ That will cause a side panel to open up. This will display three main automation
 
 For more information, see [here](faq/automations)
 
-### Sending to a dataset
+### Sending to a Dataset
 
 One common workflow is to send datapoints to a dataset automatically. This can be done by selecting the dataset button and then selecting the dataset you want to send to (or create a new dataset).
 
@@ -69,7 +69,7 @@ For more information, see [here](faq/annotation_queue)
 
 Often times you may want to use an LLM to annotate or leave feedback on datapoints. This can be for the purpose of trying to get some initial feedback on the LLM answer (vague, not vague) or to classify user input, or both! This can be done with `Online Evaluation`.
 
-NOTE: before clicking on this option, make sure to set up secrets to have access to any API keys for the LLMs you will use. You can do this by clicking `Settings -> Secrets -> Add secret`.
+NOTE: before clicking on this option, make sure to set up secrets to have access to any API keys for the LLMs you will use. You can do this by clicking `Settings -> Secrets -> Add secret`. These are different from Playground secrets, which live in the browser. Evaluator secrets live in our backend and are encrypted.
 
 ![Filtering](static/secrets.png)
 
