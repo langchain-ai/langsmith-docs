@@ -33,7 +33,7 @@ If you want to also use an off-the-shelf LangChain evaluator, you can install `l
         value: "python",
         label: "Python",
         language: "bash",
-        content: `pip install -U "langsmith openai"\npip install -U langchain langchain_openai # If you want to use pre-built LangChain evaluators`,
+        content: `pip install -U langsmith openai\npip install -U langchain langchain_openai # If you want to use pre-built LangChain evaluators`,
         },
         {
         value: "typescript",
@@ -60,6 +60,7 @@ For more information on other ways to create and use datasets, check out the [ho
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client\n
+client = Client()
 # Inputs are provided to your model, so it know what to generate
 dataset_inputs = [
   "a rap battle between Atticus Finch and Cicero",
@@ -72,7 +73,6 @@ dataset_outputs = [
     {"must_mention": ["lawyer", "justice"]},
     {"must_mention": ["plastic", "nuclear"]},
 ]
-client = Client()
 dataset_name = "Rap Battle Dataset"\n
 # Storing inputs in a dataset lets us
 # run chains and LLMs over a shared set of examples.
@@ -128,6 +128,7 @@ await client.createExamples({
 The `evaluate` test runner can evaluate __any__ function. The function accepts a dictionary (the `example.inputs` from your dataset) and should return a dictionary (containing the prediction outputs).
 
 <CodeTabs
+defaultValue="custom-function"
 tabs={[
     {
     value: "custom-function",
@@ -314,12 +315,12 @@ groupId="client-language"
     ]}>
 <TabItem value="python">
 
-<p>LangChain provides a convenient <a href="https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.runner_utils.run_on_dataset.html#langchain.smith.evaluation.runner_utils.run_on_dataset">run_on_dataset</a> and async <a href="https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.runner_utils.arun_on_dataset.html#langchain.smith.evaluation.runner_utils.arun_on_dataset">arun_on_dataset</a> method to generate predictions (and traces) over a dataset. When a <a href="https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.config.RunEvalConfig.html#langchain.smith.evaluation.config.RunEvalConfig">RunEvalConfig</a> is provided, the configured evalutors will be applied to the predictions as well to generate automated feedback.</p>
+<p>LangSmith provides a convenient `evaluate()` method to generate predictions (and traces) over a dataset. When evaluators are provided, they will also be called to generate automated feedback.</p>
 
 Below, configure evaluation for some custom criteria. The feedback will be automatically logged within LangSmith.
 
-For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](faq/evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/langchain_api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
 For more information on how to write a custom evaluator, check out the [custom evaluators](faq/custom-evaluators) guide.
+For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](faq/evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/langchain_api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
 
 <CodeTabs
   tabs={[

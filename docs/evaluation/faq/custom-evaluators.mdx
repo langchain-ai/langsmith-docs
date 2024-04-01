@@ -1,77 +1,158 @@
 ---
 sidebar_label: How to create custom evaluators
-sidebar_position: 5
+sidebar_position: 1
 ---
+# Evaluators
 
-# How to create custom evaluators
+In this guide, you will create custom evaluators to grade your LLM system. An evaluator can apply any logic you want, returning a numeric `score` associated with a `key`.
 
-In this guide, you will create a custom evaluator to grade your agent. You can choose to use LangChain components or write your own custom evaluator from scratch.
+Most evaluators are applied on a `run` level, scoring each prediction individually.
+Some `summary_evaluators` can be applied on a `experiment` level, letting you score and aggregate metrics across multiple runs.
 
 ## Run Evaluators
 
-Run evaluators return a score and feedback (metric) key for a given run. You can define them however you see fit. Common types include:
+Run evaluators are applied to each prediction of your pipeline. The common automated evaluator types are:
 
-1. Heuristics: Checking for regex matches, presence/absence of certain words or code, etc.
-2. AI-assisted: Instruct an LLM to grade the output of a run based on the prediction reference answer.
-
+1. Simple Heuristics: Checking for regex matches, presence/absence of certain words or code, etc.
+2. AI-assisted: Instruct an "LLM-as-judge" to grade the output of a run based on the prediction and reference answer (or retrieved context).
 
 We will demonstrate some simple ones below.
 
-#### Example 1: Emptiness Evaluator
+#### Example 1: Exact Match Evaluator
+
+Let's start with a simple evaluator that checks if the model's output exactly matches the reference answer.
 
 ```python
-from langsmith.evaluation import EvaluationResult, run_evaluator
 from langsmith.schemas import Example, Run
 
-
-@run_evaluator
-def is_empty(run: Run, example: Example | None = None):
-    model_outputs = run.outputs["output"]
-    score = not model_outputs.strip()
-    return EvaluationResult(key="is_empty", score=score)
+def exact_match(run: Run, example: Example) -> dict:
+    reference = example.outputs["answer"]
+    prediction = run.outputs["output"]
+    score = prediction.lower() == reference.lower()
+    return {"key": "exact_match", "score": score}
 ```
 
-#### Example 2: Blocklist Evaluator
 
-You may want to parametrize your evaluator as a class. For this, you can use the RunEvaluator class, which is functionally equivalent to the decorator above.
+Let's break this down:
+- The evaluator function accepts a `Run` and `Example` and returns a dictionary with the evaluation key and score. The run contains the full trace of your pipeline, and the example contains the inputs and outputs for this data point. If your dataset contains labels, they are found in the `example.outputs` dictionary, which is kept separate to keep your model from cheating.
+- In our dataset, the outputs have an "answer" key that contains the reference answer. Your pipeline generates predictions as a dictionary with an "output" key.
+- It compares the prediction and reference (case-insensitive) and returns a dictionary with the evaluation key and score.
+
+
+You can use this evaluator directly in the `evaluate` function:
 
 ```python
-from langsmith.evaluation import EvaluationResult, RunEvaluator
+from langsmith.evaluation import evaluate
+
+evaluate(
+    <your prediction function>,
+    data="<dataset_name>",
+    evaluators=[exact_match],
+)
+```
+
+
+#### Example 2: Parametrizing your evaluator
+
+You may want to parametrize your evaluator as a class. This is useful when you need to pass additional parameters to the evaluator.
+
+```python
+from langsmith.evaluation import evaluate
 from langsmith.schemas import Example, Run
 
-class BlocklistEvaluator(RunEvaluator):
+class BlocklistEvaluator:
     def __init__(self, blocklist: list[str]):
         self.blocklist = blocklist
-
-    def evaluate_run(
+    def __call__(
         self, run: Run, example: Example | None = None
-    ) -> EvaluationResult:
+    ) -> dict:
         model_outputs = run.outputs["output"]
         score = not any([word in model_outputs for word in self.blocklist])
-        return EvaluationResult(key="blocklist", score=score)
+        return {"key": "blocklist", "score": score}
+
+
+evaluate(
+    <your prediction function>,
+    data="<dataset_name>",
+    evaluators=[BlocklistEvaluator(blocklist=["bad", "words"])],
+)
 ```
 
-#### Example 3: Perplexity Evaluator
+#### Example 3: Evaluating nested traces
 
-You may want to use statistical measures such as [`perplexity`](https://huggingface.co/spaces/evaluate-metric/perplexity) to grade your run output. Below is an example in which we use the [evaluate](https://huggingface.co/docs/evaluate/index) package by HuggingFace, which contains numerous commonly used metrics for tasks such as text generation, machine translation, and more. Start by installing the `evaluate` package by running `pip install evaluate`.
+While most evaluations are applied to the inputs and outputs of your system, you can also evaluate all of the subcomponents that are traced within your pipeline.
+
+This is possible by stepping through the `run` object and collecting the outputs of each component.
+
+As a simple example, let's assume you want to evaluate the expected tools that are invoked in a pipeline.
 
 ```python
-from typing import Optional
-
-from evaluate import load
-from langsmith.evaluation import EvaluationResult, RunEvaluator
+from langsmith.evaluation import evaluate
 from langsmith.schemas import Example, Run
 
+def evaluate_trajectory(run: Run, example: Example) -> dict:
+    # collect the tools on level 1 of the trace tree
+    steps = [child.name for child in run.child_runs if child.run_type == "tool"]
+    expected_steps = example.outputs["expected_tools"]
+    score = len(set(steps) & set(expected_steps)) / len(set(steps) | set(expected_steps))
+    return {"key": "tools", "score": score}
+```
 
-class PerplexityEvaluator(RunEvaluator):
+This assumes tools are properly typed in the trace tree.
+
+#### Example 3: Structured Output
+
+With function calling, it has become easier than ever to generate feedback metrics using LLMs as a judge simply by specifying a Pydantic schema for the output.
+
+Below is an example (in this case using LangChain's `with_structured_output` functionality) to evaluate RAG app faithfulness.
+
+```python
+from typing import List
+from langsmith.evaluation import evaluate
+from langsmith.schemas import Example, Run
+from langchain_openai import ChatOpenAI
+from langchain_core.pydantic_v1 import BaseModel, Field
+
+class Propositions(BaseModel):
+    propositions: List[str] = Field(description="The factual propositions generated by the model")
+
+class FaithfulnessScore(BaseModel):
+    reasoning: str = Field(description="The reasoning for the faithfulness score")
+    score: bool
+
+extractor = ChatOpenAI(model="gpt-4-turbo-preview").with_structured_output(Propositions)
+grader = ChatOpenAI(model="gpt-4-turbo-preview").with_structured_output(FaithfulnessScore)
+
+def faithfulness(run: Run, example: Example) -> dict:
+    # Assumes your RAG app includes the prediction in the "output" key in its response
+    response: str = run.outputs["output"]
+    # Assumes your RAG app includes the retrieved docs as a "context" key in the outputs
+    retrieved_docs: list = run.outputs["context"]
+    formatted_docs = "\n".join([str(doc) for doc in retrieved_docs])
+    extracted = extractor.invoke(response)
+    scores = grader.batch(extracted.propositions)
+    scores = [score.score for score in scores]
+    average_score = sum(scores) / len(scores)
+    comment = "\n".join([score.reasoning for score in scores])
+    return {"key": "faithfulness", "score": average_score, "comment": comment}
+```
+
+#### Example 4: Perplexity Evaluator
+
+The flexibility of the functional interface means you can easly apply evaluators from any other libraries. For instance, you may want to use statistical measures such as [`perplexity`](https://huggingface.co/spaces/evaluate-metric/perplexity) to grade your run output. Below is an example using the [evaluate](https://huggingface.co/docs/evaluate/index) package by HuggingFace, which contains numerous commonly used metrics. Start by installing the `evaluate` package by running `pip install evaluate`.
+
+```python
+from evaluate import load
+from langsmith.schemas import Example, Run
+
+class PerplexityEvaluator:
     def __init__(self, prediction_key: Optional[str] = None, model_id: str = "gpt-2"):
         self.prediction_key = prediction_key
         self.model_id = model_id
         self.metric_fn = load("perplexity", module_type="metric")
-
     def evaluate_run(
-        self, run: Run, example: Optional[Example] = None
-    ) -> EvaluationResult:
+        self, run: Run, example: Example
+    ) -> dict:
         if run.outputs is None:
             raise ValueError("Run outputs cannot be None")
         prediction = run.outputs[self.prediction_key]
@@ -79,153 +160,71 @@ class PerplexityEvaluator(RunEvaluator):
             predictions=[prediction], model_id=self.model_id
         )
         ppl = results["perplexities"][0]
-        return EvaluationResult(key="Perplexity", score=ppl)
+        return {"key": "Perplexity", "score": ppl}
 ```
 
 Let's break down what the `PerplexityEvaluator` is doing:
-
 - **Initialize**: In the constructor, we're setting up a few properties that will be needed later on.
-
   - `prediction_key`: The key to find the model's prediction in the outputs of a run.
   - `model_id`: The ID of the language model you want to use to compute the metric. In our example, we are using 'gpt-2'.
-  - `metric_fn`: The evaluation metric function, which is loaded from the HuggingFace `evaluate` package.
-
-- **Evaluate**: This method takes a run (and optionally an example) and returns an `EvaluationResult`.
+  - `metric_fn`: The evaluation metric function, loaded from the HuggingFace `evaluate` package.
+- **Evaluate**: This method takes a run (and optionally an example) and returns an evaluation dictionary.
   - If the run outputs are `None`, the evaluator raises an error.
-  - Otherwise, the outputs are passed to the `metric_fn` to compute the perplexity. The perplexity score is then returned as part of an `EvaluationResult`.
-
-Once you've define your evaluators, you can use them to evaluate your model.
+  - Otherwise, the outputs are passed to the `metric_fn` to compute the perplexity. The perplexity score is then returned as part of the evaluation dictionary.
+Once you've defined your evaluators, you can use them to evaluate your model:
 
 ```python
-from langsmith import Client
-from langchain.smith import RunEvalConfig, run_on_dataset
-
-ds = client.create_dataset("My Dataset")
-client.create_examples(,
-    inputs=[
-        {"input": "Hello"},
-        {"input": "How are you?"},
-    ],
-    outputs=[
-        {"output": "I'm good, thanks!"},
-        {"output": "I'm not doing so well."},
-    ],
-    dataset_id=ds.id,
-)
-
-evaluation_config = RunEvalConfig(
-    custom_evaluators = [PerplexityEvaluator(), BlocklistEvaluator(blocklist=["bad", "words"]), is_empty],
-)
-
-def my_model(inputs):
-    return "This is a bad model"
-
-client.run_on_dataset(
-    dataset_name="My Dataset",
-    llm_or_chain_factory=my_model,
-    evaluation=evaluation_config,
+from langsmith.evaluation import evaluate
+evaluate(
+    <LLM or chain or agent>,
+    data="<dataset_name>",
+    evaluators=[BlocklistEvaluator(blocklist=["bad", "words"]), PerplexityEvaluator(), is_empty],
 )
 ```
 
-## Custom LangChain string evaluators
+## Summary Evaluators
 
-Any custom LangChain [StringEvaluator](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.schema.StringEvaluator.html#langchain.evaluation.schema.StringEvaluator) can be directly used for evaluation.
-
-In this section, you will create a LangChain string evaluator that grades the relevance of a model's response to the input. You can also consult the [reference documentation](https://api.python.langchain.com/en/latest/langchain_api_reference.html#module-langchain.smith) for more details.
-
-### Step 1: Define the evaluator
-
-We will use an [LLMChain](https://api.python.langchain.com/en/latest/chains/langchain.chains.llm.LLMChain.html#langchain.chains.llm.LLMChain) to perform the grading. That logic can be any custom code. In this case, we will use an LLM call to output a grade from 0 to 100 based on how relevant the model thinks the output is to the input.
+Some metrics can only be defined on a higher, dataset level. For example, you may want to compute the f1 score of a classifier across all runs in a dataset. These are called `summary_evaluators`.
 
 ```python
-import re
-from typing import Any, Optional
-from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
-from langchain.evaluation import StringEvaluator
+from typing import List
+from langsmith.schemas import Example, Run
+from langsmith.evaluation import evaluate
 
+def f1_score_summary_evaluator(examples: List[Example]) -> dict:
+    true_positives = 0
+    false_positives = 0
+    false_negatives = 0
+    for example in examples:
+        reference = example.outputs["answer"]
+        prediction = example.outputs["output"]
+        if reference and prediction == reference:
+            true_positives += 1
+        elif prediction and not reference:
+            false_positives += 1
+        elif not prediction and reference:
+            false_negatives += 1
+    if true_positives == 0:
+        return {"key": "f1_score", "score": 0.0}
+    
+    precision = true_positives / (true_positives + false_positives)
+    recall = true_positives / (true_positives + false_negatives)
+    f1_score = 2 * (precision * recall) / (precision + recall)
+    return {"key": "f1_score", "score": f1_score}
 
-class RelevanceEvaluator(StringEvaluator):
-    """An LLM-based relevance evaluator."""
-
-    def __init__(self):
-        llm = ChatOpenAI(model="gpt-4", temperature=0)
-
-        template = """On a scale from 0 to 100, how relevant is the following response to the input:
-        --------
-        INPUT: {input}
-        --------
-        OUTPUT: {prediction}
-        --------
-        Reason step by step about why the score is appropriate, then print the score at the end. At the end, repeat that score alone on a new line."""
-
-        self.eval_chain = PromptTemplate.from_template(template) | llm
-
-    @property
-    def requires_input(self) -> bool:
-        return True
-
-    @property
-    def requires_reference(self) -> bool:
-        return False
-
-    @property
-    def evaluation_name(self) -> str:
-        return "scored_relevance"
-
-    def _evaluate_strings(
-        self,
-        prediction: str,
-        input: Optional[str] = None,
-        reference: Optional[str] = None,
-        **kwargs: Any
-    ) -> dict:
-        evaluator_result = self.eval_chain.invoke(
-            {"input": input, "prediction": prediction}, kwargs
-        )
-        reasoning, score = evaluator_result["text"].split("\n", maxsplit=1)
-        score = re.search(r"\d+", score).group(0)
-        if score is not None:
-            score = float(score.strip()) / 100.0
-        return {"score": score, "reasoning": reasoning.strip()}
-```
-
-Let's break down what the `RelevanceEvaluator` is doing:
-
-- **Initialize**: In the constructor, we're instructing the LLMChain on how to grade the output.
-- **requires_input**: This makes sure the evaluation helper extracts the input string from your chain or LLM's input and handles additional validation.
-- **requires_reference**: This validator doesn't require a reference string to be passed in, meaning that your dataset doesn't even require outputs to be present.
-- **evaluation_name**: This is the key assigned to the feedback generated from your evaluator. You can look for runs with feedback by "scored_relevance" in the LangSmith app.
-- **\_evaluate_strings**: This is the function that actually evaluates the input and output strings. In this case, we're using the LLMChain to generate a score and reasoning for the score.
-
-### Step 2: Evaluate
-
-Start evaluating your chain, agent, or LLM using the [run_on_dataset](https://api.python.langchain.com/en/latest/smith/langchain.smith.evaluation.runner_utils.run_on_dataset.html#langchain.smith.evaluation.runner_utils.run_on_dataset) function.
-
-```python
-from langsmith import Client
-from langchain.smith import RunEvalConfig, run_on_dataset
-
-evaluation_config = RunEvalConfig(
-    custom_evaluators = [RelevanceEvaluator()],
-)
-run_on_dataset(
-    dataset_name="<my_dataset_name>",
-    llm_or_chain_factory=<llm or function constructing chain>,
-    client=client,
-    evaluation=evaluation_config,
-    project_name="<the name to assign to this test project>",
+# Assumes the dataset's outputs has an "answer" key that is a booleans
+evaluate(
+    lambda x: {"output": True}, # Your classifier
+    data="<dataset_name>",
+    summary_evaluators=[f1_score_summary_evaluator],
 )
 ```
 
 ### Recap
 
 Congratulations! You created a custom evaluation chain you can apply to _any_ traced run so you can surface more relevant information in your application.
-
 LangChain's evaluation chains speed up the development process for application-specific, semantically robust evaluations.
-
 You can also extend existing components from the library so you can focus on building your product. All your evals come with:
-
 - Automatic tracing integrations to help you debug, compare, and improve your code
 - Easy sharing and mixing of components and results
 - Out-of-the-box support for sync and async evaluations for faster runs
