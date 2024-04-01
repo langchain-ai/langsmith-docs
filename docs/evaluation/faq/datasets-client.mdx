@@ -20,6 +20,8 @@ Once you have a dataset created, you can continue to add new runs to it as examp
 
 The most flexible way to make a dataset using the client is by creating examples from a list of inputs and optional outputs. Below is an example.
 
+Note that you can add arbitrary metadata to each example, such as a note or a source. The metadata is stored as a dictionary.
+
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client\n
@@ -40,6 +42,7 @@ for input_prompt, output_answer in example_inputs:
     client.create_example(
         inputs={"question": input_prompt},
         outputs={"answer": output_answer},
+        metadata={"source": "Wikipedia"},
         dataset_id=dataset.id,
     )`),
     TypeScriptBlock(`import { Client } from "langsmith";\n
@@ -69,6 +72,7 @@ for (const [inputPrompt, outputAnswer] of exampleInputs) {
     { answer: outputAnswer },
     {
       datasetId: dataset.id,
+      metadata: { source: "Wikipedia" },
     }
   );
 }`),
