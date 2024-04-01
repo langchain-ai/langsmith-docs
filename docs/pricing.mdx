@@ -31,7 +31,7 @@ sidebar_position: 4
 Collaborator Seats | -- | -- | Coming Soon! 
 | <b>Rates</b> |  |  |  |
 | Traces | First 5k traces per month for free.<br />$0.005 per trace thereafter<sup>2</sup> | First 10k traces per month for free.<br />$0.005 per trace thereafter<sup>2</sup> | Custom
-| Max runs / hour<sup>3</sup> | 50,000<sup>4</sup> / 500,000 | 500,000 | Custom
+| Max ingested events / hour<sup>3</sup> | 50,000<sup>4</sup> / 500,000 | 500,000 | Custom
 | Total trace size storage / hour<sup>5</sup> | 1GB<sup>4</sup> / 5GB | 5GB | Custom
 | <b>Security Controls</b> |  |  |  |
 | Single Sign On | -- | Google<br />GitHub | Custom SSO |
@@ -60,7 +60,7 @@ Collaborator Seats | -- | -- | Coming Soon!
 
 ## Questions and Answers
 ### I’ve been using LangSmith since before pricing took effect for new users. When will pricing go into effect for my account?
-If you’ve been using LangSmith already, your usage will be billable starting May. At that point if you want to add seats or use more than the monthly allotment of free traces, you will need to add a credit card to LangSmith or contact sales. If you are interested in the Enterprise plan with higher rate limits and special deployment options, you can learn more or make a purchase by reaching out to [sales@langchain.dev](mailto:sales@langchain.dev).
+If you’ve been using LangSmith already, your usage will be billable starting sometime in May. At that point if you want to add seats or use more than the monthly allotment of free traces, you will need to add a credit card to LangSmith or contact sales. If you are interested in the Enterprise plan with higher rate limits and special deployment options, you can learn more or make a purchase by reaching out to [sales@langchain.dev](mailto:sales@langchain.dev).
 
 ### Which plan is right for me?
 If you’re an individual developer, the Developer plan is a great choice for small projects. For teams that want to collaborate in LangSmith, check out the Plus plan. If you need more advanced administration, authentication and authorization, deployment options, support, or annual invoicing, the Enterprise plan is right for you.  If you are a seed-stage startup or educational institution, through the <b>LangSmith for Startups and Education</b> program you can apply for access to a special program with starter pricing for a period of time.  Please reach out via our [Sales Contact Form](https://www.langchain.com/contact-sales) for more details.
@@ -71,8 +71,11 @@ Seats are named to a specific developer. All accepted invitations to an account 
 ### What is a trace?
 A trace is one complete invocation of your application chain or agent, evaluator run, or playground run. Here is an [example](https://smith.langchain.com/public/17c24270-9f74-47e7-b70c-d508afc448fa/r) of a single trace.
 
-### I’ve hit my rate limits. What can I do?
-If you’ve consumed the monthly allotment of free traces in your account, you can purchase credits via credit card on the Developer and Plus plans to continue sending traces to LangSmith. If you’ve hit the usage limits on your tier, you can upgrade to a higher plan to get higher limits, or reach out to [support@langchain.dev](mailto:support@langchain.dev) with questions.
+### What is an ingested event?
+An ingested event is a run step as part of a trace or feedback that is submitted for a trace.  A trace can have multiple run steps and multiple pieces of feedback and each counts toward hourly rate limits.
+
+### I’ve hit my usage limits. What can I do?
+If you’ve consumed the monthly allotment of free traces in your account, you can add a credit card on the Developer and Plus plans to continue sending traces to LangSmith. If you’ve hit the rate limits on your tier, you can upgrade to a higher plan to get higher limits, or reach out to [support@langchain.dev](mailto:support@langchain.dev) with questions.
 
 ### I have a developer account, can I upgrade my account to the Plus or Enterprise plan?
 Every user will have a unique personal account on the Developer plan. <b>We cannot upgrade a Developer account to the Plus or Enterprise plans.</b> If you’re interested in working as a team, create a separate LangSmith Organization on the Plus plan.  This plan can upgraded to the Enterprise plan at a later date.
@@ -83,7 +86,9 @@ Seats are billed monthly on the first of the month in the future will be pro-rat
 Enterprise plan customers are billed annually by invoice.
 
 ### What can I expect from Support?
-On the Plus plan, you receive preferential, email support at support@langchain.dev for LangSmith-related questions only.
+On the Developer plan, community-based support is available on [Discord](https://discord.com/invite/6adMQxSpJS).
+
+On the Plus plan, you will also receive preferential, email support at [support@langchain.dev](mailto:support@langchain.dev) for LangSmith-related questions only.
 
 On the Enterprise plan, you’ll get white-glove support with a Slack channel, a dedicated customer success manager, and monthly check-ins to go over LangSmith and LangChain questions. We can help with anything from debugging, agent and RAG techniques, evaluation approaches, and cognitive architecture reviews. If you purchase the add-on to run LangSmith in your environment, we’ll also support deployments and new releases with our infra engineering team on-call.
 
