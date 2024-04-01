@@ -32,8 +32,8 @@ Collaborator Seats | -- | -- | Coming Soon!
 | <b>Usage Limits</b> |  |  |  |
 | Traces | First 5k traces per month for free.<br />$0.005 per trace thereafter<sup>2</sup> | First 10k traces per month for free.<br />$0.005 per trace thereafter<sup>2</sup> | Custom
 | <b>Rate Limits</b> |  |  |  |
-| Max ingested events / hour<sup>3</sup> | 50,000<sup>4</sup> / 500,000 | 500,000 | Custom
-| Total trace size storage / hour<sup>5</sup> | 1GB<sup>4</sup> / 5GB | 5GB | Custom
+| Max ingested events / hour<sup>3</sup> | 50,000<sup>3</sup> / 250,000 | 500,000 | Custom
+| Total trace size storage / hour<sup>4</sup> | 500MB<sup>3</sup> / 2.5GB | 5GB | Custom
 | <b>Security Controls</b> |  |  |  |
 | Single Sign On | -- | Google<br />GitHub | Custom SSO |
 | Deployment | Hosted in US | Hosted in US | Add-on for self-hosted<br /> deployment in customer's VPC |
@@ -51,13 +51,11 @@ Collaborator Seats | -- | -- | Coming Soon!
 
 <sup>1</sup> Seats are billed monthly on the first of the month and in the future will be prorated if additional seats are purchased in the middle of the month. Seats removed mid-month are not credited.  
 <br />
-<sup>2</sup> You can purchase LangSmith credits for your tracing usage. As long as you have credits in your account, we’ll service your traces and deduct from your credit balance. You’ll be able to set alerts and auto top-ups on credits if you choose.  
+<sup>2</sup> You can purchase LangSmith credits for your tracing usage. As long as you have a valid credit card in your account, we’ll service your traces and deduct from your credit balance. You’ll be able to set alerts and auto top-ups on credits if you choose.  
 <br />
-<sup>3</sup> Usage limits are approximate and are not a hard limit.  Billing will be based on actual traces ingested.  
+<sup>3</sup> Personal accounts without a credit card on file will be rate limited to 50,000 ingested events per hour and 500MB of storage per hour.
 <br />
-<sup>4</sup> Personal accounts without a credit card on file will be limited to 50,000 ingested events per hour and 1GB of storage per hour.
-<br />
-<sup>5</sup> Trace storage includes all submitted inputs, outputs, and metadata and is aggregated over all submission events.  Depending on the design of your application, trace data may be sent multiple times (e.g. once at the start of a trace step and again after it is complete)
+<sup>4</sup> Trace storage includes all submitted inputs, outputs, and metadata and is aggregated over all submission events.  Depending on the design of your application, trace data may be sent multiple times (e.g. once at the start of a trace step and again after it is complete)
 
 ## Questions and Answers
 ### I’ve been using LangSmith since before pricing took effect for new users. When will pricing go into effect for my account?
@@ -82,7 +80,10 @@ If you’ve consumed the monthly allotment of free traces in your account, you c
 Every user will have a unique personal account on the Developer plan. <b>We cannot upgrade a Developer account to the Plus or Enterprise plans.</b> If you’re interested in working as a team, create a separate LangSmith Organization on the Plus plan.  This plan can upgraded to the Enterprise plan at a later date.
 
 ### How will billing work?
-Seats are billed monthly on the first of the month in the future will be pro-rated if additional seats are purchased in the middle of the month. Seats removed mid-month will not be credited. You can purchase LangSmith credits for your tracing usage. As long as you have credits in your account, we’ll service your traces and deduct from your credit balance. You’ll be able to set alerts and auto-top ups on credits if you choose.
+<b>Seats</b>
+Seats are billed monthly on the first of the month in the future will be pro-rated if additional seats are purchased in the middle of the month. Seats removed mid-month will not be credited. 
+<b>Traces</b>
+As long as you have a card on file in your account, we’ll service your traces and bill you on the first of the month for traces that you submitted in the previous month. You will be able to set usage limits if you so choose to limit the maximum charges you could incur in any given month.
 
 Enterprise plan customers are billed annually by invoice.
 
