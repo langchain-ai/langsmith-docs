@@ -65,13 +65,16 @@ If you’ve been using LangSmith already, your usage will be billable starting s
 If you’re an individual developer, the Developer plan is a great choice for small projects. For teams that want to collaborate in LangSmith, check out the Plus plan. If you need more advanced administration, authentication and authorization, deployment options, support, or annual invoicing, the Enterprise plan is right for you.  If you are a seed-stage startup or educational institution, through the <b>LangSmith for Startups and Education</b> program you can apply for access to a special program with starter pricing for a period of time.  Please reach out via our [Sales Contact Form](https://www.langchain.com/contact-sales) for more details.
 
 ### What is a seat?
-Seats are named to a specific developer. All accepted invitations to an account will be counted as a seat.
+A seat is a distinct developer inside your organization.  We consider the total number of users (including invited users) to determine the number of seats to bill.
 
 ### What is a trace?
 A trace is one complete invocation of your application chain or agent, evaluator run, or playground run. Here is an [example](https://smith.langchain.com/public/17c24270-9f74-47e7-b70c-d508afc448fa/r) of a single trace.
 
 ### What is an ingested event?
-An ingested event is a run step as part of a trace or feedback that is submitted for a trace.  A trace can have multiple run steps and multiple pieces of feedback and each counts toward hourly rate limits.
+An ingested event is any distinct, trace-related data sent to LangSmith.  This includes:
+- Inputs, outputs and metadata sent at the start of a run step within a trace
+- UInputs, outputs and metadata sent at the end of a run step within a trace
+- Feedback on run steps or traces
 
 ### I’ve hit my rate or usage limits. What can I do?
 If you’ve consumed the monthly allotment of free traces in your account, you can add a credit card on the Developer and Plus plans to continue sending traces to LangSmith. If you’ve hit the rate limits on your tier, you can upgrade to a higher plan to get higher limits, or reach out to [support@langchain.dev](mailto:support@langchain.dev) with questions.
