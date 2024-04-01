@@ -12,16 +12,17 @@ A lot of these concepts build off of tracing concepts - it is recommended to rea
 ## Runs
 A `Run` is a span representing a single unit of work or operation within your LLM application. This could be anything from single call to an LLM or chain, to a prompt formatting call, to a runnable lambda invocation. If you are familiar with [OpenTelemetry](https://opentelemetry.io/), you can think of a run as a span.
 
-
 ## Traces
 A `Trace` is a collection of runs that are related to a single operation. For example, if you have a user request that triggers a chain, and that chain makes a call to an LLM, then to an output parser, and so on, all of these runs would be part of the same trace. If you are familiar with [OpenTelemetry](https://opentelemetry.io/), you can think of a LangSmith trace as a collection of spans. Runs are bound to a trace by a unique trace ID.
 
 ## Filter
 A `Filter` is a rule that applies to all runs in a project. The default filter you see on the main page selects only top-level runs (`IsRoot` is `true`) but you can filter for sub-runs as well.
 
+You can even filter for runs that are part of a trace with a particular attribute, for example filtering for runs with name `"ChatOpenAI"` that are part of a trace with `user_score` equal to 0.
+
 ## Threads
 
-A `Thread` is a sequence of traces representing a conversation. Each response is represented as it's own trace, but these traces are linked together by being part of the same conversation.
+A `Thread` is a sequence of traces representing a conversation. Each response is represented as its own trace, but these traces are linked together by being part of the same conversation.
 
 You can track threads by attaching a special metadata key to runs (one of `session_id`, `thread_id` or `conversation_id`).
 
@@ -33,15 +34,17 @@ Monitoring dashboards display key metrics over time for a configurable time wind
 
 ## Rules
 
-Rules represent actions that are taken on a set of runs. These are configured by a filter rule and an action.
+Rules represent actions that are taken on a set of runs. These are configured by a specifying a filter rule, a sampling rate, and an action to take. Currently, the supported actions are adding to dataset, adding to annotation queue, and sending to online evaluation.
+
+An example of a rule could be, in plain English, "Run a 'vagueness' evaluator on 70% of root runs with a feedback score of 0 for the feedback key `user_score`"
 
 ## Datasets
 
-Datasets are a way to collect datapoints. For more information, see [here](/evaluation/concepts)
+Datasets are a way to collect examples, which are input-output pairs. You can use datasets for evaluation, as well as fine-tuning and few-shot prompting. For more information, see [here](/evaluation/concepts)
 
 ## Annotation Queues
 
-Annotation Queues are a user friendly way to annotate a lot of traces.
+Annotation Queues are a user-friendly way to annotate a lot of traces.
 
 ## Online Evaluation
 
