@@ -37,12 +37,6 @@ Start by installing LangSmith. If you want to use pre-built [LangChain evaluator
     groupId="client-language"
 />
 
-Then configure your API key.
-
-```bash
-export LANGCHAIN_API_KEY=<your api key>
-```
-
 ## 1. Create a dataset
 
 The [dataset](faq) defines test cases over inputs your pipeline should handle well.
@@ -294,7 +288,7 @@ groupId="client-language"
     ]}>
 <TabItem value="python">
 
-<p>The <code>evaluate()</code> method calls your `predict()` function on each example in the dataset. It traces this process and provides the traces and examples to your [evaluators](faq/custom-evaluators), which return scores for each prediction.</p>
+<p>The <code>evaluate()</code> method calls your `predict()` function on each example in the dataset. It traces this process and provides the traces and examples to your <a href="faq/custom-evaluators">evaluators</a>, which return scores for each prediction.</p>
 
 <CodeTabs
   tabs={[
@@ -446,6 +440,12 @@ experiment_results = evaluate(
   ]}
   groupId="client-language"
 />
+
+Configure your API key, then run the script to evaluate your system.
+
+```bash
+export LANGCHAIN_API_KEY=<your api key>
+```
 </TabItem>
 
 <TabItem value="typescript">

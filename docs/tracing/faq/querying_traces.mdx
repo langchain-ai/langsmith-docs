@@ -28,7 +28,10 @@ Using the `list_runs` method in the SDK or [`/runs/query`](https://api.smith.lan
 | `filter`                      | Fetch runs that match a given structured filter statement. See the [run filtering guide](#run-filtering) below for more information.                                                                                         |
 | `trace_filter`                | Filter to apply to the ROOT run in the trace tree. This is meant to be used in conjunction with the regular `filter` parameter to let you filter runs by attributes of the root run within a trace.                          |
 | `tree_filter`                 | Filter to apply to OTHER runs in the trace tree, including sibling and child runs. This is meant to be used in conjunction with the regular `filter` parameter to let you filter runs by attributes of any run within a trace. |
+| `is_root`                     | Only return root runs.                                                                                                                                                                                               |  
+| `select`                     | Select the fields to return in the response. By default, all fields are returned.                                                                                                                                             |
 | `query` (_experimental_)      | Query the experimental natural language API, which translates your query into a filter statement. 
+
 
 ## Using keyword arguments
 
@@ -93,12 +96,12 @@ Root runs (or run traces), are runs that have no parents. These are assigned an 
   tabs={[
     PythonBlock(`root_runs = client.list_runs(
     project_name="<your_project>",
-    execution_order=1
+    is_root=True
 )`),
     TypeScriptBlock(`const rootRuns: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
-  executionOrder: 1,
+  isRoot: 1,
 })) {
   rootRuns.push(run);
 };`),
