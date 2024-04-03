@@ -15,17 +15,11 @@ import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallat
 
 # Evaluation Quick Start
 
-In this walkthrough, you will evaluate a chain over a dataset of examples. To do so, you will:
-
-- Create a dataset
-- Define the pipeline to evaluate
-- Define the evaluators
-- Review the resulting experiment in LangSmith
+LangSmith helps you evaluate any AI systems
 
 ## Prerequisites
 
-This walkthrough assumes you have already installed `langsmith` and `openai` and configured your environment to connect to LangSmith.
-If you want to also use an off-the-shelf LangChain evaluator, you can install `langchain` as well.
+Start by installing LangSmith. If you want to use pre-built [LangChain evaluators](https://python.langchain.com/docs/guides/evaluation/), you can install LangChain as well.
 
 <CodeTabs
     tabs={[
@@ -61,28 +55,17 @@ For more information on other ways to create and use datasets, check out the [ho
   tabs={[
     PythonBlock(`from langsmith import Client\n
 client = Client()
-# Inputs are provided to your model, so it know what to generate
-dataset_inputs = [
-  "a rap battle between Atticus Finch and Cicero",
-  "a rap battle between Barbie and Oppenheimer",
-  # ... add more as desired
-]\n
-# Outputs are provided to the evaluator, so it knows what to compare to
-# Outputs are optional but recommended.
-dataset_outputs = [
-    {"must_mention": ["lawyer", "justice"]},
-    {"must_mention": ["plastic", "nuclear"]},
-]
 dataset_name = "Rap Battle Dataset"\n
-# Storing inputs in a dataset lets us
-# run chains and LLMs over a shared set of examples.
-dataset = client.create_dataset(
-    dataset_name=dataset_name,
-    description="Rap battle prompts.",
-)
+dataset = client.create_dataset(dataset_name, description="Rap battle prompts.")
 client.create_examples(
-    inputs=[{"question": q} for q in dataset_inputs],
-    outputs=dataset_outputs,
+    inputs=[
+        {"question": "a rap battle between Atticus Finch and Cicero"},
+        {"question": "a rap battle between Barbie and Oppenheimer"},
+    ],
+    outputs=[
+        {"must_mention": ["lawyer", "justice"]},
+        {"must_mention": ["plastic", "nuclear"]},
+    ],
     dataset_id=dataset.id,
 )`),
   TypeScriptBlock(`import { Client } from "langsmith";\n

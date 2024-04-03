@@ -61,10 +61,12 @@ runnable.invoke({
 
 const jsBlock = `// import
 import * as hub from "langchain/hub";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 
 // pull a chat prompt
-const prompt = await hub.pull("efriis/my-first-prompt");
+await hub.pull<ChatPromptTemplate>("efriis/my-first-prompt");
+
 
 // create a model to use it with
 const model = new ChatOpenAI();
