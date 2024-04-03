@@ -15,9 +15,7 @@ import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallat
 
 # Evaluation Quick Start
 
-LangSmith helps you evaluate any AI systems
-
-## Prerequisites
+LangSmith helps you evaluate your AI system over real-world data so you can deploy the best perfoming model for your needs. This guide gets you started with the basics.
 
 Start by installing LangSmith. If you want to use pre-built [LangChain evaluators](https://python.langchain.com/docs/guides/evaluation/), you can install LangChain as well.
 
@@ -27,29 +25,21 @@ Start by installing LangSmith. If you want to use pre-built [LangChain evaluator
         value: "python",
         label: "Python",
         language: "bash",
-        content: `pip install -U langsmith openai\npip install -U langchain langchain_openai # If you want to use pre-built LangChain evaluators`,
+        content: `pip install -U langsmith\npip install -U langchain # If you want to use pre-built open source evaluators`,
         },
         {
         value: "typescript",
         label: "TypeScript",
         language: "bash",
-        content: `yarn add langchain @langchain/openai`,
+        content: `yarn add langchain`,
         },
     ]}
     groupId="client-language"
 />
 
-Then configure your API key.
-
-```bash
-export LANGCHAIN_API_KEY=<your api key>
-```
-
 ## 1. Create a dataset
 
-The dataset defines the types of information your pipeline should be expected to handle well. For this example, we will upload a pre-made list of input examples.
-
-For more information on other ways to create and use datasets, check out the [how-to](faq) guides.
+The [dataset](faq) defines test cases over inputs your pipeline should handle well.
 
 <CodeTabs
   tabs={[
@@ -97,7 +87,7 @@ await client.createExamples({
   groupId="client-language"
 />
 
-## 2. System to evaluate
+## 2. Define your system
 
 <Tabs
   groupId="client-language"
@@ -108,7 +98,7 @@ await client.createExamples({
   ]}>
 <TabItem value="python">
 
-The `evaluate` test runner can evaluate __any__ function. The function accepts a dictionary (the `example.inputs` from your dataset) and should return a dictionary (containing the prediction outputs).
+The `evaluate` test runner expects a function that accepts a dictionary (the `example.inputs` from your dataset) and should return a dictionary (containing the predicted outputs).
 
 <CodeTabs
 defaultValue="custom-function"
@@ -298,12 +288,7 @@ groupId="client-language"
     ]}>
 <TabItem value="python">
 
-<p>LangSmith provides a convenient `evaluate()` method to generate predictions (and traces) over a dataset. When evaluators are provided, they will also be called to generate automated feedback.</p>
-
-Below, configure evaluation for some custom criteria. The feedback will be automatically logged within LangSmith.
-
-For more information on how to write a custom evaluator, check out the [custom evaluators](faq/custom-evaluators) guide.
-For more information on evaluators you can use off-the-shelf, check out the [pre-built evaluators](faq/evaluator-implementations) docs or the [reference documentation](https://api.python.langchain.com/en/latest/langchain_api_reference.html#module-langchain.evaluation) for LangChain's evalution module.
+<p>The <code>evaluate()</code> method calls your `predict()` function on each example in the dataset. It traces this process and provides the traces and examples to your <a href="faq/custom-evaluators">evaluators</a>, which return scores for each prediction.</p>
 
 <CodeTabs
   tabs={[
@@ -318,26 +303,16 @@ def must_mention(run: Run, example: Example) -> dict:
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
     return {"key":"must_mention", "score": score}\n
-evaluators = [
-  must_mention,
-  LangChainStringEvaluator(
-    "criteria",
-    config={"criteria":  "harmfulness"}
-  ),
-  LangChainStringEvaluator(
-    "criteria",
-    config={
-      "criteria": {
-        "cliche": "Are the lyrics cliche?"
-        " Respond Y if they are, N if they're entirely unique."
-      }
-    },
-  ),
-]\n
 experiment_results = evaluate(
     predict,
     data=dataset_name,
-    evaluators=evaluators,
+    evaluators=[
+      must_mention,
+      LangChainStringEvaluator(
+        "criteria",
+        config={"criteria":  "harmfulness"}
+      ),
+    ], # Update with your evaluators
     experiment_prefix="custom-rap-generator",
     # Any experiment metadata can be specified here
     metadata={
@@ -357,27 +332,17 @@ def must_mention(run: Run, example: Example) -> dict:
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
     return {"key":"must_mention", "score": score}\n
-evaluators = [
-  must_mention,
-  LangChainStringEvaluator(
-    "criteria",
-    config={"criteria":  "harmfulness"}
-  ),
-  LangChainStringEvaluator(
-    "criteria",
-    config={
-      "criteria": {
-        "cliche": "Are the lyrics cliche?"
-        " Respond Y if they are, N if they're entirely unique."
-      }
-    },
-  ),
-]\n
 experiment_results = evaluate(
     predict,
     data=dataset_name,
-    evaluators=evaluators,
-    experiment_prefix="runnable-rap-generator",
+    evaluators=[
+      must_mention,
+      LangChainStringEvaluator(
+        "criteria",
+        config={"criteria":  "harmfulness"}
+      ),
+    ], # Update with your evaluators
+    experiment_prefix="custom-rap-generator",
     # Any experiment metadata can be specified here
     metadata={
       "version": "1.0.0",
@@ -396,27 +361,17 @@ def must_mention(run: Run, example: Example) -> dict:
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
     return {"key":"must_mention", "score": score}\n
-evaluators = [
-  must_mention,
-  LangChainStringEvaluator(
-    "criteria",
-    config={"criteria":  "harmfulness"}
-  ),
-  LangChainStringEvaluator(
-    "criteria",
-    config={
-      "criteria": {
-        "cliche": "Are the lyrics cliche?"
-        " Respond Y if they are, N if they're entirely unique."
-      }
-    },
-  ),
-]\n
 experiment_results = evaluate(
     predict,
     data=dataset_name,
-    evaluators=evaluators,
-    experiment_prefix="agent-rap-generator",
+    evaluators=[
+      must_mention,
+      LangChainStringEvaluator(
+        "criteria",
+        config={"criteria":  "harmfulness"}
+      ),
+    ], # Update with your evaluators
+    experiment_prefix="custom-rap-generator",
     # Any experiment metadata can be specified here
     metadata={
       "version": "1.0.0",
@@ -435,27 +390,17 @@ def must_mention(run: Run, example: Example) -> dict:
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
     return {"key":"must_mention", "score": score}\n
-evaluators = [
-  must_mention,
-  LangChainStringEvaluator(
-    "criteria",
-    config={"criteria":  "harmfulness"}
-  ),
-  LangChainStringEvaluator(
-    "criteria",
-    config={
-      "criteria": {
-        "cliche": "Are the lyrics cliche?"
-        " Respond Y if they are, N if they're entirely unique."
-      }
-    },
-  ),
-]\n
 experiment_results = evaluate(
     predict,
     data=dataset_name,
-    evaluators=evaluators,
-    experiment_prefix="llm-rap-generator",
+    evaluators=[
+      must_mention,
+      LangChainStringEvaluator(
+        "criteria",
+        config={"criteria":  "harmfulness"}
+      ),
+    ], # Update with your evaluators
+    experiment_prefix="custom-rap-generator",
     # Any experiment metadata can be specified here
     metadata={
       "version": "1.0.0",
@@ -474,27 +419,17 @@ def must_mention(run: Run, example: Example) -> dict:
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
     return {"key":"must_mention", "score": score}\n
-evaluators = [
-  must_mention,
-  LangChainStringEvaluator(
-    "criteria",
-    config={"criteria":  "harmfulness"}
-  ),
-  LangChainStringEvaluator(
-    "criteria",
-    config={
-      "criteria": {
-        "cliche": "Are the lyrics cliche?"
-        " Respond Y if they are, N if they're entirely unique."
-      }
-    },
-  ),
-]\n
 experiment_results = evaluate(
     predict,
     data=dataset_name,
-    evaluators=evaluators,
-    experiment_prefix="class-rap-generator",
+    evaluators=[
+      must_mention,
+      LangChainStringEvaluator(
+        "criteria",
+        config={"criteria":  "harmfulness"}
+      ),
+    ], # Update with your evaluators
+    experiment_prefix="custom-rap-generator",
     # Any experiment metadata can be specified here
     metadata={
       "version": "1.0.0",
@@ -505,6 +440,12 @@ experiment_results = evaluate(
   ]}
   groupId="client-language"
 />
+
+Configure your API key, then run the script to evaluate your system.
+
+```bash
+export LANGCHAIN_API_KEY=<your api key>
+```
 </TabItem>
 
 <TabItem value="typescript">
@@ -816,7 +757,7 @@ await runOnDataset(llm, datasetName, {
 
 ## 4. Review Results
 
-The evaluation results will be streamed to a new test project linked to your "Rap Battle Dataset". You can view the results by clicking on the link printed by the `evaluate` function or by navigating to the [Datasets & Testing](https://smith.langchain.com/datasets) page, clicking "Rap Battle Dataset", and viewing the latest test run.
+The evaluation results will be streamed to a new experiment linked to your "Rap Battle Dataset". You can view the results by clicking on the link printed by the `evaluate` function or by navigating to the [Datasets & Testing](https://smith.langchain.com/datasets) page, clicking "Rap Battle Dataset", and viewing the latest test run.
 
 There, you can inspect the traces and feedback generated from the evaluation configuration.
 
