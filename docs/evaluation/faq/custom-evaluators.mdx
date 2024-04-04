@@ -184,7 +184,7 @@ evaluate(
 
 ## Summary Evaluators
 
-Some metrics can only be defined on a higher, dataset level. For example, you may want to compute the f1 score of a classifier across all runs in a dataset. These are called `summary_evaluators`.
+Some metrics can only be defined on the entire experiment level as opposed to the individual runs of the experiment. For example, you may want to compute the f1 score of a classifier across all runs in an experiment kicked off from a dataset. These are called `summary_evaluators`.
 
 ```python
 from typing import List
