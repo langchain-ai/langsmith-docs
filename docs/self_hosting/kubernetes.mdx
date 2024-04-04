@@ -59,7 +59,7 @@ Ensure you have the following tools/items ready. Some items are marked optional 
 
 ## Configure your Helm Charts:
 
-1. Create a copy of `values.yaml`
+1. Create a new file called `langsmith_config.yaml`. This should have a similar structure to the `values.yaml` file in the LangSmith Helm Chart repository.
 2. Override any values in the file. Refer to the documentation for the [<u>LangSmith Helm Chart</u>](https://github.com/langchain-ai/helm/tree/main/charts/langsmith) to see all configurable values. Some values we recommend setting:
     1. Resources
     2. SSL(If on EKS or some other cloud provider)
@@ -68,13 +68,14 @@ Ensure you have the following tools/items ready. Some items are marked optional 
     4. Images
     5. Oauth
 
-
 An example bare minimum config file `langsmith_config.yaml`:
 
 ```yaml
 config:
   langsmithLicenseKey: ""
 ```
+
+You can also see some example configurations in the examples directory.
 
 ## Deploying to Kubernetes:
 
