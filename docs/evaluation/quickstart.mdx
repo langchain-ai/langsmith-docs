@@ -4,7 +4,6 @@ sidebar_position: 1
 ---
 
 import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 import {
   CodeTabs,
@@ -96,6 +95,7 @@ experiment_results = evaluate(
       content: `import { Client } from "langsmith";
 import { Run, Example } from "langsmith";
 import { EvaluationResult } from "langsmith/evaluation";
+// Note: native evaluate() function support coming soon to the LangSmith TS SDK
 import { runOnDataset } from "langchain/smith";
 import OpenAI from "openai";\n
 const client = new Client();
