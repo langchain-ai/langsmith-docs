@@ -46,16 +46,16 @@ The following explains how to run the LangSmith using Docker Compose. This is th
 
 You can find the `docker-compose.yml` file and related files in the LangSmith SDK repository here: [<u>LangSmith Docker Compose File</u>](https://github.com/langchain-ai/langsmith-sdk/blob/main/python/langsmith/cli/docker-compose.yaml)
 
-Copy the `docker-compose.yml` file from the LangSmith SDK to your project directory. Make sure to copy the other files in the same directory as well.
+Copy the `docker-compose.yml` file and all files in that directory from the LangSmith SDK to your project directory.
+- Ensure that you copy the `users.xml` file as well.
 
-1. Ensure that you copy the `users.xml` file as well.
 ### 2. Configure environment variables
 
 Copy the `.env.example` file from the LangSmith SDK to your project directory and rename it to `.env`. Then, set the following environment variables in the `.env` file:
 
 ```bash
 # Don't change this file. Instead, copy it to .env and change the values there. The default values will work out of the box as long as you provide your license key.
-_LANGSMITH_IMAGE_VERSION=0.1.17 # Change to your desired LangSmith version. Required. Typically you should use the latest version defined in the .env file.
+_LANGSMITH_IMAGE_VERSION=0.2.11 # Change to your desired LangSmith version. Required. Typically you should use the latest version defined in the .env file.
 LANGSMITH_LICENSE_KEY=your-license-key # Change to your Langsmith license key. Required
 OPENAI_API_KEY=your-openai-api-key # Needed for Online Evals and Magic Query features
 AUTH_TYPE=none # Set to "oauth" if you want to use OAuth2.0
@@ -110,14 +110,11 @@ We recommend only using this in a local setting as it is not as flexible as usin
 
 ### 1. Install the LangSmith SDK
 
-Both the Python and TypeScript LangSmith SDKs expose a `langsmith` command line tool.
+The Python LangSmith SDKs exposes a `langsmith` command line tool.
 
 First, install a recent version of the `langsmith` package:
 
 - Python/Pip: `pip install -U langsmith`
-- TypeScript/yarn: `yarn add langsmith`
-- TypeScript/npm: `npm install -S langsmith`
-- TypeScript/pnpm: `pnpm add langsmith`
 
 This will install the LangSmith Client and the bundled command line tool.
 
@@ -127,12 +124,6 @@ Start the LangSmith tracing server by executing the following command in your te
 
 ```bash
 langsmith start --langsmith-license-key=<YOUR_LANGSMITH_LICENSE_KEY> --version=<LANGSMITH_VERSION> --openai-api-key=<YOUR_OPENAI_API_KEY>
-```
-
-If you installed the JS SDK locally, the binary won't be automatically added to your path. In this case, you can start the server from the node_modules directory:
-
-```bash
-node_modules/.bin/langchain
 ```
 
 If the server starts correctly, it will open up the UI in your browser at [http://localhost](http://localhost).
