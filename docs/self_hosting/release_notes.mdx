@@ -16,6 +16,8 @@ LangSmith 0.4 improves performance and reliability, implements a new asynchronou
 ### Breaking changes
 
 - This release adds an API key salt parameter. This previously defaulted to your LangSmith License Key. **For updates from earlier versions you should set this parameter to your license key to ensure backwards compatibility.** Using a new api key salt will invalidate all existing api keys.
+- This release makes Clickhouse persistence use 50Gi of storage by default. You can adjust this by changing the `clickhouse.statefulSet.persistence.size` value in your `values.yaml` file.
+    - If your existing configuration does not configure persistence already, you will need to resize your existing pvc or set `clickhouse.statefulSet.persistence.size` to the previous default value of `8Gi`.
 
 ### Performance and Reliability Changes
 
