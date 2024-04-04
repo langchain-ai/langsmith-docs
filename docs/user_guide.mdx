@@ -88,7 +88,13 @@ import datasets from "./static/user_guide/datasets.mp4"
 </video>
 
 ## Production
-Closely inspecting key data points, growing benchmarking datasets, annotating traces, and drilling down into important data in trace view are workflows you’ll also want to do once your app hits production. However, especially at the production stage, it’s crucial to get a high-level overview of application performance with respect to latency, cost, and feedback scores. This ensures that it's delivering desirable results at scale.
+Closely inspecting key data points, growing benchmarking datasets, annotating traces, and drilling down into important data in trace view are workflows you’ll also want to do once your app hits production.
+
+However, especially at the production stage, it’s crucial to get a high-level overview of application performance with respect to latency, cost, and feedback scores. This ensures that it's delivering desirable results at scale.
+
+Online evaluations and automations allow you to process and score production traces in near real-time.
+
+Additionally, threads provide a seamless way to group traces from a single conversation, making it easier to track the performance of your application across multiple turns.
 
 #### Monitoring and A/B Testing
 LangSmith provides monitoring charts that allow you to track key metrics over time. You can expand to view metrics for a given period and drill down into a specific data point to get a trace table for that time period — this is especially handy for debugging production issues.
@@ -99,4 +105,26 @@ import monitoring from "./static/user_guide/monitoring.mp4"
 
 <video controls autoPlay muted style={{ width: "100%", borderRadius: "8px", overflow: "hidden" }}>
   <source src={monitoring} />
+</video>
+
+#### Automations
+
+Automations are a powerful feature in LangSmith that allow you to perform actions on traces in near real-time. This can be used to automatically score traces, send them to annotation queues, or send them to datasets.
+
+To define an automation, simply provide a filter condition, a sampling rate, and an action to perform. Automations are particularly helpful for processing traces at production scale.
+
+import online_eval from "./static/user_guide/online_eval.mp4"
+
+<video controls autoPlay muted style={{ width: "100%", borderRadius: "8px", overflow: "hidden" }}>
+    <source src={online_eval} />
+</video>
+
+#### Threads
+
+Many LLM applications are multi-turn, meaning that they involve a series of interactions between the user and the application. LangSmith provides a threads view that groups traces from a single conversation together, making it easier to track the performance of and annotate your application across multiple turns.
+
+import threads from "./static/user_guide/threads.mp4"
+
+<video controls autoPlay muted style={{ width: "100%", borderRadius: "8px", overflow: "hidden" }}>
+    <source src={threads} />
 </video>

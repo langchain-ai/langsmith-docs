@@ -15,18 +15,23 @@ LangSmith makes it easy to query for traces and runs. In addition to the filteri
 
 Using the `list_runs` method in the SDK or [`/runs/query`](https://api.smith.langchain.com/redoc#tag/run/operation/query_runs_runs_query_post) endpoint in the API, you can filter runs to analyze and export. Most simple requests can be satisfied using simple top level arguments:
 
-- `project_id` / `project_name`: The project(s) to fetch runs from - can be a single project or a list of projects.
-- `trace_id`: Fetch runs that are part of a specific trace.
-- `run_type`: The type of run to get, such as `llm`, `chain`, `tool`, `retriever`, etc.
-- `dataset_name` / `dataset_id`: Fetch runs that are associated with an example row in the specified dataset. This is useful for comparing prompts or models over a given dataset.
-- `reference_example_id`: Fetch runs that are associated with a specific example row. This is useful for comparing prompts or models on a given input.
-- `parent_run_id` - Fetch runs that are children of a given run. This is useful for fetching runs grouped together using the context manager or for fetching an agent trajectory.
-- `error`: Fetch runs that errored or did not error.
-- `run_ids`: Fetch runs with a given list of run ids. Note: **This will ignore all other filtering arguments.**
-- `filter`: Fetch runs that match a given structured filter statement. See the [run filtering guide](#run-filtering) below for more information.
-- `trace_filter`: Filter to apply to the ROOT run in the trace tree. This is meant to be used in conjunction with the regular `filter` parameter to let you filter runs by attributes of the root run within a trace.
-- `tree_filter`: Filter to apply to OTHER runs in the trace tree, including sibling and child runs. This is meant to be used in conjunction with the regular `filter` parameter to let you filter runs by attributes of any run within a trace.
-- `query` (_experimental_): Query the experimental natural language API, which translates your query into a filter statement.
+| Keys                          | Description                                                                                                                                                                                                                   |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `project_id` / `project_name` | The project(s) to fetch runs from - can be a single project or a list of projects.                                                                                                                                            |
+| `trace_id`                    | Fetch runs that are part of a specific trace.                                                                                                                                                                                 |
+| `run_type`                    | The type of run to get, such as `llm`, `chain`, `tool`, `retriever`, etc.                                                                                                                                                     |
+| `dataset_name` / `dataset_id` | Fetch runs that are associated with an example row in the specified dataset. This is useful for comparing prompts or models over a given dataset.                                                                            |
+| `reference_example_id`        | Fetch runs that are associated with a specific example row. This is useful for comparing prompts or models on a given input.                                                                                                 |
+| `parent_run_id`               | Fetch runs that are children of a given run. This is useful for fetching runs grouped together using the context manager or for fetching an agent trajectory.                                                                |
+| `error`                       | Fetch runs that errored or did not error.                                                                                                                                                                                     |
+| `run_ids`                     | Fetch runs with a given list of run ids. Note: **This will ignore all other filtering arguments.**                                                                                                                            |
+| `filter`                      | Fetch runs that match a given structured filter statement. See the [run filtering guide](#run-filtering) below for more information.                                                                                         |
+| `trace_filter`                | Filter to apply to the ROOT run in the trace tree. This is meant to be used in conjunction with the regular `filter` parameter to let you filter runs by attributes of the root run within a trace.                          |
+| `tree_filter`                 | Filter to apply to OTHER runs in the trace tree, including sibling and child runs. This is meant to be used in conjunction with the regular `filter` parameter to let you filter runs by attributes of any run within a trace. |
+| `is_root`                     | Only return root runs.                                                                                                                                                                                               |  
+| `select`                     | Select the fields to return in the response. By default, all fields are returned.                                                                                                                                             |
+| `query` (_experimental_)      | Query the experimental natural language API, which translates your query into a filter statement. 
+
 
 ## Using keyword arguments
 
@@ -91,12 +96,12 @@ Root runs (or run traces), are runs that have no parents. These are assigned an 
   tabs={[
     PythonBlock(`root_runs = client.list_runs(
     project_name="<your_project>",
-    execution_order=1
+    is_root=True
 )`),
     TypeScriptBlock(`const rootRuns: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
-  executionOrder: 1,
+  isRoot: 1,
 })) {
   rootRuns.push(run);
 };`),
