@@ -196,8 +196,10 @@ def f1_score_summary_evaluator(runs: List[Run], examples: List[Example]) -> dict
     false_positives = 0
     false_negatives = 0
     for run, example in zip(runs, examples):
+        # Matches the output format of your dataset
         reference = example.outputs["answer"]
-        prediction = run.outputs["output"]
+        # Matches the output dict in `predict` function below
+        prediction = run.outputs["prediction"]
         if reference and prediction == reference:
             true_positives += 1
         elif prediction and not reference:
@@ -212,9 +214,11 @@ def f1_score_summary_evaluator(runs: List[Run], examples: List[Example]) -> dict
     f1_score = 2 * (precision * recall) / (precision + recall)
     return {"key": "f1_score", "score": f1_score}
 
-# Assumes the dataset's outputs has an "answer" key that is a booleans
+def predict(inputs: dict):
+    return {"prediction": True}
+
 evaluate(
-    lambda x: {"output": True}, # Your classifier
+    predict, # Your classifier
     data="<dataset_name>",
     summary_evaluators=[f1_score_summary_evaluator],
 )
