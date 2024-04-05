@@ -93,7 +93,7 @@ const config = {
       },
       image: "img/langsmith-logo.svg",
       navbar: {
-        title: "🦜️🛠️ LangSmith Docs",
+        logo: {src: "img/langsmith-logo.svg"},
         items: [
           {
             href: "https://python.langchain.com/en/latest/",
