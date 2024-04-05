@@ -23,7 +23,6 @@ module.exports = {
   sidebar: [
     "index",
     "user_guide",
-    "setup",
     "pricing",
     {
       type: "category",

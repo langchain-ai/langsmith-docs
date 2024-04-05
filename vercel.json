@@ -24,11 +24,11 @@
     },
     {
       "source": "/category/organizations",
-      "destination": "/setup"
+      "destination": "/"
     },
     {
       "source": "/organizations",
-      "destination": "/setup"
+      "destination": "/"
     },
     {
       "source": "/category/organizations/:path*",
