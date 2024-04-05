@@ -191,13 +191,13 @@ from typing import List
 from langsmith.schemas import Example, Run
 from langsmith.evaluation import evaluate
 
-def f1_score_summary_evaluator(examples: List[Example]) -> dict:
+def f1_score_summary_evaluator(runs: List[Run], examples: List[Example]) -> dict:
     true_positives = 0
     false_positives = 0
     false_negatives = 0
-    for example in examples:
+    for run, example in zip(runs, examples):
         reference = example.outputs["answer"]
-        prediction = example.outputs["output"]
+        prediction = run.outputs["output"]
         if reference and prediction == reference:
             true_positives += 1
         elif prediction and not reference:
