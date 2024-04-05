@@ -10,11 +10,10 @@ import React from 'react';
 import TabItem from "@theme/TabItem";
 import Tabs from "@theme/Tabs";
 
-export const TypeScriptSDKTracingCodeBlock = () => (
-    <CodeBlock language="typescript">
-                {`import { OpenAI } from "openai";
+export const TypeScriptSDKTracingCode = () =>
+  `import { OpenAI } from "openai";
 import { traceable } from "langsmith/traceable";
-import { wrapOpenAI } from "langsmith/wrappers";
+import { wrapOpenAI } from "langsmith/wrappers";\n
 // Auto-trace LLM calls in-context
 const client = wrapOpenAI(new OpenAI());
 // Auto-trace this function
@@ -27,9 +26,10 @@ const pipeline = traceable(async (user_input) => {
 });
 
 await pipeline("Hello, world!")
-// Out: Hello there! How can I assist you today?
-// See trace: https://smith.langchain.com/public/3603e52b-5d92-4cac-a267-34004a755843/r`}
-    </CodeBlock>
+// Out: Hello there! How can I assist you today?`;
+
+export const TypeScriptSDKTracingCodeBlock = () => (
+  <CodeBlock language="typescript">{TypeScriptSDKTracingCode()}</CodeBlock>
 );
 
 export const PythonAPITracingCodeBlock = () => (
@@ -98,10 +98,8 @@ patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})
     </CodeBlock>
 );
 
-
-export const PythonSDKTracingCodeBlock = () => (
-    <CodeBlock language="python">
-                {`import openai
+export const PythonSDKTracingCode = () =>
+  `import openai
 from langsmith.wrappers import wrap_openai
 from langsmith import traceable\n
 # Auto-trace LLM calls in-context
@@ -114,9 +112,10 @@ def pipeline(user_input: str):
     )
     return result.choices[0].message.content\n
 pipeline("Hello, world!")
-# Out:  Hello there! How can I assist you today?
-# See trace: https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r`}
-            </CodeBlock>
+# Out:  Hello there! How can I assist you today?`;
+
+export const PythonSDKTracingCodeBlock = () => (
+  <CodeBlock language="python">{PythonSDKTracingCode()}</CodeBlock>
 );
 
 export const LangChainInstallationCodeTabs = () => (
