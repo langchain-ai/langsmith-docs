@@ -9,7 +9,7 @@ require("dotenv").config();
 const config = {
   title: "🦜️🛠️ LangSmith",
   tagline: "LangSmith",
-  favicon: "img/favicon.ico",
+  favicon: "img/favicon.png",
   customFields: {
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
     supabasePublicKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,
