@@ -2,25 +2,111 @@
 sidebar_label: Overview
 sidebar_position: 0
 ---
+import ThemedImage from '@theme/ThemedImage';
 
 # Evaluation Overview
 
-LLM applications involve putting a probablistic model at the center of your system.
-Due to the non-deterministic nature of LLMs, it is important to be able to properly evaluate your application.
-Having a proper evaluation framework that you trust will allow you to:
+## What are evaluations?
 
-- Experiment with different prompts and accurately determine if changes improve performance
-- Iterate on aspects your RAG architecture without guesswork
-- Quickly decide if it is worth upgrading to a new, recently release model
-- Determine if you can use a cheaper, faster model in place of a more expensive one and get similar performance
-- Flag with a model behind an API changed suddenly in an unexpected way
-- Have confidence your application will not produce biased or unwanted responses
+Evaluations allow you to understand the performance of your LLM application over time. At its core, an evaluation is a function that takes in a set of inputs and outputs from your chain, agent, or model, 
+and returns a score. This score may be based on comparing the outputs with reference outputs (e.g. with string matching or using an LLM as a judge).
+However, there are also evaluators that don't require a reference output - for example, one that checks if the output is blank, which is a common failure mode in LLM applications.
+LangSmith makes it easy to seamlessly run evaluations against your application via `Datasets`, which are made up of `Examples`.
 
-Testing and evaluation help expose issues, so you can decide how to best address them, be that through different architectural choices, better models or prompts, additional code checks, or other means.
+## Components of an evaluation pipeline
+The following diagram outlines the building blocks for evaluations in LangSmith. `Datasets` define the inputs over which you run your chain, model, or agent (the `Task`),
+and optionally the reference outputs against which your evaluator will compare the outputs of your `Task`. These datasets can be from any number of sources - 
+you might manually curate them, collect them from user input/feedback, or generate them via LLM. Your `Evaluator` can be any arbitrary function which returns a score
+based on the inputs and outputs of your `Task`, and the reference output if desired. You can also use [one of LangSmith's off-the-shelf
+evaluators](evaluation/faq/evaluator-implementations) to get started quickly!
+<ThemedImage
+  alt="LangSmith Primitives"
+  sources={{
+    light: require('./static/langsmith_landscape_v2.png').default,
+    dark: require('./static/langsmith_landscape_v2_dark.png').default,
+  }}
+/>
 
-To get started, check out the [Quick Start Guide](/evaluation/quickstart).
+## Datasets
 
-After that, peruse the [Concepts Section](/evaluation/concepts) to better understand the different components involved.
+`Datasets` are collections of `Examples`, the core building block for the evaluation workflow in LangSmith.
+Examples provide the inputs over which you will be running your pipeline,
+and, if applicable, the outputs that you will be comparing against.
+All examples in a given dataset should follow the same schema.
+
+![Example](static/sample_langsmith_example.png)
+<div style={{ display: "flex", flexDirection: "column", textAlign: "center", fontSize: "14px", marginTop: "-15px", marginBottom: "30px" }}>An Example in the LangSmith UI</div>
+
+A single run of all your example inputs through your `Task` is called an `Experiment`. In LangSmith, you can easily view all the experiments that are associated 
+with your dataset, and track your application's performance over time!
+
+![Dataset](static/sample_langsmith_dataset.png)
+<div style={{ display: "flex", flexDirection: "column", textAlign: "center", fontSize: "14px", marginTop: "-15px" }}>A Dataset in the LangSmith UI</div>
+
+### Key-value datasets
+
+There are a few different types of datasets. Dataset types communicate common input and output schemas. Datasets with the data type "kv" (key-value) are the default type, and are sufficient for almost all use-cases. The other two types, "llm" and "chat", can be useful to conveniently export datasets into known fine-tuning formats.
+
+For key-value datasets, inputs and outputs can be arbitrary key-value pairs. These are useful when evaluating chains and agents that require multiple inputs or that return multiple outputs.
+
+The tradeoff with these datasets is that running evaluations on them can be a bit more involved. If there are multiple keys, you will have to manually specify the `prepare_data` function in any off-the-shelf evaluators so they know what information to consider in generating a score.
+
+### LLM datasets
+
+Datasets with the "llm" data type correspond to the string inputs and outputs from the "completion" style LLMS (string in, string out).
+
+The `"inputs"` dictionary contains a single `"input"` key mapped to a single prompt string. Similarly, the `"outputs"` dictionary contains a single `"output"` key mapped to a single response string.
+
+
+### Chat datasets
+
+Datasets with the "chat" data type correspond to messages and generations from LLMs that expect structured "chat" messages as inputs and outputs. Each example row
+expects an `"inputs"` dictionary containing a single `"input"` key mapped to a list of serialized chat messages. The `"outputs"` dictionary contains a single `"output"` key mapped to a single list of serialized chat messages.
+
+## Evaluators
+
+Evaluators are functions that help score how well your system did on a particular example.
+They take in two things:
+
+1. An `Example` - the inputs for your pipeline and optionally the reference outputs or labels
+2. A `Run` - observed output gathered from running the inputs through the `Task`
+
+An evaluator will then return an `EvaluationResult` (or similarly shaped dictionary), which is made up of:
+
+- `key`: The name the metric being evaluated
+- `score`: The value of the metric on this example
+- `comment`: the reasoning trajectory or other string information motivating the score
+
+### Types of Evaluators
+Refer back to our high-level diagram to see the common types of evaluators:
+<ThemedImage
+  alt="LangSmith Primitives"
+  sources={{
+    light: require('./static/langsmith_evaluators.png').default,
+    dark: require('./static/langsmith_evaluation_dark.png').default,
+  }}
+/>
+
+In LLM-as-judge evaluators, an LLM is making the decision. This desicion may be based on just the inputs and outputs of your `Task` - i.e. "Is the output 
+malicious?" (Reference-free). Or it may be based on the reference output from the `Example`, along with the inputs and outputs of your system - i.e. "Does the output
+match the reference output?" (Ground Truth)
+
+
+
+## Experiment Prefix
+
+Each experiment has a name - this is usually set via the `experiment_prefix`. This should be an interpretable name that helps you understand what the experiment is testing.
+
+The test runner will automatically add a unique identifier to the end of the experiment name to make it unique.
+
+A common suggestion for a name is something like `ClaudeWithRRF`.
+
+This contains an understandable start to the name, but also a random uuid to make it unique.
+
+## Next steps
+
+
+To get started with code, check out the [Quick Start Guide](/evaluation/quickstart).
 
 If you want to learn how to accomplish a particular task, check out our comprehensive [How-To Guides](/evaluation/faq)
 
