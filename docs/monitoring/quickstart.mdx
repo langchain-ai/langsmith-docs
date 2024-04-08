@@ -84,3 +84,9 @@ The prompt template will be used to format the information from the run that you
 The criteria represents the feedback that will be associated with the run. The name is the key of the feedback, and then the LLM will generate the value which will be used as the feedback score. The name and description of the criteria are passed to the LLM, so you should make them descriptive!
 
 For more information, see [here](faq/online_evaluation)
+
+### Webhooks
+
+You also have the option of being notified via a webhook whenever a rule matches new runs. Your webhook endpoint will be called with a JSON payload containing the matched runs.
+
+For more information, see [here](faq/webhooks).
