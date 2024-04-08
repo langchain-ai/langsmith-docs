@@ -4,9 +4,19 @@ sidebar_position: 2
 table_of_contents: true
 ---
 
+import ThemedImage from '@theme/ThemedImage';
+
 # Concepts
 
-In this guide we will go over some of the concepts that are important to understand when logging traces to LangSmith. Each run in your application is a part of a trace, and each run has a unique ID.
+In this guide we will go over some of the concepts that are important to understand when logging traces to LangSmith. A `Trace` is essentially a series of steps that your application takes to go from input to output. Each of these individual steps is represented by a `Run`. A `Project` is simply a collection of traces. The following diagram displays these concepts in the context of a simple RAG app, which retrieves documents from an index and generates an answer.
+<ThemedImage
+  alt="LangSmith Primitives"
+  sources={{
+    light: require('./static/concepts/primitives.png').default,
+    dark: require('./static/concepts/primitives-dark.png').default,
+  }}
+/>
+<div style={{ display: "flex", flexDirection: "column", textAlign: "center", fontSize: "14px", marginTop: "5px" }}>Primitive datatypes in LangSmith</div>
 
 ## Runs
 A `Run` is a span representing a single unit of work or operation within your LLM application. This could be anything from single call to an LLM or chain, to a prompt formatting call, to a runnable lambda invocation. If you are familiar with [OpenTelemetry](https://opentelemetry.io/), you can think of a run as a span.
@@ -25,20 +35,19 @@ A `Project` is a collection of traces. You can think of a project as a container
 Each feedback entry consists of a feedback tag and feedback score, and is bound to a run by a unique run ID.
 Feedback can currently be continuous or discrete (categorical), and you can reuse feedback tags across different runs within an organization.
 
-Collecting feedback on runs can be done in two main ways:
-1. Annotating a run in the LangSmith UI
-2. Programmatically logging feedback to LangSmith
-
-Soon, we'll allow users to run online evaluators on a sample of runs to automatically generate feedback based on different criteria.
+Collecting feedback on runs can be done in three main ways:
+1. [In the UI](faq/logging_feedback#annotating-traces-with-feedback) - Annotate runs directly in the UI
+2. [With the SDK](faq/logging_feedback#capturing-feedback-programmatically) - Programmatically log feedback to LangSmith
+3. [With Online Evaluators](/monitoring/faq/online_evaluation) - Automatically run evaluators on a sample of your production traces to generate feeedback in realtime
 
 ![Feedback](static/concepts/feedback.png)
 
 ## Tags
 
-`Tags` are collections of strings that can be attached to runs. They are used to categorize runs and make it easier to search for them in the LangSmith UI. Tags can be used to filter runs in the LangSmith UI, and can be used to group runs together for analysis.
+`Tags` are collections of strings that can be attached to runs. They are used to categorize runs and make it easier to search for them in the LangSmith UI. Tags can be used to filter runs in the LangSmith UI, and can be used to group runs together for analysis. [Learn how to tag your traces in the LangSmith SDK.](faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces)
 ![Tags](static/concepts/tags.png)
 
 ## Metadata
 `Metadata` is a collection of key-value pairs that can be attached to runs. Metadata can be used to store additional information about a run, such as the version of the application that generated the run, the environment in which the run was generated, or any other information that you want to associate with a run.
-Similar to tags, you can use metadata to filter runs in the LangSmith UI, and can be used to group runs together for analysis.
+Similar to tags, you can use metadata to filter runs in the LangSmith UI, and can be used to group runs together for analysis. [Learn how to add metadata to your traces in the LangSmith SDK.](faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces)
 ![Metadata](static/concepts/metadata.png)
