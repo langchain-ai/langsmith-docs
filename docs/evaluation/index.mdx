@@ -22,8 +22,8 @@ evaluators](evaluation/faq/evaluator-implementations) to get started quickly!
 <ThemedImage
   alt="LangSmith Primitives"
   sources={{
-    light: require('./static/langsmith_landscape_v2.png').default,
-    dark: require('./static/langsmith_landscape_v2_dark.png').default,
+    light: require('./static/langsmith_summary.png').default,
+    dark: require('./static/langsmith_summary_dark.png').default,
   }}
 />
 
@@ -38,10 +38,12 @@ All examples in a given dataset should follow the same schema.
 <div style={{ display: "flex", flexDirection: "column", textAlign: "center", fontSize: "14px", marginTop: "-15px", marginBottom: "30px" }}>An Example in the LangSmith UI</div>
 
 A single run of all your example inputs through your `Task` is called an `Experiment`. In LangSmith, you can easily view all the experiments that are associated 
-with your dataset, and track your application's performance over time!
+with your dataset, and track your application's performance over time! 
 
 ![Dataset](static/sample_langsmith_dataset.png)
-<div style={{ display: "flex", flexDirection: "column", textAlign: "center", fontSize: "14px", marginTop: "-15px" }}>A Dataset in the LangSmith UI</div>
+<div style={{ display: "flex", flexDirection: "column", textAlign: "center", fontSize: "14px", marginTop: "-15px", marginBottom: "30px" }}>A Dataset in the LangSmith UI</div>
+
+Datasets can be [created in the LangSmith SDK](evaluation/faq/datasets-client) or directly in the UI by clicking ["New Dataset" from the LangSmith datasets page](https://smith.langchain.com/datasets).
 
 ### Key-value datasets
 
@@ -77,31 +79,8 @@ An evaluator will then return an `EvaluationResult` (or similarly shaped diction
 - `score`: The value of the metric on this example
 - `comment`: the reasoning trajectory or other string information motivating the score
 
-### Types of Evaluators
-Refer back to our high-level diagram to see the common types of evaluators:
-<ThemedImage
-  alt="LangSmith Primitives"
-  sources={{
-    light: require('./static/langsmith_evaluators.png').default,
-    dark: require('./static/langsmith_evaluation_dark.png').default,
-  }}
-/>
-
-In LLM-as-judge evaluators, an LLM is making the decision. This desicion may be based on just the inputs and outputs of your `Task` - i.e. "Is the output 
-malicious?" (Reference-free). Or it may be based on the reference output from the `Example`, along with the inputs and outputs of your system - i.e. "Does the output
-match the reference output?" (Ground Truth)
-
-
-
-## Experiment Prefix
-
-Each experiment has a name - this is usually set via the `experiment_prefix`. This should be an interpretable name that helps you understand what the experiment is testing.
-
-The test runner will automatically add a unique identifier to the end of the experiment name to make it unique.
-
-A common suggestion for a name is something like `ClaudeWithRRF`.
-
-This contains an understandable start to the name, but also a random uuid to make it unique.
+The evaluator itself can be any arbitrary function - see [How to create custom evaluators](evaluation/faq/custom-evaluators). You might use a hard-coded function here (e.g. "Is the output blank?"). 
+You might also use an LLM as a judge (e.g. "Do these two outputs have the same meaning?") To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators](https://docs.smith.langchain.com/evaluation/faq/evaluator-implementations)!
 
 ## Next steps
 
