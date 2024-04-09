@@ -1,0 +1,105 @@
+---
+sidebar_label: Unit Testing
+sidebar_position: 2
+---
+
+# Unit Testing with LangSmith
+
+LangSmith provides a way to create unit tests for your LLM-powered applications. These tests help ensure your AI components behave as expected as you iterate on your system. Here's how to set up and run unit tests with LangSmith.
+
+## Prerequisites
+
+Before you start:
+
+- Connect to LangSmith
+- Install the LangSmith Python package
+- Set up a testing framework (e.g., pytest)
+
+## Creating a Unit Test
+
+Decorate your test function with `@unit`:
+
+```python
+from langsmith.testing import unit
+
+@unit
+def test_addition():
+    assert 3 + 4 == 7
+```
+
+This creates an example in LangSmith associated with your test case. Traced code within the test function (using `@traceable` or `wrap_*` functions) is included in the test case for visibility and debugging.
+
+## Using Fixtures
+
+The `@unit` decorator works with pytest fixtures. Fixture values populate the "inputs" of the corresponding example in LangSmith.
+
+```python
+import pytest
+
+@pytest.fixture
+def some_input():
+    return "Some input"
+
+@unit
+def test_with_fixture(some_input: str):
+    assert "input" in some_input
+```
+
+## Parametrizing Tests
+
+Use `pytest.mark.parametrize()` to run multiple test cases with the same test function:
+
+```python
+@unit(output_keys=["expected"])
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        (1, 2, 3),
+        (3, 4, 7),
+    ],
+)
+def test_addition_with_multiple_inputs(a: int, b: int, expected: int):
+    assert a + b == expected
+```
+
+## Specifying Test IDs
+
+By default, each test case is assigned a unique identifier based on the function name and module. Provide a custom identifier using the `id` argument:
+
+```python
+import uuid
+
+@unit(id=uuid.uuid4())
+def test_multiplication():
+    assert 3 * 4 == 12
+```
+
+## Persisting Expected Outputs
+
+By default, unit test inputs are saved as "inputs" to a dataset. Specify the `output_keys` argument to persist specific keys within the dataset's "outputs" fields:
+
+```python
+@pytest.fixture
+def expected_output():
+    return "input"
+
+@unit(output_keys=["expected_output"])
+def test_with_expected_output(some_input: str, expected_output: str):
+    assert expected_output in some_input
+```
+
+## Running Tests
+
+Run your tests using the pytest CLI or by calling the test functions directly:
+
+```python
+test_addition()
+test_with_fixture("Some input") 
+test_with_expected_output("Some input", "Some")
+test_multiplication()
+test_addition_with_multiple_inputs(1, 2, 3)
+```
+
+## Conclusion
+
+Unit testing is crucial for building robust LLM applications. LangSmith's `@unit` decorator makes it easy to create and manage test cases, ensuring your AI components meet expectations as you develop your system.

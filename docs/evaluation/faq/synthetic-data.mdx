@@ -27,29 +27,19 @@ Create a chain for generating paraphrases using the `ChatOpenAI` model with cust
 import re
 from typing import List
 
-from langchain.chains import LLMChain
 from langchain_openai import ChatOpenAI
-from langchain.output_parsers import ListOutputParser
 from langchain_core.prompts import (
     ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    SystemMessagePromptTemplate,
 )
-
-
-class NumberedListOutputParser(ListOutputParser):
-    def parse(self, output: str) -> List[str]:
-        return re.findall(r"\d+\.\s+(.*?)\n", output)
-
 
 paraphrase_llm = ChatOpenAI(temperature=0.5)
 prompt_template = ChatPromptTemplate.from_messages(
     [
-        SystemMessagePromptTemplate.from_template(
+        ("system",
             "You are a helpful paraphrasing assistant tasked with rephrasing text."
         ),
-        SystemMessagePromptTemplate.from_template("Input: <INPUT>{query}</INPUT>"),
-        HumanMessagePromptTemplate.from_template(
+        ("system", "Input: <INPUT>{query}</INPUT>"),
+        ("user", 
             "What are {n_paraphrases} different ways you could paraphrase the INPUT text?"
             " Do not significantly change the meaning."
             " Respond using numbered bullets. If you cannot think of any,"
@@ -58,95 +48,47 @@ prompt_template = ChatPromptTemplate.from_messages(
     ]
 )
 
-paraphrase_chain = LLMChain(
-    llm=paraphrase_llm,
-    prompt=prompt_template,
-    output_parser=NumberedListOutputParser(),
-)
+def parse(output: str) -> List[str]:
+    return re.findall(r"\d+\.\s+(.*?)\n", output)
+
+paraphrase_chain = prompt | llm | parse
 ```
 
-### Step 2: Generate Paraphrases Concurrently
+## 2. Paraphrase
 
 Write a function to generate paraphrases for each example in your dataset using asyncio for concurrency.
 
 ```python
-import asyncio
-import re
-from typing import Any, Coroutine, Tuple
 
-from langsmith.schemas import Example
-
-
-async def gather_with_concurrency(n: int, *coros: Coroutine) -> list:
-    """
-    A helper function to run coroutines concurrently up to a specified limit.
-    """
-    semaphore = asyncio.Semaphore(n)
-
-    async def sem_coro(coro: Coroutine) -> Any:
-        async with semaphore:
-            return await coro
-
-    return await asyncio.gather(*(sem_coro(c) for c in coros))
-
-
-async def generate_paraphrases(
-    example: Example, n_paraphrases: int
-) -> Tuple[Example, List[str]]:
-    """
-    A function to generate paraphrases for a given string.
-    """
-    # Assumes the input is a string. Additional preprocessing might be needed.
-    example_input = next(iter(example.inputs.values()))
-    result = await paraphrase_chain.arun(
-        query=example_input, n_paraphrases=n_paraphrases
-    )
-
-    # Use regex to parse the result, getting just the text after the numbered bullets
-    return example, result
 ```
-
-### Step 3: Paraphrase the Dataset
 
 Use the `Client` from LangSmith to access your dataset and generate paraphrases for it.
 
 ```python
 from langsmith import Client
 
-
-async def paraphrase_main(
-    client: Client, n_paraphrases: int, dataset_name: str, concurrency: int = 20
-) -> list:
-    """
-    The main function to generate paraphrases for a dataset.
-    """
-    dataset = client.read_dataset(dataset_name=dataset_name)
-    examples = client.list_examples(dataset_id=dataset.id)
-    coros = (generate_paraphrases(example, n_paraphrases) for example in examples)
-    results = await gather_with_concurrency(concurrency, *coros)
-    flattened_results = []
-    for example, batch_r in results:
-        input_key = next(iter(example.inputs))
-        for r in batch_r:
-            client.create_example(
-                inputs={input_key: r},
-                outputs=example.outputs,
-                dataset_id=dataset.id,
-            )
-            flattened_results.append(r)
-    return [r for res in results for r in res]
-```
-
-Run the main function to generate paraphrases:
-
-```python
 client = Client()
 n_paraphrases = 3
 dataset_name = "Your Dataset Name"
-paraphrase_results = await paraphrase_main(client, n_paraphrases, dataset_name)
+
+examples = client.list_examples(dataset_name=dataset_name)
+results = paraphrase_chain.batch(
+    [{"query": next(iter(example.inputs.values())), "n_paraphrases": n_paraphrases}
+    for example in examples]
+)
+inputs, outputs = [], []
+for example, batch_r in zip(examples, results):
+    input_key = next(iter(example.inputs))
+    for r in result:
+        inputs.append({input_key: r})
+        outputs.append(example.outputs)
+client.create_examples(
+    inputs=inputs,
+    outputs=outputs,
+    dataset_name=dataset_name,
+)
 ```
 
-Replace "Your Dataset Name" with your actual dataset name. After running, your dataset should be roughly 3x the original size.
 
 ## Generating New Inputs
 
