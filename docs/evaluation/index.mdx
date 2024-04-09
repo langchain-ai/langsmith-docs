@@ -89,8 +89,18 @@ An evaluator will then return an `EvaluationResult` (or similarly shaped diction
 - `score`: The value of the metric on this example
 - `comment`: the reasoning trajectory or other string information motivating the score
 
-The evaluator itself can be any arbitrary function - see [How to create custom evaluators](evaluation/faq/custom-evaluators). You might use a hard-coded function here (e.g. "Is the output blank?"). 
-You might also use an LLM as a judge (e.g. "Do these two outputs have the same meaning?") To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators](https://docs.smith.langchain.com/evaluation/faq/evaluator-implementations)!
+### Types of Evaluators
+
+The evaluator itself can be any arbitrary function. There are a few different types of evaluators that are commonly used:
+- **Heuristics**: A heuristic evaluator is a hard-coded function that does some computation to determine a score. For example, you might write an 
+evaluator that checks whether the output of the system is an empty string, or determines if it is valid JSON. These would be considered **reference-free** evaluators,
+as they don't consider any example output when making their decision. You might also want to check that the output of the system matches the reference output exactly,
+which would be considered a **ground truth** evaluator because it compares the output to a reference. See [How to create custom evaluators](evaluation/faq/custom-evaluators).
+- **LLM-as-judge**: An LLM-as-judge evaluator uses an LLM to score system output. For example, you might want to check whether your system is outputting
+offensive content. This is **reference-free**, as there is no comparison to an example output. You might also want to check whether the system output has the same 
+meaning as the example output, which would be a **ground truth** evaluator. To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators](https://docs.smith.langchain.com/evaluation/faq/evaluator-implementations)!
+- **Human**: You can also evaluate your runs manually. This can be done in LangSmith [via the SDK](tracing/faq/logging_feedback#capturing-feedback-programmatically), 
+or [in the LangSmith UI](http://localhost:3000/tracing/faq/logging_feedback#annotating-traces-with-feedback).
 
 ## Next steps
 
