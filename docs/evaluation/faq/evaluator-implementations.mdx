@@ -101,8 +101,8 @@ evaluate(
 ## Criteria Evaluators (No Labels)
 If you don't have ground truth reference labels, you can evaluate your run against a custom set of criteria using the `"criteria"` or `"score"` evaluators. These are helpful when there are high level semantic aspects of your model's output you'd like to monitor that aren't captured by other explicit checks or rules.
 
-- The `"criteria"` evaluator instructs an LLM to assess if a prediction satisfies the given criteria, outputting a binary score
-- The `"score"` evaluator has the LLM score the prediction on a numeric scale (default 1-10) based on how well it satisfies the criteria
+- The `"criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.CriteriaEvalChain.html#langchain.evaluation.criteria.eval_chain.CriteriaEvalChain))instructs an LLM to assess if a prediction satisfies the given criteria, outputting a binary score
+- The `"score_string"` evaluator([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.scoring.eval_chain.ScoreStringEvalChain.html#langchain.evaluation.scoring.eval_chain.ScoreStringEvalChain)) has the LLM score the prediction on a numeric scale (default 1-10) based on how well it satisfies the criteria
 
 <CodeTabs
   tabs={[
@@ -118,7 +118,7 @@ criteria_evaluator = LangChainStringEvaluator(
     }
 )
 score_evaluator = LangChainStringEvaluator(
-    "score",
+    "score_string",
     config={
         "criteria": {
             "accuracy": "How accurate is this prediction on a scale of 1-10?" 
@@ -160,10 +160,10 @@ However, a score of 1 for "maliciousness" means that the prediction contains mal
 ::::
 
 ## Criteria Evaluators (With Labels)
-If you have ground truth reference labels, you can evaluate your run against custom criteria while also providing that reference information to the LLM using the `"labeled_criteria"` or `"labeled_score"` evaluators.
+If you have ground truth reference labels, you can evaluate your run against custom criteria while also providing that reference information to the LLM using the `"labeled_criteria"` or `"labeled_score_string"` evaluators.
 
-- The `"labeled_criteria"` evaluator instructs an LLM to assess if a prediction satisfies the criteria, taking into account the reference label
-- The `"labeled_score"` evaluator has the LLM score the prediction on a numeric scale based on how well it satisfies the criteria compared to the reference
+- The `"labeled_criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.LabeledCriteriaEvalChain.html#langchain.evaluation.criteria.eval_chain.LabeledCriteriaEvalChain)) instructs an LLM to assess if a prediction satisfies the criteria, taking into account the reference label
+- The `"labeled_score_string"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.scoring.eval_chain.LabeledScoreStringEvalChain.html#langchain.evaluation.scoring.eval_chain.LabeledScoreStringEvalChain)) has the LLM score the prediction on a numeric scale based on how well it satisfies the criteria compared to the reference
 
 <CodeTabs
   tabs={[
@@ -186,7 +186,7 @@ labeled_criteria_evaluator = LangChainStringEvaluator(
     }
 )
 labeled_score_evaluator = LangChainStringEvaluator(
-    "labeled_score", 
+    "labeled_score_string", 
     config={
         "criteria": { 
             "accuracy": "How accurate is this prediction compared to the reference on a scale of 1-10?"
@@ -216,10 +216,10 @@ evaluate(
 ## JSON Evaluators
 Evaluating extraction and function calling applications often comes down to validating that the LLM's string output can be parsed correctly and comparing it to a reference object. The JSON evaluators provide functionality to check your model's output consistency:
 
-- The `"json_validity"` evaluator checks if a prediction is valid JSON  
-- The `"json_equality"` evaluator checks if a JSON prediction exactly matches a JSON reference
-- The `"json_edit_distance"` evaluator computes the normalized edit distance between a JSON prediction and reference 
-- The `"json_schema"` evaluator checks if a JSON prediction satisfies a provided JSON schema
+- The `"json_validity"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonValidityEvaluator.html#langchain.evaluation.parsing.base.JsonValidityEvaluator]) evaluator checks if a prediction is valid JSON  
+- The `"json_equality"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonEqualityEvaluator.html#langchain.evaluation.parsing.base.JsonEqualityEvaluator]) evaluator checks if a JSON prediction exactly matches a JSON reference
+- The `"json_edit_distance"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator.html#langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator]) evaluator computes the normalized edit distance between a JSON prediction and reference 
+- The `"json_schema"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator.html#langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator]) evaluator checks if a JSON prediction satisfies a provided JSON schema
 
 <CodeTabs
   tabs={[
@@ -257,9 +257,9 @@ evaluate(
 ## String or Embedding Distance
 To measure the similarity between a predicted string and a reference, you can use string distance metrics:
 
-- The `"string_distance"` evaluator computes a normalized string edit distance between the prediction and reference
-- The `"embedding_distance"` evaluator computes the distance between the text embeddings of the prediction and reference  
-- The `"exact_match"` evaluator checks for an exact string match between prediction and reference
+- The `"string_distance"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.string_distance.base.StringDistanceEvalChain.html#langchain.evaluation.string_distance.base.StringDistanceEvalChain)) evaluator computes a normalized string edit distance between the prediction and reference
+- The `"embedding_distance"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.embedding_distance.base.EmbeddingDistance.html#langchain.evaluation.embedding_distance.base.EmbeddingDistance)) evaluator computes the distance between the text embeddings of the prediction and reference  
+- The `"exact_match"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.exact_match.base.ExactMatchStringEvaluator.html#langchain.evaluation.exact_match.base.ExactMatchStringEvaluator)) evaluator checks for an exact string match between prediction and reference
 
 <CodeTabs
   tabs={[
@@ -273,6 +273,7 @@ embedding_distance_evaluator = LangChainStringEvaluator(
     config={
       # Defaults to OpenAI, but you can customize which embedding provider to use:
       # "embeddings": HuggingFaceEmbeddings(model="distilbert-base-uncased"), 
+      # Can also choose "euclidean", "chebyshev", "hamming", and "manhattan"
         "distance_metric": "cosine",
       } 
 )
@@ -293,8 +294,9 @@ evaluate(
   groupId="client-language"  
 />
 
-## Regex Match  
-To evaluate predictions against a reference regular expression pattern, you can use the `"regex_match"` evaluator.
+## Regex Match
+
+To evaluate predictions against a reference regular expression pattern, you can use the `"regex_match"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.regex_match.base.RegexMatchStringEvaluator.html#langchain.evaluation.regex_match.base.RegexMatchStringEvaluator)) evaluator.
 The pattern is provided as a string in the example outputs of the dataset. The evaluator checks if the prediction matches the pattern.
 
 <CodeTabs
