@@ -15,7 +15,7 @@ const config = {
     supabasePublicKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,
   },
   // Set the production url of your site here
-  url: "https://smith.langchain.com/", // TODO: also make configurable with dev deployment
+  url: "https://docs.smith.langchain.com/", // TODO: also make configurable with dev deployment
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/",
