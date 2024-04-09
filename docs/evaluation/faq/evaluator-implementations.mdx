@@ -21,6 +21,19 @@ Most of these evaluators are useful but imperfect! We recommend against blind tr
 Many of the LLM-based evaluators return a binary score for a given data point, so measuring differences in prompt or model performance are most reliable in aggregate over a larger dataset.
 :::
 
+## Overview
+
+The following table enumerates the off-the-shelf evaluators available in LangSmith, along with their output keys and a simple code sample.
+
+| Evaluator name | Output Key | Simple Code Example |
+|-----------------|-----------------|-----------------|
+| QA    | `correctness`    | `LangChainStringEvaluator("qa")`     |
+| Contextual QA    | `contextual accuracy`    | `LangChainStringEvaluator("context_qa")`    |
+| Chain of Thought QA    | `cot contextual accuracy`    | `LangChainStringEvaluator("cot_qa")`    |
+| Criteria    |  Depends on criteria key     |  `LangChainStringEvaluator("labeled_criteria", config={ "criteria": <criterion> })`<br/><br/>`criterion` may be one of the default implemented criteria: `conciseness`, `relevance`, `correctness`, `coherence`, `harmfulness`, `maliciousness`, `helpfulness`, `controversiality`, `misogyny`, and `criminality`.<br/><br/>Or, you may define your own criteria in a custom dict as follows:<br/>`{ "criterion_key": "criterion description" }`  |
+| Embedding distance | `embedding_cosine_distance` | `LangChainStringEvaluator("embedding_distance")` |
+
+
 ## Correctness: QA evaluation
 QA evalutors help to measure the correctness of a response to a user query or question. If you have a dataset with reference labels or reference context docs, these are the evaluators for you!
 Three QA evaluators you can load are: `"qa"`, `"context_qa"`, `"cot_qa"`. Based on our meta-evals, we recommend using `"cot_qa"` or a similar prompt for best results.
