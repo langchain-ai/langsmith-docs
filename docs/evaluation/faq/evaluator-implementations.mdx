@@ -7,7 +7,7 @@ import { CodeTabs, PythonBlock, TypeScriptBlock } from "@site/src/components/Ins
 # How to use off-the-shelf LangChain evaluators
 LangChain's evaluation module provides evaluators you can use as-is for common evaluation scenarios. 
 
-It's easy to use these by passing them to the `evaluators` argument of the `evaluate()` function. You can check out the [linked doc](https://python.langchain.com/docs/guides/langsmith) for a quick walkthrough of how to use it.
+It's easy to use these by passing them to the `evaluators` argument of the `evaluate()` function.
 
 Copy the code snippets below to get started. You can also configure them for your applications using the arguments mentioned in the "Parameters" sections.  
 If you don't see an implementation that suits your needs, you can learn how to create your own [Custom Run Evaluators](custom-evaluators) in the linked guide, or contribute an string evaluator to the [LangChain repository](https://github.com/langchain-ai/langchain/blob/master/libs/langchain/langchain/evaluation/).
@@ -217,10 +217,10 @@ evaluate(
 
 Evaluating extraction and function calling applications often comes down to validating that the LLM's string output can be parsed correctly and comparing it to a reference object. The JSON evaluators provide functionality to check your model's output consistency:
 
-- The `"json_validity"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonValidityEvaluator.html#langchain.evaluation.parsing.base.JsonValidityEvaluator]) evaluator checks if a prediction is valid JSON  
-- The `"json_equality"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonEqualityEvaluator.html#langchain.evaluation.parsing.base.JsonEqualityEvaluator]) evaluator checks if a JSON prediction exactly matches a JSON reference, after normalization
-- The `"json_edit_distance"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator.html#langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator]) evaluator computes the normalized edit distance between a JSON prediction and reference 
-- The `"json_schema"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator.html#langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator]) evaluator checks if a JSON prediction satisfies a provided JSON schema
+- The `"json_validity"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonValidityEvaluator.html#langchain.evaluation.parsing.base.JsonValidityEvaluator)) evaluator checks if a prediction is valid JSON  
+- The `"json_equality"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonEqualityEvaluator.html#langchain.evaluation.parsing.base.JsonEqualityEvaluator)) evaluator checks if a JSON prediction exactly matches a JSON reference, after normalization
+- The `"json_edit_distance"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator.html#langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator)) evaluator computes the normalized edit distance between a JSON prediction and reference 
+- The `"json_schema"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator.html#langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator)) evaluator checks if a JSON prediction satisfies a provided JSON schema
 
 <CodeTabs
   tabs={[
