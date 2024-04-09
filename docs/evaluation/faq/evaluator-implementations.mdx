@@ -101,8 +101,8 @@ evaluate(
 ## Criteria Evaluators (No Labels)
 If you don't have ground truth reference labels, you can evaluate your run against a custom set of criteria using the `"criteria"` or `"score"` evaluators. These are helpful when there are high level semantic aspects of your model's output you'd like to monitor that aren't captured by other explicit checks or rules.
 
-- The `"criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.CriteriaEvalChain.html#langchain.evaluation.criteria.eval_chain.CriteriaEvalChain))instructs an LLM to assess if a prediction satisfies the given criteria, outputting a binary score
-- The `"score_string"` evaluator([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.scoring.eval_chain.ScoreStringEvalChain.html#langchain.evaluation.scoring.eval_chain.ScoreStringEvalChain)) has the LLM score the prediction on a numeric scale (default 1-10) based on how well it satisfies the criteria
+- The `"criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.CriteriaEvalChain.html#langchain.evaluation.criteria.eval_chain.CriteriaEvalChain)) instructs an LLM to assess if a prediction satisfies the given criteria, outputting a binary score
+- The `"score_string"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.scoring.eval_chain.ScoreStringEvalChain.html#langchain.evaluation.scoring.eval_chain.ScoreStringEvalChain)) has the LLM score the prediction on a numeric scale (default 1-10) based on how well it satisfies the criteria
 
 <CodeTabs
   tabs={[
