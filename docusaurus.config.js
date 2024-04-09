@@ -96,16 +96,6 @@ const config = {
         logo: {src: "img/langsmith-logo-black.svg", srcDark: 'img/langsmith-logo-white.svg'},
         items: [
           {
-            href: "https://python.langchain.com/en/latest/",
-            label: "LangChain Python Docs",
-            position: "left",
-          },
-          {
-            href: "https://js.langchain.com/docs/",
-            label: "LangChain JS/TS Docs",
-            position: "left",
-          },
-          {
             type: "search",
             position: "right",
           },
@@ -164,6 +154,16 @@ const config = {
               {
                 label: "Blog",
                 href: "https://blog.langchain.dev",
+              },
+              {
+                href: "https://python.langchain.com/en/latest/",
+                label: "LangChain Python Docs",
+                position: "left",
+              },
+              {
+                href: "https://js.langchain.com/docs/",
+                label: "LangChain JS/TS Docs",
+                position: "left",
               },
             ],
           },

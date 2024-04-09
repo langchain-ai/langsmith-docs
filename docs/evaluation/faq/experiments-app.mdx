@@ -31,16 +31,23 @@ We currently support configuring LLM-as-a-judge evaluators on datasets that will
 The process for configuring this is very similar to the process for configuring an [online evaluator](../../monitoring/faq/online_evaluation) for your tracing projects.
 
 1. **Navigate to the dataset details page** by clicking "Datasets and Testing" in the sidebar and selecting the dataset you want to configure the evaluator for.
-2. **Click on the "Add Rule" button** to add an evaluator to the dataset. This will open a modal you can use to configure the evaluator.
-![Add Rule](../static/add_rule.png)
-3. **Give your rule a name** then select "Create evaluator"
-![Create evaluator](../static/create_evaluator.png)
-4. **Set an inline prompt or load a prompt from the prompt hub** that will be used to evaluate the results of the runs in the experiment.
-Importantly, evaluator prompts must contain the following input variables:
-- `input`: the input to the target you are evaluating
-- `output`: the output of the target you are evaluating
-- `reference`: the reference output, taken from the dataset
-You can specify the scoring criteria in the "schema" field. In this example, we are asking the LLM to grade on "correctness" of the output with respect to the reference, with a boolean output of 0 or 1. The name of the field in the schema will be interpreted as the feedback key and the type will be the type of the score.
-![Evaluator prompt](../static/evaluator_prompt.png)
+2. **Click on the "Add Evaluator" button** to add an evaluator to the dataset. This will open a modal you can use to configure the evaluator.
+
+   ![Add Evaluator](../static/add_evaluator.png)
+
+3. **Give your evaluator a name** and **set an inline prompt or load a prompt from the prompt hub** that will be used to evaluate the results of the runs in the experiment. 
+
+   ![Add evaluator name and prompt](../static/create_evaluator.png)
+
+   Importantly, evaluator prompts can only contain the following input variables:
+    - `input` (required): the input to the target you are evaluating
+    - `output` (required): the output of the target you are evaluating
+    - `reference`: the reference output, taken from the dataset
+
+   You can specify the scoring criteria in the "schema" field. In this example, we are asking the LLM to grade on "correctness" of the output with respect to the reference, with a boolean output of 0 or 1. The name of the field in the schema will be interpreted as the feedback key and the type will be the type of the score.
+
+   ![Evaluator prompt](../static/evaluator_prompt.png)
+
 5. **Save the evaluator** and navigate back to the dataset details page. Each subsequent experiment run from the dataset will now be evaluated by the evaluator you configured. Note that in the below image, each run in the experiment has a "correctness" score.
-![Playground evaluator results](../static/playground_evaluator_results.png)
+
+   ![Playground evaluator results](../static/playground_evaluator_results.png)

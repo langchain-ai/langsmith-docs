@@ -285,7 +285,6 @@ def replace_dead_readme_links(content: str) -> str:
     pattern = r"\((?!http:|https:).*?(/README\.md\))"
     return re.sub(pattern, "(/)", content)
 
-
 def move_to_docs(root_path: str, destination_path: str) -> None:
     """Move all markdown files and linked images to the docs folder."""
     img_extensions = [".png", ".jpg", ".jpeg", ".gif", ".svg"]
@@ -407,7 +406,7 @@ We suggest running the code by forking or cloning the repository.
                     content = md_ipynb_pattern.sub(replace_md_ipynb_links, content)
                     content = replace_brackets(content)
                     content = replace_dead_readme_links(content)
-                    content = add_github_backlink(content)
+                    content = add_github_backlink(content).strip()
 
                     with open(dest, "w", encoding="utf-8") as md_file:
                         md_file.write(content)

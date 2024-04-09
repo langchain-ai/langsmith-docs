@@ -9,6 +9,23 @@ In this guide, you will create custom evaluators to grade your LLM system. An ev
 Most evaluators are applied on a `run` level, scoring each prediction individually.
 Some `summary_evaluators` can be applied on a `experiment` level, letting you score and aggregate metrics across multiple runs.
 
+Evaluators take in a `Run` and an `Example`:
+
+#### Run Object
+
+The key `Run` object fields are as follows:
+
+- `outputs`: `Dict[str, Any]` - The outputs of your pipeline
+- `inputs`: `Dict[str, Any]` - The inputs to your pipeline. These are the same as the inputs in the example.
+- `child_runs`: `List[Run]` - If your pipeline has nested steps, these can be accessed and used in your evaluator
+
+#### Example Object
+
+The key `Example` object fields are as follows:
+- `outputs`: `Dict[str, Any]` - The reference labels or other context found in your dataset
+- `inputs`: `Dict[str, Any]` - The inputs to your pipeline
+- `metadata`: `Dict[str, Any]` - Any other metadata you have stored in that example within the dataset
+
 ## Run Evaluators
 
 Run evaluators are applied to each prediction of your pipeline. The common automated evaluator types are:

@@ -35,6 +35,10 @@
       "destination": ":path*"
     },
     {
+      "source": "/cookbook/testing-examples/prod-candidate-testing",
+      "destination": "/cookbook/testing-examples/backtesting"
+    },
+    {
       "source": "/overview",
       "destination": "/"
     },
