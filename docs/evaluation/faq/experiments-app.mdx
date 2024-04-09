@@ -39,9 +39,9 @@ The process for configuring this is very similar to the process for configuring 
 
    ![Add evaluator name and prompt](../static/create_evaluator.png)
 
-   Importantly, evaluator prompts must contain the following input variables:
-    - `input`: the input to the target you are evaluating
-    - `output`: the output of the target you are evaluating
+   Importantly, evaluator prompts can only contain the following input variables:
+    - `input` (required): the input to the target you are evaluating
+    - `output` (required): the output of the target you are evaluating
     - `reference`: the reference output, taken from the dataset
 
    You can specify the scoring criteria in the "schema" field. In this example, we are asking the LLM to grade on "correctness" of the output with respect to the reference, with a boolean output of 0 or 1. The name of the field in the schema will be interpreted as the feedback key and the type will be the type of the score.
