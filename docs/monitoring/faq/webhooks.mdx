@@ -1,0 +1,79 @@
+# How to use webhooks with automations
+
+When you add a webhook URL on an automation action, we will make a POST request to your webhook endpoint any time the rules you defined match any new runs.
+
+## Webhook Payload
+
+The payload we send to your webhook endpoint contains
+
+- "rule_id" this is the ID of the automation that sent this payload
+- "start_time" and "end_time" these are the time boundaries where we found matching runs
+- "runs" this is an array of runs, where each run is a dictionary. If you need more information about each run we suggest using our SDK in your endpoint to fetch it from our API.
+
+This is an example webhook payload
+
+```json
+{
+  "rule_id": "d75d7417-0c57-4655-88fe-1db3cda3a47a",
+  "start_time": "2024-04-05T01:28:54.734491+00:00",
+  "end_time": "2024-04-05T01:28:56.492563+00:00",
+  "runs": [
+    {
+      "status": "success",
+      "is_root": true,
+      "trace_id": "6ab80f10-d79c-4fa2-b441-922ed6feb630",
+      "dotted_order": "20230505T051324571809Z6ab80f10-d79c-4fa2-b441-922ed6feb630",
+      "run_type": "tool",
+      "modified_at": "2024-04-05T01:28:54.145062",
+      "tenant_id": "2ebda79f-2946-4491-a9ad-d642f49e0815",
+      "end_time": "2024-04-05T01:28:54.085649",
+      "name": "Search",
+      "start_time": "2024-04-05T01:28:54.085646",
+      "id": "6ab80f10-d79c-4fa2-b441-922ed6feb630",
+      "session_id": "6a3be6a2-9a8c-4fc8-b4c6-a8983b286cc5",
+      "parent_run_ids": [],
+      "child_run_ids": null,
+      "direct_child_run_ids": null,
+      "total_tokens": 0,
+      "completion_tokens": 0,
+      "prompt_tokens": 0,
+      "total_cost": null,
+      "completion_cost": null,
+      "prompt_cost": null,
+      "first_token_time": null,
+      "app_path": "/o/2ebda79f-2946-4491-a9ad-d642f49e0815/projects/p/6a3be6a2-9a8c-4fc8-b4c6-a8983b286cc5/r/6ab80f10-d79c-4fa2-b441-922ed6feb630?trace_id=6ab80f10-d79c-4fa2-b441-922ed6feb630&start_time=2023-05-05T05:13:24.571809",
+      "in_dataset": false,
+      "last_queued_at": null,
+      "inputs": null,
+      "inputs_s3_urls": null,
+      "outputs": null,
+      "outputs_s3_urls": null,
+      "extra": null,
+      "events": null,
+      "feedback_stats": null,
+      "serialized": null,
+      "share_token": null
+    }
+  ]
+}
+```
+
+### Webhook Security
+
+We strongly recommend you add a secret query string parameter to the webhook URL, and verify it on any incoming request. This ensures that if someone discovers your webhook URL you can distinguish those calls from authentic webhookn notifications.
+
+An example would be
+
+```
+https://api.example.com/langsmith_webhook?secret=38ee77617c3a489ab6e871fbeb2ec87d
+```
+
+### Webhook Delivery
+
+When delivering events to your webhook endpoint we follow these guidelines
+
+- If we fail to connect to your endpoint, we retry the transport connection up to 2 times, before declaring the delivery failed.
+- If your endpoint takes longer than 5 seconds to reply we declare the delivery failed and do not .
+- If your endpoint returns a 5xx status code in less than 5 seconds we retry up to 2 times with exponential backoff.
+- If your endpoint returns a 4xx status code, we declare the delivery failed and do not retry.
+- If your endpoint returns any body do not read it
