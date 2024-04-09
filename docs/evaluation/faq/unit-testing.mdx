@@ -52,8 +52,6 @@ def test_sql_generation_select_all(user_query, expected_sql):
 Use `pytest`'s parametrize functionality to run the same assertions across multiple data points. For example:
 
 ```python
-import pytest
-
 @unit
 @pytest.mark.parametrize(
     "user_query, expected_sql",
