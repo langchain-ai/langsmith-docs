@@ -58,7 +58,7 @@ evaluate(
     <your pipeline>,
     data="<dataset_name>", 
     evaluators=[qa_evaluator, context_qa_evaluator, cot_qa_evaluator],
-    metadata={"project_name": "<the name to assign to this test project>"},
+    metadata={"revision_id": "the version of your pipeline you are testing"},
 )`),
   ]}
   groupId="client-language"
@@ -135,7 +135,7 @@ evaluate(
         criteria_evaluator,
         score_evaluator
     ], 
-    metadata={"project_name": "<the name to assign to this test project>"},
+    metadata={"revision_id": "the version of your pipeline you are testing"},
 )`),
   ]}
   groupId="client-language"  
@@ -207,17 +207,18 @@ evaluate(
         labeled_criteria_evaluator,
         labeled_score_evaluator
     ],
-    metadata={"project_name": "<the name to assign to this test project>"},
+    metadata={"revision_id": "the version of your pipeline you are testing"},
 )`),
   ]}
   groupId="client-language"
 />
 
 ## JSON Evaluators
+
 Evaluating extraction and function calling applications often comes down to validating that the LLM's string output can be parsed correctly and comparing it to a reference object. The JSON evaluators provide functionality to check your model's output consistency:
 
 - The `"json_validity"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonValidityEvaluator.html#langchain.evaluation.parsing.base.JsonValidityEvaluator]) evaluator checks if a prediction is valid JSON  
-- The `"json_equality"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonEqualityEvaluator.html#langchain.evaluation.parsing.base.JsonEqualityEvaluator]) evaluator checks if a JSON prediction exactly matches a JSON reference
+- The `"json_equality"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonEqualityEvaluator.html#langchain.evaluation.parsing.base.JsonEqualityEvaluator]) evaluator checks if a JSON prediction exactly matches a JSON reference, after normalization
 - The `"json_edit_distance"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator.html#langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator]) evaluator computes the normalized edit distance between a JSON prediction and reference 
 - The `"json_schema"` ((reference)[https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator.html#langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator]) evaluator checks if a JSON prediction satisfies a provided JSON schema
 
