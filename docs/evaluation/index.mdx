@@ -9,9 +9,9 @@ import ThemedImage from '@theme/ThemedImage';
 ## What are evaluations?
 
 Evaluations allow you to understand the performance of your LLM application over time. At its core, an evaluation is a function that takes in a set of inputs and outputs from your chain, agent, or model, 
-and returns a score. This score may be based on comparing the outputs with reference outputs (e.g. with string matching or using an LLM as a judge).
-However, there are also evaluators that don't require a reference output - for example, one that checks if the output is blank, which is a common failure mode in LLM applications.
-LangSmith makes it easy to seamlessly run evaluations against your application via `Datasets`, which are made up of `Examples`.
+and returns a score (or multiple scores). This score may be based on comparing the outputs with reference outputs (e.g. with string matching or using an LLM as a judge).
+However, there are also evaluators that don't require a reference output - for example, one that checks if the output is valid JSON, which is a common requirement in LLM applications.
+LangSmith lets you run evaluations against your application via `Datasets`, which are made up of `Examples`.
 
 ## Components of an evaluation pipeline
 The following diagram outlines the building blocks for evaluations in LangSmith. `Datasets` define the inputs over which you run your chain, model, or agent (the `Task`),
