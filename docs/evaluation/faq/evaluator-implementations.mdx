@@ -100,6 +100,7 @@ evaluate(
   ]}
   groupId="client-language"
 />
+
 ## Criteria with labels
 Your dataset may have ground truth labels or contextual information demonstrating an output that satisfies a criterion or prediction for a certain input. You can use criteria in context with the `"labeled_criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.LabeledCriteriaEvalChain.html)).
 <CodeTabs
@@ -176,6 +177,7 @@ evaluate(
   ]}
   groupId="client-language"
 />
+
 # String distance
 Another simple way to measure similarity is by computing a string edit distance like Levenshtein distance. You can use the `"string_distance"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.string_distance.base.StringDistanceEvalChain.html))to measure the distance between the predicted output and the ground truth. This depends on the `rapidfuzz` library.
 <CodeTabs
