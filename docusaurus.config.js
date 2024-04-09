@@ -91,9 +91,9 @@ const config = {
         theme: require("prism-react-renderer/themes/vsLight"),
         darkTheme: require("prism-react-renderer/themes/vsDark"),
       },
-      image: "img/langsmith-logo.svg",
+      image: "img/langsmith-preview.png",
       navbar: {
-        logo: {src: "img/langsmith-logo.svg"},
+        logo: {src: "img/langsmith-logo-black.svg", srcDark: 'img/langsmith-logo-white.svg'},
         items: [
           {
             href: "https://python.langchain.com/en/latest/",
