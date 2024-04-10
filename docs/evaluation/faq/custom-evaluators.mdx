@@ -115,7 +115,9 @@ def evaluate_trajectory(run: Run, example: Example) -> dict:
     return {"key": "tools", "score": score}
 ```
 
-This assumes tools are properly typed in the trace tree.
+This lets you grade the performance of intermediate steps in your pipeline.
+
+Note: the example above assumes tools are properly typed in the trace tree.
 
 #### Example 3: Structured Output
 
@@ -144,6 +146,7 @@ def faithfulness(run: Run, example: Example) -> dict:
     # Assumes your RAG app includes the prediction in the "output" key in its response
     response: str = run.outputs["output"]
     # Assumes your RAG app includes the retrieved docs as a "context" key in the outputs
+    # If not, you can fetch from the child_runs of the run object
     retrieved_docs: list = run.outputs["context"]
     formatted_docs = "\n".join([str(doc) for doc in retrieved_docs])
     extracted = extractor.invoke(response)
@@ -154,7 +157,39 @@ def faithfulness(run: Run, example: Example) -> dict:
     return {"key": "faithfulness", "score": average_score, "comment": comment}
 ```
 
-#### Example 4: Perplexity Evaluator
+#### Example 4: Returning Multiple Scores
+
+A single evaluator can return multiple scores. An example of when this might be useful is if you are using tool calling for an LLM-as-judge to extract multiple metrics in a single API call.
+
+```python
+from langsmith.schemas import Example, Run
+from langchain_openai import ChatOpenAI
+from langchain_core.pydantic_v1 import BaseModel, Field
+
+class Scores(BaseModel):
+    correctness_reasoning: str = Field(description="The reasoning for the correctness score")
+    correctness: float = Field(description="The score for the correctness of the prediction")
+    conciseness_reasoning: str = Field(description="The reasoning for the conciseness score")
+    conciseness: float = Field(description="The score for the conciseness of the prediction")
+
+scorer = ChatOpenAI(model="gpt-4-turbo-preview").with_structured_output(Scores)
+
+def multiple_scores(run: Run, example: Example) -> dict:
+    reference = example.outputs["answer"]
+    prediction = run.outputs["output"]
+
+    scores = scorer.invoke(f"Reference: {reference}\nPrediction: {prediction}")
+
+    return {
+        "results": [
+            {"key": "correctness", "score": scores.correctness, "comment": scores.correctness_reasoning},
+            {"key": "conciseness", "score": scores.conciseness, "comment": scores.conciseness_reasoning}
+        ]
+    }
+```
+
+
+#### Example 5: Perplexity Evaluator
 
 The flexibility of the functional interface means you can easly apply evaluators from any other libraries. For instance, you may want to use statistical measures such as [`perplexity`](https://huggingface.co/spaces/evaluate-metric/perplexity) to grade your run output. Below is an example using the [evaluate](https://huggingface.co/docs/evaluate/index) package by HuggingFace, which contains numerous commonly used metrics. Start by installing the `evaluate` package by running `pip install evaluate`.
 
