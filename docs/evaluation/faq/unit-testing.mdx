@@ -5,11 +5,12 @@ sidebar_position: 3
 
 # Unit Tests
 
-Unit tests for LLMs are assertions and checks designed to quickly identify obvious bugs and regressions in your AI system. These tests are typically small, fast, and cheap to run. They verify that individual components of your system work as expected.
+Unit tests for LLMs are assertions and checks designed to quickly identify obvious bugs and regressions in your AI system.
+Relative to evaluations, tests are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases. We recommend tracking any unit tests that touch an LLM or other non-deterministic part of AI system.
 
-## Writing Tests
+## Write `@unit` test
 
-To sync unit tests with LangSmith, decorate your `pytest` test functions with `@unit`. For example:
+To instruct LangSmith to track a unit test, decorate your `pytest` test functions with `@unit`. For example:
 
 ```python
 from langsmith import unit, traceable
@@ -17,6 +18,7 @@ from langsmith import unit, traceable
 @traceable
 def generate_sql(user_query):
     # Replace with your SQL generation logic
+    # e.g., my_llm(my_prompt.format(user_query))
     return "SELECT * FROM customers"
 
 @unit
@@ -26,10 +28,25 @@ def test_sql_generation_select_all():
     assert sql == "SELECT * FROM customers"
 ```
 
-Any time you run this test suite (e.g., using `pytest`), LangSmith will track it as a new `experiment` and log the test result as `pass` feedback (1 for pass, 0 for fail).
+## Run tests
+
+To run your tests, use the `pytest` (or your preferred test provider) command in your terminal . For example:
+
+```bash
+pytest tests/
+```
+
+Each time you run this test suite, LangSmith will collect the test suite results as a new `experiment`, logging the `pass` rate (1 for pass, 0 for fail) over all the applicable tests.
+
 Each test case is synced as an `example` to a corresponding dataset in LangSmith.
 
-`@unit` works well with `pytest` fixtures. The input For example:
+## Going Further
+
+`@unit` is designed to stay out of your way and works well with familiar `pytest` features. For example:
+
+#### Defining inputs as fixtures
+
+Test case inputs defined as `pytest` fixtures are automatically synced to LangSmith. For example:
 
 ```python
 import pytest
@@ -43,11 +60,14 @@ def expected_sql():
     return "SELECT * FROM customers"
 
 # output_keys indicate which test arguments to save as 'outputs' in the dataset (Optional)
+# Otherwise, all arguments are saved as 'inputs'
 @unit(output_keys=["expected_sql"])
 def test_sql_generation_with_fixture(user_query, expected_sql):
     sql = generate_sql(user_query)
     assert sql == expected_sql
 ```
+
+#### Parametrizing tests
 
 Use `pytest`'s parametrize functionality to run the same assertions across multiple data points. For example:
 
@@ -65,22 +85,45 @@ def test_sql_generation_parametrized(user_query, expected_sql):
     assert sql == expected_sql
 ```
 
-## Running Tests
+**Note:** as the parametrized list grows, you may consider using `evaluate()` instead. This parallelizes the evaluation and makes it easier to control individual experiments and the corresponding dataset.
 
-To run your tests, use the `pytest` command in your terminal. For example:
+#### Caching
+
+LLMs on every commit in CI can get expensive. To save time and resources, LangSmith lets you cache results to disk. Any identical inputs will be loaded from the cache so you don't have to call out to your LLM provider unless theere are changes to the model, prompt, or retrieved data.
+
+To enable caching, run with `LANGCHAIN_TEST_CACHE=/my/cache/path`. For example:
 
 ```bash
-pytest tests/
+LANGCHAIN_TEST_CACHE=tests/cassettes pytest tests/my_llm_tests
+```
+
+All requests will be cached to `tests/cassettes` and loaded from there on subsequent runs. If you check this in to your repository, your CI will be able to use the cache as well.
+
+#### Using `watch` mode
+
+With caching enabled, you can iterate quickly on your tests using `watch` mode without worrying about unnecessarily hitting your LLM provider. For example, using `[pytest-watch](https://pypi.org/project/pytest-watch/)`:
+
+```bash
+LANGCHAIN_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests
 ```
 
 All decorated test functions will be executed and logged to LangSmith under a dataset named after your package or github repository and a new `TestSuite` experiment.
 
 ![Unit Test Example](../static/unit-test-suite.png)
 
+## Dry-run mode
+
+If you want to run the tests without syncing the results to LangSmith, you can set `LANGCHAIN_TEST_TRACKING=false` in your environment.
+
+```bash
+LANGCHAIN_TEST_TRACKING=false pytest tests/
+```
+
+The tests will run as normal, but the experiment logs will not be sent to LangSmith.
+
 ## Conclusion
 
 Unit testing is a fast way to catch simple bugs and regressions in your AI system, especially when you want to add specific checks on a small number of test cases. They are an easy starting point to use when you are just starting out if you don't have time to commit to more comprehensive evaluation approaches.
-
 
 :::note
 `@unit` is currently only supported in python version `>=0.1.42`. If you are interested in unit testing functionality in TypeScript or other languages, please let us know at [support@langchain.dev](mailto:support@langchain.dev).
