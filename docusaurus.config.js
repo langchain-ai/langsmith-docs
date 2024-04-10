@@ -9,13 +9,13 @@ require("dotenv").config();
 const config = {
   title: "🦜️🛠️ LangSmith",
   tagline: "LangSmith",
-  favicon: "img/favicon.ico",
+  favicon: "img/favicon.png",
   customFields: {
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
     supabasePublicKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,
   },
   // Set the production url of your site here
-  url: "https://smith.langchain.com/", // TODO: also make configurable with dev deployment
+  url: "https://docs.smith.langchain.com/", // TODO: also make configurable with dev deployment
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/",
@@ -91,9 +91,9 @@ const config = {
         theme: require("prism-react-renderer/themes/vsLight"),
         darkTheme: require("prism-react-renderer/themes/vsDark"),
       },
-      image: "img/langsmith-logo.svg",
+      image: "img/langsmith-preview.png",
       navbar: {
-        title: "🦜️🛠️ LangSmith Docs",
+        logo: {src: "img/langsmith-logo-black.svg", srcDark: 'img/langsmith-logo-white.svg'},
         items: [
           {
             type: "search",
