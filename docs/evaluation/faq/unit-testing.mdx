@@ -5,22 +5,34 @@ sidebar_position: 3
 
 # Unit Tests
 
-Unit tests for LLMs are assertions and checks designed to **quickly** identify obvious bugs and regressions in your AI system. Relative to evaluations, tests are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases. 
+LangSmith unit tests are assertions and expectations designed to **quickly** identify obvious bugs and regressions in your AI system.  Relative to evaluations, tests are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases. 
 We recommend using LangSmith to track any unit tests that touch an LLM or other non-deterministic part of your AI system.
 
-## Write `@unit` test
+:::note
+`@unit` currently requires `langsmith` python version `>=0.1.42`. If you are interested in unit testing functionality in TypeScript or other languages, please let us know at [support@langchain.dev](mailto:support@langchain.dev).  
+:::
 
-To instruct LangSmith to track a unit test, decorate your `pytest` test functions with `@unit`.
-If you want to  track the full nested trace of the system being testsed, you can mark those functions with `@traceable`. For example:
+## Write @unit test
+
+To write a LangSmith unit test, decorate your test function with `@unit`.
+If you want to  track the full nested trace of the system or component being tested, you can mark those functions with `@traceable`. For example:
 
 ```python
-from langsmith import unit, traceable
-
-@traceable  
+# my_app/main.py
+from langsmith import traceable
+@traceable # Optional
 def generate_sql(user_query):
     # Replace with your SQL generation logic
     # e.g., my_llm(my_prompt.format(user_query))
     return "SELECT * FROM customers"
+```
+
+Then define your unit test:
+
+```python tests/test_my_app.py
+# tests/test_my_app.py
+from langsmith import unit
+from my_app.main import generate_sql
 
 @unit
 def test_sql_generation_select_all():
@@ -31,13 +43,13 @@ def test_sql_generation_select_all():
 
 ## Run tests
 
-To run your tests, use the `pytest` (or your preferred test provider) command in your terminal. For example:
+You can use a standard unit testing framework such as `pytest` ([docs](https://docs.pytest.org/en/7.1.x/contents.html)) to run. For example:
 
 ```bash
 pytest tests/
 ```
 
-Each time you run this test suite, LangSmith will collect the test suite results as a new `TestSuiteResult`, logging the `pass` rate (1 for pass, 0 for fail) over all the applicable tests.
+Each time you run this test suite, LangSmith collects the pass/fail rate and other traces as a new `TestSuiteResult`, logging the `pass` rate (1 for pass, 0 for fail) over all the applicable tests.
 
 The test suite syncs to a corresponding dataset named after your package or github repository.
 
@@ -121,11 +133,3 @@ With caching enabled, you can iterate quickly on your tests using `watch` mode w
 pip install pytest-watch
 LANGCHAIN_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests  
 ```
-
-## Conclusion
-
-Unit testing with LangSmith is a quick and effective way to catch bugs and regressions in your AI system. By instrumenting your test functions with `@unit`, you can automatically track test results as experiments, monitor performance on specific test cases, and catch issues before they make it to production. Tests are fast and cheap to write, making them an ideal starting point for teams that want to begin systematically testing their LLMs without a huge upfront investment. Try adding LangSmith to your test suite today and start gaining visibility into your model's behavior.
-
-:::note
-`@unit` is currently only supported in python version `>=0.1.42`. If you are interested in unit testing functionality in TypeScript or other languages, please let us know at [support@langchain.dev](mailto:support@langchain.dev).  
-:::
