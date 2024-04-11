@@ -118,7 +118,7 @@ def test_sql_generation_select_all():
 
 This will log the binary "expectation" score to the experiment results, additionally `assert`ing that the expectation is met possibly triggering a test failure.
 
-`expect` also exposes a couple handy "fuzzy match" methods. For example:
+`expect` also provides "fuzzy match" methods. For example:
 
 ```python
 @unit
@@ -134,12 +134,11 @@ def test_embedding_similarity(query, expectation):
         # This step logs the distance as feedback for this run
         prediction=prediction, expectation=expectation
     # Adding a matcher (in this case, 'to_be_*"), logs 'expectation' feedback
-    # This is optional
-    ).to_be_less_than(0.5)
+    ).to_be_less_than(0.5) # Optional predicate to assert against
     expect.edit_distance(
-        # This computes the Damerau-Levenshtein distance between the two strings
+        # This computes the normalized Damerau-Levenshtein distance between the two strings
         prediction=prediction, expectation=expectation
-    # I didn't add a matcher here, meaning no `assert` will be triggered
+    # If no predicate is provided below, 'assert' isn't called, but the score is still logged
     )
 ```
 
