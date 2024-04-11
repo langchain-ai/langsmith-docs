@@ -150,6 +150,8 @@ This test case will be assigned 4 scores:
 3. The `edit_distance` between the prediction and the expectation
 4. The overall test pass/fail score (binary)
 
+The `expect` utility is modeled off of [Jest](https://jestjs.io/docs/expect)'s expect API, with some off-the-shelf functionality to make it easier to grade your LLMs.
+
 #### Dry-run mode
 
 If you want to run the tests without syncing the results to LangSmith, you can set `LANGCHAIN_TEST_TRACKING=false` in your environment.
