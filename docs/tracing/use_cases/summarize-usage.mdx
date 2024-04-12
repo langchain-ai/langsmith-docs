@@ -10,7 +10,7 @@ cluster and summarize how people are using an application so you can build a bet
 
 In this example, you will perform simple k-means clustering and an LLM call to summarize logged user activity.
 
-## Prerequisites 
+## Prerequisites
 
 This example assumes you've configured your environment to connect to LangSmith.
 
@@ -112,13 +112,13 @@ chain = (
     _truncate_inputs
     | prompt
     | ChatAnthropic(
-        model="claude-2", 
+        model="claude-2",
         temperature=1,
         max_tokens_to_sample=1000,
     )
     | StrOutputParser()
 )
-    
+
 input_arr = np.array(sampled)
 batch_inputs = [
     input_arr[kmeans.labels_ == i] for i in range(n_clusters)
@@ -130,6 +130,6 @@ for summary in summaries:
 
 Congratulations! You have now clustered and summarized user activity for an application.
 
-This is just a simple example of how to use LangChain to analyze your application logs. You will likely 
+This is just a simple example of how to use LangChain to analyze your application logs. You will likely
 want to combine this with other techniques, such as [run filtering](/tracing/faq/querying_traces) to select relevant
 examples. You can also update the prompt to ask more targed questions or to provide additional context.

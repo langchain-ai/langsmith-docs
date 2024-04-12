@@ -2,6 +2,7 @@
 sidebar_label: How to create custom evaluators
 sidebar_position: 1
 ---
+
 # Evaluators
 
 In this guide, you will create custom evaluators to grade your LLM system. An evaluator can apply any logic you want, returning a numeric `score` associated with a `key`.
@@ -22,6 +23,7 @@ The key `Run` object fields are as follows:
 #### Example Object
 
 The key `Example` object fields are as follows:
+
 - `outputs`: `Dict[str, Any]` - The reference labels or other context found in your dataset
 - `inputs`: `Dict[str, Any]` - The inputs to your pipeline
 - `metadata`: `Dict[str, Any]` - Any other metadata you have stored in that example within the dataset
@@ -49,12 +51,11 @@ def exact_match(run: Run, example: Example) -> dict:
     return {"key": "exact_match", "score": score}
 ```
 
-
 Let's break this down:
+
 - The evaluator function accepts a `Run` and `Example` and returns a dictionary with the evaluation key and score. The run contains the full trace of your pipeline, and the example contains the inputs and outputs for this data point. If your dataset contains labels, they are found in the `example.outputs` dictionary, which is kept separate to keep your model from cheating.
 - In our dataset, the outputs have an "answer" key that contains the reference answer. Your pipeline generates predictions as a dictionary with an "output" key.
 - It compares the prediction and reference (case-insensitive) and returns a dictionary with the evaluation key and score.
-
 
 You can use this evaluator directly in the `evaluate` function:
 
@@ -67,7 +68,6 @@ evaluate(
     evaluators=[exact_match],
 )
 ```
-
 
 #### Example 2: Parametrizing your evaluator
 
@@ -181,6 +181,7 @@ class PerplexityEvaluator:
 ```
 
 Let's break down what the `PerplexityEvaluator` is doing:
+
 - **Initialize**: In the constructor, we're setting up a few properties that will be needed later on.
   - `prediction_key`: The key to find the model's prediction in the outputs of a run.
   - `model_id`: The ID of the language model you want to use to compute the metric. In our example, we are using 'gpt-2'.
@@ -188,7 +189,7 @@ Let's break down what the `PerplexityEvaluator` is doing:
 - **Evaluate**: This method takes a run (and optionally an example) and returns an evaluation dictionary.
   - If the run outputs are `None`, the evaluator raises an error.
   - Otherwise, the outputs are passed to the `metric_fn` to compute the perplexity. The perplexity score is then returned as part of the evaluation dictionary.
-Once you've defined your evaluators, you can use them to evaluate your model:
+    Once you've defined your evaluators, you can use them to evaluate your model:
 
 ```python
 from langsmith.evaluation import evaluate
@@ -225,7 +226,7 @@ def f1_score_summary_evaluator(runs: List[Run], examples: List[Example]) -> dict
             false_negatives += 1
     if true_positives == 0:
         return {"key": "f1_score", "score": 0.0}
-    
+
     precision = true_positives / (true_positives + false_positives)
     recall = true_positives / (true_positives + false_negatives)
     f1_score = 2 * (precision * recall) / (precision + recall)
@@ -246,6 +247,7 @@ evaluate(
 Congratulations! You created a custom evaluation chain you can apply to _any_ traced run so you can surface more relevant information in your application.
 LangChain's evaluation chains speed up the development process for application-specific, semantically robust evaluations.
 You can also extend existing components from the library so you can focus on building your product. All your evals come with:
+
 - Automatic tracing integrations to help you debug, compare, and improve your code
 - Easy sharing and mixing of components and results
 - Out-of-the-box support for sync and async evaluations for faster runs

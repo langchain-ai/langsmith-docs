@@ -1,6 +1,6 @@
 ---
 sidebar_label: How to list datasets from the client
-sidebar_position: 4 
+sidebar_position: 4
 ---
 
 import {
@@ -11,6 +11,7 @@ import {
 } from "@site/src/components/InstructionsWithCode";
 
 # How to list datasets from the client
+
 You can programmatically fetch the datasets from LangSmith using the `list_datasets` method in the client. Below are some common examples:
 
 ### Query all datasets
@@ -29,8 +30,12 @@ If you want to search by the exact name, you can do the following:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`datasets = client.list_datasets(dataset_name="My Test Dataset 1")`),
-    TypeScriptBlock(`const datasets = await client.listDatasets({datasetName: "My Test Dataset 1"});`),
+    PythonBlock(
+      `datasets = client.list_datasets(dataset_name="My Test Dataset 1")`
+    ),
+    TypeScriptBlock(
+      `const datasets = await client.listDatasets({datasetName: "My Test Dataset 1"});`
+    ),
   ]}
   groupId="client-language"
 />
@@ -39,8 +44,12 @@ If you want to do a case-invariant substring search, try the following:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`datasets = client.list_datasets(dataset_name_contains="some substring")`),
-    TypeScriptBlock(`const datasets = await client.listDatasets({datasetNameContains: "some substring"});`),
+    PythonBlock(
+      `datasets = client.list_datasets(dataset_name_contains="some substring")`
+    ),
+    TypeScriptBlock(
+      `const datasets = await client.listDatasets({datasetNameContains: "some substring"});`
+    ),
   ]}
   groupId="client-language"
 />
@@ -52,7 +61,9 @@ You can filter datasets by type. Below is an example querying for chat datasets.
 <CodeTabs
   tabs={[
     PythonBlock(`datasets = client.list_datasets(data_type="chat")`),
-    TypeScriptBlock(`const datasets = await client.listDatasets({dataType: "chat"});`),
+    TypeScriptBlock(
+      `const datasets = await client.listDatasets({dataType: "chat"});`
+    ),
   ]}
   groupId="client-language"
 />

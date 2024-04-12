@@ -233,28 +233,25 @@ The [Vercel AI SDK](https://sdk.vercel.ai/docs) contains integrations with a var
 Here's an example of how you can trace outputs in a Next.js handler:
 
 ```ts
-import { traceable } from 'langsmith/traceable';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
+import { traceable } from "langsmith/traceable";
+import { OpenAIStream, StreamingTextResponse } from "ai";
 
 // Note: There are no types for the Mistral API client yet.
-import MistralClient from '@mistralai/mistralai';
+import MistralClient from "@mistralai/mistralai";
 
-const client = new MistralClient(process.env.MISTRAL_API_KEY || '');
+const client = new MistralClient(process.env.MISTRAL_API_KEY || "");
 
 export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const { messages } = await req.json();
 
-  const mistralChatStream = traceable(
-    client.chatStream.bind(client),
-    {
-      name: "Mistral Stream",
-      run_type: "llm",
-    }
-  );
+  const mistralChatStream = traceable(client.chatStream.bind(client), {
+    name: "Mistral Stream",
+    run_type: "llm",
+  });
 
   const response = await mistralChatStream({
-    model: 'mistral-tiny',
+    model: "mistral-tiny",
     maxTokens: 1000,
     messages,
   });

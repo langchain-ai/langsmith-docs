@@ -126,7 +126,7 @@ await chain.invoke(
   },
   { callbacks: [tracer] }
 );
-`)
+`),
   ]}
   groupId="client-language"
 />
@@ -315,7 +315,7 @@ configured_chain.invoke({"query": "What is the meaning of life?"})`),
 ...
 const configuredChain = chain.withConfig({ runName: "MyCustomChain" });
 await configuredChain.invoke({query: "What is the meaning of life?"});
-`)
+`),
   ]}
   groupId="client-language"
 />
@@ -344,11 +344,11 @@ LANGCHAIN_HIDE_OUTPUTS=true
 
 This works for both the LangSmith SDK and LangChain.
 
-You can also customize and override this behavior for a given Client instance.  This can be done by setting the `hide_inputs` and `hide_outputs` parameters on the `Client` object.
+You can also customize and override this behavior for a given Client instance. This can be done by setting the `hide_inputs` and `hide_outputs` parameters on the `Client` object.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`import openai
+  tabs={[
+    PythonBlock(`import openai
 from langsmith import Client
 from langsmith.wrappers import wrap_openai\n
 openai_client = wrap_openai(openai.Client())
@@ -403,7 +403,7 @@ const langsmithClient = new Client({
   });
 })();
 `),
-LangChainPyBlock(`from langchain_core.tracers.context import tracing_v2_enabled
+    LangChainPyBlock(`from langchain_core.tracers.context import tracing_v2_enabled
 from langchain_openai import ChatOpenAI
 from langsmith import Client\n\n
 def filter_inputs(inputs: dict):
@@ -427,7 +427,7 @@ with tracing_v2_enabled("test-filtering", client=Client()) as cb:
     # The linked run will not have hidden inputs and outputs
     print(cb.get_run_url())
 `),
-        LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
+    LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";
 import { Client} from "langsmith";\n
 (async () => {
@@ -444,6 +444,6 @@ import { Client} from "langsmith";\n
     await llm.invoke("Say bar", { callbacks: [unfilteredTracer] });
 })();
 `),
-]}
-groupId="client-language"
+  ]}
+  groupId="client-language"
 />
