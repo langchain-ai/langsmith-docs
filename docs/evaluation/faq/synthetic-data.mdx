@@ -1,11 +1,11 @@
 ---
-sidebar_label: Synthetic Data for Evaluation 
+sidebar_label: Synthetic Data for Evaluation
 sidebar_position: 8
 ---
 
 # Synthetic Data for Evaluation
 
-When prototyping a system, you may not have enough real data to thoroughly evaluate how the component will behave. This guide will walk you through two techniques for generating synthetic data to augment your dataset: 
+When prototyping a system, you may not have enough real data to thoroughly evaluate how the component will behave. This guide will walk you through two techniques for generating synthetic data to augment your dataset:
 
 1. **Paraphrasing Existing Inputs**: Generate semantically similar variations of your existing examples to test your system's consistency.
 
@@ -47,7 +47,7 @@ prompt_template = ChatPromptTemplate.from_messages(
             "You are a helpful paraphrasing assistant tasked with rephrasing text."
         ),
         ("system", "Input: <INPUT>{query}</INPUT>"),
-        ("user", 
+        ("user",
             "What are {n_paraphrases} different ways you could paraphrase the INPUT text?"
             " Do not significantly change the meaning."
             " Respond using numbered bullets. If you cannot think of any,"

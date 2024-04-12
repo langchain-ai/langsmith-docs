@@ -8,7 +8,7 @@ export function LangChainPyBlock(content) {
     value: "langchain-py",
     label: "LangChain (Python)",
     content: content,
-    language: "python"
+    language: "python",
   };
 }
 
@@ -17,17 +17,16 @@ export function LangChainJSBlock(content) {
     value: "langchain-js",
     label: "LangChain (JS)",
     content: content,
-    language: "typescript"
+    language: "typescript",
   };
 }
-
 
 export function TypeScriptBlock(content) {
   return {
     value: "typescript",
     label: "TypeScript SDK",
     content: content,
-    language: "typescript"
+    language: "typescript",
   };
 }
 
@@ -36,7 +35,7 @@ export function PythonBlock(content) {
     value: "python",
     label: "Python SDK",
     content: content,
-    language: "python"
+    language: "python",
   };
 }
 
@@ -45,7 +44,7 @@ export function APIBlock(content) {
     value: "api",
     label: "API (Using Python Requests)",
     content: content,
-    language: "python"
+    language: "python",
   };
 }
 

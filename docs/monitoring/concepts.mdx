@@ -10,12 +10,15 @@ In this guide we will go over some of the concepts that are important to underst
 A lot of these concepts build off of tracing concepts - it is recommended to read the [Tracing Concepts](/tracing/concepts) documentation before.
 
 ## Runs
+
 A `Run` is a span representing a single unit of work or operation within your LLM application. This could be anything from single call to an LLM or chain, to a prompt formatting call, to a runnable lambda invocation. If you are familiar with [OpenTelemetry](https://opentelemetry.io/), you can think of a run as a span.
 
 ## Traces
+
 A `Trace` is a collection of runs that are related to a single operation. For example, if you have a user request that triggers a chain, and that chain makes a call to an LLM, then to an output parser, and so on, all of these runs would be part of the same trace. If you are familiar with [OpenTelemetry](https://opentelemetry.io/), you can think of a LangSmith trace as a collection of spans. Runs are bound to a trace by a unique trace ID.
 
 ## Filter
+
 A `Filter` is a rule that applies to all runs in a project. The default filter you see on the main page selects only top-level runs (`IsRoot` is `true`) but you can filter for sub-runs as well.
 
 You can even filter for runs that are part of a trace with a particular attribute, for example filtering for runs with name `"ChatOpenAI"` that are part of a trace with `user_score` equal to 0.

@@ -28,7 +28,6 @@ From there, we select the dataset to organize it in and update the ground truth 
 
 ![Modify example](../static/modify_example.png)
 
-
 ### Upload a CSV
 
 The easiest way to create a dataset from your own data is by clicking the 'upload a CSV dataset' button on the home page or in the top right-hand corner of the 'Datasets & Testing' page.
@@ -51,7 +50,6 @@ To do so, select a dataset, click on "Examples", and then click the "Export Data
 This will open a modal where you can select the format you want to export to.
 
 ![Export Dataset Modal](../static/export-dataset-modal.png)
-
 
 ## How to manage datasets programmatically
 
@@ -268,8 +266,12 @@ If you want to search by the exact name, you can do the following:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`datasets = client.list_datasets(dataset_name="My Test Dataset 1")`),
-    TypeScriptBlock(`const datasets = await client.listDatasets({datasetName: "My Test Dataset 1"});`),
+    PythonBlock(
+      `datasets = client.list_datasets(dataset_name="My Test Dataset 1")`
+    ),
+    TypeScriptBlock(
+      `const datasets = await client.listDatasets({datasetName: "My Test Dataset 1"});`
+    ),
   ]}
   groupId="client-language"
 />
@@ -278,8 +280,12 @@ If you want to do a case-invariant substring search, try the following:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`datasets = client.list_datasets(dataset_name_contains="some substring")`),
-    TypeScriptBlock(`const datasets = await client.listDatasets({datasetNameContains: "some substring"});`),
+    PythonBlock(
+      `datasets = client.list_datasets(dataset_name_contains="some substring")`
+    ),
+    TypeScriptBlock(
+      `const datasets = await client.listDatasets({datasetNameContains: "some substring"});`
+    ),
   ]}
   groupId="client-language"
 />
@@ -291,16 +297,16 @@ You can filter datasets by type. Below is an example querying for chat datasets.
 <CodeTabs
   tabs={[
     PythonBlock(`datasets = client.list_datasets(data_type="chat")`),
-    TypeScriptBlock(`const datasets = await client.listDatasets({dataType: "chat"});`),
+    TypeScriptBlock(
+      `const datasets = await client.listDatasets({dataType: "chat"});`
+    ),
   ]}
   groupId="client-language"
 />
 
-
 ## List Examples from the client
 
 Once you have a dataset created, you may want to download the examples. You can fetch dataset examples using the `list_examples` method on the LangSmith client. Below are some common calls:
-
 
 ### List all examples for a dataset
 
@@ -308,8 +314,12 @@ You can filter by dataset ID:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`examples = client.list_examples(dataset_id="c9ace0d8-a82c-4b6c-13d2-83401d68e9ab")`),
-    TypeScriptBlock(`const examples = await client.listExamples({datasetId: "c9ace0d8-a82c-4b6c-13d2-83401d68e9ab"});`),
+    PythonBlock(
+      `examples = client.list_examples(dataset_id="c9ace0d8-a82c-4b6c-13d2-83401d68e9ab")`
+    ),
+    TypeScriptBlock(
+      `const examples = await client.listExamples({datasetId: "c9ace0d8-a82c-4b6c-13d2-83401d68e9ab"});`
+    ),
   ]}
   groupId="client-language"
 />
@@ -318,8 +328,12 @@ Or you can filter by dataset name (this must exactly match the dataset name you 
 
 <CodeTabs
   tabs={[
-    PythonBlock(`examples = client.list_examples(dataset_name="My Test Dataset")`),
-    TypeScriptBlock(`const examples = await client.listExamples({datasetName: "My test Dataset"});`),
+    PythonBlock(
+      `examples = client.list_examples(dataset_name="My Test Dataset")`
+    ),
+    TypeScriptBlock(
+      `const examples = await client.listExamples({datasetName: "My test Dataset"});`
+    ),
   ]}
   groupId="client-language"
 />
