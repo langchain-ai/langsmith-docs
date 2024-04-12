@@ -344,11 +344,11 @@ LANGCHAIN_HIDE_OUTPUTS=true
 
 This works for both the LangSmith SDK and LangChain.
 
-You can also customize and override this behavior for a given Client instance.  This can be done by setting the `hide_inputs` and `hide_outputs` parameters on the `Client` object.
+You can also customize and override this behavior for a given Client instance. This can be done by setting the `hide_inputs` and `hide_outputs` parameters on the `Client` object.
 
 <CodeTabs
-    tabs={[
-        LangChainPyBlock(`from langchain_core.tracers.context import tracing_v2_enabled
+  tabs={[
+    LangChainPyBlock(`from langchain_core.tracers.context import tracing_v2_enabled
 from langchain_openai import ChatOpenAI
 from langsmith import Client\n\n
 def filter_inputs(inputs: dict):
@@ -372,7 +372,7 @@ with tracing_v2_enabled("test-filtering", client=Client()) as cb:
     # The linked run will not have hidden inputs and outputs
     print(cb.get_run_url())
 `),
-        LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
+    LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";
 import { Client} from "langsmith";\n
 (async () => {
@@ -389,7 +389,7 @@ import { Client} from "langsmith";\n
     await llm.invoke("Say bar", { callbacks: [unfilteredTracer] });
 })();
 `),
-        PythonBlock(`import openai
+    PythonBlock(`import openai
 from langsmith import Client
 from langsmith.wrappers import wrap_openai\n
 openai_client = wrap_openai(openai.Client())
@@ -444,6 +444,6 @@ const langsmithClient = new Client({
   });
 })();
 `),
-]}
-groupId="client-language"
+  ]}
+  groupId="client-language"
 />

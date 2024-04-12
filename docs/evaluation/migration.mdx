@@ -11,7 +11,6 @@ This guide will walk you through the process of migrating your existing code fro
 
 ## Key Differences
 
-
 #### 1. `llm_or_chain_factory` -> first positional argument
 
 The "thing you are evaluating" (pipeline, target, model, chain, agent, etc.) is **always** the first positional argument and **always** has the following signature:
@@ -45,7 +44,6 @@ results = evaluate(
 
 ```
 
-
 #### 3. `RunEvalConfig` -> `List[RunEvaluator]`
 
 The config has been deprecated (removing the LangChain dependency). Instead, directly provide a list of evaluators to the `evaluators` argument.
@@ -67,7 +65,7 @@ evaluate(
 ```
 
 Anything that subclasses `RunEvaluator` still works as they did before, we just will automatically promote your compatible functions to `RunEvaluator` instances.
-    
+
     b. `LangChain` evaluators can be incorporated using the `LangChainStringEvaluator` wrapper.
 
 For example, if you were previously using the "Criteria" evaluator, this evaluation:
@@ -94,15 +92,15 @@ evaluators=[
         config={
             "criteria": {
                 "usefulness": "The prediction is useful if...",
-            }, 
+            },
             "llm": my_eval_llm,
         },
     ),
 ]
 ```
 
-   c. For evaluating multi-key datasets using off-the-shelf LangChain evaluators, replace any `input_key`, `reference_key`, `prediction_key` with a custom `prepare_data` function.
-   
+c. For evaluating multi-key datasets using off-the-shelf LangChain evaluators, replace any `input_key`, `reference_key`, `prediction_key` with a custom `prepare_data` function.
+
 If your dataset has a single key for the inputs and reference answer, and if your target pipeline returns a response in a single key, the evaluators can automatically use these responses directly without any additional configuration.
 
 For multi-key datasets, you must explain which values to use for the model prediction, (and optionally for the expected answer and/or inputs). This is done by providing a `prepare_data` function that converts a run and example to a dictionary of {"input": ..., "prediction": ..., "reference": ...}.
@@ -124,8 +122,7 @@ qa_evaluator = LangChainStringEvaluator(
 )
 ```
 
-
-#### 4. `batch_evaluators` -> `summary_evaluators`. 
+#### 4. `batch_evaluators` -> `summary_evaluators`.
 
 These let you compute custom metrics over the whole dataset. For example, precision:
 
@@ -133,13 +130,13 @@ These let you compute custom metrics over the whole dataset. For example, precis
 def precision(runs: List[Run], examples: List[Example]) -> dict:
     """Calculate the precision of the runs."""
     expected = [example.outputs["answer"] for example in examples]
-    predicted = [run.outputs["output"] for run in runs] 
+    predicted = [run.outputs["output"] for run in runs]
     tp = sum([p == e for p, e in zip(predictions, expected) if p == "yes"])
     fp = sum([p == "yes" and e == "no" for p, e in zip(predictions, expected)])
     return {"score": tp / (tp + fp), "key": "precision"}
 ```
 
-#### 5. `project_metadata` -> `metadata`. 
+#### 5. `project_metadata` -> `metadata`.
 
 #### 6. `project_name` -> `experiment_prefix`.
 
@@ -178,7 +175,7 @@ def predict(inputs: dict):
     return my_pipeline.invoke(inputs)
 ```
 
-####4.  If you were using LangChain evaluators, wrap them with `LangChainStringEvaluator`:
+####4. If you were using LangChain evaluators, wrap them with `LangChainStringEvaluator`:
 
 ```python
 from langsmith.evaluation import LangChainStringEvaluator

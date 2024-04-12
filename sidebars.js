@@ -104,6 +104,6 @@ module.exports = {
         description:
           "Learn from hands-on code examples using LangSmith Cookbook.",
       },
-    }
+    },
   ],
 };

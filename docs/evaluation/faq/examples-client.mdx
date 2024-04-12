@@ -1,6 +1,6 @@
 ---
 sidebar_label: How to list datapoints from the client
-sidebar_position: 5 
+sidebar_position: 5
 ---
 
 import {
@@ -14,15 +14,18 @@ import {
 
 Once you have a dataset created, you may want to download the examples. You can fetch dataset examples using the `list_examples` method on the LangSmith client. Below are some common calls:
 
-
 ### List all examples for a dataset
 
 You can filter by dataset ID:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`examples = client.list_examples(dataset_id="c9ace0d8-a82c-4b6c-13d2-83401d68e9ab")`),
-    TypeScriptBlock(`const examples = await client.listExamples({datasetId: "c9ace0d8-a82c-4b6c-13d2-83401d68e9ab"});`),
+    PythonBlock(
+      `examples = client.list_examples(dataset_id="c9ace0d8-a82c-4b6c-13d2-83401d68e9ab")`
+    ),
+    TypeScriptBlock(
+      `const examples = await client.listExamples({datasetId: "c9ace0d8-a82c-4b6c-13d2-83401d68e9ab"});`
+    ),
   ]}
   groupId="client-language"
 />
@@ -31,8 +34,12 @@ Or you can filter by dataset name (this must exactly match the dataset name you 
 
 <CodeTabs
   tabs={[
-    PythonBlock(`examples = client.list_examples(dataset_name="My Test Dataset")`),
-    TypeScriptBlock(`const examples = await client.listExamples({datasetName: "My test Dataset"});`),
+    PythonBlock(
+      `examples = client.list_examples(dataset_name="My Test Dataset")`
+    ),
+    TypeScriptBlock(
+      `const examples = await client.listExamples({datasetName: "My test Dataset"});`
+    ),
   ]}
   groupId="client-language"
 />

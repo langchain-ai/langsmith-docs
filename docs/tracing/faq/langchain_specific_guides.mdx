@@ -1,21 +1,18 @@
 ---
 sidebar_label: LangChain-Specific Guides
-sidebar_position: 6 
+sidebar_position: 6
 ---
 
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
-    LangChainPyBlock,
-    LangChainJSBlock,
-    APIBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+  LangChainPyBlock,
+  LangChainJSBlock,
+  APIBlock,
 } from "@site/src/components/InstructionsWithCode";
 
-import {
-    AccessRunIdBlock
-} from "@site/src/components/TracingFaq";
-
+import { AccessRunIdBlock } from "@site/src/components/TracingFaq";
 
 # LangChain-specific guides
 
@@ -29,8 +26,8 @@ With chatbots, copilots, and other common LLM design patterns, users frequently 
 Below is a minimal example with LangChain, but **the same idea applies when using the LangSmith SDK or API.**
 
 <CodeTabs
-    tabs={[
-        LangChainPyBlock(`from langchain_core.messages import AIMessage, HumanMessage
+  tabs={[
+    LangChainPyBlock(`from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI\n
@@ -79,7 +76,7 @@ for chunk in chain.stream(
     print(chunk, end="")
     response += chunk
 `),
-        LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
+    LangChainJSBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";\n
 const prompt = ChatPromptTemplate.fromMessages([
@@ -121,8 +118,8 @@ for await (const chunk of await chain.stream(
   process.stdout.write(chunk);
   response += chunk;
 }`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 To view all the traces from that conversation in LangSmith, you can query the project using a metadata filter:
@@ -149,8 +146,8 @@ Some situations don't permit the use of environment variables or don't expose `p
 Example:
 
 <CodeTabs
-    tabs={[
-        LangChainPyBlock(`from langchain.callbacks import LangChainTracer
+  tabs={[
+    LangChainPyBlock(`from langchain.callbacks import LangChainTracer
 from langchain_openai import ChatOpenAI
 from langsmith import Client\n
 callbacks = [
@@ -165,7 +162,7 @@ callbacks = [
 llm = ChatOpenAI()
 llm.invoke("Hello, world!", config={"callbacks": callbacks})
 `),
-        LangChainJSBlock(`import { Client } from "langsmith";
+    LangChainJSBlock(`import { Client } from "langsmith";
 import { LangChainTracer } from "langchain/callbacks";
 import { ChatOpenAI } from "langchain/chat_models/openai";\n
 const callbacks = [
@@ -180,8 +177,8 @@ const callbacks = [
 const llm = new ChatOpenAI({});
 await llm.invoke("Hello, world!", { callbacks });
 `),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 This tactic is also useful for when you have multiple chains running in a shared environment but want to log their run traces to different projects.
@@ -196,8 +193,8 @@ For both languages, LangChain exposes methods to wait for traces to be submitted
 Below is an example:
 
 <CodeTabs
-    tabs={[
-        LangChainPyBlock(`from langchain_openai import ChatOpenAI
+  tabs={[
+    LangChainPyBlock(`from langchain_openai import ChatOpenAI
 from langchain.callbacks.tracers.langchain import wait_for_all_tracers\n
 llm = ChatOpenAI()
 try:
@@ -206,7 +203,7 @@ finally:
     # highlight-next-line
     wait_for_all_tracers()
 `),
-        LangChainJSBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
+    LangChainJSBlock(`import { ChatOpenAI } from "langchain/chat_models/openai";
 import { awaitAllCallbacks } from "langchain/callbacks";\n
 try {
   const llm = new ChatOpenAI();
@@ -217,6 +214,6 @@ try {
   await awaitAllCallbacks();
 }
 `),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />

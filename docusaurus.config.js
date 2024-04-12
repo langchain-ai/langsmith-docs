@@ -26,13 +26,13 @@ const config = {
 
   plugins: [
     [
-      '@scalar/docusaurus',
+      "@scalar/docusaurus",
       {
-        label: 'LangSmith API Docs',
-        route: '/api-docs',
+        label: "LangSmith API Docs",
+        route: "/api-docs",
         configuration: {
           spec: {
-            url: 'https://api.smith.langchain.com/openapi.json',
+            url: "https://api.smith.langchain.com/openapi.json",
           },
         },
       },
@@ -137,12 +137,11 @@ const config = {
             items: [
               {
                 label: "Docs Code",
-                href: "https://github.com/langchain-ai/langsmith-docs"
+                href: "https://github.com/langchain-ai/langsmith-docs",
               },
               {
                 label: "LangSmith SDK",
-                href: "https://github.com/langchain-ai/langsmith-sdk"
-
+                href: "https://github.com/langchain-ai/langsmith-sdk",
               },
               {
                 label: "Python",
@@ -183,13 +182,13 @@ const config = {
         contextualSearch: true,
       },
     }),
-    scripts: [
-      "/js/google_analytics.js",
-      {
-        src: "https://www.googletagmanager.com/gtag/js?id=G-62DTR64PQZ",
-        async: true,
-      },
-    ],
+  scripts: [
+    "/js/google_analytics.js",
+    {
+      src: "https://www.googletagmanager.com/gtag/js?id=G-62DTR64PQZ",
+      async: true,
+    },
+  ],
 };
 
 module.exports = config;

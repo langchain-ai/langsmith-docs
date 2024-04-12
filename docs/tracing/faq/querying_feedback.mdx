@@ -1,11 +1,12 @@
 ---
 sidebar_label: Querying Feedback
-sidebar_position: 5 
+sidebar_position: 5
 ---
+
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Querying Feedback
@@ -14,65 +15,71 @@ LangSmith makes it easy to fetch feedback associated with your runs. The `Run` o
 satisfy your needs. If you want the additional feedback metadata (or full list of feedback objects), you can use the SDK or API to list feedback objects based on run IDs, feedback keys, and feedback source types.
 
 Using the `list_feedback` method in the SDK or [`/feedback`](https://api.smith.langchain.com/redoc#tag/feedback/operation/list_feedback_feedback_get) endpoint in the API, you can fetch feedback to analyze. Most simple requests can be satisfied using the following arguments:
+
 - `run_ids`: Fetch feedback for specific runs by providing their IDs.
 - `feedback_keys`: Filter feedback by specific keys, such as 'correctness' or 'quality'.
 - `feedback_source_types`: Filter feedback by the source type, such as 'model' for model-generated feedback or 'api' for feedback submitted via the API.
 
 All the examples below assume you have created a LangSmith client and configured it with your API key to connect to the LangSmith server.
+
 <CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith import Client\n
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
 client = Client()`),
-        TypeScriptBlock(`import { Client, Feedback } from "langsmith";\n
+    TypeScriptBlock(`import { Client, Feedback } from "langsmith";\n
 const client = new Client();`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 Below are some examples of ways to list feedback using the available arguments:
 
 #### List all feedback for a specific run
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`run_feedback = client.list_feedback(run_ids=["<run_id>"])`),
-        TypeScriptBlock(`const runFeedback: Feedback[] = [];
+  tabs={[
+    PythonBlock(`run_feedback = client.list_feedback(run_ids=["<run_id>"])`),
+    TypeScriptBlock(`const runFeedback: Feedback[] = [];
 for await (const feedback of client.listFeedback({
   runIds: ["<run_id>"],
 })) {
   runFeedback.push(feedback);
 }`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 #### List all feedback with a specific key
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`correctness_feedback = client.list_feedback(feedback_key=["correctness"])`),
-        TypeScriptBlock(`const correctnessFeedback: Feedback[] = [];
+  tabs={[
+    PythonBlock(
+      `correctness_feedback = client.list_feedback(feedback_key=["correctness"])`
+    ),
+    TypeScriptBlock(`const correctnessFeedback: Feedback[] = [];
 for await (const feedback of client.listFeedback({
   feedbackKeys: ["correctness"],
 })) {
   correctnessFeedback.push(feedback);
 }`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 #### List all model-generated feedback
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`model_feedback = client.list_feedback(feedback_source_type=["model"])`),
-        TypeScriptBlock(`const modelFeedback: Feedback[] = [];
+  tabs={[
+    PythonBlock(
+      `model_feedback = client.list_feedback(feedback_source_type=["model"])`
+    ),
+    TypeScriptBlock(`const modelFeedback: Feedback[] = [];
 for await (const feedback of client.listFeedback({
   feedbackSourceTypes: ["model"],
 })) {
   modelFeedback.push(feedback);
 }`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ## Use Cases
@@ -82,9 +89,10 @@ Here are a few common use cases for querying feedback:
 #### Compare model-generated and human feedback for a set of runs
 
 After querying for a set of runs, you can compare the model-generated and human feedback for those specific runs:
+
 <CodeTabs
-    tabs={[
-        PythonBlock(`# Query for runs
+  tabs={[
+    PythonBlock(`# Query for runs
 runs = client.list_runs(project_name="<your_project>", filter='gt(start_time, "2023-07-15T00:00:00Z")')\n
 # Extract run IDs
 run_ids = [run.id for run in runs]\n
@@ -92,7 +100,7 @@ run_ids = [run.id for run in runs]\n
 model_feedback = client.list_feedback(run_ids=run_ids, feedback_source_type=["model"])\n 
 # Fetch human feedback for the runs
 human_feedback = client.list_feedback(run_ids=run_ids, feedback_source_type=["api"])`),
-        TypeScriptBlock(`// Query for runs
+    TypeScriptBlock(`// Query for runs
 const runs: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
@@ -118,16 +126,17 @@ for await (const feedback of client.listFeedback({
 })) {
   humanFeedback.push(feedback);
 }`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 #### Analyze feedback for a specific key and set of runs
 
 If you're interested in analyzing feedback for a specific key, such as 'correctness' or 'quality', for a set of runs, you can query for the runs and then filter the feedback by key:
+
 <CodeTabs
-    tabs={[
-        PythonBlock(`# Query for runs
+  tabs={[
+    PythonBlock(`# Query for runs
 runs = client.list_runs(project_name="<your_project>", filter='gt(start_time, "2023-07-15T00:00:00Z")')\n
 # Extract run IDs  
 run_ids = [run.id for run in runs]\n
@@ -135,7 +144,7 @@ run_ids = [run.id for run in runs]\n
 correctness_feedback = client.list_feedback(run_ids=run_ids, feedback_key=["correctness"])\n
 # Analyze the correctness scores
 scores = [feedback.score for feedback in correctness_feedback]`),
-        TypeScriptBlock(`// Query for runs
+    TypeScriptBlock(`// Query for runs
 const runs: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
@@ -155,6 +164,6 @@ for await (const feedback of client.listFeedback({
 }\n
 // Analyze the correctness scores
 const scores = correctnessFeedback.map(feedback => feedback.score);`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />

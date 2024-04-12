@@ -56,7 +56,7 @@ const pred = await chain.invoke(
 );
 const runId = runCollector.tracedRuns[0].id;
 console.log(runId);`;
-  const oldTypeScriptBlock= `import { ChatAnthropic } from "langchain/chat_models/anthropic";
+  const oldTypeScriptBlock = `import { ChatAnthropic } from "langchain/chat_models/anthropic";
 import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";\n
 const prompt = PromptTemplate.fromTemplate("Say hi to {name}");
@@ -93,11 +93,17 @@ console.log(response.__run);`;
         </CodeBlock>
       </TabItem>
       <TabItem key="typescript" value="typescript" label="LangChain (JS)">
-        <p>For newer versions of Langchain ({`>=`}0.0.139), you can use the `RunCollectorCallbackHandler` for any chain or runnable.</p>
+        <p>
+          For newer versions of Langchain ({`>=`}0.0.139), you can use the
+          `RunCollectorCallbackHandler` for any chain or runnable.
+        </p>
         <CodeBlock className="typescript" language="typescript">
           {callbackTypeScriptBlock}
         </CodeBlock>
-        <p>If youre on an older version of LangChain, you can still retrieve the run ID directly from chain calls.</p>
+        <p>
+          If youre on an older version of LangChain, you can still retrieve the
+          run ID directly from chain calls.
+        </p>
         <CodeBlock className="typescript" language="typescript">
           {oldTypeScriptBlock}
         </CodeBlock>

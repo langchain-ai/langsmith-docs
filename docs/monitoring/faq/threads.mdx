@@ -20,12 +20,12 @@ To associate traces together, you need to pass in a special metadata key where t
 Below is an example of logging conversations:
 
 <CodeTabs
-tabs={[
+  tabs={[
     {
-    value: "python",
-    label: "Python",
-    language: "python",
-    content: `
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `
 import openai
 from langsmith import traceable
 import uuid
@@ -59,10 +59,10 @@ response = assistant(
 )`,
     },
     {
-    value: "langchain-python",
-    label: "LangChain (Python)",
-    language: "python",
-    content: `from langchain_anthropic import ChatAnthropic
+      value: "langchain-python",
+      label: "LangChain (Python)",
+      language: "python",
+      content: `from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
@@ -76,10 +76,8 @@ response = chain.invoke({"messages": messages}, config=config)
 messages = messages + [response, HumanMessage(content="whats my name")]
 response = chain.invoke({"messages": messages}, config=config)`,
     },
-]}
+  ]}
 />
-
-
 
 ## How to view threads
 
@@ -91,7 +89,6 @@ You can then click into a particular thread. This will open the history for a pa
 
 ![Conversation](../static/convo.png)
 
-
 ## What are special metadata keys that associate traces as part of the same thread?
 
 In order to log runs as part of the same thread you need to pass a special metadata key to the run. The key value is the unique identifier for that conversation.
@@ -100,4 +97,3 @@ The key name should be one of:
 - `session_id`
 - `thread_id`
 - `conversation_id`.
-

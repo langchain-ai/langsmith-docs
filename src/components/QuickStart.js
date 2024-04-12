@@ -3,16 +3,16 @@ import {
   PythonBlock,
   ShellBlock,
   TypeScriptBlock,
-} from './InstructionsWithCode';
+} from "./InstructionsWithCode";
 
-import CodeBlock from '@theme/CodeBlock';
-import React from 'react';
+import CodeBlock from "@theme/CodeBlock";
+import React from "react";
 import TabItem from "@theme/TabItem";
 import Tabs from "@theme/Tabs";
 
 export const TypeScriptSDKTracingCodeBlock = () => (
-    <CodeBlock language="typescript">
-                {`import { OpenAI } from "openai";
+  <CodeBlock language="typescript">
+    {`import { OpenAI } from "openai";
 import { traceable } from "langsmith/traceable";
 import { wrapOpenAI } from "langsmith/wrappers";
 // Auto-trace LLM calls in-context
@@ -29,12 +29,12 @@ const pipeline = traceable(async (user_input) => {
 await pipeline("Hello, world!")
 // Out: Hello there! How can I assist you today?
 // See trace: https://smith.langchain.com/public/3603e52b-5d92-4cac-a267-34004a755843/r`}
-    </CodeBlock>
+  </CodeBlock>
 );
 
 export const PythonAPITracingCodeBlock = () => (
-    <CodeBlock language="python">
-        {`import openai
+  <CodeBlock language="python">
+    {`import openai
 import requests
 from datetime import datetime
 from uuid import uuid4
@@ -95,13 +95,12 @@ chat_completion = client.chat.completions.create(model="gpt-3.5-turbo", messages
 # End runs
 patch_run(child_run_id, chat_completion.dict())
 patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})`}
-    </CodeBlock>
+  </CodeBlock>
 );
 
-
 export const PythonSDKTracingCodeBlock = () => (
-    <CodeBlock language="python">
-                {`import openai
+  <CodeBlock language="python">
+    {`import openai
 from langsmith.wrappers import wrap_openai
 from langsmith import traceable\n
 # Auto-trace LLM calls in-context
@@ -116,7 +115,7 @@ def pipeline(user_input: str):
 pipeline("Hello, world!")
 # Out:  Hello there! How can I assist you today?
 # See trace: https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r`}
-            </CodeBlock>
+  </CodeBlock>
 );
 
 export const LangChainInstallationCodeTabs = () => (
@@ -124,27 +123,27 @@ export const LangChainInstallationCodeTabs = () => (
     groupId="client-language"
     tabs={[
       {
-        value: 'python',
-        label: 'pip',
-        language: 'bash',
+        value: "python",
+        label: "pip",
+        language: "bash",
         content: `pip install langchain_openai langchain_core`,
       },
       {
-        value: 'typescript',
-        label: 'yarn',
-        language: 'bash',
+        value: "typescript",
+        label: "yarn",
+        language: "bash",
         content: `yarn add @langchain/openai @langchain/core`,
       },
       {
-        value: 'npm',
-        label: 'npm',
-        language: 'bash',
+        value: "npm",
+        label: "npm",
+        language: "bash",
         content: `npm install @langchain/openai @langchain/core`,
       },
       {
-        value: 'pnpm',
-        label: 'pnpm',
-        language: 'bash',
+        value: "pnpm",
+        label: "pnpm",
+        language: "bash",
         content: `pnpm add @langchain/openai @langchain/core`,
       },
     ]}
@@ -152,16 +151,16 @@ export const LangChainInstallationCodeTabs = () => (
 );
 
 export const ConfigureSDKEnvironmentCodeTabs = ({}) => (
-    <CodeTabs
-        tabs={[
-            ShellBlock(`export LANGCHAIN_TRACING_V2=true
+  <CodeTabs
+    tabs={[
+      ShellBlock(`export LANGCHAIN_TRACING_V2=true
 export LANGCHAIN_API_KEY=<your-api-key>
 
 # The below examples use the OpenAI API, though it's not necessary in general
 export OPENAI_API_KEY=<your-openai-api-key>`),
-        ]}
-        groupId="client-language"
-    />
+    ]}
+    groupId="client-language"
+  />
 );
 
 export const ConfigureEnvironmentCodeTabs = ({}) => (
@@ -244,7 +243,6 @@ chain.invoke({"question": question, "context": context})`}
     </Tabs>
   );
 };
-
 
 const TraceableQuickStart = PythonBlock(`from typing import Any, Iterable\n
 import openai
@@ -363,7 +361,7 @@ export const RunTreeQuickStartCodeTabs = ({}) => (
         value: "python-run-tree",
         label: "Python (Run Tree)",
         language: "python",
-        content:`from langsmith.run_trees import RunTree\n
+        content: `from langsmith.run_trees import RunTree\n
 parent_run = RunTree(
     name="My Chat Bot",
     run_type="chain",
@@ -382,7 +380,8 @@ child_llm_run = parent_run.create_child(
 child_llm_run.end(outputs={"generations": ["Summary of the meeting..."]})
 parent_run.end(outputs={"output": ["The meeting notes are as follows:..."]})\n
 res = parent_run.post(exclude_child_runs=False)
-res.result()`},
+res.result()`,
+      },
       TypeScriptBlock(`import { RunTree, RunTreeConfig } from "langsmith";\n
 const parentRunConfig: RunTreeConfig = {
     name: "My Chat Bot",
