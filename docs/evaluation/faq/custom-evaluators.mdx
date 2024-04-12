@@ -126,7 +126,7 @@ With function calling, it has become easier than ever to generate feedback metri
 Below is an example (in this case using OpenAI's tool calling functionality) to evaluate RAG app faithfulness.
 
 ````python
-import json
+iimport json
 from typing import List
 
 import openai
@@ -167,7 +167,7 @@ def faithfulness(run: Run, example: Example) -> dict:
             {
                 "type": "function",
                 "function": {
-                    "name": "propositions",
+                    "name": "Propositions",
                     "description": "Use to record each factual assertion.",
                     "parameters": Propositions.model_json_schema(),
                 },
@@ -185,8 +185,8 @@ def faithfulness(run: Run, example: Example) -> dict:
         {
             "type": "function",
             "function": {
-                "name": "propositions",
-                "description": "Use to score how faithful the .",
+                "name": "FaithfulnessScore",
+                "description": "Use to score how faithful the propositions are to the docs.",
                 "parameters": FaithfulnessScore.model_json_schema(),
             },
         }
@@ -204,14 +204,14 @@ def faithfulness(run: Run, example: Example) -> dict:
             ],
             # highlight-next-line
             tools=tools,
-            tool_choice={"type": "function", "function": {"name": "Propositions"}},
+            tool_choice={"type": "function", "function": {"name": "FaithfulnessScore"}},
         )
         faithfulness_args = json.loads(
             faithfulness_completion.choices[0].message.tool_calls[0].function.arguments
         )
         scores.append(faithfulness_args["score"])
         reasoning.append(faithfulness_args["reasoning"])
-    average_score = sum(scores) / len(scores)
+    average_score = sum(scores) / len(scores) if scores else None
     comment = "\n".join(reasoning)
     return {"key": "faithfulness", "score": average_score, "comment": comment}
 
