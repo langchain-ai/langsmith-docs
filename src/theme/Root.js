@@ -7,7 +7,12 @@ export default function Root({ children }) {
     <>
       {getInitColorSchemeScript()}
       <CssBaseline />
-      <CssVarsProvider defaultMode="system" modeStorageKey="langsmith-docs-joy-mode">{children}</CssVarsProvider>
+      <CssVarsProvider
+        defaultMode="system"
+        modeStorageKey="langsmith-docs-joy-mode"
+      >
+        {children}
+      </CssVarsProvider>
     </>
   );
 }

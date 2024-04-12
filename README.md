@@ -29,7 +29,6 @@ $ yarn build
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
-
 ### Contributing
 
 If you see an issue in one of the examples, feel free to open a PR! Or file an issue reporting it.

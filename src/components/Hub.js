@@ -1,41 +1,41 @@
-import React from 'react';
+import React from "react";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import CodeBlock from '@theme/CodeBlock';
+import CodeBlock from "@theme/CodeBlock";
 
 import {
   CodeTabs,
   PythonBlock,
   TypeScriptBlock,
   ShellBlock,
-} from './InstructionsWithCode';
+} from "./InstructionsWithCode";
 
 export const HubInstallationCodeTabs = () => (
   <CodeTabs
     groupId="client-language"
     tabs={[
       {
-        value: 'python',
-        label: 'pip',
-        language: 'bash',
+        value: "python",
+        label: "pip",
+        language: "bash",
         content: `pip install -U langchain langchainhub`,
       },
       {
-        value: 'typescript',
-        label: 'yarn',
-        language: 'bash',
+        value: "typescript",
+        label: "yarn",
+        language: "bash",
         content: `yarn add langchain`,
       },
       {
-        value: 'npm',
-        label: 'npm',
-        language: 'bash',
+        value: "npm",
+        label: "npm",
+        language: "bash",
         content: `npm install -S langchain`,
       },
       {
-        value: 'pnpm',
-        label: 'pnpm',
-        language: 'bash',
+        value: "pnpm",
+        label: "pnpm",
+        language: "bash",
         content: `pnpm add langchain`,
       },
     ]}
@@ -59,7 +59,7 @@ runnable.invoke({
 	"question": "What is special about parrots?",
 })`;
 
-const jsBlock = `// import
+  const jsBlock = `// import
 import * as hub from "langchain/hub";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "langchain/chat_models/openai";
@@ -78,7 +78,7 @@ const result = await runnable.invoke({
   "question": "What is special about parrots?",
 });
 
-console.log(result);`
+console.log(result);`;
 
   return (
     <Tabs groupId="client-language">
@@ -104,7 +104,7 @@ prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
 
 hub.push("<handle>/topic-joke-generator", prompt)`;
 
-const jsBlock = `import * as hub from "langchain/hub";
+  const jsBlock = `import * as hub from "langchain/hub";
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -115,7 +115,7 @@ const message = HumanMessagePromptTemplate.fromTemplate(
 );
 const prompt = ChatPromptTemplate.fromPromptMessages([message]);
 
-await hub.push("<handle>/my-first-prompt", prompt);`
+await hub.push("<handle>/my-first-prompt", prompt);`;
 
   return (
     <Tabs groupId="client-language">

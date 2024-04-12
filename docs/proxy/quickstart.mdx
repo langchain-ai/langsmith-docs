@@ -9,27 +9,26 @@ sidebar_position: 1
 
 The LangSmith Proxy is intended to be a drop-in replacement for your LLM apis with some additional features. It is designed to be a simple, easy-to-use, and easy-to-configure tool that adds minimal overhead to your existing LLM API usage.
 
-* **Easy to use**: The LangSmith LLM Proxy is designed to be easy to use. You can run it as a sidecar to your existing app and start using it immediately. Besides changing the URL of your LLM API, you don't need to make any changes to your app to start using the LangSmith Proxy.
-* **Cache support**: The LangSmith LLM Proxy supports caching of requests/responses(with streaming support) from the LLM API. This allows you to cache responses for a configurable amount of time, reducing the number of requests to the LLM API and improving response times. This can be especially useful if you are using the LLM API in a high-traffic environment or running CI(in cases like evals)
-* **Minimal overhead**: We use NGINX as a reverse proxy to minimize the overhead of the LangSmith LLM Proxy. Requests are passed through the proxy with minimal processing.
-* **Streaming support**: The LangSmith LLM Proxy supports streaming responses from the LLM API. This allows you to start processing the response as soon as it is available, rather than waiting for the entire response to be received.
-* **Tracing support(optional)**: The LangSmith LLM Proxy supports tracing of LLM calls via LangSmith. This allows you to trace calls to your LLM without any configuration changes to your app.
+- **Easy to use**: The LangSmith LLM Proxy is designed to be easy to use. You can run it as a sidecar to your existing app and start using it immediately. Besides changing the URL of your LLM API, you don't need to make any changes to your app to start using the LangSmith Proxy.
+- **Cache support**: The LangSmith LLM Proxy supports caching of requests/responses(with streaming support) from the LLM API. This allows you to cache responses for a configurable amount of time, reducing the number of requests to the LLM API and improving response times. This can be especially useful if you are using the LLM API in a high-traffic environment or running CI(in cases like evals)
+- **Minimal overhead**: We use NGINX as a reverse proxy to minimize the overhead of the LangSmith LLM Proxy. Requests are passed through the proxy with minimal processing.
+- **Streaming support**: The LangSmith LLM Proxy supports streaming responses from the LLM API. This allows you to start processing the response as soon as it is available, rather than waiting for the entire response to be received.
+- **Tracing support(optional)**: The LangSmith LLM Proxy supports tracing of LLM calls via LangSmith. This allows you to trace calls to your LLM without any configuration changes to your app.
 
 ## Models Supported
 
 The LangSmith Proxy supports the following APIS:
 
-* OpenAI(Chat and Completion)
-* AzureOpenAI(Chat and Completion)
+- OpenAI(Chat and Completion)
+- AzureOpenAI(Chat and Completion)
 
 We are actively working on adding support for the following models:
 
-* Anthropic
-* Google Vertex
-* Gemini
+- Anthropic
+- Google Vertex
+- Gemini
 
 If you would like to see support for a specific model, please message us at support@langchain.dev
-
 
 The steps in this guide will acquaint you with deploying the LangSmith Proxy and using it to make requests to OpenAI.
 
@@ -42,7 +41,7 @@ The steps in this guide will acquaint you with deploying the LangSmith Proxy and
 ## Prerequisites
 
 1. Docker installed on your local machine
-    - Instructions for installing Docker can be found [here](https://docs.docker.com/get-docker/)
+   - Instructions for installing Docker can be found [here](https://docs.docker.com/get-docker/)
 2. An OpenAI API Key
 3. (Optional) If configuring tracing, a LangSmith API Key
 
@@ -68,6 +67,7 @@ Couldn't create langsmith client: API key must be provided when using hosted Lan
 Listening for traces at 0.0.0.0:9999
 Connection from ('127.0.0.1', 47370)
 ```
+
 Ignore the `Couldn't create langsmith client` message if you are not configuring tracing.
 
 ## 2. Update your app to make requests to the LangSmith Proxy
@@ -83,6 +83,7 @@ pip install asyncio
 
 Now, you can use the LangSmith Proxy to make requests to OpenAI. Here's an example of how you can do this in Python:
 Let's create a file called `openai_test.py` and add the following code:
+
 ```python
 import time
 
@@ -105,6 +106,7 @@ print(f"Time taken: {time.time() - start}")
 ```
 
 Run the file using the following command:
+
 ```bash
 python openai_test.py
 
@@ -113,9 +115,10 @@ Time taken: 4.794615030288696
 ```
 
 There will also be a corresponding Cache Miss log entry in your proxy.
+
 ```bash
 "POST /proxy/openai/chat/completions HTTP/1.1" 200 20418 "-" "OpenAI/Python 1.12.0" "CACHE: MISS"
-````
+```
 
 Pretty slow! Let's try running this again.
 
@@ -127,11 +130,13 @@ Time taken: 0.12684011459350586
 ```
 
 Cache hit! Our request hits the cache and the response time is much faster. You will also see a Cache Hit log entry in your proxy.
+
 ```bash
 "POST /proxy/openai/chat/completions HTTP/1.1" 200 24915 "-" "OpenAI/Python 1.12.0" "CACHE: HIT"
 ```
 
 ## 3. Forcefully turn off caching for the LangSmith Proxy
+
 In some scenarios, you may want to forcefully turn off caching for the LangSmith Proxy. You can do this by adding a Cache-Control header `{"Cache-Control": "no-cache"}` header to your request. This will force the LangSmith Proxy to make a request to the LLM API and bypass the cache.
 
 ```python
@@ -156,9 +161,10 @@ print(f"Time taken: {time.time() - start}")
 ```
 
 There will also be a corresponding Cache Bypass log entry in your proxy.
+
 ```bash
 "POST /proxy/openai/chat/completions HTTP/1.1" 200 24376 "-" "OpenAI/Python 1.12.0" "CACHE: BYPASS"
-````
+```
 
 As you can see, the request takes a longer time to complete as the LangSmith Proxy is making a request to the LLM API. You will also see a Bypass Header in your response.
 
@@ -168,6 +174,7 @@ The LangSmith Proxy supports streaming responses from the LLM API. This allows y
 This will still work with caching!
 
 Update your `openai_test.py` file to use the streaming API:
+
 ```python
 import time
 
@@ -222,11 +229,11 @@ Time taken: 0.07226419448852539
 ```
 
 Again, much faster! The corresponding miss and hit logs will also be present in your proxy.
+
 ```
 "POST /proxy/openai/chat/completions HTTP/1.1" 200 17761 "-" "OpenAI/Python 1.12.0" "CACHE: MISS"
 "POST /proxy/openai/chat/completions HTTP/1.1" 200 17745 "-" "OpenAI/Python 1.12.0" "CACHE: HIT"
 ```
-
 
 ## 5. Turn on tracing while using the LangSmith Proxy
 

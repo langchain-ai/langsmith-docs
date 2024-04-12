@@ -13,13 +13,13 @@ This allows you to test your prompt / model configuration over a series of input
 
 1. **Navigate to the prompt playground** by clicking on "Hub" in the sidebar, then selecting a prompt from the list of available prompts or creating a new one.
 2. **Select the "Switch to dataset" button** to switch to the dataset you want to use for the experiment. Please note that the dataset keys of the dataset inputs must match the input variables of the prompt. In the below sections, note that the selected dataset has inputs with keys "text", which correctly match the input variable of the prompt. Also note that there is a max capacity of 15 inputs for the prompt playground.
-![Switch to dataset](../static/switch_to_dataset.png)
+   ![Switch to dataset](../static/switch_to_dataset.png)
 3. **Click on the "Start" button** or CMD+Enter to start the experiment. This will run the prompt over all the examples in the dataset and create an entry for the experiment in the dataset details page. Note that you need to commit the prompt to the prompt hub before you can start the experiment to ensure it can be referenced in the experiment. The result for each input will be streamed and displayed inline for each input in the dataset.
-![Input variables](../static/input_variables_playground.png)
+   ![Input variables](../static/input_variables_playground.png)
 4. **View the results** by clicking on the "View Dataset Run Table" button. This will take you to the experiment details page where you can see the results of the experiment.
-![View results](../static/view_results.png)
+   ![View results](../static/view_results.png)
 5. **Navigate back to the commit page** by clicking on the "View Commit" button. This will take you back to the prompt page where you can make changes to the prompt and run more experiments. The "View Commit" button is available to all experiments that were run from the prompt playground. The experiment is prefixed with the prompt repository name, a unique identifier, and the date and time the experiment was run.
-![Playground experiment results](../static/playground_experiment_results.png)
+   ![Playground experiment results](../static/playground_experiment_results.png)
 
 ## Adding evaluation scores to the experiment
 
@@ -35,19 +35,20 @@ The process for configuring this is very similar to the process for configuring 
 
    ![Add Evaluator](../static/add_evaluator.png)
 
-3. **Give your evaluator a name** and **set an inline prompt or load a prompt from the prompt hub** that will be used to evaluate the results of the runs in the experiment. 
+3. **Give your evaluator a name** and **set an inline prompt or load a prompt from the prompt hub** that will be used to evaluate the results of the runs in the experiment.
 
    ![Add evaluator name and prompt](../static/create_evaluator.png)
 
    Importantly, evaluator prompts can only contain the following input variables:
-    - `input` (required): the input to the target you are evaluating
-    - `output` (required): the output of the target you are evaluating
-    - `reference`: the reference output, taken from the dataset
+
+   - `input` (required): the input to the target you are evaluating
+   - `output` (required): the output of the target you are evaluating
+   - `reference`: the reference output, taken from the dataset
 
    You can specify the scoring criteria in the "schema" field. In this example, we are asking the LLM to grade on "correctness" of the output with respect to the reference, with a boolean output of 0 or 1. The name of the field in the schema will be interpreted as the feedback key and the type will be the type of the score.
 
    ![Evaluator prompt](../static/evaluator_prompt.png)
 
-5. **Save the evaluator** and navigate back to the dataset details page. Each subsequent experiment run from the dataset will now be evaluated by the evaluator you configured. Note that in the below image, each run in the experiment has a "correctness" score.
+4. **Save the evaluator** and navigate back to the dataset details page. Each subsequent experiment run from the dataset will now be evaluated by the evaluator you configured. Note that in the below image, each run in the experiment has a "correctness" score.
 
    ![Playground evaluator results](../static/playground_evaluator_results.png)
