@@ -39,6 +39,14 @@
       "destination": "/cookbook/testing-examples/backtesting"
     },
     {
+      "source": "/evaluation/faq/datasets-client",
+      "destination": "/evaluation/faq/manage-datasets#how-to-manage-datasets-programmatically"
+    },
+    {
+      "source": "/faq/datasets-webapp",
+      "destination": "/faq/manage-datasets"
+    },
+    {
       "source": "/overview",
       "destination": "/"
     },
