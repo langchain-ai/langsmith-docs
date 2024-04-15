@@ -25,6 +25,24 @@ The `@traceable` decorator is a simple way to log traces from the LangSmith Pyth
 your desination project](/tracing/faq/customizing_trace_attributes#changing-the-destination-project-at-runtime), [add custom metadata and tags](/tracing/faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces),
 and [customize your run name](/tracing/faq/customizing_trace_attributes#customizing-the-run-name).
 
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import traceable\n
+@traceable
+def my_function(input: Any) -> Any:
+    return "result"\n
+my_function("Why is the sky blue?")
+`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+const myFunction = traceable(async (text: string) => {
+  return "result";
+});\n
+await myFunction("Why is the sky blue?");
+`),
+  ]}
+  groupId="client-language"
+/>
+
 Also available is the `wrap_openai` function. This function allows you to wrap your OpenAI client in order to automatically log traces, no decorator necessary - it
 is applied for you, under the hood.
 
@@ -117,39 +135,31 @@ child_llm_run.end(outputs=chat_completion)
 child_llm_run.post()\n
 pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
 pipeline.post()`),
-    TypeScriptBlock(`// To run the example below, ensure the environment variable OPENAI_API_KEY is set
-import OpenAI from "openai";
-import { RunTree } from "langsmith";\n
-// This can be a user input to your app
-const question = "Can you summarize this morning's meetings?";\n
-const pipeline = new RunTree({
-    name: "Chat Pipeline",
-    run_type: "chain",
-    inputs: { question }
+    TypeScriptBlock(`import OpenAI from "openai";
+import { traceable } from "langsmith/traceable";
+import { wrapOpenAI } from "langsmith/wrappers";\n
+const client = wrapOpenAI(new OpenAI());\n
+const myTool = traceable(async (question: string) => {
+  return "During this morning's meeting, we solved all world conflict.";
 });\n
-// This can be retrieved in a retrieval step
-const context = "During this morning's meeting, we solved all world conflict.";\n
-const messages = [
-    { role: "system", content: "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-    { role: "user", content: \`Question: \${question}\nContext: \${context}\` }
-];\n
-// Create a child run
-const childRun = await pipeline.createChild({
-    name: "OpenAI Call",
-    run_type: "llm",
-    inputs: { messages },
-});\n
-// Generate a completion
-const client = new OpenAI();
-const chatCompletion = await client.chat.completions.create({
+const chatPipeline = traceable(async (question: string) => {
+  const context = await myTool(question);
+  const messages = [
+    {
+      role: "system",
+      content:
+        "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+    },
+    { role: "user", content: \`Question: $\{question\}\nContext: $\{context\}\` },
+  ];
+  const chatCompletion = await client.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: messages,
+  });
+  return chatCompletion.choices[0].message.content;
 });\n
-// End the runs and log them
-childRun.end(chatCompletion);
-await childRun.postRun();\n
-pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
-await pipeline.postRun();`),
+await chatPipeline("Can you summarize this morning's meetings?");
+`),
     APIBlock(`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
 # Here, we'll show you to use the requests library in Python to log a trace, but you can use any HTTP client in any language.
 import openai
