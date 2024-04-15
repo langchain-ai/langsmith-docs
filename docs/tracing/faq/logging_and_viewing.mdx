@@ -280,11 +280,13 @@ Then the server (or other service) can continue the trace by passing the headers
 ```python
 # server.py
 from langsmith import traceable
+from fastapi import FastAPI, Request
 
 @traceable
 async def my_application()
     ...
 
+app = FastAPI() # Or Flask, Django, or any other framework
 
 @app.post("/my-route")
 async def fake_route(request: Request):
