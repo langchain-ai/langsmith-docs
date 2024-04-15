@@ -48,11 +48,10 @@ To log traces to a different project, see [this section](/tracing/faq/customizin
 :::note
 Please make sure to set the `LANGCHAIN_API_KEY` environment variable to your API key before running the examples below.
 Additionally, you will need to set `LANGCHAIN_TRACING_V2='true'` if you plan to use either:
-:::
 
 - LangChain (Python or JS)
 - `@traceable` decorator or `wrap_openai` method in the Python SDK
-  :::
+:::
 
 <CodeTabs
   tabs={[
@@ -261,6 +260,7 @@ This works for the `traceable` decorator and `RunTree` objects.
 LangSmith supports distributed tracing out of the box, linking runs within a trace across services using context propagation headers (`langsmith-trace` and optional `baggage` for metadata/tags).
 
 Example client-server setup:
+
 - Trace starts on client
 - Continues on server
 
@@ -303,9 +303,6 @@ async def fake_route(request: Request):
     return await my_application(langsmith_extra={"parent": request.headers})
 
 ```
-
-
-
 
 ### Turning off tracing
 
