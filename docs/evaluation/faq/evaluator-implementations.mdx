@@ -54,6 +54,7 @@ Three QA evaluators you can load are: `"qa"`, `"context_qa"`, `"cot_qa"`. Based 
 - The `"context_qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.ContextQAEvalChain.html#langchain.evaluation.qa.eval_chain.ContextQAEvalChain)) instructs the LLM chain to use reference "context" (provided throught the example outputs) in determining correctness. This is useful if you have a larger corpus of grounding docs but don't have ground truth answers to a query.
 - The `"cot_qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.CotQAEvalChain.html#langchain.evaluation.qa.eval_chain.CotQAEvalChain)) is similar to the "context_qa" evaluator, except it instructs the LLMChain to use chain of thought "reasoning" before determining a final verdict. This tends to lead to responses that better correlate with human labels, for a slightly higher token and runtime cost.
   {" "}
+  {" "}
   <CodeTabs
     tabs={[
       PythonBlock(`from langsmith import Client

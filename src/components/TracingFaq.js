@@ -3,7 +3,7 @@ import React from "react";
 import TabItem from "@theme/TabItem";
 import Tabs from "@theme/Tabs";
 
-export const AccessRunIdBlock = ({}) => {
+export function AccessRunIdBlock({}) {
   const callbackPythonBlock = `from langchain import chat_models, prompts, callbacks
 chain = (
     prompts.ChatPromptTemplate.from_template("Say hi to {name}")
@@ -110,4 +110,4 @@ console.log(response.__run);`;
       </TabItem>
     </Tabs>
   );
-};
+}
