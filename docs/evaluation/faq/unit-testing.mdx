@@ -185,7 +185,6 @@ pip install pytest-watch
 LANGCHAIN_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests
 ```
 
-
 ## Explanations
 
 The `@unit` test decorator converts any unit test into a parametrized LangSmith example. By default, all unit tests within a given file will be grouped as a single "test suite" with a corresponding dataset.
@@ -213,12 +212,11 @@ def test_foo():
     client.create_feedback(run_id=run_tree.id, key="my_custom_feedback", score=1)
 ```
 
-
 ## Reference
 
 ### `expect`
 
-`expect` makes it easy to make approximate assertions on test results and log scores to LangSmith. 
+`expect` makes it easy to make approximate assertions on test results and log scores to LangSmith.
 Off-the-shelf, it allows you to compute and compare embedding distances, edit distances, and make custom assertions on values.
 
 #### `expect.embedding_distance(prediction, reference, *, config=None)`
@@ -254,7 +252,7 @@ This depends on the `rapidfuzz` package for string distance computation.
 - `prediction` (str): The predicted string to compare.
 - `reference` (str): The reference string to compare against.
 - `config` (Optional[EditDistanceConfig]): Optional configuration for the string distance evaluator. Supported options:
-  - `metric`: The distance metric to use for comparison. Supported values: "damerau_levenshtein", "levenshtein", "jaro", "jaro_winkler", "hamming", "indel". 
+  - `metric`: The distance metric to use for comparison. Supported values: "damerau_levenshtein", "levenshtein", "jaro", "jaro_winkler", "hamming", "indel".
   - `normalize_score`: Whether to normalize the score between 0 and 1.
 
 **Returns**
@@ -316,7 +314,7 @@ Create a unit test case in LangSmith.
 **Parameters**
 
 - `id` (Optional[uuid.UUID]): A unique identifier for the test case. If not provided, an ID will be generated based on the test function's module and name.
-- `output_keys` (Optional[Sequence[str]]): A list of keys to be considered as the output keys for the test case. These keys will be extracted from the test function's inputs and stored as the expected outputs.  
+- `output_keys` (Optional[Sequence[str]]): A list of keys to be considered as the output keys for the test case. These keys will be extracted from the test function's inputs and stored as the expected outputs.
 - `client` (Optional[ls_client.Client]): An instance of the LangSmith client to be used for communication with the LangSmith service. If not provided, a default client will be used.
 - `test_suite_name` (Optional[str]): The name of the test suite to which the test case belongs. If not provided, the test suite name will be determined based on the environment or the package name.
 
