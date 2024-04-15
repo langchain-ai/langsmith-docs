@@ -270,12 +270,11 @@ import httpx
 
 @traceable
 async def my_client_function():
-    async with AsyncClient(base_url="...") as client:
-        # highlight-next-line
+    headers = {}
+    async with httpx.AsyncClient(base_url="...") as client:
         if run_tree := get_current_run_tree():
             # add langsmith-id to headers
             headers.update(run_tree.to_headers())
-        # highlight-next-line
         return await client.post("/my-route", headers=headers)
 ```
 
@@ -286,19 +285,22 @@ Then the server (or other service) can continue the trace by passing the headers
 from langsmith import traceable
 from fastapi import FastAPI, Request
 
+
 @traceable
-async def my_application()
+async def my_application():
     ...
 
-app = FastAPI() # Or Flask, Django, or any other framework
+
+app = FastAPI()  # Or Flask, Django, or any other framework
+
 
 @app.post("/my-route")
 async def fake_route(request: Request):
-    # request.headers:  {"langsmith-trace": "..."} 
+    # request.headers:  {"langsmith-trace": "..."}
     # as well as optional metadata/tags in `baggage`
     # highlight-next-line
     return await my_application(langsmith_extra={"parent": request.headers})
-    return {"message": "Fake route response"}
+
 ```
 
 
