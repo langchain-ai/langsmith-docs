@@ -1,10 +1,11 @@
 import React from "react";
 import { CodeTabs, PythonBlock, TypeScriptBlock } from "./InstructionsWithCode";
 
-export const RunTreeExampleCodeTabs = () => (
-  <CodeTabs
-    tabs={[
-      PythonBlock(`from langsmith.run_trees import RunTree\n
+export function RunTreeExampleCodeTabs() {
+  return (
+    <CodeTabs
+      tabs={[
+        PythonBlock(`from langsmith.run_trees import RunTree\n
 parent_run = RunTree(
     name="My Chat Bot",
     run_type="chain",
@@ -59,7 +60,7 @@ parent_run.end(outputs={"output": ["The meeting notes are as follows:..."]})\n
 res = parent_run.post(exclude_child_runs=False)
 res.result()
 `),
-      TypeScriptBlock(`import { RunTree, RunTreeConfig } from "langsmith";\n
+        TypeScriptBlock(`import { RunTree, RunTreeConfig } from "langsmith";\n
 const parentRunConfig: RunTreeConfig = {
   name: "My Chat Bot",
   run_type: "chain",
@@ -115,7 +116,7 @@ try {
   throw new Error("Something went wrong");
 } catch (e) {
   await childChainRun.end({
-    error: \`I errored again \$\{e.message\}\`,
+    error: \`I errored again $\{e.message}\`,
   });
 }\n
 await parentRun.end({
@@ -127,7 +128,8 @@ await parentRun.end({
 // (don't exclude child runs)
 await parentRun.postRun(false);
 `),
-    ]}
-    groupId="client-language"
-  />
-);
+      ]}
+      groupId="client-language"
+    />
+  );
+}

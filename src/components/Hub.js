@@ -10,39 +10,41 @@ import {
   ShellBlock,
 } from "./InstructionsWithCode";
 
-export const HubInstallationCodeTabs = () => (
-  <CodeTabs
-    groupId="client-language"
-    tabs={[
-      {
-        value: "python",
-        label: "pip",
-        language: "bash",
-        content: `pip install -U langchain langchainhub`,
-      },
-      {
-        value: "typescript",
-        label: "yarn",
-        language: "bash",
-        content: `yarn add langchain`,
-      },
-      {
-        value: "npm",
-        label: "npm",
-        language: "bash",
-        content: `npm install -S langchain`,
-      },
-      {
-        value: "pnpm",
-        label: "pnpm",
-        language: "bash",
-        content: `pnpm add langchain`,
-      },
-    ]}
-  />
-);
+export function HubInstallationCodeTabs() {
+  return (
+    <CodeTabs
+      groupId="client-language"
+      tabs={[
+        {
+          value: "python",
+          label: "pip",
+          language: "bash",
+          content: `pip install -U langchain langchainhub`,
+        },
+        {
+          value: "typescript",
+          label: "yarn",
+          language: "bash",
+          content: `yarn add langchain`,
+        },
+        {
+          value: "npm",
+          label: "npm",
+          language: "bash",
+          content: `npm install -S langchain`,
+        },
+        {
+          value: "pnpm",
+          label: "pnpm",
+          language: "bash",
+          content: `pnpm add langchain`,
+        },
+      ]}
+    />
+  );
+}
 
-export const HubPullCodeTabs = ({}) => {
+export function HubPullCodeTabs() {
   const pyBlock = `from langchain import hub
 
 # pull a chat prompt
@@ -94,9 +96,9 @@ console.log(result);`;
       </TabItem>
     </Tabs>
   );
-};
+}
 
-export const HubPushCodeTabs = ({}) => {
+export function HubPushCodeTabs() {
   const pyBlock = `from langchain import hub
 from langchain.prompts.chat import ChatPromptTemplate
 
@@ -131,4 +133,4 @@ await hub.push("<handle>/my-first-prompt", prompt);`;
       </TabItem>
     </Tabs>
   );
-};
+}

@@ -53,10 +53,10 @@ Three QA evaluators you can load are: `"qa"`, `"context_qa"`, `"cot_qa"`. Based 
 - The `"qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.QAEvalChain.html#langchain-evaluation-qa-eval-chain-qaevalchain)) instructs an llm to directly grade a response as "correct" or "incorrect" based on the reference answer.
 - The `"context_qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.ContextQAEvalChain.html#langchain.evaluation.qa.eval_chain.ContextQAEvalChain)) instructs the LLM chain to use reference "context" (provided throught the example outputs) in determining correctness. This is useful if you have a larger corpus of grounding docs but don't have ground truth answers to a query.
 - The `"cot_qa"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.qa.eval_chain.CotQAEvalChain.html#langchain.evaluation.qa.eval_chain.CotQAEvalChain)) is similar to the "context_qa" evaluator, except it instructs the LLMChain to use chain of thought "reasoning" before determining a final verdict. This tends to lead to responses that better correlate with human labels, for a slightly higher token and runtime cost.
-  {" "}
-  <CodeTabs
-    tabs={[
-      PythonBlock(`from langsmith import Client
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
 from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
 qa_evaluator = LangChainStringEvaluator("qa")  
 context_qa_evaluator = LangChainStringEvaluator("context_qa")
@@ -68,17 +68,16 @@ evaluate(
     evaluators=[qa_evaluator, context_qa_evaluator, cot_qa_evaluator],
     metadata={"revision_id": "the version of your pipeline you are testing"},
 )`),
-    ]}
-    groupId="client-language"
-  />
-  You can customize the evaluator by specifying the LLM used to power its LLM
-  chain or even by customizing the prompt itself. Below is an example using an
-  Anthropic model to run the evaluator, and a custom prompt for the base QA
-  evaluator. Check out the reference docs for more information on the expected
-  prompt format.
-  <CodeTabs
-    tabs={[
-      PythonBlock(`from langchain.chat_models import ChatAnthropic
+  ]}
+  groupId="client-language"
+/>
+You can customize the evaluator by specifying the LLM used to power its LLM chain
+or even by customizing the prompt itself. Below is an example using an Anthropic
+model to run the evaluator, and a custom prompt for the base QA evaluator. Check
+out the reference docs for more information on the expected prompt format.
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain.chat_models import ChatAnthropic
 from langchain_core.prompts.prompt import PromptTemplate
 from langsmith.evaluation import LangChainStringEvaluator\n
 _PROMPT_TEMPLATE = """You are an expert professor specialized in grading students' answers to questions.
@@ -104,9 +103,9 @@ evaluate(
     evaluators=[qa_evaluator, context_qa_evaluator, cot_qa_evaluator],  
 )
 `),
-    ]}
-    groupId="client-language"
-  />
+  ]}
+  groupId="client-language"
+/>
 
 ## Criteria Evaluators (No Labels)
 

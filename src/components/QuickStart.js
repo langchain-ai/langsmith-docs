@@ -1,14 +1,13 @@
+import CodeBlock from "@theme/CodeBlock";
+import React from "react";
+import TabItem from "@theme/TabItem";
+import Tabs from "@theme/Tabs";
 import {
   CodeTabs,
   PythonBlock,
   ShellBlock,
   TypeScriptBlock,
 } from "./InstructionsWithCode";
-
-import CodeBlock from "@theme/CodeBlock";
-import React from "react";
-import TabItem from "@theme/TabItem";
-import Tabs from "@theme/Tabs";
 
 export const TypeScriptSDKTracingCode = () =>
   `import { OpenAI } from "openai";
@@ -28,13 +27,16 @@ const pipeline = traceable(async (user_input) => {
 await pipeline("Hello, world!")
 // Out: Hello there! How can I assist you today?`;
 
-export const TypeScriptSDKTracingCodeBlock = () => (
-  <CodeBlock language="typescript">{TypeScriptSDKTracingCode()}</CodeBlock>
-);
+export function TypeScriptSDKTracingCodeBlock() {
+  return (
+    <CodeBlock language="typescript">{TypeScriptSDKTracingCode()}</CodeBlock>
+  );
+}
 
-export const PythonAPITracingCodeBlock = () => (
-  <CodeBlock language="python">
-    {`import openai
+export function PythonAPITracingCodeBlock() {
+  return (
+    <CodeBlock language="python">
+      {`import openai
 import requests
 from datetime import datetime
 from uuid import uuid4
@@ -95,8 +97,9 @@ chat_completion = client.chat.completions.create(model="gpt-3.5-turbo", messages
 # End runs
 patch_run(child_run_id, chat_completion.dict())
 patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})`}
-  </CodeBlock>
-);
+    </CodeBlock>
+  );
+}
 
 export const PythonSDKTracingCode = () =>
   `import openai
@@ -114,69 +117,75 @@ def pipeline(user_input: str):
 pipeline("Hello, world!")
 # Out:  Hello there! How can I assist you today?`;
 
-export const PythonSDKTracingCodeBlock = () => (
-  <CodeBlock language="python">{PythonSDKTracingCode()}</CodeBlock>
-);
+export function PythonSDKTracingCodeBlock() {
+  return <CodeBlock language="python">{PythonSDKTracingCode()}</CodeBlock>;
+}
 
-export const LangChainInstallationCodeTabs = () => (
-  <CodeTabs
-    groupId="client-language"
-    tabs={[
-      {
-        value: "python",
-        label: "pip",
-        language: "bash",
-        content: `pip install langchain_openai langchain_core`,
-      },
-      {
-        value: "typescript",
-        label: "yarn",
-        language: "bash",
-        content: `yarn add @langchain/openai @langchain/core`,
-      },
-      {
-        value: "npm",
-        label: "npm",
-        language: "bash",
-        content: `npm install @langchain/openai @langchain/core`,
-      },
-      {
-        value: "pnpm",
-        label: "pnpm",
-        language: "bash",
-        content: `pnpm add @langchain/openai @langchain/core`,
-      },
-    ]}
-  />
-);
+export function LangChainInstallationCodeTabs() {
+  return (
+    <CodeTabs
+      groupId="client-language"
+      tabs={[
+        {
+          value: "python",
+          label: "pip",
+          language: "bash",
+          content: `pip install langchain_openai langchain_core`,
+        },
+        {
+          value: "typescript",
+          label: "yarn",
+          language: "bash",
+          content: `yarn add @langchain/openai @langchain/core`,
+        },
+        {
+          value: "npm",
+          label: "npm",
+          language: "bash",
+          content: `npm install @langchain/openai @langchain/core`,
+        },
+        {
+          value: "pnpm",
+          label: "pnpm",
+          language: "bash",
+          content: `pnpm add @langchain/openai @langchain/core`,
+        },
+      ]}
+    />
+  );
+}
 
-export const ConfigureSDKEnvironmentCodeTabs = ({}) => (
-  <CodeTabs
-    tabs={[
-      ShellBlock(`export LANGCHAIN_TRACING_V2=true
+export function ConfigureSDKEnvironmentCodeTabs({}) {
+  return (
+    <CodeTabs
+      tabs={[
+        ShellBlock(`export LANGCHAIN_TRACING_V2=true
 export LANGCHAIN_API_KEY=<your-api-key>
 
 # The below examples use the OpenAI API, though it's not necessary in general
 export OPENAI_API_KEY=<your-openai-api-key>`),
-    ]}
-    groupId="client-language"
-  />
-);
+      ]}
+      groupId="client-language"
+    />
+  );
+}
 
-export const ConfigureEnvironmentCodeTabs = ({}) => (
-  <CodeTabs
-    tabs={[
-      ShellBlock(`export LANGCHAIN_TRACING_V2=true
+export function ConfigureEnvironmentCodeTabs({}) {
+  return (
+    <CodeTabs
+      tabs={[
+        ShellBlock(`export LANGCHAIN_TRACING_V2=true
 export LANGCHAIN_API_KEY=<your-api-key>
 
 # The below examples use the OpenAI API, though it's not necessary in general
 export OPENAI_API_KEY=<your-openai-api-key>`),
-    ]}
-    groupId="client-language"
-  />
-);
+      ]}
+      groupId="client-language"
+    />
+  );
+}
 
-export const LangChainQuickStartCodeTabs = ({}) => {
+export function LangChainQuickStartCodeTabs({}) {
   const simpleTSBlock = `import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
@@ -242,7 +251,7 @@ chain.invoke({"question": question, "context": context})`}
       </TabItem>
     </Tabs>
   );
-};
+}
 
 const TraceableQuickStart = PythonBlock(`from typing import Any, Iterable\n
 import openai
@@ -272,21 +281,24 @@ for tok in my_chat_bot("Summarize this morning's meetings."):
     print(tok, end="")
 # See an example run at: https://smith.langchain.com/public/3e853ad8-77ce-404d-ad4c-05726851ad0f/r`);
 
-export const TraceableQuickStartCodeBlock = ({}) => (
-  <CodeBlock
-    className={TraceableQuickStart.value}
-    language={TraceableQuickStart.language ?? TraceableQuickStart.value}
-  >
-    {TraceableQuickStart.content}
-  </CodeBlock>
-);
+export function TraceableQuickStartCodeBlock({}) {
+  return (
+    <CodeBlock
+      className={TraceableQuickStart.value}
+      language={TraceableQuickStart.language ?? TraceableQuickStart.value}
+    >
+      {TraceableQuickStart.content}
+    </CodeBlock>
+  );
+}
 
-export const TraceableThreadingCodeBlock = ({}) => (
-  <CodeBlock
-    className={TraceableQuickStart.value}
-    language={TraceableQuickStart.language ?? TraceableQuickStart.value}
-  >
-    {`import asyncio
+export function TraceableThreadingCodeBlock({}) {
+  return (
+    <CodeBlock
+      className={TraceableQuickStart.value}
+      language={TraceableQuickStart.language ?? TraceableQuickStart.value}
+    >
+      {`import asyncio
 import datetime
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List\n
@@ -350,18 +362,20 @@ async def nested_chain(text: str, run_tree: RunTree, **kwargs: Any) -> str:
             )
     return "\\n".join([future.result() for future in futures])\n\n
 asyncio.run(nested_chain("Summarize meeting"))`}
-  </CodeBlock>
-);
+    </CodeBlock>
+  );
+}
 
-export const RunTreeQuickStartCodeTabs = ({}) => (
-  <CodeTabs
-    tabs={[
-      TraceableQuickStart,
-      {
-        value: "python-run-tree",
-        label: "Python (Run Tree)",
-        language: "python",
-        content: `from langsmith.run_trees import RunTree\n
+export function RunTreeQuickStartCodeTabs({}) {
+  return (
+    <CodeTabs
+      tabs={[
+        TraceableQuickStart,
+        {
+          value: "python-run-tree",
+          label: "Python (Run Tree)",
+          language: "python",
+          content: `from langsmith.run_trees import RunTree\n
 parent_run = RunTree(
     name="My Chat Bot",
     run_type="chain",
@@ -381,8 +395,8 @@ child_llm_run.end(outputs={"generations": ["Summary of the meeting..."]})
 parent_run.end(outputs={"output": ["The meeting notes are as follows:..."]})\n
 res = parent_run.post(exclude_child_runs=False)
 res.result()`,
-      },
-      TypeScriptBlock(`import { RunTree, RunTreeConfig } from "langsmith";\n
+        },
+        TypeScriptBlock(`import { RunTree, RunTreeConfig } from "langsmith";\n
 const parentRunConfig: RunTreeConfig = {
     name: "My Chat Bot",
     run_type: "chain",
@@ -418,7 +432,8 @@ outputs: {
 await parentRun.postRun(false);
 
   `),
-    ]}
-    groupId="client-language"
-  />
-);
+      ]}
+      groupId="client-language"
+    />
+  );
+}

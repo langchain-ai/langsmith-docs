@@ -7,7 +7,7 @@ export function LangChainPyBlock(content) {
   return {
     value: "langchain-py",
     label: "LangChain (Python)",
-    content: content,
+    content,
     language: "python",
   };
 }
@@ -16,7 +16,7 @@ export function LangChainJSBlock(content) {
   return {
     value: "langchain-js",
     label: "LangChain (JS)",
-    content: content,
+    content,
     language: "typescript",
   };
 }
@@ -25,7 +25,7 @@ export function TypeScriptBlock(content) {
   return {
     value: "typescript",
     label: "TypeScript SDK",
-    content: content,
+    content,
     language: "typescript",
   };
 }
@@ -34,7 +34,7 @@ export function PythonBlock(content) {
   return {
     value: "python",
     label: "Python SDK",
-    content: content,
+    content,
     language: "python",
   };
 }
@@ -43,27 +43,35 @@ export function APIBlock(content) {
   return {
     value: "api",
     label: "API (Using Python Requests)",
-    content: content,
+    content,
     language: "python",
   };
 }
 
 export function ShellBlock(content, value = "shell", label = "Shell") {
   return {
-    value: value,
-    label: label,
-    content: content,
+    value,
+    label,
+    content,
   };
 }
 
-export const CodeTabs = ({ tabs, groupId }) => (
-  <Tabs groupId={groupId}>
-    {tabs.map((tab, index) => (
-      <TabItem key={index} value={tab.value} label={tab.label}>
-        <CodeBlock className={tab.value} language={tab.language ?? tab.value}>
-          {tab.content}
-        </CodeBlock>
-      </TabItem>
-    ))}
-  </Tabs>
-);
+export function CodeTabs({ tabs, groupId }) {
+  return (
+    <Tabs groupId={groupId}>
+      {tabs.map((tab, index) => {
+        const key = `${groupId}-${index}`;
+        return (
+          <TabItem key={key} value={tab.value} label={tab.label}>
+            <CodeBlock
+              className={tab.value}
+              language={tab.language ?? tab.value}
+            >
+              {tab.content}
+            </CodeBlock>
+          </TabItem>
+        );
+      })}
+    </Tabs>
+  );
+}

@@ -9,6 +9,6 @@ export function useColorScheme() {
     mode: systemMode,
     isDarkMode,
     isLightMode: !isDarkMode,
-    setMode: setMode,
+    setMode,
   };
 }
