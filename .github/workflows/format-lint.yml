@@ -7,9 +7,6 @@ on:
   push:
     branches: ["main"]
   pull_request:
-    # Do not run this workflow if only docs changed.
-    paths-ignore:
-      - 'docs/**'
   workflow_dispatch:  # Allows triggering the workflow manually in GitHub UI
 
 
