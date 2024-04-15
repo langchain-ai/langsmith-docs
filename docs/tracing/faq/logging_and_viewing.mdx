@@ -255,6 +255,48 @@ export LANGCHAIN_TRACING_SAMPLING_RATE=0.75
 
 This works for the `traceable` decorator and `RunTree` objects.
 
+### Distributed Tracing
+
+Sometimes your application may span multiple services. LangSmith supports exporting context propagation headers to maintain a trace across processes and systems.
+The following example shows an example 'client' and 'server' setup, where the trace starts on the client and continues on the server.
+
+
+```python
+# client.py
+from langsmith.run_helpers import get_current_run_tree, traceable
+import httpx
+
+@traceable
+async def my_client_function():
+    async with AsyncClient(base_url="...") as client:
+        if run_tree := get_current_run_tree():
+            # add langsmith-id to headers
+            headers.update(run_tree.to_headers())
+        return await client.post("/my-route", headers=headers)
+```
+
+Then the server (or other service) can continue the trace by passing the headers in as `langsmith_extra`:
+
+```python
+# server.py
+from langsmith import traceable
+
+@traceable
+async def my_application()
+    ...
+
+
+@app.post("/my-route")
+async def fake_route(request: Request):
+    # request.headers:  {"langsmith-trace": "..."} 
+    # as well as optional metadata/tags in `baggage`
+    return await my_application(langsmith_extra={"parent": request.headers})
+    return {"message": "Fake route response"}
+```
+
+
+
+
 ### Turning off tracing
 
 If you've decided you no longer want to trace your runs, you can remove the environment variables configured to start tracing in the first place.
