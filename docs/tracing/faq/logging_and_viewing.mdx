@@ -296,6 +296,7 @@ Then the server (or other service) can continue the trace by passing the headers
 ```python
 # server.py
 from langsmith import traceable
+from langsmith.run_helpers import tracing_context
 from fastapi import FastAPI, Request
 
 
@@ -312,8 +313,27 @@ async def fake_route(request: Request):
     # request.headers:  {"langsmith-trace": "..."}
     # as well as optional metadata/tags in `baggage`
     # highlight-next-line
-    return await my_application(langsmith_extra={"parent": request.headers})
+    with tracing_context(parent=request.headers):
+        return await my_application()
 
+```
+
+The example above uses the `tracing_context` context manager. You can also directly specify the parent run context in the `trace` context manager or `traceable` decorator.
+
+```python
+from langsmith.run_helpers import traceable, trace
+# ... same as above
+@app.post("/my-route")
+async def fake_route(request: Request):
+    # request.headers:  {"langsmith-trace": "..."}
+    # as well as optional metadata/tags in `baggage`
+    # highlight-next-line
+    my_application(langsmith_extra={"parent": request.headers})
+    # Or using the `trace` context manager
+    with trace(parent=request.headers) as run_tree:
+        ...
+        run_tree.end(outputs={"answer": "42"})
+        ...
 ```
 
 ### Turning off tracing
