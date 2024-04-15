@@ -257,9 +257,11 @@ This works for the `traceable` decorator and `RunTree` objects.
 
 ### Distributed Tracing
 
-Sometimes your application may span multiple services. LangSmith supports exporting context propagation headers to maintain a trace across processes and systems.
-The following example shows an example 'client' and 'server' setup, where the trace starts on the client and continues on the server.
+LangSmith supports distributed tracing out of the box, linking runs within a trace across services using context propagation headers (`langsmith-trace` and optional `baggage` for metadata/tags).
 
+Example client-server setup:
+- Trace starts on client
+- Continues on server
 
 ```python
 # client.py
