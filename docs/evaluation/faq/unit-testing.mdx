@@ -38,6 +38,9 @@ from my_app.main import generate_sql
 def test_sql_generation_select_all():
     user_query = "Get all users from the customers table"
     sql = generate_sql(user_query)
+    # LangSmith logs any exception raised by `assert` / `pytest.fail` / `raise` / etc.
+    # as a test failure
+    # highlight-next-line
     assert sql == "SELECT * FROM customers"
 ```
 
@@ -181,3 +184,143 @@ With caching enabled, you can iterate quickly on your tests using `watch` mode w
 pip install pytest-watch
 LANGCHAIN_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests
 ```
+
+
+## Explanations
+
+The `@unit` test decorator converts any unit test into a parametrized LangSmith example. By default, all unit tests within a given file will be grouped as a single "test suite" with a corresponding dataset.
+
+The following metrics are available off-the-shelf:
+
+| Feedback             | Description                                                 | Example                                                                                                               |
+| -------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `pass`               | Binary pass/fail score, 1 for pass, 0 for fail              | `assert False` # Fails                                                                                                |
+| `expectation`        | Binary expectation score, 1 if expectation is met, 0 if not | `expect(prediction).against(lambda x: re.search(r"\b[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}\b", x)` ) |
+| `embedding_distance` | Cosine distance between two embeddings                      | expect.embedding_distance(prediction=prediction, expectation=expectation)                                             |
+| `edit_distance`      | Edit distance between two strings                           | expect.edit_distance(prediction=prediction, expectation=expectation)                                                  |
+
+You can also log any arbitrary feeback within a unit test manually using the `client`.
+
+```python
+from langsmith import unit, Client
+from langsmith.run_helpers import get_current_run_tree
+
+client = Client()
+
+@unit
+def test_foo():
+    run_tree = get_current_run_tree()
+    client.create_feedback(run_id=run_tree.id, key="my_custom_feedback", score=1)
+```
+
+
+## Reference
+
+### `expect`
+
+`expect` makes it easy to make approximate assertions on test results and log scores to LangSmith. 
+Off-the-shelf, it allows you to compute and compare embedding distances, edit distances, and make custom assertions on values.
+
+#### `expect.embedding_distance(prediction, reference, *, config=None)`
+
+Compute the embedding distance between the prediction and reference.
+
+This logs the embedding distance to LangSmith and returns a [`Matcher`](#matcher) instance for making assertions on the distance value.
+
+By default, this uses the OpenAI API for computing embeddings.
+
+**Parameters**
+
+- `prediction` (str): The predicted string to compare.
+- `reference` (str): The reference string to compare against.
+- `config` (Optional[EmbeddingConfig]): Optional configuration for the embedding distance evaluator. Supported options:
+  - `encoder`: A custom encoder function to encode the list of input strings to embeddings. Defaults to the OpenAI API.
+  - `metric`: The distance metric to use for comparison. Supported values: "cosine", "euclidean", "manhattan", "chebyshev", "hamming".
+
+**Returns**
+
+A [`Matcher`](#matcher) instance for the embedding distance value.
+
+#### `expect.edit_distance(prediction, reference, *, config=None)`
+
+Compute the string distance between the prediction and reference.
+
+This logs the string distance (Damerau-Levenshtein) to LangSmith and returns a [`Matcher`](#matcher) instance for making assertions on the distance value.
+
+This depends on the `rapidfuzz` package for string distance computation.
+
+**Parameters**
+
+- `prediction` (str): The predicted string to compare.
+- `reference` (str): The reference string to compare against.
+- `config` (Optional[EditDistanceConfig]): Optional configuration for the string distance evaluator. Supported options:
+  - `metric`: The distance metric to use for comparison. Supported values: "damerau_levenshtein", "levenshtein", "jaro", "jaro_winkler", "hamming", "indel". 
+  - `normalize_score`: Whether to normalize the score between 0 and 1.
+
+**Returns**
+
+A [`Matcher`](#matcher) instance for the string distance value.
+
+#### `expect.value(value)`
+
+Create a [`Matcher`](#matcher) instance for making assertions on the given value.
+
+**Parameters**
+
+- `value` (Any): The value to make assertions on.
+
+**Returns**
+
+A [`Matcher`](#matcher) instance for the given value.
+
+#### `Matcher`
+
+A class for making assertions on expectation values.
+
+**`to_be_less_than(value)`**
+
+Assert that the expectation value is less than the given value.
+
+**`to_be_greater_than(value)` **
+
+Assert that the expectation value is greater than the given value.
+
+**`to_be_between(min_value, max_value)`**
+
+Assert that the expectation value is between the given min and max values.
+
+**`to_be_approximately(value, precision=2)`**
+
+Assert that the expectation value is approximately equal to the given value.
+
+**`to_equal(value)`**
+
+Assert that the expectation value equals the given value.
+
+**`to_contain(value)`**
+
+Assert that the expectation value contains the given value.
+
+**`against(func)`**
+
+Assert the expectation value against a custom function.
+
+### `unit` API
+
+The `unit` decorator is used to mark a function as a test case for LangSmith. It ensures that the necessary example data is created and associated with the test function. The decorated function will be executed as a test case, and the results will be recorded and reported by LangSmith.
+
+#### `@unit(id=None, output_keys=None, client=None, test_suite_name=None)`
+
+Create a unit test case in LangSmith.
+
+**Parameters**
+
+- `id` (Optional[uuid.UUID]): A unique identifier for the test case. If not provided, an ID will be generated based on the test function's module and name.
+- `output_keys` (Optional[Sequence[str]]): A list of keys to be considered as the output keys for the test case. These keys will be extracted from the test function's inputs and stored as the expected outputs.  
+- `client` (Optional[ls_client.Client]): An instance of the LangSmith client to be used for communication with the LangSmith service. If not provided, a default client will be used.
+- `test_suite_name` (Optional[str]): The name of the test suite to which the test case belongs. If not provided, the test suite name will be determined based on the environment or the package name.
+
+**Environment Variables**
+
+- `LANGSMITH_TEST_CACHE`: If set, API calls will be cached to disk to save time and costs during testing. Recommended to commit the cache files to your repository for faster CI/CD runs. Requires the 'langsmith[vcr]' package to be installed.
+- `LANGSMITH_TEST_TRACKING`: Set this variable to the path of a directory to enable caching of test results. This is useful for re-running tests without re-executing the code. Requires the 'langsmith[vcr]' package.
