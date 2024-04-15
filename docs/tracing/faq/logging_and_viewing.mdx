@@ -150,7 +150,7 @@ const chatPipeline = traceable(async (question: string) => {
       content:
         "You are a helpful assistant. Please respond to the user's request only based on the given context.",
     },
-    { role: "user", content: `Question: ${question}\nContext: ${context}` },
+    { role: "user", content: \`Question: ${question}\nContext: ${context}\` },
   ];
   const chatCompletion = await client.chat.completions.create({
     model: "gpt-3.5-turbo",
