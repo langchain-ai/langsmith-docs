@@ -2,7 +2,8 @@ import React from "react";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
-import Markdown from "react-markdown";
+import { marked } from "marked";
+import * as DOMPurify from "dompurify";
 
 export function LangChainPyBlock(content) {
   return {
@@ -67,7 +68,13 @@ export function CodeTabs({ tabs, groupId }) {
         const key = `${groupId}-${index}`;
         return (
           <TabItem key={key} value={tab.value} label={tab.label}>
-            {tab.caption && <Markdown>{tab.caption}</Markdown>}
+            {tab.caption && (
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(marked.parse(tab.caption)),
+                }}
+              ></div>
+            )}
             <CodeBlock
               className={tab.value}
               language={tab.language ?? tab.value}
