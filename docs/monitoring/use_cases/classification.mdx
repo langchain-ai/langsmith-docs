@@ -118,17 +118,77 @@ We will set up two automations, one for positive feedback and the other for nega
 
 The first will take all runs with positive feedback and automatically add them to a dataset.
 The logic behind this is that any run with positive feedback we can use as a good example in future iterations.
+Let's create a dataset called `classifier-github-issues` to add this data to.
 
 ![Optimization Positive](../static/optimization-classification-positive.png)
 
-The second will take all runs with a correction and add them to the same dataset.
-The logic here is that we can use the correction on these examples as a good example in future iterations.
+The second will take all runs with a correction and use a webhook to add them to a dataset
 
 ![Optimization Negative](../static/optimization-classification-negative.png)
+
+In order to do this, we need to set up a webhook. We will do this using [Modal](https://modal.com/).
+To see in-depth instructions on this, see instructions [here](../faq/webhooks).
+
+The Python file that defines our Modal service should look like:
+
+```python
+from fastapi import Depends, HTTPException, status, Request, Query
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from modal import Secret, Stub, web_endpoint, Image
+from langsmith import Client
+
+# Create a job called "auth-example" that install the `langsmith` package as a dependency
+# Installing `langsmith` is just an example, you may need to install other packages
+# depending on your logic.
+stub = Stub("auth-example", image=Image.debian_slim().pip_install("langsmith"))
+
+# These are the secrets we defined above
+@stub.function(
+    secrets=[
+        Secret.from_name("ls-webhook"),
+        Secret.from_name("my-langsmith-secret")
+    ]
+ )
+# We want this to be a `POST` endpoint since we will post data here
+@web_endpoint(method="POST")
+# We set up a `secret` query parameter
+async def f(request: Request, secret: str = Query(...), ):
+
+    # First, we validate the secret key we pass
+    import os
+
+    if secret != os.environ["LS_WEBHOOK"]:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Now we load the JSON payload for the runs that are passed to the webhook
+    body = await request.json()
+    # We get all runs
+    runs = body['runs']
+    ls_client = Client()
+    # We get the ids of the runs we are passed
+    ids = [r['id'] for r in runs]
+    # We fetch feedback for all those runs
+    feedback = list(ls_client.list_feedback(run_ids=ids))
+    # We then iterate over these runs and associated feedback
+    for r, f in zip(runs, feedback):
+        # We create an example in the dataset
+        # This example has the same inputs as our application
+        # But the outputs are now the "correction" that we left as feedback
+        ls_client.create_example(
+            inputs=r['inputs'],
+            outputs={'output': f.correction},
+            dataset_name="classifier-github-issues"
+        )
+    # Function body
+    return "success!"
+
+```
 
 ## Updating the application
 
 We can now update our code to pull down the dataset we are sending runs to.
-We can use the datapoints in that dataset as few shot examples.
-We will need some logic to check if the example has a correction associated with it or not.
-This is important because if it does then we will want to use that as the example, otherwise we can

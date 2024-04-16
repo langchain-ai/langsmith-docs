@@ -77,3 +77,116 @@ When delivering events to your webhook endpoint we follow these guidelines
 - If your endpoint returns a 5xx status code in less than 5 seconds we retry up to 2 times with exponential backoff.
 - If your endpoint returns a 4xx status code, we declare the delivery failed and do not retry.
 - If your endpoint returns any body do not read it
+
+## Example with Modal
+
+### Setup
+
+For an example of how to set this up, we will use [Modal](https://modal.com/).
+
+First, create a Modal account. Then, locally install the Modal SDK:
+
+```shell
+pip install modal
+```
+
+### Secrets
+
+Next, you will need to set up some secrets.
+
+First, we will set up a secret to use to authenticate to our server.
+You can see instructions for secrets [here](https://modal.com/docs/guide/secrets).
+For this purpose, let's call our secret `ls-webhook` and have it set an environment variable with the name `LS_WEBHOOK`.
+
+We can also set up a LangSmith secret - luckily there is already an integration template for this!
+
+![LangSmith Modal Template](../static/modal_langsmith_secret.png)
+
+### Service
+
+After that, you can create a Python file that will serve as your endpoint.
+An example is below, with comments explaining what is going on:
+
+```python
+from fastapi import Depends, HTTPException, status, Request, Query
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from modal import Secret, Stub, web_endpoint, Image
+from langsmith import Client
+
+# Create a job called "auth-example" that install the `langsmith` package as a dependency
+# Installing `langsmith` is just an example, you may need to install other packages
+# depending on your logic.
+stub = Stub("auth-example", image=Image.debian_slim().pip_install("langsmith"))
+
+# These are the secrets we defined above
+@stub.function(
+    secrets=[
+        Secret.from_name("ls-webhook"),
+        Secret.from_name("my-langsmith-secret")
+    ]
+ )
+# We want this to be a `POST` endpoint since we will post data here
+@web_endpoint(method="POST")
+# We set up a `secret` query parameter
+async def f(request: Request, secret: str = Query(...), ):
+
+    # First, we validate the secret key we pass
+    import os
+
+    if secret != os.environ["LS_WEBHOOK"]:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Now we load the JSON payload for the runs that are passed to the webhook
+    body = await request.json()
+    # This is where we put the logic for what should happen inside this webhook
+    runs = body['runs']
+    ls_client = Client()
+    ids = [r['id'] for r in runs]
+    feedback = list(ls_client.list_feedback(run_ids=ids))
+    for r, f in zip(runs, feedback):
+        try:
+            ls_client.create_example(
+                inputs=r['inputs'],
+                outputs={'output': f.correction},
+                dataset_name="classifier-github-issues"
+            )
+        except Exception as e:
+            raise ValueError(f"{r} and {f}")
+    # Function body
+    return "success!"
+
+```
+
+We can now deploy this easily with `modal deploy ...` (see docs [here](https://modal.com/docs/guide/managing-deployments)).
+
+You should now get something like:
+
+```
+✓ Created objects.
+├── 🔨 Created mount /Users/harrisonchase/workplace/langsmith-docs/example-webhook.py
+├── 🔨 Created mount PythonPackage:langsmith
+└── 🔨 Created f => https://hwchase17--auth-example-f.modal.run
+✓ App deployed! 🎉
+
+View Deployment: https://modal.com/apps/hwchase17/auth-example
+```
+
+The important thing to remember is `https://hwchase17--auth-example-f.modal.run` - the function we created to run.
+NOTE: this is NOT the final deployment URL, make sure not to accidentally use that.
+
+### Hooking it up
+
+We can now take the function URL we create above and add it as a webhook.
+We have to remember to also pass in the secret key as a query parameter.
+Putting it all together, it should look something like:
+
+```
+https://hwchase17--auth-example-f-dev.modal.run?secret={SECRET}
+```
+
+Replace `{SECRET}` with the secret key you created to access the Modal service.
