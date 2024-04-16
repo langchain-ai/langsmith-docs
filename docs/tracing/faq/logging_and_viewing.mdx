@@ -18,12 +18,15 @@ import { AccessRunIdBlock } from "@site/src/components/TracingFaq";
 
 LangSmith makes it easy to log and view traces from your LLM application, regardless of which language or framework you use.
 
-### The `@traceable` decorator
+## Annotating your code for tracing
 
-The `@traceable` decorator is a simple way to log traces from the LangSmith Python SDK. Simply decorate any function with `@traceable`, set your
-`LANGCHAIN_API_KEY` and `LANGCHAIN_TRACING_V2='true'`, and the inputs and outputs of that function will be logged to LangSmith as a `Run`. You can [choose
-your desination project](/tracing/faq/customizing_trace_attributes#changing-the-destination-project-at-runtime), [add custom metadata and tags](/tracing/faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces),
-and [customize your run name](/tracing/faq/customizing_trace_attributes#customizing-the-run-name).
+LangSmith makes it easy to start logging traces with minimal changes to your existing code.
+
+:::note
+Please follow the [Setup](/) guide to learn how to sign up and create an API key.
+By default, the traces will be logged to a project named `default`.
+To log traces to a different project, see [this section](/tracing/faq/customizing_trace_attributes#logging-to-a-specific-project).
+:::
 
 <CodeTabs
   tabs={[
@@ -32,7 +35,12 @@ and [customize your run name](/tracing/faq/customizing_trace_attributes#customiz
 def my_function(input: Any) -> Any:
     return "result"\n
 my_function("Why is the sky blue?")
-`),
+`,
+`The <code>@traceable</code> decorator is a simple way to log traces from the LangSmith Python SDK. Simply decorate any function with <code>@traceable</code>, set your
+<code>LANGCHAIN_API_KEY</code> and <code>LANGCHAIN_TRACING_V2='true'</code>, and the inputs and outputs of that function will be logged to LangSmith as a <code>Run</code>. You can <a href="/tracing/faq/customizing_trace_attributes#changing-the-destination-project-at-runtime">choose
+your destination project</a>, <a href="/tracing/faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces">add custom metadata and tags</a>,
+and <a href="/tracing/faq/customizing_trace_attributes#customizing-the-run-name">customize your run name</a>.`
+),
     TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
 const myFunction = traceable(async (text: string) => {
   return "result";
