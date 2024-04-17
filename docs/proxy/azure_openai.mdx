@@ -1,6 +1,6 @@
 ---
-sidebar_label: Quick Start
-sidebar_position: 1
+sidebar_label: Use LangSmith Proxy with Azure OpenAI
+sidebar_position: 2
 ---
 
 # Configure LangSmith Proxy to talk to your Azure OpenAI Endpoint
@@ -17,7 +17,7 @@ The LangSmith Proxy is available as a Docker container. You can run it in your e
 
 ```bash
 docker pull docker.io/langchain/langsmith-proxy:latest # Force pull the latest version of the LangSmith Proxy
-docker run -p 8080:8080 docker.io/langchain/langsmith-proxy:latest -e AZURE_OPENAI_ENDPOINT <YOUR AZURE_OPENAI_ENDPOINT> -p 8080:8080 # Run the LangSmith Proxy on port 8080 and publish it to the host
+docker run -e AZURE_OPENAI_ENDPOINT <YOUR AZURE_OPENAI_ENDPOINT> -p 8080:8080 docker.io/langchain/langsmith-proxy:latest # Run the LangSmith Proxy on port 8080 and publish it to the host
 ```
 
 You should see the following output:
