@@ -329,7 +329,7 @@ evaluate(
 
 ## Summary Evaluators
 
-Some metrics can only be defined on the entire experiment level as opposed to the individual runs of the experiment. For example, you may want to compute the f1 score of a classifier across all runs in an experiment kicked off from a dataset. These are called `summary_evaluators`.
+Some metrics can only be defined on the entire experiment level as opposed to the individual runs of the experiment. For example, you may want to compute the f1 score of a classifier across all runs in an experiment kicked off from a dataset. These are called `summary_evaluators`. Instead of taking in a single `Run` and `Example`, these evaluators take a list of each.
 
 ```python
 from typing import List
