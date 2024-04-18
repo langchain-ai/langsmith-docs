@@ -130,7 +130,7 @@ stub = Stub("auth-example", image=Image.debian_slim().pip_install("langsmith"))
 # We want this to be a `POST` endpoint since we will post data here
 @web_endpoint(method="POST")
 # We set up a `secret` query parameter
-def f(runs: dict, secret: str = Query(...)):
+def f(data: dict, secret: str = Query(...)):
     # You can import dependencies you don't have locally inside Modal funxtions
     from langsmith import Client
 
@@ -146,6 +146,7 @@ def f(runs: dict, secret: str = Query(...)):
 
     # This is where we put the logic for what should happen inside this webhook
     ls_client = Client()
+    runs = data["runs"]
     ids = [r["id"] for r in runs]
     feedback = list(ls_client.list_feedback(run_ids=ids))
     for r, f in zip(runs, feedback):
