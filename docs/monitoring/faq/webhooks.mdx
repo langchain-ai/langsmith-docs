@@ -95,6 +95,7 @@ To finish setting up your account, run the command:
 ```shell
 modal setup
 ```
+
 and follow the instructions
 
 ### Secrets
@@ -103,7 +104,7 @@ Next, you will need to set up some secrets in Modal.
 
 First, LangSmith will need to authenticate to Modal by passing in a secret.
 The easiest way to do this is to pass in a secret in the query parameters.
-To validate this secret, we will need to add a secret in *Modal* to validate it.
+To validate this secret, we will need to add a secret in _Modal_ to validate it.
 We will do that by creating a Modal secret.
 You can see instructions for secrets [here](https://modal.com/docs/guide/secrets).
 For this purpose, let's call our secret `ls-webhook` and have it set an environment variable with the name `LS_WEBHOOK`.
