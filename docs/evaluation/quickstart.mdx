@@ -118,12 +118,12 @@ await client.createExamples({
 // Define AI system
 const openaiClient = new OpenAI();\n
 async function predictResult({ question }: { question: string }) {
-    const messages = [{ "role": "user", "content": question }];
-    const output = await openaiClient.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messages
-    });
-    return { output };
+  const messages = [{ "role": "user", "content": question }];
+  const output = await openaiClient.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: messages
+  });
+  return { output };
 }\n
 // Define evaluators
 const mustMention = async ({ run, example }: { run: Run; example?: Example; }): Promise<EvaluationResult> => {
@@ -138,9 +138,11 @@ const mustMention = async ({ run, example }: { run: Run; example?: Example; }): 
 };\n
 await runOnDataset(
   predictResult, // Your AI system
-   datasetName, // The data to predict and grade over
-   {
-    evaluationConfig: {customEvaluators: [mustMention] 
+  datasetName, // The data to predict and grade over
+  {
+    evaluationConfig: {
+      customEvaluators: [mustMention]
+    }
   },
   projectMetadata: {
     version: "1.0.0",
