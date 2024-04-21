@@ -105,15 +105,15 @@ const dataset = await client.createDataset(datasetName, {
   description: "Rap battle prompts.",
 });
 await client.createExamples({
-    inputs: [
-        {question: "a rap battle between Atticus Finch and Cicero"},
-        {question: "a rap battle between Barbie and Oppenheimer"},
-    ],
-    outputs: [
-        {must_mention: ["lawyer", "justice"]},
-        {must_mention: ["plastic", "nuclear"]},
-    ],
-    datasetId: dataset.id,
+  inputs: [
+    {question: "a rap battle between Atticus Finch and Cicero"},
+    {question: "a rap battle between Barbie and Oppenheimer"},
+  ],
+  outputs: [
+    {must_mention: ["lawyer", "justice"]},
+    {must_mention: ["plastic", "nuclear"]},
+  ],
+  datasetId: dataset.id,
 });\n
 // Define AI system
 const openaiClient = new OpenAI();\n
