@@ -44,7 +44,7 @@
     },
     {
       "source": "/evaluation/faq/datasets-webapp",
-      "destination": "/faq/manage-datasets"
+      "destination": "/evaluation/faq/manage-datasets"
     },
     {
       "source": "/overview",
