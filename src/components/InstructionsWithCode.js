@@ -64,7 +64,6 @@ export function ShellBlock(content, value = "shell", label = "Shell") {
 }
 
 /**
- * 
  * @param {string} code 
  * @param {"typescript" | "python"} language 
  * @returns {string} The formatted code
@@ -86,6 +85,7 @@ function formatCode(code, language) {
   } catch (_) {
     // no-op
   }
+
   // If formatting fails, return as is
   return code
 }
