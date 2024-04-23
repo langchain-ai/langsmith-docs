@@ -36,6 +36,7 @@
     "@supabase/supabase-js": "^2.39.7",
     "clsx": "^1.2.1",
     "dompurify": "^3.1.0",
+    "isomorphic-dompurify": "^2.7.0",
     "json-loader": "^0.5.7",
     "marked": "^12.0.1",
     "process": "^0.11.10",

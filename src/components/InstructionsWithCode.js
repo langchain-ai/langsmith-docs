@@ -3,7 +3,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 import { marked } from "marked";
-import * as DOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 
 export function LangChainPyBlock(content) {
   return {
