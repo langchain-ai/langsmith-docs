@@ -48,13 +48,13 @@ const config = {
           lastVersion: "current",
           versions: {
             current: {
-              label: '1.0',
+              label: "1.0",
               badge: false,
             },
             "2.0": {
               label: "2.0",
               banner: "unreleased",
-            }
+            },
           },
           sidebarPath: require.resolve("./sidebars.js"),
           remarkPlugins: [
