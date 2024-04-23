@@ -69,15 +69,15 @@ export function ShellBlock(content, value = "shell", label = "Shell") {
  * @returns {string} The formatted code
  */
 function formatCode(code, language) {
-  language = language.toLowerCase();
-  if (language === "python") {
+  const languageLower = language.toLowerCase();
+  if (languageLower === "python") {
     // no-op - Do not format Python code at this time
     return code;
   }
 
   try {
     const formattedCode = prettier.format(code, {
-      parser: language,
+      parser: languageLower,
       plugins: [parserTypeScript],
     });
 
