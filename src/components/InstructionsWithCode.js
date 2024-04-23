@@ -73,7 +73,7 @@ export function CodeTabs({ tabs, groupId }) {
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(marked.parse(tab.caption)),
                 }}
-              ></div>
+              />
             )}
             <CodeBlock
               className={tab.value}

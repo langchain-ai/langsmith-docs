@@ -35,7 +35,8 @@ To log traces to a different project, see [this section](/tracing/faq/customizin
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import traceable\n
+    PythonBlock(
+      `from langsmith import traceable\n
 from openai import Client\n
 openai = Client()\n\n
 @traceable
@@ -65,9 +66,10 @@ def run_pipeline():
     return parse_output(response)\n
 run_pipeline()
 `,
-`The \`@traceable\` decorator is a simple way to log traces from the LangSmith Python SDK. Simply decorate any function with \`@traceable\`.`
-),
-    TypeScriptBlock(`import { traceable } from "langsmith/traceable";
+      `The \`@traceable\` decorator is a simple way to log traces from the LangSmith Python SDK. Simply decorate any function with \`@traceable\`.`
+    ),
+    TypeScriptBlock(
+      `import { traceable } from "langsmith/traceable";
 import OpenAI from "openai";\n
 const openai = new OpenAI();\n
 const formatPrompt = traceable((subject: string) => {
@@ -99,9 +101,9 @@ const runPipeline = traceable(async () => {
 }, { name: "runPipeline" });\n
 await runPipeline()
 `,
-`The \`traceable\` function is a simple way to log traces from the LangSmith TypeScript SDK. Simply wrap any function with \`traceable\`.\n
+      `The \`traceable\` function is a simple way to log traces from the LangSmith TypeScript SDK. Simply wrap any function with \`traceable\`.\n
 Note that when wrapping a sync function with \`traceable\`, (e.g. \`formatPrompt\` in the example below), you should use the \`await\` keyword when calling it to ensure the trace is logged correctly.`
-),
+    ),
   ]}
   groupId="client-language"
 />
@@ -121,8 +123,8 @@ To log traces to a different project, see [this section](/tracing/faq/customizin
 :::
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`import openai
+  tabs={[
+    PythonBlock(`import openai
 from langsmith import traceable
 from langsmith.wrappers import wrap_openai\n
 client = wrap_openai(openai.Client())\n
@@ -140,9 +142,8 @@ def chat_pipeline(question: str):
         model="gpt-3.5-turbo", messages=messages
     )
     return chat_completion.choices[0].message.content\n
-chat_pipeline("Can you summarize this morning's meetings?")`,
-        ),
-        TypeScriptBlock(`import OpenAI from "openai";
+chat_pipeline("Can you summarize this morning's meetings?")`),
+    TypeScriptBlock(`import OpenAI from "openai";
 import { traceable } from "langsmith/traceable";
 import { wrapOpenAI } from "langsmith/wrappers";\n
 const client = wrapOpenAI(new OpenAI());\n
@@ -165,10 +166,9 @@ const chatPipeline = traceable(async (question: string) => {
     });
     return chatCompletion.choices[0].message.content;
 }, { name: "Chat Pipeline" });\n
-await chatPipeline("Can you summarize this morning's meetings?");`
-        ),
-    ]}
-    groupId="client-language"
+await chatPipeline("Can you summarize this morning's meetings?");`),
+  ]}
+  groupId="client-language"
 />
 
 ### Using the `RunTree` API
@@ -178,8 +178,8 @@ create runs and children runs to assemble your trace. You still need to set your
 necessary for this method.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`import openai
+  tabs={[
+    PythonBlock(`import openai
 from langsmith.run_trees import RunTree
 # This can be a user input to your app
 question = "Can you summarize this morning's meetings?"
@@ -210,9 +210,8 @@ chat_completion = client.chat.completions.create(
 child_llm_run.end(outputs=chat_completion)
 child_llm_run.post()
 pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
-pipeline.post()`,
-        ),
-        TypeScriptBlock(`import OpenAI from "openai";
+pipeline.post()`),
+    TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";
 // This can be a user input to your app
 const question = "Can you summarize this morning's meetings?";
@@ -243,10 +242,9 @@ const chatCompletion = await client.chat.completions.create({
 childRun.end(chatCompletion);
 await childRun.postRun();
 pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
-await pipeline.postRun();`
-        ),
-    ]}
-    groupId="client-language"
+await pipeline.postRun();`),
+  ]}
+  groupId="client-language"
 />
 
 ## Viewing Traces
