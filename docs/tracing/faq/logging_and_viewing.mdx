@@ -20,14 +20,16 @@ LangSmith makes it easy to log and view traces from your LLM application, regard
 
 ## Annotating your code for tracing
 
-### Using traceable
+### Using `@traceable` / `traceable`
 
 LangSmith makes it easy to log traces with minimal changes to your existing code with the `@traceable` decorator in Python and `traceable` function in TypeScript.
 
 :::note
 The `LANGCHAIN_TRACING_V2` environment variable must be set to `'true'` in order for traces to be logged to LangSmith, even when using `@traceable` or `traceable`. This allows you to toggle tracing on and off without changing your code.
-By default, the traces will be logged to a project named `default`. Additionally, you will need to set the `LANGCHAIN_API_KEY` environment variable to your API key (see [Setup](/) for more information).
 
+Additionally, you will need to set the `LANGCHAIN_API_KEY` environment variable to your API key (see [Setup](/) for more information).
+
+By default, the traces will be logged to a project named `default`.
 To log traces to a different project, see [this section](/tracing/faq/customizing_trace_attributes#logging-to-a-specific-project).
 :::
 
@@ -49,7 +51,7 @@ def format_prompt(subject):
         }
     ]\n
 @traceable(run_type="llm")
-def invoke_llm(prompt):
+def invoke_llm(messages):
     return openai.chat.completions.create(
         messages=prompt, model="gpt-3.5-turbo", temperature=0
     )\n
@@ -58,8 +60,8 @@ def parse_output(response):
     return response.choices[0].message.content\n
 @traceable
 def run_pipeline():
-    prompt = format_prompt("colorful socks")
-    response = invoke_llm(prompt)
+    messages = format_prompt("colorful socks")
+    response = invoke_llm(messages)
     return parse_output(response)\n
 run_pipeline()
 `,
@@ -80,19 +82,19 @@ const formatPrompt = traceable((subject: string) => {
         }
     ];
 }, { name: "formatPrompt" });\n
-const invokeLLM = traceable(async (prompt: { role: string; content: string }[]) => {
+const invokeLLM = traceable(async (messages: { role: string; content: string }[]) => {
     return openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: prompt,
+        messages: messages,
         temperature: 0
     });
-}, { runType: "llm", name: "invokeLLM" });\n
+}, { run_type: "llm", name: "invokeLLM" });\n
 const parseOutput = traceable((response: any) => {
     return response.choices[0].message.content;
 }, { name: "parseOutput" });\n
 const runPipeline = traceable(async () => {
-    const prompt = await formatPrompt("colorful socks");
-    const response = await invokeLLM(prompt);
+    const messages = await formatPrompt("colorful socks");
+    const response = await invokeLLM(messages);
     return parseOutput(response);
 }, { name: "runPipeline" });\n
 await runPipeline()
@@ -104,219 +106,157 @@ Note that when wrapping a sync function with \`traceable\`, (e.g. \`formatPrompt
   groupId="client-language"
 />
 
-Also available is the `wrap_openai` function. This function allows you to wrap your OpenAI client in order to automatically log traces, no decorator necessary - it
-is applied for you, under the hood.
+### Wrapping the OpenAI client
 
-### The `RunTree` API
-
-Another, more explicit way to log traces to LangSmith is via the `RunTree` API. This API allows you more control over your tracing - you can manually
-create runs and children runs to craft your trace however you like. You still need to set your `LANGCHAIN_API_KEY`, but `LANGCHAIN_TRACING_V2` is not
-necessary for this method.
-
-### Logging Traces
-
-There are multiple ways to logs traces to LangSmith using the LangSmith SDK or API, OpenAI's Python client, or LangChain.
-
-When using the Python SDK, take special note of the `traceable` decorator and `wrap_openai`, as these methods can be easier to use than the `RunTree` API.
+The `wrap_openai`/`wrapOpenAI` methods in Python/TypeScript allow you to wrap your OpenAI client in order to automatically log traces -- no decorator or function wrapping required!
+The wrapper works seamlessly with the `@traceable` decorator or `traceable` function and you can use both in the same application.
 
 :::note
-Please follow the [Setup](/) guide to learn how to sign up and create an API key.
+The `LANGCHAIN_TRACING_V2` environment variable must be set to `'true'` in order for traces to be logged to LangSmith, even when using `wrap_openai` or `wrapOpenAI`. This allows you to toggle tracing on and off without changing your code.
+
+Additionally, you will need to set the `LANGCHAIN_API_KEY` environment variable to your API key (see [Setup](/) for more information).
+
 By default, the traces will be logged to a project named `default`.
 To log traces to a different project, see [this section](/tracing/faq/customizing_trace_attributes#logging-to-a-specific-project).
 :::
 
-:::note
-Please make sure to set the `LANGCHAIN_API_KEY` environment variable to your API key before running the examples below.
-Additionally, you will need to set `LANGCHAIN_TRACING_V2='true'` if you plan to use either:
-
-- LangChain (Python or JS)
-- `@traceable` decorator or `wrap_openai` method in the Python SDK
-
-:::
-
 <CodeTabs
-  tabs={[
-    PythonBlock(`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
-from typing import Any, Iterable
-import openai
+    tabs={[
+        PythonBlock(`import openai
 from langsmith import traceable
-from langsmith.run_trees import RunTree
 from langsmith.wrappers import wrap_openai\n
-### OPTION 1: Use traceable decorator ###
-client = openai.Client()
+client = wrap_openai(openai.Client())\n
 @traceable(run_type="tool", name="Retrieve Context")
 def my_tool(question: str) -> str:
     return "During this morning's meeting, we solved all world conflict."\n
-@traceable(name="Chat Pipeline Traceable")
+@traceable(name="Chat Pipeline")
 def chat_pipeline(question: str):
     context = my_tool(question)
     messages = [
         { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-        { "role": "user", "content": f"Question: {question}\\nContext: {context}"}
+        { "role": "user", "content": f"Question: {question}\nContext: {context}"}
     ]
     chat_completion = client.chat.completions.create(
         model="gpt-3.5-turbo", messages=messages
     )
     return chat_completion.choices[0].message.content\n
-chat_pipeline("Can you summarize this morning's meetings?")\n
-### Alternatively, use the wrapped OpenAI client to log traces automatically:
-client = wrap_openai(openai.Client())
-client.chat.completions.create(
-    messages=[{"role": "user", "content": "Hello, world"}],
-    model="gpt-3.5-turbo"
-)\n
-### OPTION 2: Use RunTree API (more explicit) ###
+chat_pipeline("Can you summarize this morning's meetings?")`,
+        ),
+        TypeScriptBlock(`import OpenAI from "openai";
+import { traceable } from "langsmith/traceable";
+import { wrapOpenAI } from "langsmith/wrappers";\n
+const client = wrapOpenAI(new OpenAI());\n
+const myTool = traceable(async (question: string) => {
+    return "During this morning's meeting, we solved all world conflict.";
+}, { name: "Retrieve Context", run_type: "tool" });\n
+const chatPipeline = traceable(async (question: string) => {
+    const context = await myTool(question);
+    const messages = [
+        {
+            role: "system",
+            content:
+                "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+        },
+        { role: "user", content: \`Question: \${question} Context: \${context}\` },
+    ];
+    const chatCompletion = await client.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: messages,
+    });
+    return chatCompletion.choices[0].message.content;
+}, { name: "Chat Pipeline" });\n
+await chatPipeline("Can you summarize this morning's meetings?");`
+        ),
+    ]}
+    groupId="client-language"
+/>
+
+### Using the `RunTree` API
+
+Another, more explicit way to log traces to LangSmith is via the `RunTree` API. This API allows you more control over your tracing - you can manually
+create runs and children runs to assemble your trace. You still need to set your `LANGCHAIN_API_KEY`, but `LANGCHAIN_TRACING_V2` is not
+necessary for this method.
+
+<CodeTabs
+    tabs={[
+        PythonBlock(`import openai
+from langsmith.run_trees import RunTree
 # This can be a user input to your app
-question = "Can you summarize this morning's meetings?"\n
+question = "Can you summarize this morning's meetings?"
 # Create a top-level run
 pipeline = RunTree(
-    name="Chat Pipeline Run Tree",
+    name="Chat Pipeline",
     run_type="chain",
     inputs={"question": question}
-)\n
+)
 # This can be retrieved in a retrieval step
-context = "During this morning's meeting, we solved all world conflict."\n
+context = "During this morning's meeting, we solved all world conflict."
 messages = [
     { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
     { "role": "user", "content": f"Question: {question}\\nContext: {context}"}
-]\n
+]
 # Create a child run
 child_llm_run = pipeline.create_child(
     name="OpenAI Call",
     run_type="llm",
     inputs={"messages": messages},
-)\n
+)
 # Generate a completion
 client = openai.Client()
 chat_completion = client.chat.completions.create(
     model="gpt-3.5-turbo", messages=messages
-)\n
+)
 # End the runs and log them
 child_llm_run.end(outputs=chat_completion)
-child_llm_run.post()\n
+child_llm_run.post()
 pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
-pipeline.post()`),
-    TypeScriptBlock(`import OpenAI from "openai";
-import { traceable } from "langsmith/traceable";
-import { wrapOpenAI } from "langsmith/wrappers";\n
-const client = wrapOpenAI(new OpenAI());\n
-const myTool = traceable(async (question: string) => {
-  return "During this morning's meeting, we solved all world conflict.";
-});\n
-const chatPipeline = traceable(async (question: string) => {
-  const context = await myTool(question);
-  const messages = [
-    {
-      role: "system",
-      content:
-        "You are a helpful assistant. Please respond to the user's request only based on the given context.",
-    },
-    { role: "user", content: \`Question: $\{question\}\nContext: $\{context\}\` },
-  ];
-  const chatCompletion = await client.chat.completions.create({
+pipeline.post()`,
+        ),
+        TypeScriptBlock(`import OpenAI from "openai";
+import { RunTree } from "langsmith";
+// This can be a user input to your app
+const question = "Can you summarize this morning's meetings?";
+const pipeline = new RunTree({
+    name: "Chat Pipeline",
+    run_type: "chain",
+    inputs: { question }
+});
+// This can be retrieved in a retrieval step
+const context = "During this morning's meeting, we solved all world conflict.";
+const messages = [
+    { role: "system", content: "You are a helpful assistant. Please respond to the user's request only based on the given context." },
+    { role: "user", content: \`Question: \${question}\nContext: \${context}\` }
+];
+// Create a child run
+const childRun = await pipeline.createChild({
+    name: "OpenAI Call",
+    run_type: "llm",
+    inputs: { messages },
+});
+// Generate a completion
+const client = new OpenAI();
+const chatCompletion = await client.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: messages,
-  });
-  return chatCompletion.choices[0].message.content;
-});\n
-await chatPipeline("Can you summarize this morning's meetings?");
-`),
-    APIBlock(`# To run the example below, ensure the environment variable OPENAI_API_KEY is set
-# Here, we'll show you to use the requests library in Python to log a trace, but you can use any HTTP client in any language.
-import openai
-import requests
-from datetime import datetime
-from uuid import uuid4\n
-def post_run(run_id, name, run_type, inputs, parent_id=None):
-    """Function to post a new run to the API."""
-    data = {
-        "id": run_id.hex,
-        "name": name,
-        "run_type": run_type,
-        "inputs": inputs,
-        "start_time": datetime.utcnow().isoformat(),
-    }
-    if parent_id:
-        data["parent_run_id"] = parent_id.hex
-    requests.post(
-        "https://api.smith.langchain.com/runs",
-        json=data,
-        headers=headers
-    )\n
-def patch_run(run_id, outputs):
-    """Function to patch a run with outputs."""
-    requests.patch(
-        f"https://api.smith.langchain.com/runs/{run_id}",
-        json={
-            "outputs": outputs,
-            "end_time": datetime.utcnow().isoformat(),
-        },
-        headers=headers,
-    )\n
-# Send your API Key in the request headers
-headers = {"x-api-key": "<YOUR API KEY>"}\n
-# This can be a user input to your app
-question = "Can you summarize this morning's meetings?"\n
-# This can be retrieved in a retrieval step
-context = "During this morning's meeting, we solved all world conflict."
-messages = [
-    {"role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context."},
-    {"role": "user", "content": f"Question: {question}\\nContext: {context}"}
-]\n
-# Create parent run
-parent_run_id = uuid4()
-post_run(parent_run_id, "Chat Pipeline", "chain", {"question": question})\n
-# Create child run
-child_run_id = uuid4()
-post_run(child_run_id, "OpenAI Call", "llm", {"messages": messages}, parent_run_id)\n
-# Generate a completion
-client = openai.Client()
-chat_completion = client.chat.completions.create(model="gpt-3.5-turbo", messages=messages)\n
-# End runs
-patch_run(child_run_id, chat_completion.dict())
-patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})`),
-    LangChainPyBlock(`# No extra code is needed to log a trace to LangSmith when using LangChain Python.
-# Just run your LangChain code as you normally would with the LANGCHAIN_TRACING_V2 environment variable set to 'true' and the LANGCHAIN_API_KEY environment variable set to your API key.
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser\n
-prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
-    ("user", "Question: {question}\nContext: {context}")
-])
-model = ChatOpenAI(model="gpt-3.5-turbo")
-output_parser = StrOutputParser()\n
-chain = prompt | model | output_parser\n
-question = "Can you summarize this morning's meetings?"
-context = "During this morning's meeting, we solved all world conflict."
-chain.invoke({"question": question, "context": context})`),
-    LangChainJSBlock(`// No extra code is needed to log a trace to LangSmith when using LangChain JS.
-// Just run your LangChain code as you normally would with the LANGCHAIN_TRACING_V2 environment variable set to 'true' and the LANGCHAIN_API_KEY environment variable set to your API key.
-import { ChatOpenAI } from "@langchain/openai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from "@langchain/core/output_parsers";\n
-const prompt = ChatPromptTemplate.fromMessages([
-["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
-["user", "Question: {question}\\nContext: {context}"],
-]);
-const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
-const outputParser = new StringOutputParser();\n
-const chain = prompt.pipe(model).pipe(outputParser);\n
-const question = "Can you summarize this morning's meetings?"
-const context = "During this morning's meeting, we solved all world conflict."
-await chain.invoke({ question: question, context: context });`),
-  ]}
-  groupId="client-language"
+});
+// End the runs and log them
+childRun.end(chatCompletion);
+await childRun.postRun();
+pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
+await pipeline.postRun();`
+        ),
+    ]}
+    groupId="client-language"
 />
 
-### Viewing Traces
+## Viewing Traces
 
 To view traces, navigate to the project details page for your project (by default, all traces are logged to the "default" project).
 Then, click on a row in the traces table to expand the trace. This will bring up a run tree, which shows the parent-child relationships between runs, as well as the inputs and outputs of each run.
 You can also view feedback, metadata, and other information in the tabs.
 ![Trace](../static/faq/trace.png)
 
-### Setting a sampling rate for tracing
+## Setting a sampling rate for tracing
 
 To downsample the number of traces logged to LangSmith, set the `LANGCHAIN_TRACING_SAMPLING_RATE` environment variable to
 any float between 0 (no traces) and 1 (all traces). This requires a python SDK version >= 0.0.84, and a JS SDK version >= 0.0.64.
@@ -328,7 +268,7 @@ export LANGCHAIN_TRACING_SAMPLING_RATE=0.75
 
 This works for the `traceable` decorator and `RunTree` objects.
 
-### Distributed Tracing
+## Distributed Tracing
 
 LangSmith supports distributed tracing out of the box, linking runs within a trace across services using context propagation headers (`langsmith-trace` and optional `baggage` for metadata/tags).
 
@@ -397,7 +337,7 @@ async def fake_route(request: Request):
         ...
 ```
 
-### Turning off tracing
+## Turning off tracing
 
 If you've decided you no longer want to trace your runs, you can remove the environment variables configured to start tracing in the first place.
 By unsetting the `LANGCHAIN_TRACING_V2` environment variable, traces will no longer be logged to LangSmith.
@@ -405,7 +345,7 @@ Note that this currently does not affect the `RunTree` objects.
 
 This setting works both with LangChain and the LangSmith SDK, in both Python and TypeScript.
 
-### Getting the run ID of a logged run
+## Getting the run ID of a logged run
 
 The example below shows how to get the run ID of a logged run using the LangSmith SDK. **To get the run ID of a run using LangChain, you can follow the guide [here](/tracing/faq/langchain_specific_guides#getting-a-run-id-from-a-langchain-call).**
 
@@ -522,7 +462,7 @@ print("API Run ID: ", run_id)`),
   groupId="client-language"
 />
 
-### Getting the URL of a logged run
+## Getting the URL of a logged run
 
 Runs are logged to whichever project you have configured ("default" if none is set), and you can view them by opening the corresponding project details page. To programmatically access the run's URL, you can
 use the LangSmith client. Below is an example. To get the run ID of a run, you can follow the guide [here](#getting-the-run-id-of-a-logged-run).
@@ -542,7 +482,7 @@ console.log(runUrl);
   groupId="client-language"
 />
 
-### Deleting traces in a project?
+## Deleting traces in a project
 
 You can delete a project, along with all its associated traces and other information, in the UI or by using the LangSmith client.
 
