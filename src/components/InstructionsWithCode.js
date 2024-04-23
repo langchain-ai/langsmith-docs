@@ -4,8 +4,8 @@ import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 import { marked } from "marked";
 import DOMPurify from "isomorphic-dompurify";
-import prettier from 'prettier';
-import parserTypeScript from 'prettier/parser-typescript';
+import prettier from "prettier";
+import parserTypeScript from "prettier/parser-typescript";
 
 export function LangChainPyBlock(content) {
   return {
@@ -64,8 +64,8 @@ export function ShellBlock(content, value = "shell", label = "Shell") {
 }
 
 /**
- * @param {string} code 
- * @param {"typescript" | "python"} language 
+ * @param {string} code
+ * @param {"typescript" | "python"} language
  * @returns {string} The formatted code
  */
 function formatCode(code, language) {
@@ -87,7 +87,7 @@ function formatCode(code, language) {
   }
 
   // If formatting fails, return as is
-  return code
+  return code;
 }
 
 export function CodeTabs({ tabs, groupId }) {
