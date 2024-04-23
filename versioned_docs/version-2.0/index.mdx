@@ -1,0 +1,177 @@
+---
+sidebar_label: Quick Start
+sidebar_position: 1
+table_of_contents: true
+---
+
+import Tabs from "@theme/Tabs";
+import CodeBlock from "@theme/CodeBlock";
+import {
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+import {
+  LangChainInstallationCodeTabs,
+  LangChainQuickStartCodeTabs,
+  ConfigureEnvironmentCodeTabs,
+  RunTreeQuickStartCodeTabs,
+  ConfigureSDKEnvironmentCodeTabs,
+  PythonSDKTracingCode,
+  TypeScriptSDKTracingCode,
+} from "@site/src/components/QuickStart";
+import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
+import DocCardList from "@theme/DocCardList";
+
+# Getting started with LangSmith (New!)
+
+## Introduction
+
+**LangSmith** is a platform for building production-grade LLM applications. It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence. Use of LangChain is not necessary - LangSmith works on its own!
+
+## Install LangSmith
+
+We offer Python and Typescript SDKs for all your LangSmith needs.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "bash",
+      content: `pip install -U langsmith`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "bash",
+      content: `yarn add langchain langsmith`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+## Create an API key
+
+To create an API key head to the [setting pages](https://smith.langchain.com/settings). Then click **Create API Key.**
+
+## Setup your environment
+
+<ConfigureSDKEnvironmentCodeTabs />
+
+## Log your first trace
+
+<p>
+  We provide multiple ways to log traces to LangSmith. Below, we'll highlight
+  how to use <code>traceable</code>. See more on the{" "}
+  <a href="./tracing/integrations">Integrations</a> page.
+</p>
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: PythonSDKTracingCode(),
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "typescript",
+      content: TypeScriptSDKTracingCode(),
+    },
+  ]}
+  groupId="client-language"
+/>
+
+- View a [sample output trace](https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r).
+- Learn more about tracing on the [tracing page](/tracing).
+
+## Create your first evaluation
+
+Evalution requires a system to test, [data](evaluation/faq) to serve as test cases, and optionally evaluators to grade the results. Here we use a built-in accuracy evaluator.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `from langsmith import Client
+from langsmith.evaluation import evaluate\n
+client = Client()\n
+# Define dataset: these are your test cases
+dataset_name = "Sample Dataset"
+dataset = client.create_dataset(dataset_name, description="A sample dataset in LangSmith.")
+client.create_examples(
+    inputs=[
+        {"postfix": "to LangSmith"},
+        {"postfix": "to Evaluations in LangSmith"},
+    ],
+    outputs=[
+        {"output": "Welcome to LangSmith"},
+        {"output": "Welcome to Evaluations in LangSmith"},
+    ],
+    dataset_id=dataset.id,
+)\n
+# Define your evaluator
+def exact_match(run, example):
+    return {"score": run.outputs["output"] == example.outputs["output"]}\n
+experiment_results = evaluate(
+    lambda input: "Welcome " + input['postfix'], # Your AI system goes here
+    data=dataset_name, # The data to predict and grade over
+    evaluators=[exact_match], # The evaluators to score the results
+    experiment_prefix="sample-experiment", # The name of the experiment
+    metadata={
+      "version": "1.0.0",
+      "revision_id": "beta"
+    },
+)
+`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "typescript",
+      content: `import { Client, Run, Example } from 'langsmith';
+import { runOnDataset } from 'langchain/smith';
+import { EvaluationResult } from 'langsmith/evaluation';\n
+const client = new Client();\n
+// Define dataset: these are your test cases
+const datasetName = "Sample Dataset";
+const dataset = await client.createDataset(datasetName, {
+    description: "A sample dataset in LangSmith."
+});
+await client.createExamples({
+    inputs: [
+        { postfix: "to LangSmith" },
+        { postfix: "to Evaluations in LangSmith" },
+    ],
+    outputs: [
+        { output: "Welcome to LangSmith" },
+        { output: "Welcome to Evaluations in LangSmith" },
+    ],
+    datasetId: dataset.id,
+});\n
+// Define your evaluator
+const exactMatch = async ({ run, example }: { run: Run; example?: Example; }): Promise<EvaluationResult> => {
+    return {
+        key: 'exact_match',
+        score: run.outputs?.output === example?.outputs?.output ? 1 : 0,
+    };
+};\n
+await runOnDataset(
+    (input: { postfix: string }) => ({ output: \`Welcome $\{input.postfix\}\` }), // Your AI system goes here
+    datasetName, // The data to predict and grade over
+    {
+        evaluationConfig: { customEvaluators: [exactMatch] },
+        projectMetadata: {
+            version: "1.0.0",
+            revision_id: "beta",
+        },
+    }
+);`,
+    },
+  ]}
+  groupId="client-language"
+/>
