@@ -4,6 +4,8 @@ import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 import { marked } from "marked";
 import DOMPurify from "isomorphic-dompurify";
+import prettier from "prettier";
+import parserTypeScript from "prettier/parser-typescript";
 
 export function LangChainPyBlock(content) {
   return {
@@ -61,6 +63,33 @@ export function ShellBlock(content, value = "shell", label = "Shell") {
   };
 }
 
+/**
+ * @param {string} code
+ * @param {"typescript" | "python"} language
+ * @returns {string} The formatted code
+ */
+function formatCode(code, language) {
+  const languageLower = language.toLowerCase();
+  if (languageLower === "python") {
+    // no-op - Do not format Python code at this time
+    return code;
+  }
+
+  try {
+    const formattedCode = prettier.format(code, {
+      parser: languageLower,
+      plugins: [parserTypeScript],
+    });
+
+    return formattedCode;
+  } catch (_) {
+    // no-op
+  }
+
+  // If formatting fails, return as is
+  return code;
+}
+
 export function CodeTabs({ tabs, groupId }) {
   return (
     <Tabs groupId={groupId}>
@@ -79,7 +108,7 @@ export function CodeTabs({ tabs, groupId }) {
               className={tab.value}
               language={tab.language ?? tab.value}
             >
-              {tab.content}
+              {formatCode(tab.content, tab.language ?? tab.value)}
             </CodeBlock>
           </TabItem>
         );
