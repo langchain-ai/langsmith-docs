@@ -4,26 +4,22 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 
 ## Setup
 
-- [Create an account and API key](./how_to_guides/setup/create_account_api_key)
-- [Create an organization](./how_to_guides/setup/create_organization)
-- [ ] Set up a workspace
-- [ ] Setup billing
-- [ ] Assign roles (enterprise only)
+* [Create an account and API key](./how_to_guides/setup/create_account_api_key)
+* [Create an organization](./how_to_guides/setup/create_organization)
+* [ ] Set up a workspace
+* [ ] Setup billing
+* [ ] Assign roles (enterprise only)
 
-### Deployment
+## Tracing
 
-- [ ] Self-hosting LangSmith on Kubernetes
-- [ ] Self-hosting LangSmith via Docker Compose
-- [ ] Setting up Auth
-
-### Tracing
-
-- [ ] Annotate code for tracing
-  - [ ] `traceable`
-  - [ ] wrapping OpenAI or Custom LLM
-  - [ ] RunTree
-- [ ] Log traces to specific project
-- [ ] Toggle tracing on and off
+* [Annotate code for tracing](./how_to_guides/tracing/annotate_code)
+  * [Use `@traceable`/`traceable`](./how_to_guides/tracing/annotate_code#use-traceable--traceable)
+  * [Wrap the OpenAI API client](./how_to_guides/tracing/annotate_code#wrap-the-openai-client)
+  * [Use the RunTree API](./how_to_guides/tracing/annotate_code#use-the-runtree-api)
+* [Toggle tracing on and off](./how_to_guides/tracing/toggle_tracing)
+* [Log traces to specific project](./how_to_guides/tracing/log_traces_to_project)
+  * [Set the destination project statically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-statically)
+  * [Set the destination project dynamically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-dynamically)
 - [ ] Sample traces
 - [ ] Add metadata and tags to traces
 - [ ] Get run_id and trace_id
