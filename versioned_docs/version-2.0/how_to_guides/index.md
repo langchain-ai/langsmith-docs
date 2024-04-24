@@ -1,14 +1,14 @@
 # How-To Guides
 
-Step-by-step guides that cover key tasks, operations and common problems.
+Step-by-step guides that cover key tasks and operations in LangSmith.
 
-### Setup
+## Setup
 
-- [ ] Create an account and API Key
-- [ ] Setup an organization
-- [ ] Setup a workspace
-- [ ] Setup Billing
-- [ ] Assigning Roles (enterprise only)
+- [Create an account and API key](./how_to_guides/setup/create_account_api_key)
+- [Create an organization](./how_to_guides/setup/create_organization)
+- [ ] Set up a workspace
+- [ ] Setup billing
+- [ ] Assign roles (enterprise only)
 
 ### Deployment
 
