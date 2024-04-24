@@ -20,7 +20,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 * [Log traces to specific project](./how_to_guides/tracing/log_traces_to_project)
   * [Set the destination project statically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-statically)
   * [Set the destination project dynamically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-dynamically)
-- [ ] Sample traces
+* [Set a sampling rate for traces](./how_to_guides/tracing/sample_traces)
 - [ ] Add metadata and tags to traces
 - [ ] Get run_id and trace_id
 - [ ] Mask inputs and outputs
