@@ -1,13 +1,16 @@
---
-sidebar_label: Customize Trace Attributes
+---
+sidebar_label: Token Counting for Custom LLMs
 sidebar_position: 7
-
 ---
 
 # Custom LLM Token Counting
 
 This guide shows how to get your custom functions to have their token count tracked by LangSmith. The key is to coerce your inputs and outputs to conform with a minimal version OpenAI's API format.
 We will review adding support for both chat models (llms that expect a list of chat messages as inputs and return with a chat message) and completion models (models that expect a string as input and return a string).
+
+:::note
+This guide assumes you are using the `traceable` decorator, though the same principles can be applied to other tracing methods.
+:::
 
 ## Chat Models (messages in, completion message out)
 
