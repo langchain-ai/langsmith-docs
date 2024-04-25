@@ -19,7 +19,7 @@ For chat models, your inputs must contain a list of messages as input. The outpu
 ```python
 from langsmith import traceable
 
-@traceable
+@traceable(run_type="llm")
 def my_chat_model(messages: list):
     return {
         "choices": [
@@ -109,6 +109,7 @@ To manually provide token counts, you can add a `usage` key to the function's re
 
 ```python
 from langsmith.run_helpers import get_current_run_tree
+
 @traceable(run_type="llm")
 def my_chat_model_with_usage(messages: list, model: str = "gpt-3.5-turbo"):
     run_tree = get_current_run_tree()
