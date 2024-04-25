@@ -12,7 +12,7 @@ We will review adding support for both chat models (llms that expect a list of c
 This guide assumes you are using the `traceable` decorator, though the same principles can be applied to other tracing methods.
 :::
 
-## Chat Models (messages in, completion message out)
+## Chat Models (messages in, message out)
 
 For chat models, your inputs must contain a list of messages as input. The output must return an object that, when serialized, contains the key `choices` with a list of dicts. Each dict must contain the key `message` with a dict value. The message dict must contain the key `content` with a string value and the key `role`.
 
