@@ -1,0 +1,236 @@
+---
+sidebar_label: Token Counting for Custom LLMs
+sidebar_position: 7
+---
+
+# Custom LLM Token Counting
+
+This guide shows how to get your custom functions to have their token count tracked by LangSmith. The key is to coerce your inputs and outputs to conform with a minimal version OpenAI's API format.
+We will review adding support for both chat models (llms that expect a list of chat messages as inputs and return with a chat message) and completion models (models that expect a string as input and return a string).
+
+:::note
+This guide assumes you are using the `traceable` decorator, though the same principles can be applied to other tracing methods.
+:::
+
+## Chat Models (messages in, message out)
+
+For chat models, your inputs must contain a list of messages as input. The output must return an object that, when serialized, contains the key `choices` with a list of dicts. Each dict must contain the key `message` with a dict value. The message dict must contain the key `content` with a string value and the key `role`.
+
+```python
+from langsmith import traceable
+
+@traceable(run_type="llm")
+def my_chat_model(messages: list):
+    return {
+        "choices": [
+            {
+                "message": {
+                    "content": "hello, " + messages[1]["content"],
+                    "role": "assistant",
+                }
+            }
+        ]
+    }
+
+# Usage
+my_chat_model(
+    [
+        {"role": "system", "content": "You are a bot."},
+        {"role": "user", "content": "SolidGoldMagikarp"},
+    ]
+)
+```
+
+You can configure the model and other arguments as well. The `model` key is used to match cost information:
+
+```python
+@traceable(run_type="llm")
+def my_chat_model_with_model(messages: list, model: str):
+    return {
+        "choices": [
+            {
+                "message": {
+                    "content": "hello, " + messages[1]["content"],
+                    "role": "assistant",
+                }
+            }
+        ]
+    }
+
+my_chat_model_with_model(
+    [
+        {"role": "system", "content": "You are a bot."},
+        {"role": "user", "content": "SolidGoldMagikarp"},
+    ],
+    model="gpt-3.5-turbo",
+)
+```
+
+### Streaming
+
+For streaming, you can "reduce" the outputs into the same format as the non-streaming version:
+
+```python
+def _reduce_chunks(chunks: list):
+    all_text = "".join([chunk["choices"][0]["message"]["content"] for chunk in chunks])
+    return {"choices": [{"message": {"content": all_text, "role": "assistant"}}]}
+
+@traceable(run_type="llm", reduce_fn=_reduce_chunks)
+def my_streaming_chat_model(messages: list, model: str):
+    for chunk in ["hello, " + messages[1]["content"]]:
+        yield {
+            "choices": [
+                {
+                    "message": {
+                        "content": chunk,
+                        "role": "assistant",
+                    }
+                }
+            ]
+        }
+
+list(
+    my_streaming_chat_model(
+        [
+            {"role": "system", "content": "You are a bot."},
+            {"role": "user", "content": "SolidGoldMagikarp but streaming"},
+        ],
+        model="gpt-3.5-turbo",
+    )
+)
+```
+
+Note: Tool calling and other messages are also supported, following the OpenAI format.
+
+### Manually Providing Token Counts
+
+By default, LangSmith uses tiktoken to count tokens, using our best guess at the model's tokenizer based on the `model` parameter you provide.
+To manually provide token counts, you can add a `usage` key to the function's response, containing a dictionary with the keys `prompt_tokens`, `completion_tokens`, and `total_tokens`. You must also add `batch_size=1` to the extra dictionary in the `run_tree.extra` object.
+
+```python
+from langsmith.run_helpers import get_current_run_tree
+
+@traceable(run_type="llm")
+def my_chat_model_with_usage(messages: list, model: str = "gpt-3.5-turbo"):
+    run_tree = get_current_run_tree()
+    run_tree.extra["batch_size"] = 1
+    return {
+        "choices": [
+            {
+                "message": {
+                    "content": "hello, " + messages[1]["content"],
+                    "role": "assistant",
+                }
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 9_999,
+            "completion_tokens": 32,
+            "total_tokens": 10_031,
+        },
+    }
+
+my_chat_model_with_usage(
+    messages=[
+        {"role": "system", "content": "You are a bot."},
+        {"role": "user", "content": "SolidGoldMagikarp but with usage"},
+    ],
+)
+```
+
+This is also supported via streaming:
+
+```python
+def _reduce_chunks_with_usage(chunks: list):
+    all_text = "".join(
+        [
+            chunk["choices"][0]["message"]["content"]
+            for chunk in chunks
+            if "choices" in chunk
+        ]
+    )
+    usages = [chunk["usage"] for chunk in chunks if "usage" in chunk]
+    usage = {}
+    if usages:
+        total_tokens = sum([usage["total_tokens"] for usage in usages])
+        prompt_tokens = sum([usage["prompt_tokens"] for usage in usages])
+        completion_tokens = sum([usage["completion_tokens"] for usage in usages])
+        usage = {
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "total_tokens": total_tokens,
+        }
+    return {
+        "choices": [{"message": {"content": all_text, "role": "assistant"}}],
+        "usage": usage,
+    }
+
+@traceable(run_type="llm", reduce_fn=_reduce_chunks_with_usage)
+def my_streaming_chat_model_with_usage(messages: list, model: str = "gpt-3.5-turbo"):
+    run_tree = get_current_run_tree()
+    run_tree.extra["batch_size"] = 1
+    for chunk in ["hello, " + messages[1]["content"]]:
+        yield {
+            "choices": [
+                {
+                    "message": {
+                        "content": chunk,
+                        "role": "assistant",
+                    }
+                }
+            ],
+        }
+    yield {
+        "usage": {
+            "prompt_tokens": 9_999,
+            "completion_tokens": 32,
+            "total_tokens": 10_031,
+        }
+    }
+
+list(
+    my_streaming_chat_model_with_usage(
+        messages=[
+            {"role": "system", "content": "You are a bot."},
+            {"role": "user", "content": "SolidGoldMagikarp but with usage"},
+        ]
+    )
+)
+```
+
+## Completion Models (string in, string out)
+
+For completion models, your inputs must contain a key `prompt` with a string value. Other inputs are also permitted. The output must return an object that, when serialized, contains the key `choices` with a list of dicts. Each dict must contain the key `text` with a string value.
+
+```python
+@traceable(run_type="llm")
+def my_llm(prompt: str):
+    return {"choices": [{"text": "hello, " + prompt}]}
+
+my_llm("SolidGoldMagikarp")
+```
+
+If you want to add additional "invocation params" such as the model name, you can just add those keys. The `model` key can be used to let the cost estimator know which model is being used.
+
+```python
+@traceable(run_type="llm")
+def my_llm_with_model(prompt: str, model: str):
+    return {"choices": [{"text": "hello, " + prompt}]}
+
+my_llm_with_model("SolidGoldMagikarp", model="gpt-3.5-turbo-instruct")
+```
+
+For streaming, you can "reduce" the outputs into the same format as the non-streaming version:
+
+```python
+def _reduce_chunks(chunks: list):
+    all_text = "".join([chunk["choices"][0]["text"] for chunk in chunks])
+    return {"choices": [{"text": all_text}]}
+
+@traceable(run_type="llm", reduce_fn=_reduce_chunks)
+def my_streaming_llm(prompt: str, model: str):
+    for chunk in ["hello, " + prompt]:
+        yield {"choices": [{"text": chunk}]}
+
+list(my_streaming_llm("SolidGoldMagikarp but streaming", model="gpt-3.5-turbo-instruct"))
+```
