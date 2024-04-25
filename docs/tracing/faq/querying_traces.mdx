@@ -524,32 +524,26 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor, Future
-from tqdm.auto import tqdm
-
+from tqdm.auto import tqdm\n
 client = Client()
 project_name = "my-project"
-num_days = 30
-
-# List all tool runs
-
+num_days = 30\n
+# List all tool runs\n
 tool_runs = client.list_runs(
 project_name=project_name,
 start_time=datetime.now() - timedelta(days=num_days),
 run_type="tool", # highlight-start # We don't need to fetch inputs, outputs, and other values that # may increase the query time
 select=["trace_id", "name", "run_type"] # highlight-end
-)
-
+)\n
 data = []
 futures: list[Future] = []
 trace_cursor = 0
-trace_batch_size = 50
-
+trace_batch_size = 50\n
 with ThreadPoolExecutor(max_workers=2) as executor: # Group tool runs by parent run ID
 tool_runs_by_parent = defaultdict(lambda: defaultdict(set))
 for run in tqdm(tool_runs): # update tool_runs_by_parent
 root_set = tool_runs_by_parent[run.trace_id]
-root_set["tools_involved"].add(run.name)
-
+root_set["tools_involved"].add(run.name)\n
         # highlight-start
         # maybe send a batch of parent run IDs to the server
         # this lets us query for the root runs in batches
@@ -560,8 +554,7 @@ root_set["tools_involved"].add(run.name)
                 futures.append(executor.submit(client.list_runs, project_name=project_name, run_ids=this_batch, select=["name", "inputs", "outputs", "run_type"]))
         # highlight-end
     if this_batch := list(tool_runs_by_parent.keys())[trace_cursor:]:
-        futures.append(executor.submit(client.list_runs, project_name=project_name, run_ids=this_batch, select=["name", "inputs", "outputs", "run_type"]))
-
+        futures.append(executor.submit(client.list_runs, project_name=project_name, run_ids=this_batch, select=["name", "inputs", "outputs", "run_type"]))\n
     for future in tqdm(futures):
         root_runs = future.result()
         for root_run in root_runs:
@@ -573,10 +566,8 @@ root_set["tools_involved"].add(run.name)
                 "inputs": root_run.inputs,
                 "outputs": root_run.outputs,
                 "tools_involved": list(root_data["tools_involved"]),
-            })
-
-# Convert to a pandas DataFrame
-
+            })\n
+# Convert to a pandas DataFrame\n
 df = pd.DataFrame(data)
 df.head()
 `),
