@@ -528,7 +528,7 @@ from tqdm.auto import tqdm\n
 client = Client()
 project_name = "my-project"
 num_days = 30\n
-# List all tool runs\n
+# List all tool runs
 tool_runs = client.list_runs(
     project_name=project_name,
     start_time=datetime.now() - timedelta(days=num_days),
