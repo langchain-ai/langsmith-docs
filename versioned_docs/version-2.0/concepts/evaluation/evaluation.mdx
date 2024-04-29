@@ -16,11 +16,11 @@ based on the inputs and outputs of your `Task`, and the reference output if desi
 evaluators](evaluation/faq/evaluator-implementations) to get started quickly!
 
 <ThemedImage
-    alt="LangSmith Primitives"
-    sources={{
-        light: require("../static/langsmith_summary.png").default,
-        dark: require("../static/langsmith_summary_dark.png").default,
-    }}
+  alt="LangSmith Primitives"
+  sources={{
+    light: require("../static/langsmith_summary.png").default,
+    dark: require("../static/langsmith_summary_dark.png").default,
+  }}
 />
 
 ## Datasets and examples
@@ -32,32 +32,33 @@ All examples in a given dataset should follow the same schema. Examples contain 
 along with (optionally) a `metadata` dict.
 
 ![Dataset](../static/sample_langsmith_dataset.png)
+
 <div
-    style={{
-        display: "flex",
-        flexDirection: "column",
-        textAlign: "center",
-        fontSize: "14px",
-        marginTop: "-15px",
-        marginBottom: "30px",
-    }}
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    textAlign: "center",
+    fontSize: "14px",
+    marginTop: "-15px",
+    marginBottom: "30px",
+  }}
 >
-    A Dataset in the LangSmith UI
+  A Dataset in the LangSmith UI
 </div>
 
 ![Example](../static/sample_langsmith_example.png)
 
 <div
-    style={{
-        display: "flex",
-        flexDirection: "column",
-        textAlign: "center",
-        fontSize: "14px",
-        marginTop: "-15px",
-        marginBottom: "30px",
-    }}
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    textAlign: "center",
+    fontSize: "14px",
+    marginTop: "-15px",
+    marginBottom: "30px",
+  }}
 >
-    An Example in the LangSmith UI
+  An Example in the LangSmith UI
 </div>
 
 ### Types of Datasets
@@ -66,14 +67,15 @@ Dataset types communicate common input and output schemas. There are three types
 sufficient for almost all use-cases. `llm` and `chat` datasets can be useful to conveniently export datasets into known fine-tuning formats.
 
 - `kv`: In `kv` datasets, inputs and outputs can be arbitrary key-value pairs. These are useful when evaluating chains and agents that require
-multiple inputs or that return multiple outputs.
-The tradeoff with these datasets is that running evaluations on them can be a bit more involved. If there are multiple keys, you will have to manually specify the `prepare_data`
-function in any off-the-shelf evaluators so they know what information to consider in generating a score.
+  multiple inputs or that return multiple outputs.
+  The tradeoff with these datasets is that running evaluations on them can be a bit more involved. If there are multiple keys, you will have to manually specify the `prepare_data`
+  function in any off-the-shelf evaluators so they know what information to consider in generating a score.
 - `llm`: `llm` datasets correspond to the string inputs and outputs from the "completion" style LLMS (string in, string out). The `"inputs"` dictionary contains a single `"input"` key mapped to a single prompt string. Similarly, the `"outputs"` dictionary contains a single `"output"` key mapped to a single response string.
 - `chat`: `chat` datasets correspond to messages and generations from LLMs that expect structured "chat" messages as inputs and outputs. Each example row
-expects an `"inputs"` dictionary containing a single `"input"` key mapped to a list of serialized chat messages. The `"outputs"` dictionary contains a single `"output"` key mapped to a single list of serialized chat messages.
+  expects an `"inputs"` dictionary containing a single `"input"` key mapped to a list of serialized chat messages. The `"outputs"` dictionary contains a single `"output"` key mapped to a single list of serialized chat messages.
 
 ## Experiments
+
 A single execution of all your example inputs through your `Task` is called an `Experiment`. In LangSmith, you can easily view all the experiments that are associated
 with your dataset, and track your application's performance over time! You can also compare two or more experiments in a comparison view.
 
@@ -82,16 +84,16 @@ Multiple experiments can be bound to the same dataset, and each experiment can h
 ![Example](../static/comparing_multiple_experiments.png)
 
 <div
-    style={{
-        display: "flex",
-        flexDirection: "column",
-        textAlign: "center",
-        fontSize: "14px",
-        marginTop: "-15px",
-        marginBottom: "30px",
-    }}
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    textAlign: "center",
+    fontSize: "14px",
+    marginTop: "-15px",
+    marginBottom: "30px",
+  }}
 >
-    Comparing Multiple Experiments in the LangSmith UI
+  Comparing Multiple Experiments in the LangSmith UI
 </div>
 
 ## Evaluators
@@ -102,11 +104,11 @@ The function then returns an `EvaluationResult`, which specifies your metric nam
 The following diagram gives an overview of the data flow in an evaluation:
 
 <ThemedImage
-    alt="LangSmith Evaluations"
-    sources={{
-        light: require("../static/langsmith_app_flow.png").default,
-        dark: require("../static/langsmith_app_flow_dark.png").default,
-    }}
+  alt="LangSmith Evaluations"
+  sources={{
+    light: require("../static/langsmith_app_flow.png").default,
+    dark: require("../static/langsmith_app_flow_dark.png").default,
+  }}
 />
 <div style={{ marginBottom: "30px" }} />
 
@@ -126,11 +128,11 @@ An evaluator will then return an `EvaluationResult` (or similarly shaped diction
 The evaluator itself can be any arbitrary function. There are a few different types of evaluators that are commonly used:
 
 - **Heuristics**: A heuristic evaluator is a hard-coded function that does some computation to determine a score. For example, you might write an
-evaluator that checks whether the output of the system is an empty string, or determines if it is valid JSON. These would be considered **reference-free** evaluators,
-as they don't consider any example output when making their decision. You might also want to check that the output of the system matches the reference output exactly,
-which would be considered a **ground truth** evaluator because it compares the output to a reference. See [How to create custom evaluators](evaluation/faq/custom-evaluators).
+  evaluator that checks whether the output of the system is an empty string, or determines if it is valid JSON. These would be considered **reference-free** evaluators,
+  as they don't consider any example output when making their decision. You might also want to check that the output of the system matches the reference output exactly,
+  which would be considered a **ground truth** evaluator because it compares the output to a reference. See [How to create custom evaluators](evaluation/faq/custom-evaluators).
 - **LLM-as-judge**: An LLM-as-judge evaluator uses an LLM to score system output. For example, you might want to check whether your system is outputting
-offensive content. This is **reference-free**, as there is no comparison to an example output. You might also want to check whether the system output has the same
-meaning as the example output, which would be a **ground truth** evaluator. To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators](https://docs.smith.langchain.com/evaluation/faq/evaluator-implementations)!
+  offensive content. This is **reference-free**, as there is no comparison to an example output. You might also want to check whether the system output has the same
+  meaning as the example output, which would be a **ground truth** evaluator. To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators](https://docs.smith.langchain.com/evaluation/faq/evaluator-implementations)!
 - **Human**: You can also evaluate your runs manually. This can be done in LangSmith [via the SDK](tracing/faq/logging_feedback#capturing-feedback-programmatically),
-or [in the LangSmith UI](http://localhost:3000/tracing/faq/logging_feedback#annotating-traces-with-feedback).
+  or [in the LangSmith UI](http://localhost:3000/tracing/faq/logging_feedback#annotating-traces-with-feedback).

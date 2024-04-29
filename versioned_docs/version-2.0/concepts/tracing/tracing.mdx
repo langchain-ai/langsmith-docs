@@ -5,22 +5,22 @@ import ThemedImage from "@theme/ThemedImage";
 This conceptual guice covers topics that are important to understand when logging traces to LangSmith. A `Trace` is essentially a series of steps that your application takes to go from input to output. Each of these individual steps is represented by a `Run`. A `Project` is simply a collection of traces. The following diagram displays these concepts in the context of a simple RAG app, which retrieves documents from an index and generates an answer.
 
 <ThemedImage
-    alt="LangSmith Primitives"
-    sources={{
-        light: require("../static/primitives.png").default,
-        dark: require("../static/primitives-dark.png").default,
-    }}
+  alt="LangSmith Primitives"
+  sources={{
+    light: require("../static/primitives.png").default,
+    dark: require("../static/primitives-dark.png").default,
+  }}
 />
 <div
-    style={{
-        display: "flex",
-        flexDirection: "column",
-        textAlign: "center",
-        fontSize: "14px",
-        marginTop: "5px",
-    }}
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    textAlign: "center",
+    fontSize: "14px",
+    marginTop: "5px",
+  }}
 >
-    Primitive datatypes in LangSmith
+  Primitive datatypes in LangSmith
 </div>
 
 ## Runs
@@ -62,4 +62,3 @@ Collecting feedback on runs can be done in three main ways:
 `Metadata` is a collection of key-value pairs that can be attached to runs. Metadata can be used to store additional information about a run, such as the version of the application that generated the run, the environment in which the run was generated, or any other information that you want to associate with a run.
 Similar to tags, you can use metadata to filter runs in the LangSmith UI, and can be used to group runs together for analysis. [Learn how to add metadata to your traces in the LangSmith SDK.](faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces)
 ![Metadata](../static/metadata.png)
-
