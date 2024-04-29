@@ -32,8 +32,12 @@ To log traces to a different project, see [this section](/tracing/faq/customizin
   tabs={[
     PythonBlock(
       `from langsmith import traceable
-from openai import Client\n
-openai = Client()\n
+from openai import Client
+
+
+openai = Client()
+
+
 @traceable
 def format_prompt(subject):
     return [
@@ -43,22 +47,33 @@ def format_prompt(subject):
         },
         {
             "role": "user",
-            "content": f"What's a good name for a store that sells {subject}?"
+  "content": f"What's a good name for a store that sells {subject}?"
         }
-    ]\n
+    ]
+
+
 @traceable(run_type="llm")
 def invoke_llm(messages):
     return openai.chat.completions.create(
         messages=messages, model="gpt-3.5-turbo", temperature=0
-    )\n
+    )
+
+
 @traceable
 def parse_output(response):
-    return response.choices[0].message.content\n
+    return response.choices[0].message.content
+
+
+
+
+
 @traceable
 def run_pipeline():
     messages = format_prompt("colorful socks")
     response = invoke_llm(messages)
-    return parse_output(response)\n
+    return parse_output(response)
+
+
 run_pipeline()
 `,
       `The \`@traceable\` decorator is a simple way to log traces from the LangSmith Python SDK. Simply decorate any function with \`@traceable\`.`
@@ -137,49 +152,68 @@ To log traces to a different project, see [this section](/tracing/faq/customizin
   tabs={[
     PythonBlock(`import openai
 from langsmith import traceable
-from langsmith.wrappers import wrap_openai\n
-client = wrap_openai(openai.Client())\n
+from langsmith.wrappers import wrap_openai
+
+client = wrap_openai(openai.Client())
+
 @traceable(run_type="tool", name="Retrieve Context")
 def my_tool(question: str) -> str:
-    return "During this morning's meeting, we solved all world conflict."\n
+return "During this morning's meeting, we solved all world conflict."
+
 @traceable(name="Chat Pipeline")
 def chat_pipeline(question: str):
-    context = my_tool(question)
-    messages = [
-        { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-        { "role": "user", "content": f"Question: {question}\nContext: {context}"}
-    ]
-    chat_completion = client.chat.completions.create(
-        model="gpt-3.5-turbo", messages=messages
-    )
-    return chat_completion.choices[0].message.content\n
-chat_pipeline("Can you summarize this morning's meetings?")`),
+context = my_tool(question)
+messages = [
+{
+"role": "system",
+"content": "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+},
+{"role": "user", "content": f"Question: {question}" + f"Context: {context}"},
+]
+chat_completion = client.chat.completions.create(
+model="gpt-3.5-turbo", messages=messages
+)
+return chat_completion.choices[0].message.content
+
+chat_pipeline("Can you summarize this morning's meetings?")
+`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { traceable } from "langsmith/traceable";
-import { wrapOpenAI } from "langsmith/wrappers";\n
-const client = wrapOpenAI(new OpenAI());\n
-const myTool = traceable(async (question: string) => {
+import { wrapOpenAI } from "langsmith/wrappers";
+
+const client = wrapOpenAI(new OpenAI());
+
+const myTool = traceable(
+  async (question: string) => {
     return "During this morning's meeting, we solved all world conflict.";
-}, { name: "Retrieve Context", run_type: "tool" });\n
-const chatPipeline = traceable(async (question: string) => {
+  },
+  { name: "Retrieve Context", run_type: "tool" }
+);
+
+const chatPipeline = traceable(
+  async (question: string) => {
     const context = await myTool(question);
     const messages = [
-        {
-            role: "system",
-            content:
-                "You are a helpful assistant. Please respond to the user's request only based on the given context.",
-        },
-        { role: "user", content: \`Question: \${question} Context: \${context}\` },
+      {
+        role: "system",
+        content:
+          "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+      },
+      { role: "user", content: \`Question: \${question} Context: \${context}\` },
     ];
     const chatCompletion = await client.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messages,
+      model: "gpt-3.5-turbo",
+      messages: messages,
     });
     return chatCompletion.choices[0].message.content;
-}, { name: "Chat Pipeline" });\n
-await chatPipeline("Can you summarize this morning's meetings?");`),
-  ]}
-  groupId="client-language"
+  },
+  { name: "Chat Pipeline" }
+);
+
+await chatPipeline("Can you summarize this morning's meetings?");
+`),
+]}
+groupId="client-language"
 />
 
 ## Use the `RunTree` API
@@ -192,68 +226,97 @@ necessary for this method.
   tabs={[
     PythonBlock(`import openai
 from langsmith.run_trees import RunTree
+
 # This can be a user input to your app
+
 question = "Can you summarize this morning's meetings?"
+
 # Create a top-level run
+
 pipeline = RunTree(
-    name="Chat Pipeline",
-    run_type="chain",
-    inputs={"question": question}
+    name="Chat Pipeline", run_type="chain", inputs={"question": question}
 )
+
 # This can be retrieved in a retrieval step
+
 context = "During this morning's meeting, we solved all world conflict."
 messages = [
-    { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-    { "role": "user", "content": f"Question: {question}\\nContext: {context}"}
+    {
+        "role": "system",
+        "content": "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+    },
+    {
+        "role": "user",
+        "content": f"Question: {question}\
+Context: {context}",
+    },
 ]
+
 # Create a child run
+
 child_llm_run = pipeline.create_child(
     name="OpenAI Call",
     run_type="llm",
     inputs={"messages": messages},
 )
+
 # Generate a completion
+
 client = openai.Client()
 chat_completion = client.chat.completions.create(
     model="gpt-3.5-turbo", messages=messages
 )
+
 # End the runs and log them
+
 child_llm_run.end(outputs=chat_completion)
 child_llm_run.post()
 pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
-pipeline.post()`),
+pipeline.post()
+`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";
 // This can be a user input to your app
 const question = "Can you summarize this morning's meetings?";
 const pipeline = new RunTree({
-    name: "Chat Pipeline",
-    run_type: "chain",
-    inputs: { question }
+  name: "Chat Pipeline",
+  run_type: "chain",
+  inputs: { question },
 });
 // This can be retrieved in a retrieval step
 const context = "During this morning's meeting, we solved all world conflict.";
 const messages = [
-    { role: "system", content: "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-    { role: "user", content: \`Question: \${question}\nContext: \${context}\` }
+  {
+    role: "system",
+    content:
+      "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+  },
+  {
+    role: "user",
+    content: \`Question: \${question}
+Context: \${context}\`,
+  },
 ];
 // Create a child run
 const childRun = await pipeline.createChild({
-    name: "OpenAI Call",
-    run_type: "llm",
-    inputs: { messages },
+  name: "OpenAI Call",
+  run_type: "llm",
+  inputs: { messages },
 });
 // Generate a completion
 const client = new OpenAI();
 const chatCompletion = await client.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: messages,
+  model: "gpt-3.5-turbo",
+  messages: messages,
 });
 // End the runs and log them
 childRun.end(chatCompletion);
 await childRun.postRun();
-pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
-await pipeline.postRun();`),
-  ]}
-  groupId="client-language"
+pipeline.end({
+  outputs: { answer: chatCompletion.choices[0].message.content },
+});
+await pipeline.postRun();
+`),
+]}
+groupId="client-language"
 />

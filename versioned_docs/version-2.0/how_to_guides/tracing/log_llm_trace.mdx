@@ -29,49 +29,61 @@ The input to your function should be named `messages`.
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import traceable\n
+    PythonBlock(`from langsmith import traceable
+
 inputs = [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "I'd like to book a table for two."},
-]\n
+]
+
 output = {
     "choices": [
         {
             "message": {
                 "role": "assistant",
-                "content": "Sure, what time would you like to book the table for?"
+                "content": "Sure, what time would you like to book the table for?",
             }
         }
     ]
-}\n
+}
+
+
 @traceable(run_type="llm")
 def chat_model(messages: list):
-    return output\n
-chat_model(inputs)`),
-    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+    return output
+
+
+chat_model(inputs)
+`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";
+
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
-  { role: "user", content: "I'd like to book a table for two." }
-];\n
+  { role: "user", content: "I'd like to book a table for two." },
+];
+
 const output = {
   choices: [
     {
       message: {
         role: "assistant",
-        content: "Sure, what time would you like to book the table for?"
-      }
-    }
-  ]
-};\n
+        content: "Sure, what time would you like to book the table for?",
+      },
+    },
+  ],
+};
+
 const chatModel = traceable(
   async ({ messages }: { messages: { role: string; content: string }[] }) => {
     return output;
   },
   { run_type: "llm", name: "chat_model" }
-);\n
-await chatModel({ messages });`),
-  ]}
-  groupId="client-language"
+);
+
+await chatModel({ messages });
+`),
+]}
+groupId="client-language"
 />
 
 The above code will log the following trace:
@@ -84,49 +96,67 @@ You can configure the model name by passing the `model` parameter to the functio
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import traceable\n
+    PythonBlock(`from langsmith import traceable
+
 inputs = [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "I'd like to book a table for two."},
-]\n
+]
+
 output = {
     "choices": [
         {
             "message": {
                 "role": "assistant",
-                "content": "Sure, what time would you like to book the table for?"
+                "content": "Sure, what time would you like to book the table for?",
             }
         }
     ]
-}\n
+}
+
+
 @traceable(run_type="llm")
 def chat_model(messages: list, model: str):
-    return output\n
-chat_model(inputs, "gpt-3.5-turbo")`),
-    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+    return output
+
+
+chat_model(inputs, "gpt-3.5-turbo")
+`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";
+
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
-  { role: "user", content: "I'd like to book a table for two." }
-];\n
+  { role: "user", content: "I'd like to book a table for two." },
+];
+
 const output = {
   choices: [
     {
       message: {
         role: "assistant",
-        content: "Sure, what time would you like to book the table for?"
-      }
-    }
-  ]
-};\n
+        content: "Sure, what time would you like to book the table for?",
+      },
+    },
+  ],
+};
+
 const chatModel = traceable(
-  async ({ messages, model }: { messages: { role: string; content: string }[]; model: string }) => {
+  async ({
+    messages,
+    model,
+  }: {
+    messages: { role: string; content: string }[];
+    model: string;
+  }) => {
     return output;
   },
   { run_type: "llm", name: "chat_model" }
-);\n
-await chatModel({ messages, model: "gpt-3.5-turbo" });`),
-  ]}
-  groupId="client-language"
+);
+
+await chatModel({ messages, model: "gpt-3.5-turbo" });
+`),
+]}
+groupId="client-language"
 />
 
 ## Stream outputs
@@ -170,17 +200,19 @@ By default, LangSmith uses tiktoken to count tokens, utilizing a best guess at t
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import traceable
-from langsmith.run_helpers import get_current_run_tree\n
+from langsmith.run_helpers import get_current_run_tree
+
 inputs = [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "I'd like to book a table for two."},
-]\n
+]
+
 output = {
     "choices": [
         {
             "message": {
                 "role": "assistant",
-                "content": "Sure, what time would you like to book the table for?"
+                "content": "Sure, what time would you like to book the table for?",
             }
         }
     ],
@@ -188,18 +220,25 @@ output = {
         "prompt_tokens": 27,
         "completion_tokens": 13,
     },
-}\n
+}
+
+
 @traceable(run_type="llm")
 def chat_model(messages: list, model: str):
     run_tree = get_current_run_tree()
     run_tree.extra["batch_size"] = 1
-    return output\n
-chat_model(inputs, "gpt-3.5-turbo")`),
-    TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";\n
+    return output
+
+
+chat_model(inputs, "gpt-3.5-turbo")
+`),
+    TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";
+
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "I'd like to book a table for two." },
-];\n
+];
+
 const output = {
   choices: [
     {
@@ -210,10 +249,11 @@ const output = {
     },
   ],
   usage: {
-    "prompt_tokens": 27,
-    "completion_tokens": 13,
+    prompt_tokens: 27,
+    completion_tokens: 13,
   },
-};\n
+};
+
 const chatModel = traceable(
   async ({
     messages,
@@ -223,14 +263,16 @@ const chatModel = traceable(
     model: string;
   }) => {
     const run = getCurrentRunTree();
-    run.extra.batch_size = 1
+    run.extra.batch_size = 1;
     return output;
   },
   { run_type: "llm", name: "chat_model" }
-);\n
-await chatModel({ messages, model: "gpt-3.5-turbo" });`),
-  ]}
-  groupId="client-language"
+);
+
+await chatModel({ messages, model: "gpt-3.5-turbo" });
+`),
+]}
+groupId="client-language"
 />
 
 ## Instruct-style models
@@ -242,25 +284,34 @@ For instruct-style models (string in, string out), your inputs must contain a ke
     PythonBlock(`@traceable(run_type="llm")
 def hello_llm(prompt: str):
     return {
-        "choices": [
-            {"text": "Hello, " + prompt}
-        ],
-    }\n
-hello_llm("polly the parrot\\n")`),
-    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+        "choices": [{"text": "Hello, " + prompt}],
+    }
+
+
+hello_llm(
+    "polly the parrot\
+"
+)
+`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";
+
 const helloLLM = traceable(
   ({ prompt }: { prompt: string }) => {
     return {
-      choices: [
-        { text: "Hello, " + prompt }
-      ]
+      choices: [{ text: "Hello, " + prompt }],
     };
   },
   { run_type: "llm", name: "hello_llm" }
-);\n
-await helloLLM({ prompt: "polly the parrot\\n" });`),
-  ]}
-  groupId="client-language"
+);
+
+await helloLLM({
+  prompt:
+    "polly the parrot\
+",
+});
+`),
+]}
+groupId="client-language"
 />
 
 The above code will log the following trace:

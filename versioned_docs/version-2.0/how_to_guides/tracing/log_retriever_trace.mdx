@@ -27,48 +27,60 @@ The following code snippets show how to log a retrieval steps in Python and Type
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import traceable\n
-def _convert_docs(results):
+    PythonBlock(`from langsmith import traceable
+
+
+def convert_docs(results):
     return [
-        {
-            "page_content": r,
-            "type": "Document",
-            "metadata": {"foo": "bar"}
-        }
+        {"page_content": r, "type": "Document", "metadata": {"foo": "bar"}}
         for r in results
-    ]\n
+    ]
+
+
 @traceable(run_type="retriever")
-def retrieve_docs(query):
-    # Foo retriever returning hardcoded dummy documents.
-    # In production, this could be a real vector datatabase or other document index.
+def retrieve_docs(
+    query,
+):  # Foo retriever returning hardcoded dummy documents. # In production, this could be a real vector datatabase or other document index.
     contents = ["Document contents 1", "Document contents 2", "Document contents 3"]
-    return _convert_docs(contents)\n
-retrieve_docs("User query")`),
-    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+    return convert_docs(contents)
+
+
+retrieve_docs("User query")
+`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";
+
 interface Document {
   page_content: string;
   type: string;
   metadata: { foo: string };
-}\n
+}
+
 function convertDocs(results: string[]): Document[] {
   return results.map((r) => ({
     page_content: r,
     type: "Document",
-    metadata: { foo: "bar" }
+    metadata: { foo: "bar" },
   }));
-}\n
+}
+
 const retrieveDocs = traceable(
   (query: string): Document[] => {
     // Foo retriever returning hardcoded dummy documents.
     // In production, this could be a real vector database or other document index.
-    const contents = ["Document contents 1", "Document contents 2", "Document contents 3"];
+    const contents = [
+      "Document contents 1",
+      "Document contents 2",
+      "Document contents 3",
+    ];
     return convertDocs(contents);
   },
   { name: "retrieveDocs", run_type: "retriever" } // Configuration for traceable
-);\n
-await retrieveDocs("User query");`),
-  ]}
-  groupId="client-language"
+);
+
+await retrieveDocs("User query");
+`),
+]}
+groupId="client-language"
 />
 
 The following image shows how a retriever step is rendered in a trace. The contents along with the metadata are displayed with each document.

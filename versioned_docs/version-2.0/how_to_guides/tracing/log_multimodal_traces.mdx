@@ -17,50 +17,56 @@ In order to log images, use `wrap_openai`/ `wrapOpenAI` in Python or TypeScript 
 <CodeTabs
   tabs={[
     PythonBlock(`from openai import OpenAI
-from langsmith.wrappers import wrap_openai\n
-client = wrap_openai(OpenAI())\n
+from langsmith.wrappers import wrap_openai
+
+client = wrap_openai(OpenAI())
+
 response = client.chat.completions.create(
-  model="gpt-4-turbo",
-  messages=[
-    {
-      "role": "user",
-      "content": [
-        {"type": "text", "text": "What’s in this image?"},
+    model="gpt-4-turbo",
+    messages=[
         {
-          "type": "image_url",
-          "image_url": {
-            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "What's in this image?"},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+                    },
+                },
+            ],
+        }
+    ],
+)
+print(response.choices[0])
+`),
+    TypeScriptBlock(`import OpenAI from "openai";
+import { wrapOpenAI } from "langsmith/wrappers";
+
+// Wrap the OpenAI client to automatically log traces
+const wrappedClient = wrapOpenAI(new OpenAI());
+
+const response = await wrappedClient.chat.completions.create({
+  model: "gpt-4-turbo",
+  messages: [
+    {
+      role: "user",
+      content: [
+        { type: "text", text: "What’s in this image?" },
+        {
+          type: "image_url",
+          image_url: {
+            url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
           },
         },
       ],
-    }
+    },
   ],
-)
-print(response.choices[0])`),
-    TypeScriptBlock(`import OpenAI from "openai";
-import { wrapOpenAI } from "langsmith/wrappers";\n
-// Wrap the OpenAI client to automatically log traces
-const wrappedClient = wrapOpenAI(new OpenAI());\n
-const response = await wrappedClient.chat.completions.create({
-    model: "gpt-4-turbo",
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: "What’s in this image?" },
-          {
-            type: "image_url",
-            image_url: {
-              "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-            },
-          },
-        ],
-      },
-    ],
 });
-console.log(response.choices[0]);`),
-  ]}
-  groupId="client-language"
+console.log(response.choices[0]);
+`),
+]}
+groupId="client-language"
 />
 
 The image will be rendered as part of the trace in the LangSmith UI.

@@ -32,12 +32,16 @@ Initialize the client before running the below code snippets.
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client\n
-client = Client()`),
-    TypeScriptBlock(`import { Client, Run } from "langsmith";\n
-const client = new Client();`),
-  ]}
-  groupId="client-language"
+    PythonBlock(`from langsmith import Client
+
+client = Client()
+`),
+    TypeScriptBlock(`import { Client, Run } from "langsmith";
+
+const client = new Client();
+`),
+]}
+groupId="client-language"
 />
 
 Below are some examples of ways to list runs using keyword arguments:
@@ -55,7 +59,8 @@ for await (const run of client.listRuns({
   projectName: "<your_project>",
 })) {
   projectRuns.push(run);
-};`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -68,7 +73,8 @@ for await (const run of client.listRuns({
     project_name="<your_project>",
     start_time=datetime.now() - timedelta(days=1),
     run_type="llm",
-)`),
+)
+`),
     TypeScriptBlock(`const todaysLlmRuns: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
@@ -76,7 +82,8 @@ for await (const run of client.listRuns({
   runType: "llm",
 })) {
   todaysLlmRuns.push(run);
-};`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -87,17 +94,16 @@ Root runs are runs that have no parents. These are assigned a value of `True` fo
 
 <CodeTabs
   tabs={[
-    PythonBlock(`root_runs = client.list_runs(
-    project_name="<your_project>",
-    is_root=True
-)`),
+    PythonBlock(`root_runs = client.list_runs(project_name="<your_project>", is_root=True)
+`),
     TypeScriptBlock(`const rootRuns: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
   isRoot: 1,
 })) {
   rootRuns.push(run);
-};`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -115,7 +121,8 @@ for await (const run of client.listRuns({
   error: false,
 })) {
   correctRuns.push(run);
-};`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -130,8 +137,12 @@ If you have a list of run IDs, you can list them directly:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`run_ids = ['a36092d2-4ad5-4fb4-9c0d-0dba9a2ed836','9398e6be-964f-4aa4-8ae9-ad78cd4b7074']
-selected_runs = client.list_runs(id=run_ids)`),
+    PythonBlock(`run_ids = [
+    "a36092d2-4ad5-4fb4-9c0d-0dba9a2ed836",
+    "9398e6be-964f-4aa4-8ae9-ad78cd4b7074",
+]
+selected_runs = client.list_runs(id=run_ids)
+`),
     TypeScriptBlock(`const runIds = [
   "a36092d2-4ad5-4fb4-9c0d-0dba9a2ed836",
   "9398e6be-964f-4aa4-8ae9-ad78cd4b7074",
@@ -141,7 +152,8 @@ for await (const run of client.listRuns({
   id: runIds,
 })) {
   selectedRuns.push(run);
-};`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -157,13 +169,15 @@ For more complex queries, you can use the query language described in the [filte
     PythonBlock(`client.list_runs(
     project_name="<your_project>",
     filter='eq(name, "extractor")',
-    trace_filter='and(eq(feedback_key, "user_score"), eq(feedback_score, 1))'
-)`),
+    trace_filter='and(eq(feedback_key, "user_score"), eq(feedback_score, 1))',
+)
+`),
     TypeScriptBlock(`client.listRuns({
   projectName: "<your_project>",
   filter: 'eq(name, "extractor")',
-  traceFilter: 'and(eq(feedback_key, "user_score"), eq(feedback_score, 1))'
-})`),
+  traceFilter: 'and(eq(feedback_key, "user_score"), eq(feedback_score, 1))',
+});
+`),
   ]}
   groupId="client-language"
 />
@@ -174,12 +188,14 @@ For more complex queries, you can use the query language described in the [filte
   tabs={[
     PythonBlock(`client.list_runs(
     project_name="<your_project>",
-    filter='and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))'
-)`),
+    filter='and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))',
+)
+`),
     TypeScriptBlock(`client.listRuns({
   projectName: "<your_project>",
-  filter: 'and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))'
-})`),
+  filter: 'and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))',
+});
+`),
   ]}
   groupId="client-language"
 />
@@ -275,13 +291,15 @@ had `total_tokens` greater than 5000
 <CodeTabs
   tabs={[
     PythonBlock(`client.list_runs(
-  project_name="<your_project>",
-  filter='and(eq(run_type, "chain"), gt(latency, 10), gt(total_tokens, 5000))'
-)`),
+    project_name="<your_project>",
+    filter='and(eq(run_type, "chain"), gt(latency, 10), gt(total_tokens, 5000))',
+)
+`),
     TypeScriptBlock(`client.listRuns({
   projectName: "<your_project>",
-  filter: 'and(eq(run_type, "chain"), gt(latency, 10), gt(total_tokens, 5000))'
-})`),
+  filter: 'and(eq(run_type, "chain"), gt(latency, 10), gt(total_tokens, 5000))',
+});
+`),
   ]}
   groupId="client-language"
 />
@@ -360,32 +378,32 @@ about your runs.
 
 <CodeTabs
   tabs={[
-    PythonBlock(`
-to_search = {
-    "user_id": ""
-}\n
+    PythonBlock(`to_search = {"user_id": ""}
+
 # Check for any run with the "user_id" metadata key
-client.list_runs(
-  project_name="default",
-  filter="eq(metadata_key, 'user_id')"
-)
+
+client.list_runs(project_name="default", filter="eq(metadata_key, 'user_id')")
+
 # Check for runs with user_id=4070f233-f61e-44eb-bff1-da3c163895a3
+
 client.list_runs(
-  project_name="default",
-  filter="and(eq(metadata_key, 'user_id'), eq(metadata_value, '4070f233-f61e-44eb-bff1-da3c163895a3'))"
-)`),
+    project_name="default",
+    filter="and(eq(metadata_key, 'user_id'), eq(metadata_value, '4070f233-f61e-44eb-bff1-da3c163895a3'))",
+)
+`),
     TypeScriptBlock(`// Check for any run with the "user_id" metadata key
 client.listRuns({
-  projectName: 'default',
-  filter: \`eq(metadata_key, 'user_id')\`
+  projectName: "default",
+  filter: \`eq(metadata_key, 'user_id')\`,
 });
 // Check for runs with user_id=4070f233-f61e-44eb-bff1-da3c163895a3
 client.listRuns({
-  projectName: 'default',
-  filter: \`and(eq(metadata_key, 'user_id'), eq(metadata_value, '4070f233-f61e-44eb-bff1-da3c163895a3'))\`
-});`),
-  ]}
-  groupId="client-language"
+  projectName: "default",
+  filter: \`and(eq(metadata_key, 'user_id'), eq(metadata_value, '4070f233-f61e-44eb-bff1-da3c163895a3'))\`,
+});
+`),
+]}
+groupId="client-language"
 />
 
 ### Check for environment details in metadata.
@@ -397,13 +415,15 @@ environment metadata, you can use the same pattern as above:
 <CodeTabs
   tabs={[
     PythonBlock(`client.list_runs(
-  project_name="default",
-  filter="and(eq(metadata_key, 'environment'), eq(metadata_value, 'production'))"
-)`),
+    project_name="default",
+    filter="and(eq(metadata_key, 'environment'), eq(metadata_value, 'production'))",
+)
+`),
     TypeScriptBlock(`client.listRuns({
-  projectName: 'default',
-  filter: \`and(eq(metadata_key, 'environment'), eq(metadata_value, 'production'))\`
-});`),
+  projectName: "default",
+  filter: \`and(eq(metadata_key, 'environment'), eq(metadata_value, 'production'))\`,
+});
+`),
   ]}
   groupId="client-language"
 />
@@ -417,13 +437,15 @@ runs based on a conversation ID in this way, you can search for that ID in the m
 <CodeTabs
   tabs={[
     PythonBlock(`client.list_runs(
-  project_name="default",
-  filter="and(eq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
-)`),
+    project_name="default",
+    filter="and(eq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))",
+)
+`),
     TypeScriptBlock(`client.listRuns({
-  projectName: 'default',
-  filter: \`and(eq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))\`
-});`),
+  projectName: "default",
+  filter: \`and(eq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))\`,
+});
+`),
   ]}
   groupId="client-language"
 />
@@ -437,13 +459,15 @@ have a specific `conversation_id` in their metadata:
 <CodeTabs
   tabs={[
     PythonBlock(`client.list_runs(
-  project_name="default",
-  filter="and(eq(name, 'ChatOpenAI'), eq(metadata_key, 'conversation_id'), eq(metadata_value, '69b12c91-b1e2-46ce-91de-794c077e8151'))"
-)`),
+    project_name="default",
+    filter="and(eq(name, 'ChatOpenAI'), eq(metadata_key, 'conversation_id'), eq(metadata_value, '69b12c91-b1e2-46ce-91de-794c077e8151'))",
+)
+`),
     TypeScriptBlock(`client.listRuns({
-  projectName: 'default',
-  filter: \`and(eq(name, 'ChatOpenAI'), eq(metadata_key, 'conversation_id'), eq(metadata_value, '69b12c91-b1e2-46ce-91de-794c077e8151'))\`
-});`),
+  projectName: "default",
+  filter: \`and(eq(name, 'ChatOpenAI'), eq(metadata_key, 'conversation_id'), eq(metadata_value, '69b12c91-b1e2-46ce-91de-794c077e8151'))\`,
+});
+`),
   ]}
   groupId="client-language"
 />
@@ -460,14 +484,16 @@ This type of query is useful if you want to extract a specific run conditional o
     project_name="<your_project>",
     filter='eq(name, "RetrieveDocs")',
     trace_filter='and(eq(feedback_key, "user_score"), eq(feedback_score, 1))',
-    tree_filter='eq(name, "ExpandQuery")'
-)`),
+    tree_filter='eq(name, "ExpandQuery")',
+)
+`),
     TypeScriptBlock(`client.listRuns({
   projectName: "<your_project>",
   filter: 'eq(name, "RetrieveDocs")',
   traceFilter: 'and(eq(feedback_key, "user_score"), eq(feedback_score, 1))',
-  treeFilter: 'eq(name, "ExpandQuery")'
-})`),
+  treeFilter: 'eq(name, "ExpandQuery")',
+});
+`),
   ]}
   groupId="client-language"
 />
@@ -488,76 +514,82 @@ To optimize the query, the example:
   tabs={[
     PythonBlock(`from collections import defaultdict
 from concurrent.futures import Future, ThreadPoolExecutor
-from datetime import datetime, timedelta\n
+from datetime import datetime, timedelta
+
 import pandas as pd
 from langsmith import Client
-from tqdm.auto import tqdm\n
+from tqdm.auto import tqdm
+
 client = Client()
 project_name = "my-project"
-num_days = 30\n
+num_days = 30
+
 # List all tool runs
+
 tool_runs = client.list_runs(
-    project_name=project_name,
-    start_time=datetime.now() - timedelta(days=num_days),
-    run_type="tool",
-    # We don't need to fetch inputs, outputs, and other values that # may increase the query time
-    # highlight-next-line
-    select=["trace_id", "name", "run_type"],
-)\n
+project_name=project_name,
+start_time=datetime.now() - timedelta(days=num_days),
+run_type="tool", # We don't need to fetch inputs, outputs, and other values that # may increase the query time # highlight-next-line
+select=["trace_id", "name", "run_type"],
+)
+
 data = []
 futures: list[Future] = []
 trace_cursor = 0
-trace_batch_size = 50\n
+trace_batch_size = 50
+
 tool_runs_by_parent = defaultdict(lambda: defaultdict(set))
+
 # Do not exceed rate limit
+
 # highlight-next-line
-with ThreadPoolExecutor(max_workers=2) as executor:
-    # Group tool runs by parent run ID
-    for run in tqdm(tool_runs):
-        # Collect all tools invoked within a given trace
-        tool_runs_by_parent[run.trace_id]["tools_involved"].add(run.name)
-        # maybe send a batch of parent run IDs to the server
-        # this lets us query for the root runs in batches
-        # while still processing the tool runs
-        if len(tool_runs_by_parent) % trace_batch_size == 0:
-            if this_batch := list(tool_runs_by_parent.keys())[
-                trace_cursor : trace_cursor + trace_batch_size
-            ]:
-                trace_cursor += trace_batch_size
-                futures.append(
-                    executor.submit(
-                        client.list_runs,
-                        project_name=project_name,
-                        run_ids=this_batch,
-                        select=["name", "inputs", "outputs", "run_type"],
-                    )
-                )
+
+with ThreadPoolExecutor(max_workers=2) as executor: # Group tool runs by parent run ID
+for run in tqdm(tool_runs): # Collect all tools invoked within a given trace
+tool_runs_by_parent[run.trace_id]["tools_involved"].add(run.name) # maybe send a batch of parent run IDs to the server # this lets us query for the root runs in batches # # while still processing the tool runs
+if len(tool_runs_by_parent) % trace_batch_size == 0:
+if this_batch := list(tool_runs_by_parent.keys())[
+trace_cursor : trace_cursor + trace_batch_size
+]:
+trace_cursor += trace_batch_size
+futures.append(
+executor.submit(
+client.list_runs,
+project_name=project_name,
+run_ids=this_batch,
+select=["name", "inputs", "outputs", "run_type"],
+)
+)
 if this_batch := list(tool_runs_by_parent.keys())[trace_cursor:]:
-    futures.append(
-        executor.submit(
-            client.list_runs,
-            project_name=project_name,
-            run_ids=this_batch,
-            select=["name", "inputs", "outputs", "run_type"],
-        )
-    )\n
+futures.append(
+executor.submit(
+client.list_runs,
+project_name=project_name,
+run_ids=this_batch,
+select=["name", "inputs", "outputs", "run_type"],
+)
+)
+
 for future in tqdm(futures):
-    root_runs = future.result()
-    for root_run in root_runs:
-        root_data = tool_runs_by_parent[root_run.id]
-        data.append(
-            {
-                "run_id": root_run.id,
-                "run_name": root_run.name,
-                "run_type": root_run.run_type,
-                "inputs": root_run.inputs,
-                "outputs": root_run.outputs,
-                "tools_involved": list(root_data["tools_involved"]),
-            }
-        )\n
-# Convert to a pandas DataFrame\n
+root_runs = future.result()
+for root_run in root_runs:
+root_data = tool_runs_by_parent[root_run.id]
+data.append(
+{
+"run_id": root_run.id,
+"run_name": root_run.name,
+"run_type": root_run.run_type,
+"inputs": root_run.inputs,
+"outputs": root_run.outputs,
+"tools_involved": list(root_data["tools_involved"]),
+}
+)
+
+# Convert to a pandas DataFrame
+
 df = pd.DataFrame(data)
-df.head()`),
-  ]}
-  groupId="client-language"
+df.head()
+`),
+]}
+groupId="client-language"
 />

@@ -36,98 +36,127 @@ Setting the project name dynamically using one of the below methods overrides th
   tabs={[
     PythonBlock(`import openai
 from langsmith import traceable
-from langsmith.run_trees import RunTree\n
-client = openai.Client()\n
+from langsmith.run_trees import RunTree
+
+client = openai.Client()
+
 messages = [
     {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Hello!"}
-]\n
+    {"role": "user", "content": "Hello!"},
+]
+
 # Use the @traceable decorator with the 'project_name' parameter to log traces to LangSmith
+
 # Ensure that the LANGCHAIN_TRACING_V2 environment variables is set for @traceable to work
+
+
 @traceable(
     run_type="llm",
-    name="OpenAI Call Decorator",
-    # highlight-next-line
-    project_name="My Project"
+    name="OpenAI Call Decorator",  # highlight-next-line
+    project_name="My Project",
 )
-def call_openai(
-    messages: list[dict], model: str = "gpt-3.5-turbo"
-) -> str:
-    return client.chat.completions.create(
-        model=model,
-        messages=messages,
-    ).choices[0].message.content\n
+def call_openai(messages: list[dict], model: str = "gpt-3.5-turbo") -> str:
+    return (
+        client.chat.completions.create(
+            model=model,
+            messages=messages,
+        )
+        .choices[0]
+        .message.content
+    )
+
+
 # Call the decorated function
-call_openai(messages)\n
+
+call_openai(messages)
+
 # You can also specify the Project via the project_name parameter
+
 # This will override the project_name specified in the @traceable decorator
+
 call_openai(
-    messages,
-    # highlight-next-line
+    messages,  # highlight-next-line
     langsmith_extra={"project_name": "My Overriden Project"},
-)\n
+)
+
 # The wrapped OpenAI client accepts all the same langsmith_extra parameters
+
 # as @traceable decorated functions, and logs traces to LangSmith automatically.
+
 # Ensure that the LANGCHAIN_TRACING_V2 environment variables is set for the wrapper to work.
+
 from langsmith import wrappers
+
 wrapped_client = wrappers.wrap_openai(client)
 wrapped_client.chat.completions.create(
     model="gpt-3.5-turbo",
-    messages=messages,
-    # highlight-next-line
+    messages=messages,  # highlight-next-line
     langsmith_extra={"project_name": "My Project"},
-)\n\n
+)
+
 # Alternatively, create a RunTree object
+
 # You can set the project name using the project_name parameter
+
 rt = RunTree(
     run_type="llm",
     name="OpenAI Call RunTree",
-    inputs={"messages": messages},
-    # highlight-next-line
-    project_name="My Project"
+    inputs={"messages": messages},  # highlight-next-line
+    project_name="My Project",
 )
 chat_completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=messages,
 )
+
 # End and submit the run
+
 rt.end(outputs=chat_completion)
 rt.post()
 `),
     TypeScriptBlock(`import OpenAI from "openai";
 import { traceable } from "langsmith/traceable";
 import { wrapOpenAI } from "langsmith/wrappers";
-import { RunTree} from "langsmith";\n
-const client = new OpenAI();\n
+import { RunTree } from "langsmith";
+
+const client = new OpenAI();
+
 const messages = [
-    {role: "system", content: "You are a helpful assistant."},
-    {role: "user", content: "Hello!"}
-];\n
-const traceableCallOpenAI = traceable(async (messages: {role: string, content: string}[]) => {
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "Hello!" },
+];
+
+const traceableCallOpenAI = traceable(
+  async (messages: { role: string; content: string }[]) => {
     const completion = await client.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messages,
+      model: "gpt-3.5-turbo",
+      messages: messages,
     });
     return completion.choices[0].message.content;
-},{
+  },
+  {
     run_type: "llm",
     name: "OpenAI Call Traceable",
     // highlight-next-line
-    project_name: "My Project"
-});
+    project_name: "My Project",
+  }
+);
 // Call the traceable function
-await traceableCallOpenAI(messages, "gpt-3.5-turbo");\n
+await traceableCallOpenAI(messages, "gpt-3.5-turbo");
+
 // Create and use a RunTree object
 const rt = new RunTree({
-    runType: "llm",
-    name: "OpenAI Call RunTree",
-    inputs: { messages },
-    // highlight-next-line
-    project_name: "My Project"
-});\n
+  runType: "llm",
+  name: "OpenAI Call RunTree",
+  inputs: { messages },
+  // highlight-next-line
+  project_name: "My Project",
+});
+
 // Execute a chat completion and handle it within RunTree
-rt.end({outputs: chatCompletion});
-await rt.postRun();`),
-  ]}
-  groupId="client-language"
+rt.end({ outputs: chatCompletion });
+await rt.postRun();
+`),
+]}
+groupId="client-language"
 />
