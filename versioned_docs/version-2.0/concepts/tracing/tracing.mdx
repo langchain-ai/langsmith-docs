@@ -46,19 +46,19 @@ Feedback can currently be continuous or discrete (categorical), and you can reus
 
 Collecting feedback on runs can be done in three main ways:
 
-1. [In the UI](faq/logging_feedback#annotating-traces-with-feedback) - Annotate runs directly in the UI
-2. [With the SDK](faq/logging_feedback#capturing-feedback-programmatically) - Programmatically log feedback to LangSmith
-3. [With Online Evaluators](/monitoring/faq/online_evaluation) - Automatically run evaluators on a sample of your production traces to generate feedback in realtime
+1. [In the UI] - Annotate runs directly in the UI
+2. [With the SDK] - Programmatically log feedback to LangSmith
+3. [With Online Evaluators] - Automatically run evaluators on a sample of your production traces to generate feedback in realtime
 
 ![Feedback](../static/feedback.png)
 
 ## Tags
 
-`Tags` are collections of strings that can be attached to runs. They are used to categorize runs and make it easier to search for them in the LangSmith UI. Tags can be used to filter runs in the LangSmith UI, and can be used to group runs together for analysis. [Learn how to tag your traces in the LangSmith SDK.](faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces)
+`Tags` are collections of strings that can be attached to runs. They are used to categorize runs and make it easier to search for them in the LangSmith UI. Tags can be used to filter runs in the LangSmith UI, and can be used to group runs together for analysis. [Learn how to attach tags to your traces](../how_to_guides/tracing/add_metadata_tags)
 ![Tags](../static/tags.png)
 
 ## Metadata
 
 `Metadata` is a collection of key-value pairs that can be attached to runs. Metadata can be used to store additional information about a run, such as the version of the application that generated the run, the environment in which the run was generated, or any other information that you want to associate with a run.
-Similar to tags, you can use metadata to filter runs in the LangSmith UI, and can be used to group runs together for analysis. [Learn how to add metadata to your traces in the LangSmith SDK.](faq/customizing_trace_attributes#adding-metadata-and-tags-to-traces)
+Similar to tags, you can use metadata to filter runs in the LangSmith UI, and can be used to group runs together for analysis. [Learn how to add metadata to your traces](../how_to_guides/tracing/add_metadata_tags)
 ![Metadata](../static/metadata.png)

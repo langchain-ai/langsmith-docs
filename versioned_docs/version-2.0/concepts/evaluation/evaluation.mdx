@@ -13,7 +13,7 @@ The following diagram outlines the building blocks for evaluations in LangSmith.
 and optionally the reference outputs against which your evaluator will compare the outputs of your `Task`. These datasets can be from any number of sources -
 you might manually curate them, collect them from user input/feedback, or generate them via LLM. Your `Evaluator` can be any arbitrary function which returns a score
 based on the inputs and outputs of your `Task`, and the reference output if desired. You can also use [one of LangSmith's off-the-shelf
-evaluators](evaluation/faq/evaluator-implementations) to get started quickly!
+evaluators] to get started quickly!
 
 <ThemedImage
   alt="LangSmith Primitives"
@@ -130,9 +130,9 @@ The evaluator itself can be any arbitrary function. There are a few different ty
 - **Heuristics**: A heuristic evaluator is a hard-coded function that does some computation to determine a score. For example, you might write an
   evaluator that checks whether the output of the system is an empty string, or determines if it is valid JSON. These would be considered **reference-free** evaluators,
   as they don't consider any example output when making their decision. You might also want to check that the output of the system matches the reference output exactly,
-  which would be considered a **ground truth** evaluator because it compares the output to a reference. See [How to create custom evaluators](evaluation/faq/custom-evaluators).
+  which would be considered a **ground truth** evaluator because it compares the output to a reference. See [How to create custom evaluators].
 - **LLM-as-judge**: An LLM-as-judge evaluator uses an LLM to score system output. For example, you might want to check whether your system is outputting
   offensive content. This is **reference-free**, as there is no comparison to an example output. You might also want to check whether the system output has the same
-  meaning as the example output, which would be a **ground truth** evaluator. To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators](https://docs.smith.langchain.com/evaluation/faq/evaluator-implementations)!
-- **Human**: You can also evaluate your runs manually. This can be done in LangSmith [via the SDK](tracing/faq/logging_feedback#capturing-feedback-programmatically),
-  or [in the LangSmith UI](http://localhost:3000/tracing/faq/logging_feedback#annotating-traces-with-feedback).
+  meaning as the example output, which would be a **ground truth** evaluator. To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators]!
+- **Human**: You can also evaluate your runs manually. This can be done in LangSmith [via the SDK],
+  or [in the LangSmith UI].
