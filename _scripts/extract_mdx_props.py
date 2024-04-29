@@ -80,8 +80,13 @@ def extract_codeblock_props(mdx_content: str) -> str:
 def test_extract_codeblock_props():
     # read all .mdx files in a directory
     directory = "/Users/bracesproul/code/lang-chain-ai/langsmith-docs/docs"
-    all_files = [os.path.join(directory, file) for file in os.listdir(directory)]
-    mdx_files = [file for file in all_files if file.endswith(".mdx")]
+    mdx_files = []
+
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".mdx"):
+                file_path = os.path.join(root, file)
+                mdx_files.append(file_path)
 
     for file_path in mdx_files:
         new_content = ""
