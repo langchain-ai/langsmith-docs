@@ -93,87 +93,93 @@ Evalution requires a system to test, [data](evaluation/faq) to serve as test cas
 
 <CodeTabs
   tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "python",
-      content: `from langsmith import Client
-from langsmith.evaluation import evaluate\n
-client = Client()\n
+    PythonBlock(`from langsmith import Client
+from langsmith.evaluation import evaluate
+
+client = Client()
+
 # Define dataset: these are your test cases
+
 dataset_name = "Sample Dataset"
-dataset = client.create_dataset(dataset_name, description="A sample dataset in LangSmith.")
-client.create_examples(
-    inputs=[
-        {"postfix": "to LangSmith"},
-        {"postfix": "to Evaluations in LangSmith"},
-    ],
-    outputs=[
-        {"output": "Welcome to LangSmith"},
-        {"output": "Welcome to Evaluations in LangSmith"},
-    ],
-    dataset_id=dataset.id,
-)\n
-# Define your evaluator
-def exact_match(run, example):
-    return {"score": run.outputs["output"] == example.outputs["output"]}\n
-experiment_results = evaluate(
-    lambda input: "Welcome " + input['postfix'], # Your AI system goes here
-    data=dataset_name, # The data to predict and grade over
-    evaluators=[exact_match], # The evaluators to score the results
-    experiment_prefix="sample-experiment", # The name of the experiment
-    metadata={
-      "version": "1.0.0",
-      "revision_id": "beta"
-    },
+dataset = client.create_dataset(
+dataset_name, description="A sample dataset in LangSmith."
 )
-`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "typescript",
-      content: `import { Client, Run, Example } from 'langsmith';
-import { runOnDataset } from 'langchain/smith';
-import { EvaluationResult } from 'langsmith/evaluation';\n
-const client = new Client();\n
+client.create_examples(
+inputs=[
+{"postfix": "to LangSmith"},
+{"postfix": "to Evaluations in LangSmith"},
+],
+outputs=[
+{"output": "Welcome to LangSmith"},
+{"output": "Welcome to Evaluations in LangSmith"},
+],
+dataset_id=dataset.id,
+)
+
+# Define your evaluator
+
+def exact_match(run, example):
+return {"score": run.outputs["output"] == example.outputs["output"]}
+
+experiment_results = evaluate(
+lambda input: "Welcome " + input["postfix"], # Your AI system goes here
+data=dataset_name, # The data to predict and grade over
+evaluators=[exact_match], # The evaluators to score the results
+experiment_prefix="sample-experiment", # The name of the experiment
+metadata={"version": "1.0.0", "revision_id": "beta"},
+)
+`),
+TypeScriptBlock(`import { Client, Run, Example } from "langsmith";
+import { runOnDataset } from "langchain/smith";
+import { EvaluationResult } from "langsmith/evaluation";
+
+const client = new Client();
+
 // Define dataset: these are your test cases
 const datasetName = "Sample Dataset";
 const dataset = await client.createDataset(datasetName, {
-    description: "A sample dataset in LangSmith."
+description: "A sample dataset in LangSmith.",
 });
 await client.createExamples({
-    inputs: [
-        { postfix: "to LangSmith" },
-        { postfix: "to Evaluations in LangSmith" },
-    ],
-    outputs: [
-        { output: "Welcome to LangSmith" },
-        { output: "Welcome to Evaluations in LangSmith" },
-    ],
-    datasetId: dataset.id,
-});\n
+inputs: [
+{ postfix: "to LangSmith" },
+{ postfix: "to Evaluations in LangSmith" },
+],
+outputs: [
+{ output: "Welcome to LangSmith" },
+{ output: "Welcome to Evaluations in LangSmith" },
+],
+datasetId: dataset.id,
+});
+
 // Define your evaluator
-const exactMatch = async ({ run, example }: { run: Run; example?: Example; }): Promise<EvaluationResult> => {
-    return {
-        key: 'exact_match',
-        score: run.outputs?.output === example?.outputs?.output ? 1 : 0,
-    };
-};\n
+const exactMatch = async ({
+run,
+example,
+}: {
+run: Run;
+example?: Example;
+}): Promise<EvaluationResult> => {
+return {
+key: "exact_match",
+score: run.outputs?.output === example?.outputs?.output ? 1 : 0,
+};
+};
+
 await runOnDataset(
-    (input: { postfix: string }) => ({ output: \`Welcome $\{input.postfix\}\` }), // Your AI system goes here
-    datasetName, // The data to predict and grade over
-    {
-        evaluationConfig: { customEvaluators: [exactMatch] },
-        projectMetadata: {
-            version: "1.0.0",
-            revision_id: "beta",
-        },
-    }
-);`,
-    },
-  ]}
-  groupId="client-language"
+(input: { postfix: string }) => ({ output: \`Welcome $\{input.postfix\}\` }), // Your AI system goes here
+datasetName, // The data to predict and grade over
+{
+evaluationConfig: { customEvaluators: [exactMatch] },
+projectMetadata: {
+version: "1.0.0",
+revision_id: "beta",
+},
+}
+);
+`)
+]}
+groupId="client-language"
 />
 
 - See more on the [evaluation quick start page](/evaluation/quickstart).

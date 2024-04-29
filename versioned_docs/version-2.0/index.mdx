@@ -93,11 +93,7 @@ Evalution requires a system to test, [data](evaluation/faq) to serve as test cas
 
 <CodeTabs
   tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "python",
-      content: `from langsmith import Client
+    PythonBlock(`from langsmith import Client
 from langsmith.evaluation import evaluate\n
 client = Client()\n
 # Define dataset: these are your test cases
@@ -127,13 +123,8 @@ experiment_results = evaluate(
       "revision_id": "beta"
     },
 )
-`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "typescript",
-      content: `import { Client, Run, Example } from 'langsmith';
+`),
+    TypeScriptBlock(`import { Client, Run, Example } from 'langsmith';
 import { runOnDataset } from 'langchain/smith';
 import { EvaluationResult } from 'langsmith/evaluation';\n
 const client = new Client();\n
@@ -170,8 +161,7 @@ await runOnDataset(
             revision_id: "beta",
         },
     }
-);`,
-    },
+);`),
   ]}
   groupId="client-language"
 />
