@@ -65,19 +65,26 @@ Note that you can add arbitrary metadata to each example, such as a note or a so
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client\n
+    PythonBlock(`from langsmith import Client
+
 example_inputs = [
-  ("What is the largest mammal?", "The blue whale"),
-  ("What do mammals and birds have in common?", "They are both warm-blooded"),
-  ("What are reptiles known for?", "Having scales"),
-  ("What's the main characteristic of amphibians?", "They live both in water and on land"),
-]\n
+    ("What is the largest mammal?", "The blue whale"),
+    ("What do mammals and birds have in common?", "They are both warm-blooded"),
+    ("What are reptiles known for?", "Having scales"),
+    (
+        "What's the main characteristic of amphibians?",
+        "They live both in water and on land",
+    ),
+]
+
 client = Client()
-dataset_name = "Elementary Animal Questions"\n
+dataset_name = "Elementary Animal Questions"
+
 # Storing inputs in a dataset lets us
 # run chains and LLMs over a shared set of examples.
 dataset = client.create_dataset(
-    dataset_name=dataset_name, description="Questions and answers about animal phylogenetics.",
+    dataset_name=dataset_name,
+    description="Questions and answers about animal phylogenetics.",
 )
 for input_prompt, output_answer in example_inputs:
     client.create_example(
@@ -85,8 +92,10 @@ for input_prompt, output_answer in example_inputs:
         outputs={"answer": output_answer},
         metadata={"source": "Wikipedia"},
         dataset_id=dataset.id,
-    )`),
-    TypeScriptBlock(`import { Client } from "langsmith";\n
+    )
+`),
+    TypeScriptBlock(`import { Client } from "langsmith";
+
 const client = new Client({
   // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
   // apiKey: "my_api_key", // Defaults to the LANGCHAIN_API_KEY env var
@@ -94,19 +103,26 @@ const client = new Client({
          maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
          maxRetries?: 6; // Maximum number of retries to make
   }*/
-});\n
+});
+
 const exampleInputs: [string, string][] = [
   ["What is the largest mammal?", "The blue whale"],
   ["What do mammals and birds have in common?", "They are both warm-blooded"],
   ["What are reptiles known for?", "Having scales"],
-  ["What's the main characteristic of amphibians?", "They live both in water and on land"],
-];\n
-const datasetName = "Elementary Animal Questions";\n
+  [
+    "What's the main characteristic of amphibians?",
+    "They live both in water and on land",
+  ],
+];
+
+const datasetName = "Elementary Animal Questions";
+
 // Storing inputs in a dataset lets us
 // run chains and LLMs over a shared set of examples.
 const dataset = await client.createDataset(datasetName, {
   description: "Questions and answers about animal phylogenetics",
-});\n
+});
+
 for (const [inputPrompt, outputAnswer] of exampleInputs) {
   await client.createExample(
     { question: inputPrompt },
@@ -116,7 +132,8 @@ for (const [inputPrompt, outputAnswer] of exampleInputs) {
       metadata: { source: "Wikipedia" },
     }
   );
-}`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -127,24 +144,28 @@ To create datasets from existing runs, you can use the same approach. Below is a
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client\n
+    PythonBlock(`from langsmith import Client
+
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
 client = Client()
-dataset_name = "Example Dataset"\n
+dataset_name = "Example Dataset"
+
 # Filter runs to add to the dataset
 runs = client.list_runs(
     project_name="my_project",
     execution_order=1,
     error=False,
-)\n
+)
+
 dataset = client.create_dataset(dataset_name, description="An example dataset")
 for run in runs:
     client.create_example(
         inputs=run.inputs,
         outputs=run.outputs,
         dataset_id=dataset.id,
-    )`),
+    )
+`),
     TypeScriptBlock(`import { Client, Run } from "langsmith";
 const client = new Client({
   // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
@@ -153,7 +174,8 @@ const client = new Client({
          maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
          maxRetries?: 6; // Maximum number of retries to make
   }*/
-});\n
+});
+
 const datasetName = "Example Dataset";
 // Filter runs to add to the dataset
 const runs: Run[] = [];
@@ -163,11 +185,13 @@ for await (const run of client.listRuns({
   error: false,
 })) {
   runs.push(run);
-}\n
+}
+
 const dataset = await client.createDataset(datasetName, {
   description: "An example dataset",
   dataType: "kv",
-});\n
+});
+
 for (const run of runs) {
   await client.createExample(run.inputs, run.outputs ?? {}, {
     datasetId: dataset.id,
@@ -187,13 +211,17 @@ First, ensure your CSV file is properly formatted with columns that represent yo
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client
-import os\n
+import os
+
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
-os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"\n
-client = Client()\n
+os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
+
+client = Client()
+
 csv_file = 'path/to/your/csvfile.csv'
 input_keys = ['column1', 'column2'] # replace with your input column names
-output_keys = ['output1', 'output2'] # replace with your output column names\n
+output_keys = ['output1', 'output2'] # replace with your output column names
+
 dataset = client.upload_csv(
     csv_file=csv_file,
     input_keys=input_keys,
@@ -202,19 +230,23 @@ dataset = client.upload_csv(
     description="Dataset created from a CSV file"
     data_type="kv"
 )`),
-    TypeScriptBlock(`import { Client } from "langsmith";\n
-const client = new Client();\n
-const csvFile = 'path/to/your/csvfile.csv';
-const inputKeys = ['column1', 'column2']; // replace with your input column names
-const outputKeys = ['output1', 'output2']; // replace with your output column names\n
+    TypeScriptBlock(`import { Client } from "langsmith";
+
+const client = new Client();
+
+const csvFile = "path/to/your/csvfile.csv";
+const inputKeys = ["column1", "column2"]; // replace with your input column names
+const outputKeys = ["output1", "output2"]; // replace with your output column names
+
 const dataset = await client.uploadCsv({
-    csvFile: csvFile,
-    fileName: "My CSV Dataset",
-    inputKeys: inputKeys,
-    outputKeys: outputKeys,
-    description: "Dataset created from a CSV file",
-    dataType: "kv"
-});`),
+  csvFile: csvFile,
+  fileName: "My CSV Dataset",
+  inputKeys: inputKeys,
+  outputKeys: outputKeys,
+  description: "Dataset created from a CSV file",
+  dataType: "kv",
+});
+`),
   ]}
   groupId="client-language"
 />
@@ -254,8 +286,10 @@ You can programmatically fetch the datasets from LangSmith using the `list_datas
 
 <CodeTabs
   tabs={[
-    PythonBlock(`datasets = client.list_datasets()`),
-    TypeScriptBlock(`const datasets = await client.listDatasets();`),
+    PythonBlock(`datasets = client.list_datasets()
+`),
+    TypeScriptBlock(`const datasets = await client.listDatasets();
+`),
   ]}
   groupId="client-language"
 />
@@ -296,7 +330,8 @@ You can filter datasets by type. Below is an example querying for chat datasets.
 
 <CodeTabs
   tabs={[
-    PythonBlock(`datasets = client.list_datasets(data_type="chat")`),
+    PythonBlock(`datasets = client.list_datasets(data_type="chat")
+`),
     TypeScriptBlock(
       `const datasets = await client.listDatasets({dataType: "chat"});`
     ),
@@ -345,18 +380,19 @@ You can also list multiple examples all by ID.
 <CodeTabs
   tabs={[
     PythonBlock(`example_ids = [
- '734fc6a0-c187-4266-9721-90b7a025751a',
- 'd6b4c1b9-6160-4d63-9b61-b034c585074f',
- '4d31df4e-f9c3-4a6e-8b6c-65701c2fed13',
+    "734fc6a0-c187-4266-9721-90b7a025751a",
+    "d6b4c1b9-6160-4d63-9b61-b034c585074f",
+    "4d31df4e-f9c3-4a6e-8b6c-65701c2fed13",
 ]
-examples = client.list_examples(example_ids=example_ids)`),
-    TypeScriptBlock(`
-const exampleIds = [
+examples = client.list_examples(example_ids=example_ids)
+`),
+    TypeScriptBlock(`const exampleIds = [
   "734fc6a0-c187-4266-9721-90b7a025751a",
   "d6b4c1b9-6160-4d63-9b61-b034c585074f",
   "4d31df4e-f9c3-4a6e-8b6c-65701c2fed13",
 ];
-const examples = await client.listExamples({exampleIds: exampleIds});`),
+const examples = await client.listExamples({ exampleIds: exampleIds });
+`),
   ]}
   groupId="client-language"
 />

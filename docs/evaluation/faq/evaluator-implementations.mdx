@@ -57,10 +57,12 @@ Three QA evaluators you can load are: `"qa"`, `"context_qa"`, `"cot_qa"`. Based 
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client
-from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
+from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
 qa_evaluator = LangChainStringEvaluator("qa")  
 context_qa_evaluator = LangChainStringEvaluator("context_qa")
-cot_qa_evaluator = LangChainStringEvaluator("cot_qa")\n
+cot_qa_evaluator = LangChainStringEvaluator("cot_qa")
+
 client = Client()
 evaluate(
     <your pipeline>,
@@ -79,7 +81,8 @@ out the reference docs for more information on the expected prompt format.
   tabs={[
     PythonBlock(`from langchain.chat_models import ChatAnthropic
 from langchain_core.prompts.prompt import PromptTemplate
-from langsmith.evaluation import LangChainStringEvaluator\n
+from langsmith.evaluation import LangChainStringEvaluator
+
 _PROMPT_TEMPLATE = """You are an expert professor specialized in grading students' answers to questions.
 You are grading the following question:
 {input}
@@ -89,11 +92,13 @@ You are grading the following predicted answer:
 {prediction}
 Respond with CORRECT or INCORRECT:
 Grade:
-"""\n
+"""
+
 PROMPT = PromptTemplate(
     input_variables=["input", "reference", "prediction"], template=_PROMPT_TEMPLATE
 )
-eval_llm = ChatAnthropic(temperature=0.0)\n
+eval_llm = ChatAnthropic(temperature=0.0)
+
 qa_evaluator = LangChainStringEvaluator("qa", config={"llm": eval_llm, "prompt": PROMPT})  
 context_qa_evaluator = LangChainStringEvaluator("context_qa", config={"llm": eval_llm})
 cot_qa_evaluator = LangChainStringEvaluator("cot_qa", config={"llm": eval_llm})
@@ -117,7 +122,8 @@ If you don't have ground truth reference labels, you can evaluate your run again
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client  
-from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
+from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
 criteria_evaluator = LangChainStringEvaluator(
     "criteria",
     config={
@@ -136,7 +142,8 @@ score_evaluator = LangChainStringEvaluator(
         # If you want the score to be saved on a scale from 0 to 1
         "normalize_by": 10,
     }  
-)\n
+)
+
 client = Client()
 evaluate(
     <your pipeline>,
@@ -180,7 +187,8 @@ If you have ground truth reference labels, you can evaluate your run against cus
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client
-from langsmith.evaluation import LangChainStringEvaluator, evaluate\n  
+from langsmith.evaluation import LangChainStringEvaluator, evaluate
+  
 labeled_criteria_evaluator = LangChainStringEvaluator(
     "labeled_criteria",
     config={
@@ -210,7 +218,8 @@ labeled_score_evaluator = LangChainStringEvaluator(
         "reference": example.outputs["answer"],
         "input": example.inputs["question"],
     }  
-)\n
+)
+
 client = Client()
 evaluate(
     <your pipeline>,
@@ -236,7 +245,8 @@ Evaluating extraction and function calling applications often comes down to vali
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
+    PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
 json_validity_evaluator = LangChainStringEvaluator("json_validity")
 json_equality_evaluator = LangChainStringEvaluator("json_equality") 
 json_edit_distance_evaluator = LangChainStringEvaluator("json_edit_distance")
@@ -252,7 +262,8 @@ json_schema_evaluator = LangChainStringEvaluator(
             "required": ["name"] 
         }
     }
-)\n
+)
+
 evaluate(
     <your pipeline>,
     data="<dataset_name>", 
@@ -277,7 +288,8 @@ To measure the similarity between a predicted string and a reference, you can us
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
+    PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
 string_distance_evaluator = LangChainStringEvaluator(
     "string_distance",  
     config={"distance": "levenshtein", "normalize_score": True}
@@ -294,7 +306,8 @@ embedding_distance_evaluator = LangChainStringEvaluator(
 exact_match_evaluator = LangChainStringEvaluator(
     "exact_match",
     config={"ignore_case": True, "ignore_punctuation": True}  
-)\n
+)
+
 evaluate(
     <your pipeline>,
     data="<dataset_name>",  
@@ -315,14 +328,16 @@ The pattern is provided as a string in the example outputs of the dataset. The e
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
+    PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
 regex_evaluator = LangChainStringEvaluator(
     "regex_match", 
     config={
         # Optionally control which flags to use in the regex match
         "flags": re.IGNORECASE  
     }
-)\n
+)
+
 evaluate(
     <your pipeline>,
     data="<dataset_name>", 

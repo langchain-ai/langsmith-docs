@@ -24,10 +24,14 @@ All the examples below assume you have created a LangSmith client and configured
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client\n
-client = Client()`),
-    TypeScriptBlock(`import { Client, Feedback } from "langsmith";\n
-const client = new Client();`),
+    PythonBlock(`from langsmith import Client
+
+client = Client()
+`),
+    TypeScriptBlock(`import { Client, Feedback } from "langsmith";
+
+const client = new Client();
+`),
   ]}
   groupId="client-language"
 />
@@ -37,13 +41,15 @@ Below are some examples of ways to list feedback using the available arguments:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`run_feedback = client.list_feedback(run_ids=["<run_id>"])`),
+    PythonBlock(`run_feedback = client.list_feedback(run_ids=["<run_id>"])
+`),
     TypeScriptBlock(`const runFeedback: Feedback[] = [];
 for await (const feedback of client.listFeedback({
   runIds: ["<run_id>"],
 })) {
   runFeedback.push(feedback);
-}`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -60,7 +66,8 @@ for await (const feedback of client.listFeedback({
   feedbackKeys: ["correctness"],
 })) {
   correctnessFeedback.push(feedback);
-}`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -77,7 +84,8 @@ for await (const feedback of client.listFeedback({
   feedbackSourceTypes: ["model"],
 })) {
   modelFeedback.push(feedback);
-}`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -93,13 +101,19 @@ After querying for a set of runs, you can compare the model-generated and human 
 <CodeTabs
   tabs={[
     PythonBlock(`# Query for runs
-runs = client.list_runs(project_name="<your_project>", filter='gt(start_time, "2023-07-15T00:00:00Z")')\n
+runs = client.list_runs(
+    project_name="<your_project>", filter='gt(start_time, "2023-07-15T00:00:00Z")'
+)
+
 # Extract run IDs
-run_ids = [run.id for run in runs]\n
+run_ids = [run.id for run in runs]
+
 # Fetch model-generated feedback for the runs
-model_feedback = client.list_feedback(run_ids=run_ids, feedback_source_type=["model"])\n 
+model_feedback = client.list_feedback(run_ids=run_ids, feedback_source_type=["model"])
+
 # Fetch human feedback for the runs
-human_feedback = client.list_feedback(run_ids=run_ids, feedback_source_type=["api"])`),
+human_feedback = client.list_feedback(run_ids=run_ids, feedback_source_type=["api"])
+`),
     TypeScriptBlock(`// Query for runs
 const runs: Run[] = [];
 for await (const run of client.listRuns({
@@ -107,9 +121,11 @@ for await (const run of client.listRuns({
   filter: 'gt(start_time, "2023-07-15T00:00:00Z")',
 })) {
   runs.push(run);
-}\n
+}
+
 // Extract run IDs
-const runIds = runs.map(run => run.id);\n
+const runIds = runs.map((run) => run.id);
+
 // Fetch model-generated feedback for the runs
 const modelFeedback: Feedback[] = [];
 for await (const feedback of client.listFeedback({
@@ -117,7 +133,8 @@ for await (const feedback of client.listFeedback({
   feedbackSourceTypes: ["model"],
 })) {
   modelFeedback.push(feedback);
-}\n
+}
+
 // Fetch human feedback for the runs
 const humanFeedback: Feedback[] = [];
 for await (const feedback of client.listFeedback({
@@ -125,7 +142,8 @@ for await (const feedback of client.listFeedback({
   feedbackSourceTypes: ["api"],
 })) {
   humanFeedback.push(feedback);
-}`),
+}
+`),
   ]}
   groupId="client-language"
 />
@@ -137,13 +155,21 @@ If you're interested in analyzing feedback for a specific key, such as 'correctn
 <CodeTabs
   tabs={[
     PythonBlock(`# Query for runs
-runs = client.list_runs(project_name="<your_project>", filter='gt(start_time, "2023-07-15T00:00:00Z")')\n
-# Extract run IDs  
-run_ids = [run.id for run in runs]\n
+runs = client.list_runs(
+    project_name="<your_project>", filter='gt(start_time, "2023-07-15T00:00:00Z")'
+)
+
+# Extract run IDs
+run_ids = [run.id for run in runs]
+
 # Fetch correctness feedback for the runs
-correctness_feedback = client.list_feedback(run_ids=run_ids, feedback_key=["correctness"])\n
+correctness_feedback = client.list_feedback(
+    run_ids=run_ids, feedback_key=["correctness"]
+)
+
 # Analyze the correctness scores
-scores = [feedback.score for feedback in correctness_feedback]`),
+scores = [feedback.score for feedback in correctness_feedback]
+`),
     TypeScriptBlock(`// Query for runs
 const runs: Run[] = [];
 for await (const run of client.listRuns({
@@ -151,9 +177,11 @@ for await (const run of client.listRuns({
   filter: 'gt(start_time, "2023-07-15T00:00:00Z")',
 })) {
   runs.push(run);
-}\n
+}
+
 // Extract run IDs
-const runIds = runs.map(run => run.id);\n
+const runIds = runs.map((run) => run.id);
+
 // Fetch correctness feedback for the runs
 const correctnessFeedback: Feedback[] = [];
 for await (const feedback of client.listFeedback({
@@ -161,9 +189,11 @@ for await (const feedback of client.listFeedback({
   feedbackKeys: ["correctness"],
 })) {
   correctnessFeedback.push(feedback);
-}\n
+}
+
 // Analyze the correctness scores
-const scores = correctnessFeedback.map(feedback => feedback.score);`),
+const scores = correctnessFeedback.map((feedback) => feedback.score);
+`),
   ]}
   groupId="client-language"
 />

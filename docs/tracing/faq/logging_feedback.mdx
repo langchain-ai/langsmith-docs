@@ -24,28 +24,31 @@ To get the run_id of a logged run, see [this guide](/tracing/faq/logging_and_vie
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client\n
-client = Client()\n
+    PythonBlock(`from langsmith import Client
+
+client = Client()
+
 # ... Run your application and get the run_id...
-# This information can be the result of a user-facing feedback form\n
+# This information can be the result of a user-facing feedback form
+
 client.create_feedback(
     run_id,
     key="feedback-key",
     score=1.0,
     comment="comment",
-)`),
+)
+`),
     TypeScriptBlock(`import { Client } from "langsmith";
-const client = new Client();\n
+const client = new Client();
+
 // ... Run your application and get the run_id...
-// This information can be the result of a user-facing feedback form\n
-await client.createFeedback(
-    runId,
-    "feedback-key",
-    {
-        score: 1.0,
-        comment: "comment",
-    }
-);`),
+// This information can be the result of a user-facing feedback form
+
+await client.createFeedback(runId, "feedback-key", {
+  score: 1.0,
+  comment: "comment",
+});
+`),
     APIBlock(`import requests\n
 # Send your API Key in the request headers
 headers = {

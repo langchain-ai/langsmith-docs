@@ -47,7 +47,7 @@ response = assistant(messages, langsmith_extra={"metadata": {"session_id": sessi
 messages = messages + [response, {"role": "user", "content": "what's my name?"}]
 response = assistant(messages, langsmith_extra={"metadata": {"session_id": session_id}})
 `),
-    TypeScriptBlock(`from langchain_anthropic import ChatAnthropic
+    PythonBlock(`from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser

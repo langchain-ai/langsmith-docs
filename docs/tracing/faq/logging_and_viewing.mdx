@@ -126,47 +126,63 @@ To log traces to a different project, see [this section](/tracing/faq/customizin
   tabs={[
     PythonBlock(`import openai
 from langsmith import traceable
-from langsmith.wrappers import wrap_openai\n
-client = wrap_openai(openai.Client())\n
+from langsmith.wrappers import wrap_openai
+
+client = wrap_openai(openai.Client())
+
 @traceable(run_type="tool", name="Retrieve Context")
 def my_tool(question: str) -> str:
-    return "During this morning's meeting, we solved all world conflict."\n
+    return "During this morning's meeting, we solved all world conflict."
+
 @traceable(name="Chat Pipeline")
 def chat_pipeline(question: str):
     context = my_tool(question)
     messages = [
         { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-        { "role": "user", "content": f"Question: {question}\nContext: {context}"}
+        { "role": "user", "content": f"Question: {question}
+Context: {context}"}
     ]
     chat_completion = client.chat.completions.create(
         model="gpt-3.5-turbo", messages=messages
     )
-    return chat_completion.choices[0].message.content\n
+    return chat_completion.choices[0].message.content
+
 chat_pipeline("Can you summarize this morning's meetings?")`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { traceable } from "langsmith/traceable";
-import { wrapOpenAI } from "langsmith/wrappers";\n
-const client = wrapOpenAI(new OpenAI());\n
-const myTool = traceable(async (question: string) => {
+import { wrapOpenAI } from "langsmith/wrappers";
+
+const client = wrapOpenAI(new OpenAI());
+
+const myTool = traceable(
+  async (question: string) => {
     return "During this morning's meeting, we solved all world conflict.";
-}, { name: "Retrieve Context", run_type: "tool" });\n
-const chatPipeline = traceable(async (question: string) => {
+  },
+  { name: "Retrieve Context", run_type: "tool" }
+);
+
+const chatPipeline = traceable(
+  async (question: string) => {
     const context = await myTool(question);
     const messages = [
-        {
-            role: "system",
-            content:
-                "You are a helpful assistant. Please respond to the user's request only based on the given context.",
-        },
-        { role: "user", content: \`Question: \${question} Context: \${context}\` },
+      {
+        role: "system",
+        content:
+          "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+      },
+      { role: "user", content: \`Question: \${question} Context: \${context}\` },
     ];
     const chatCompletion = await client.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messages,
+      model: "gpt-3.5-turbo",
+      messages: messages,
     });
     return chatCompletion.choices[0].message.content;
-}, { name: "Chat Pipeline" });\n
-await chatPipeline("Can you summarize this morning's meetings?");`),
+  },
+  { name: "Chat Pipeline" }
+);
+
+await chatPipeline("Can you summarize this morning's meetings?");
+`),
   ]}
   groupId="client-language"
 />
@@ -181,19 +197,25 @@ necessary for this method.
   tabs={[
     PythonBlock(`import openai
 from langsmith.run_trees import RunTree
+
 # This can be a user input to your app
 question = "Can you summarize this morning's meetings?"
 # Create a top-level run
 pipeline = RunTree(
-    name="Chat Pipeline",
-    run_type="chain",
-    inputs={"question": question}
+    name="Chat Pipeline", run_type="chain", inputs={"question": question}
 )
 # This can be retrieved in a retrieval step
 context = "During this morning's meeting, we solved all world conflict."
 messages = [
-    { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-    { "role": "user", "content": f"Question: {question}\\nContext: {context}"}
+    {
+        "role": "system",
+        "content": "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+    },
+    {
+        "role": "user",
+        "content": f"Question: {question}\
+Context: {context}",
+    },
 ]
 # Create a child run
 child_llm_run = pipeline.create_child(
@@ -210,39 +232,51 @@ chat_completion = client.chat.completions.create(
 child_llm_run.end(outputs=chat_completion)
 child_llm_run.post()
 pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
-pipeline.post()`),
+pipeline.post()
+`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";
 // This can be a user input to your app
 const question = "Can you summarize this morning's meetings?";
 const pipeline = new RunTree({
-    name: "Chat Pipeline",
-    run_type: "chain",
-    inputs: { question }
+  name: "Chat Pipeline",
+  run_type: "chain",
+  inputs: { question },
 });
 // This can be retrieved in a retrieval step
 const context = "During this morning's meeting, we solved all world conflict.";
 const messages = [
-    { role: "system", content: "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-    { role: "user", content: \`Question: \${question}\nContext: \${context}\` }
+  {
+    role: "system",
+    content:
+      "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+  },
+  {
+    role: "user",
+    content: \`Question: \${question}
+Context: \${context}\`,
+  },
 ];
 // Create a child run
 const childRun = await pipeline.createChild({
-    name: "OpenAI Call",
-    run_type: "llm",
-    inputs: { messages },
+  name: "OpenAI Call",
+  run_type: "llm",
+  inputs: { messages },
 });
 // Generate a completion
 const client = new OpenAI();
 const chatCompletion = await client.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: messages,
+  model: "gpt-3.5-turbo",
+  messages: messages,
 });
 // End the runs and log them
 childRun.end(chatCompletion);
 await childRun.postRun();
-pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
-await pipeline.postRun();`),
+pipeline.end({
+  outputs: { answer: chatCompletion.choices[0].message.content },
+});
+await pipeline.postRun();
+`),
   ]}
   groupId="client-language"
 />
@@ -349,22 +383,25 @@ The example below shows how to get the run ID of a logged run using the LangSmit
 
 <CodeTabs
   tabs={[
-    PythonBlock(`import openai\n
+    PythonBlock(`import openai
+
 from uuid import uuid4
 from langsmith import traceable
 from langsmith.run_trees import RunTree
-from langsmith.wrappers import wrap_openai\n
+from langsmith.wrappers import wrap_openai
+
 messages = [
-    { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-    { "role": "user", "content": "Is sunshine good for you?" }
-]\n
+    {
+        "role": "system",
+        "content": "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+    },
+    {"role": "user", "content": "Is sunshine good for you?"},
+]
+
 # Collect run ID using RunTree
 run_id = uuid4()
 rt = RunTree(
-    name="OpenAI Call RunTree",
-    run_type="llm",
-    inputs={"messages": messages},
-    id=run_id
+    name="OpenAI Call RunTree", run_type="llm", inputs={"messages": messages}, id=run_id
 )
 client = openai.Client()
 chat_completion = client.chat.completions.create(
@@ -372,58 +409,73 @@ chat_completion = client.chat.completions.create(
 )
 rt.end(outputs=chat_completion)
 rt.post()
-print("RunTree Run ID: ", run_id)\n
+print("RunTree Run ID: ", run_id)
+
 # Collect run ID using openai_wrapper
 run_id = uuid4()
 client = wrap_openai(openai.Client())
 completion = client.chat.completions.create(
-    model="gpt-3.5-turbo", messages=messages, langsmith_extra={
+    model="gpt-3.5-turbo",
+    messages=messages,
+    langsmith_extra={
         "run_id": run_id,
     },
 )
-print("OpenAI Wrapper Run ID: ", run_id)\n
+print("OpenAI Wrapper Run ID: ", run_id)
+
 # Collect run id using traceable decorator
 run_id = uuid4()
+
+
 @traceable(
     run_type="llm",
     name="OpenAI Call Decorator",
 )
-def call_openai(
-    messages: list[dict], model: str = "gpt-3.5-turbo"
-) -> str:
-    return client.chat.completions.create(
-        model=model,
-        messages=messages,
-    ).choices[0].message.content
+def call_openai(messages: list[dict], model: str = "gpt-3.5-turbo") -> str:
+    return (
+        client.chat.completions.create(
+            model=model,
+            messages=messages,
+        )
+        .choices[0]
+        .message.content
+    )
+
+
 result = call_openai(
     messages,
     langsmith_extra={
         "run_id": run_id,
     },
 )
-print("Traceable Run ID: ", run_id)`),
+print("Traceable Run ID: ", run_id)
+`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";
-import {v4 as uuidv4} from "uuid";\n
-const client = new OpenAI();\n
+import { v4 as uuidv4 } from "uuid";
+
+const client = new OpenAI();
+
 const messages = [
-    {role: "system", content: "You are a helpful assistant."},
-    {role: "user", content: "Is sunshine food for you?"}
-];\n
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "Is sunshine food for you?" },
+];
+
 const runId = uuidv4();
 const rt = new RunTree({
-    run_type: "llm",
-    name: "OpenAI Call RunTree",
-    inputs: { messages },
-    id: runId
-})
-const chatCompletion = await client.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: messages,
+  run_type: "llm",
+  name: "OpenAI Call RunTree",
+  inputs: { messages },
+  id: runId,
 });
-rt.end(chatCompletion)
-await rt.postRun()
-console.log("Run ID: ", runId);`),
+const chatCompletion = await client.chat.completions.create({
+  model: "gpt-3.5-turbo",
+  messages: messages,
+});
+rt.end(chatCompletion);
+await rt.postRun();
+console.log("Run ID: ", runId);
+`),
     APIBlock(`import openai
 import requests\n
 from datetime import datetime
@@ -467,13 +519,16 @@ use the LangSmith client. Below is an example. To get the run ID of a run, you c
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client\n
+    PythonBlock(`from langsmith import Client
+
 client = Client()
 run = client.read_run("<run_id>")
-print(run.url)`),
-    TypeScriptBlock(`import { Client } from "langsmith";\n
+print(run.url)
+`),
+    TypeScriptBlock(`import { Client } from "langsmith";
+
 const client = new Client();
-const runUrl = await client.getRunUrl({runId: "<run_id>"});
+const runUrl = await client.getRunUrl({ runId: "<run_id>" });
 console.log(runUrl);
 `),
   ]}
@@ -488,12 +543,15 @@ Below is an example using the SDK:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client\n
+    PythonBlock(`from langsmith import Client
+
 client = Client()
-client.delete_project(project_name="<project_name>")`),
-    TypeScriptBlock(`import { Client } from "langsmith";\n
+client.delete_project(project_name="<project_name>")
+`),
+    TypeScriptBlock(`import { Client } from "langsmith";
+
 const client = new Client();
-await client.deleteProject({projectName: "<project_name>"});
+await client.deleteProject({ projectName: "<project_name>" });
 `),
   ]}
   groupId="client-language"
