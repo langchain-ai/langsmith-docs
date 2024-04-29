@@ -16,7 +16,7 @@ Before diving into this content, it might be helpful to read the following:
 - [Run (span) data format](../../reference/data_formats/run_data_format)
 - [LangSmith API Reference](https://api.smith.langchain.com/redoc)
 - [LangSmith trace query syntax](../../reference/data_formats/trace_query_syntax)
-:::
+  :::
 
 The recommended way to export runs (the span data in LangSmith traces) is to use the `list_runs` method in the SDK or `/runs/query` endpoint in the API.
 
@@ -485,8 +485,8 @@ To optimize the query, the example:
 2. Fetches root runs in batches while processing tool runs concurrently.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`from collections import defaultdict
+  tabs={[
+    PythonBlock(`from collections import defaultdict
 from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import datetime, timedelta\n
 import pandas as pd
@@ -558,6 +558,6 @@ for future in tqdm(futures):
 # Convert to a pandas DataFrame\n
 df = pd.DataFrame(data)
 df.head()`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
