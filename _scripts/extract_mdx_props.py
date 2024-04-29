@@ -18,31 +18,30 @@ def write_code_files(language_and_code_list: Tuple[str, str]) -> str:
         
     tmp_folder = "tmp"
     # create a new folder if it doesn't exist
-    if not os.path.exists(tmp_folder):
-        os.makedirs(tmp_folder)
+    os.makedirs(tmp_folder, exist_ok=True)
 
     formatted_code = ""
-    file_name = f"code_block_{len(os.listdir('.'))}_{language}{file_extension}"
-    absolute_path = os.path.abspath(f"{tmp_folder}/{file_name}")
+    file_name = f"code_block_{len(os.listdir(tmp_folder))}_{language}{file_extension}"
+    file_path = os.path.join(tmp_folder, file_name)
 
     # Write the un-formatted code to a file
-    with open(absolute_path, "w") as file:
+    with open(file_path, "w") as file:
         file.write(code)
 
     ts_format_cmd = "yarn prettier --write"
     py_format_cmd = "ruff format"
 
     if language == "typescript":
-        os.system(f"{ts_format_cmd} {absolute_path}")
+        os.system(f"{ts_format_cmd} {file_path}")
     elif language == "python":
-        os.system(f"{py_format_cmd} {absolute_path}")
+        os.system(f"{py_format_cmd} {file_path}")
 
     # Read the formatted code from the file and return it
-    with open(absolute_path, "r") as file:
+    with open(file_path, "r") as file:
         formatted_code = file.read()
 
     # Cleanup, delete the file
-    os.remove(absolute_path)
+    os.remove(file_path)
 
     return formatted_code
 
@@ -77,8 +76,8 @@ def extract_codeblock_props(mdx_content: str) -> str:
 
 def test_extract_codeblock_props():
     # read all .mdx files in a directory
-    directory = ""
-    all_files = os.listdir(directory)
+    directory = "/Users/bracesproul/code/lang-chain-ai/langsmith-docs/docs"
+    all_files = [os.path.join(directory, file) for file in os.listdir(directory)]
     mdx_files = [file for file in all_files if file.endswith(".mdx")]
 
     for file_path in mdx_files:
