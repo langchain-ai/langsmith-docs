@@ -471,3 +471,93 @@ This type of query is useful if you want to extract a specific run conditional o
   ]}
   groupId="client-language"
 />
+
+### Advanced: export flattened trace view with child tool usage
+
+The following Python example demonstrates how to export a flattened view of traces, including information on the tools (from nested runs) used by the agent within each trace.
+This can be used to analyze the behavior of your agents across multiple traces.
+
+This example queries all tool runs within a specified number of days and groups them by their parent (root) run ID. It then fetches the relevant information for each root run, such as the run name, inputs, outputs, and combines that information with the child run information.
+
+To optimize the query, the example:
+
+1. Selects only the necessary fields when querying tool runs to reduce query time.
+2. Fetches root runs in batches while processing tool runs concurrently.
+
+<CodeTabs
+    tabs={[
+        PythonBlock(`from collections import defaultdict
+from concurrent.futures import Future, ThreadPoolExecutor
+from datetime import datetime, timedelta\n
+import pandas as pd
+from langsmith import Client
+from tqdm.auto import tqdm\n
+client = Client()
+project_name = "my-project"
+num_days = 30\n
+# List all tool runs
+tool_runs = client.list_runs(
+    project_name=project_name,
+    start_time=datetime.now() - timedelta(days=num_days),
+    run_type="tool",
+    # We don't need to fetch inputs, outputs, and other values that # may increase the query time
+    # highlight-next-line
+    select=["trace_id", "name", "run_type"],
+)\n
+data = []
+futures: list[Future] = []
+trace_cursor = 0
+trace_batch_size = 50\n
+tool_runs_by_parent = defaultdict(lambda: defaultdict(set))
+# Do not exceed rate limit
+# highlight-next-line
+with ThreadPoolExecutor(max_workers=2) as executor:
+    # Group tool runs by parent run ID
+    for run in tqdm(tool_runs):
+        # Collect all tools invoked within a given trace
+        tool_runs_by_parent[run.trace_id]["tools_involved"].add(run.name)
+        # maybe send a batch of parent run IDs to the server
+        # this lets us query for the root runs in batches
+        # while still processing the tool runs
+        if len(tool_runs_by_parent) % trace_batch_size == 0:
+            if this_batch := list(tool_runs_by_parent.keys())[
+                trace_cursor : trace_cursor + trace_batch_size
+            ]:
+                trace_cursor += trace_batch_size
+                futures.append(
+                    executor.submit(
+                        client.list_runs,
+                        project_name=project_name,
+                        run_ids=this_batch,
+                        select=["name", "inputs", "outputs", "run_type"],
+                    )
+                )
+if this_batch := list(tool_runs_by_parent.keys())[trace_cursor:]:
+    futures.append(
+        executor.submit(
+            client.list_runs,
+            project_name=project_name,
+            run_ids=this_batch,
+            select=["name", "inputs", "outputs", "run_type"],
+        )
+    )\n
+for future in tqdm(futures):
+    root_runs = future.result()
+    for root_run in root_runs:
+        root_data = tool_runs_by_parent[root_run.id]
+        data.append(
+            {
+                "run_id": root_run.id,
+                "run_name": root_run.name,
+                "run_type": root_run.run_type,
+                "inputs": root_run.inputs,
+                "outputs": root_run.outputs,
+                "tools_involved": list(root_data["tools_involved"]),
+            }
+        )\n
+# Convert to a pandas DataFrame\n
+df = pd.DataFrame(data)
+df.head()`),
+    ]}
+    groupId="client-language"
+/>
