@@ -1,10 +1,11 @@
 ---
 sidebar_position: 11
 ---
+
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Prevent logging of inputs and outputs in traces
@@ -24,8 +25,8 @@ You can also customize and override this behavior for a given `Client` instance.
 For the example below, we will simply return an empty object for both `hide_inputs` and `hide_outputs`, but you can customize this to your needs.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`import openai
+  tabs={[
+    PythonBlock(`import openai
 from langsmith import Client
 from langsmith.wrappers import wrap_openai\n
 openai_client = wrap_openai(openai.Client())
@@ -50,7 +51,7 @@ openai_client.chat.completions.create(
     ],
 )
 `),
-        TypeScriptBlock(`import OpenAI from "openai";
+    TypeScriptBlock(`import OpenAI from "openai";
 import { Client } from "langsmith";
 import { wrapOpenAI } from "langsmith/wrappers";\n
 const langsmithClient = new Client({
@@ -78,6 +79,6 @@ await openaiClient.chat.completions.create({
     ],
 });
 `),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />

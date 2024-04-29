@@ -1,10 +1,11 @@
 ---
 sidebar_position: 8
 ---
+
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Log multimodal traces
@@ -14,8 +15,8 @@ LangSmith supports logging and rendering images as part of traces. This is curre
 In order to log images, use `wrap_openai`/ `wrapOpenAI` in Python or TypeScript respectively and pass an image URL or base64 encoded image as part of the input.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`from openai import OpenAI
+  tabs={[
+    PythonBlock(`from openai import OpenAI
 from langsmith.wrappers import wrap_openai\n
 client = wrap_openai(OpenAI())\n
 response = client.chat.completions.create(
@@ -36,7 +37,7 @@ response = client.chat.completions.create(
   ],
 )
 print(response.choices[0])`),
-        TypeScriptBlock(`import OpenAI from "openai";
+    TypeScriptBlock(`import OpenAI from "openai";
 import { wrapOpenAI } from "langsmith/wrappers";\n
 // Wrap the OpenAI client to automatically log traces
 const wrappedClient = wrapOpenAI(new OpenAI());\n
@@ -58,8 +59,8 @@ const response = await wrappedClient.chat.completions.create({
     ],
 });
 console.log(response.choices[0]);`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 The image will be rendered as part of the trace in the LangSmith UI.

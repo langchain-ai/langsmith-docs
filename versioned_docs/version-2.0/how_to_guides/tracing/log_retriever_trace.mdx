@@ -1,10 +1,11 @@
 ---
 sidebar_position: 9
 ---
+
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Log retriever traces
@@ -25,8 +26,8 @@ LangSmith provides special rendering for retrieval steps in traces to make it ea
 The following code snippets show how to log a retrieval steps in Python and TypeScript.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith import traceable\n
+  tabs={[
+    PythonBlock(`from langsmith import traceable\n
 def _convert_docs(results):
     return [
         {
@@ -43,7 +44,7 @@ def retrieve_docs(query):
     contents = ["Document contents 1", "Document contents 2", "Document contents 3"]
     return _convert_docs(contents)\n
 retrieve_docs("User query")`),
-        TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
 interface Document {
   page_content: string;
   type: string;
@@ -66,8 +67,8 @@ const retrieveDocs = traceable(
   { name: "retrieveDocs", run_type: "retriever" } // Configuration for traceable
 );\n
 await retrieveDocs("User query");`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 The following image shows how a retriever step is rendered in a trace. The contents along with the metadata are displayed with each document.

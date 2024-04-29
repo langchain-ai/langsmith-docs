@@ -1,47 +1,49 @@
 ---
 sidebar_position: 1
 ---
+
 # How-to guides
 
 Step-by-step guides that cover key tasks and operations in LangSmith.
 
 ## Setup
 
-* [Create an account and API key](./how_to_guides/setup/create_account_api_key)
-* [Create an organization](./how_to_guides/setup/create_organization)
-* [ ] Set up a workspace
-* [ ] Setup billing
-* [ ] Assign roles (enterprise only)
+- [Create an account and API key](./how_to_guides/setup/create_account_api_key)
+- [Create an organization](./how_to_guides/setup/create_organization)
+- [ ] Set up a workspace
+- [ ] Setup billing
+- [ ] Assign roles (enterprise only)
 
 ## Tracing
 
-* [Annotate code for tracing](./how_to_guides/tracing/annotate_code)
-  * [Use `@traceable`/`traceable`](./how_to_guides/tracing/annotate_code#use-traceable--traceable)
-  * [Wrap the OpenAI API client](./how_to_guides/tracing/annotate_code#wrap-the-openai-client)
-  * [Use the RunTree API](./how_to_guides/tracing/annotate_code#use-the-runtree-api)
-* [Toggle tracing on and off](./how_to_guides/tracing/toggle_tracing)
-* [Log traces to specific project](./how_to_guides/tracing/log_traces_to_project)
-  * [Set the destination project statically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-statically)
-  * [Set the destination project dynamically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-dynamically)
-* [Set a sampling rate for traces](./how_to_guides/tracing/sample_traces)
-* [Add metadata and tags to traces](./how_to_guides/tracing/add_metadata_tags)
-* [Implement distributed tracing](./how_to_guides/tracing/distributed_tracing)
-* [Access the current span within a traced function](./how_to_guides/tracing/access_current_span)
-* [Log multimodal traces](./how_to_guides/tracing/log_multimodal_traces)
-* [Log retriever traces](./how_to_guides/tracing/log_retriever_trace)
-* [Log custom LLM traces](./how_to_guides/tracing/log_llm_trace)
-  * [Chat-style models](./how_to_guides/tracing/log_llm_trace#chat-style-models)
-  * [Specify model name](./how_to_guides/tracing/log_llm_trace#specify-model-name)
-  * [Stream outputs](./how_to_guides/tracing/log_llm_trace#stream-outputs)
-  * [Manually provide token counts](./how_to_guides/tracing/log_llm_trace#manually-provide-token-counts)
-  * [Instruct-style models](./how_to_guides/tracing/log_llm_trace#instruct-style-models)
-* [Prevent logging of inputs and outputs in traces](./how_to_guides/tracing/mask_inputs_outputs)
-* [Export traces](./how_to_guides/tracing/export_traces)
-  * [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
-  * [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
-- [ ] Decorating a generator function
-- [ ] Log a trace using LangChain
-- [ ] Log a trace using instructor
+- [Annotate code for tracing](./how_to_guides/tracing/annotate_code)
+  - [Use `@traceable`/`traceable`](./how_to_guides/tracing/annotate_code#use-traceable--traceable)
+  - [Wrap the OpenAI API client](./how_to_guides/tracing/annotate_code#wrap-the-openai-client)
+  - [Use the RunTree API](./how_to_guides/tracing/annotate_code#use-the-runtree-api)
+- [Toggle tracing on and off](./how_to_guides/tracing/toggle_tracing)
+- [Log traces to specific project](./how_to_guides/tracing/log_traces_to_project)
+  - [Set the destination project statically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-statically)
+  - [Set the destination project dynamically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-dynamically)
+- [Set a sampling rate for traces](./how_to_guides/tracing/sample_traces)
+- [Add metadata and tags to traces](./how_to_guides/tracing/add_metadata_tags)
+- [Implement distributed tracing](./how_to_guides/tracing/distributed_tracing)
+- [Access the current span within a traced function](./how_to_guides/tracing/access_current_span)
+- [Log multimodal traces](./how_to_guides/tracing/log_multimodal_traces)
+- [Log retriever traces](./how_to_guides/tracing/log_retriever_trace)
+- [Log custom LLM traces](./how_to_guides/tracing/log_llm_trace)
+  - [Chat-style models](./how_to_guides/tracing/log_llm_trace#chat-style-models)
+  - [Specify model name](./how_to_guides/tracing/log_llm_trace#specify-model-name)
+  - [Stream outputs](./how_to_guides/tracing/log_llm_trace#stream-outputs)
+  - [Manually provide token counts](./how_to_guides/tracing/log_llm_trace#manually-provide-token-counts)
+  - [Instruct-style models](./how_to_guides/tracing/log_llm_trace#instruct-style-models)
+- [Prevent logging of inputs and outputs in traces](./how_to_guides/tracing/mask_inputs_outputs)
+- [Export traces](./how_to_guides/tracing/export_traces)
+  - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
+  - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
+
+* [ ] Decorating a generator function
+* [ ] Log a trace using LangChain
+* [ ] Log a trace using instructor
 
 ### Datasets
 

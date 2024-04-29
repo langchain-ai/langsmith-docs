@@ -1,10 +1,11 @@
 ---
 sidebar_position: 7
 ---
+
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Access the current run (span) within a traced function
@@ -16,8 +17,8 @@ You can access the current run by calling the `get_current_run_tree`/`getCurrent
 For a full list of available properties on the `RunTree` object, see the API reference.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith import traceable
+  tabs={[
+    PythonBlock(`from langsmith import traceable
 from langsmith.run_helpers import get_current_run_tree
 from openai import Client\n
 openai = Client()\n
@@ -66,7 +67,7 @@ def run_pipeline():
     response = invoke_llm(messages)
     return parse_output(response)\n
 run_pipeline()`),
-        TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";
+    TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";
 import OpenAI from "openai";\n
 const openai = new OpenAI();\n
 const formatPrompt = traceable(
@@ -129,6 +130,6 @@ const runPipeline = traceable(
     { name: "runPipeline" }
 );\n
 await runPipeline();`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />

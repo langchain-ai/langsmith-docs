@@ -3,19 +3,20 @@ sidebar_position: 12
 ---
 
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Export traces
 
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
+
 - [Run (span) data format](../../reference/data_formats/run_data_format)
 - [LangSmith API Reference](https://api.smith.langchain.com/redoc)
 - [LangSmith trace query syntax](../../reference/data_formats/trace_query_syntax)
-:::
+  :::
 
 The recommended way to export runs (the span data in LangSmith traces) is to use the `list_runs` method in the SDK or `/runs/query` endpoint in the API.
 
@@ -30,13 +31,13 @@ Initialize the client before running the below code snippets.
 :::
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith import Client\n
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
 client = Client()`),
-        TypeScriptBlock(`import { Client, Run } from "langsmith";\n
+    TypeScriptBlock(`import { Client, Run } from "langsmith";\n
 const client = new Client();`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 Below are some examples of ways to list runs using keyword arguments:
@@ -44,31 +45,31 @@ Below are some examples of ways to list runs using keyword arguments:
 ### List all runs in a project
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `project_runs = client.list_runs(project_name="<your_project>")`
-        ),
-        TypeScriptBlock(`// Download runs in a project
+  tabs={[
+    PythonBlock(
+      `project_runs = client.list_runs(project_name="<your_project>")`
+    ),
+    TypeScriptBlock(`// Download runs in a project
 const projectRuns: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
 })) {
   projectRuns.push(run);
 };`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### List LLM and Chat runs in the last 24 hours
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`todays_llm_runs = client.list_runs(
+  tabs={[
+    PythonBlock(`todays_llm_runs = client.list_runs(
     project_name="<your_project>",
     start_time=datetime.now() - timedelta(days=1),
     run_type="llm",
 )`),
-        TypeScriptBlock(`const todaysLlmRuns: Run[] = [];
+    TypeScriptBlock(`const todaysLlmRuns: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
   startTime: new Date(Date.now() - 1000 * 60 * 60 * 24),
@@ -76,8 +77,8 @@ for await (const run of client.listRuns({
 })) {
   todaysLlmRuns.push(run);
 };`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### List root runs in a project
@@ -85,38 +86,38 @@ for await (const run of client.listRuns({
 Root runs are runs that have no parents. These are assigned a value of `True` for `is_root`. You can use this to filter for root runs.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`root_runs = client.list_runs(
+  tabs={[
+    PythonBlock(`root_runs = client.list_runs(
     project_name="<your_project>",
     is_root=True
 )`),
-        TypeScriptBlock(`const rootRuns: Run[] = [];
+    TypeScriptBlock(`const rootRuns: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
   isRoot: 1,
 })) {
   rootRuns.push(run);
 };`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### List runs without errors
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `correct_runs = client.list_runs(project_name="<your_project>", error=False)`
-        ),
-        TypeScriptBlock(`const correctRuns: Run[] = [];
+  tabs={[
+    PythonBlock(
+      `correct_runs = client.list_runs(project_name="<your_project>", error=False)`
+    ),
+    TypeScriptBlock(`const correctRuns: Run[] = [];
 for await (const run of client.listRuns({
   projectName: "<your_project>",
   error: false,
 })) {
   correctRuns.push(run);
 };`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### List runs by run ID
@@ -128,10 +129,10 @@ If you provide a list of run IDs in the way described above, it will ignore all 
 If you have a list of run IDs, you can list them directly:
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`run_ids = ['a36092d2-4ad5-4fb4-9c0d-0dba9a2ed836','9398e6be-964f-4aa4-8ae9-ad78cd4b7074']
+  tabs={[
+    PythonBlock(`run_ids = ['a36092d2-4ad5-4fb4-9c0d-0dba9a2ed836','9398e6be-964f-4aa4-8ae9-ad78cd4b7074']
 selected_runs = client.list_runs(id=run_ids)`),
-        TypeScriptBlock(`const runIds = [
+    TypeScriptBlock(`const runIds = [
   "a36092d2-4ad5-4fb4-9c0d-0dba9a2ed836",
   "9398e6be-964f-4aa4-8ae9-ad78cd4b7074",
 ];
@@ -141,8 +142,8 @@ for await (const run of client.listRuns({
 })) {
   selectedRuns.push(run);
 };`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ## Use filter query language
@@ -152,119 +153,119 @@ For more complex queries, you can use the query language described in the [filte
 ### List all runs called "extractor" whose root of the trace was assigned feedback "user_score" score of 1
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`client.list_runs(
+  tabs={[
+    PythonBlock(`client.list_runs(
     project_name="<your_project>",
     filter='eq(name, "extractor")',
     trace_filter='and(eq(feedback_key, "user_score"), eq(feedback_score, 1))'
 )`),
-        TypeScriptBlock(`client.listRuns({
+    TypeScriptBlock(`client.listRuns({
   projectName: "<your_project>",
   filter: 'eq(name, "extractor")',
   traceFilter: 'and(eq(feedback_key, "user_score"), eq(feedback_score, 1))'
 })`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### List runs with "star_rating" key whose score is greater than 4
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`client.list_runs(
+  tabs={[
+    PythonBlock(`client.list_runs(
     project_name="<your_project>",
     filter='and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))'
 )`),
-        TypeScriptBlock(`client.listRuns({
+    TypeScriptBlock(`client.listRuns({
   projectName: "<your_project>",
   filter: 'and(eq(feedback_key, "star_rating"), gt(feedback_score, 4))'
 })`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### List runs that took longer than 5 seconds to complete
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `client.list_runs(project_name="<your_project>", filter='gt(latency, "5s")')`
-        ),
-        TypeScriptBlock(
-            `client.listRuns({projectName: "<your_project>", filter: 'gt(latency, "5s")'})`
-        ),
-    ]}
-    groupId="client-language"
+  tabs={[
+    PythonBlock(
+      `client.list_runs(project_name="<your_project>", filter='gt(latency, "5s")')`
+    ),
+    TypeScriptBlock(
+      `client.listRuns({projectName: "<your_project>", filter: 'gt(latency, "5s")'})`
+    ),
+  ]}
+  groupId="client-language"
 />
 
 ### List all runs where `total_tokens` is greater than 5000
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `client.list_runs(project_name="<your_project>", filter='gt(total_tokens, 5000)')`
-        ),
-        TypeScriptBlock(
-            `client.listRuns({projectName: "<your_project>", filter: 'gt(total_tokens, 5000)'})`
-        ),
-    ]}
-    groupId="client-language"
+  tabs={[
+    PythonBlock(
+      `client.list_runs(project_name="<your_project>", filter='gt(total_tokens, 5000)')`
+    ),
+    TypeScriptBlock(
+      `client.listRuns({projectName: "<your_project>", filter: 'gt(total_tokens, 5000)'})`
+    ),
+  ]}
+  groupId="client-language"
 />
 
 ### List all runs that have "error" not equal to null
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `client.list_runs(project_name="<your_project>", filter='neq(error, null)')`
-        ),
-        TypeScriptBlock(
-            `client.listRuns({projectName: "<your_project>", filter: 'neq(error, null)'})`
-        ),
-    ]}
-    groupId="client-language"
+  tabs={[
+    PythonBlock(
+      `client.list_runs(project_name="<your_project>", filter='neq(error, null)')`
+    ),
+    TypeScriptBlock(
+      `client.listRuns({projectName: "<your_project>", filter: 'neq(error, null)'})`
+    ),
+  ]}
+  groupId="client-language"
 />
 
 ### List all runs where `start_time` is greater than a specific timestamp
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `client.list_runs(project_name="<your_project>", filter='gt(start_time, "2023-07-15T12:34:56Z")')`
-        ),
-        TypeScriptBlock(
-            `client.listRuns({projectName: "<your_project>", filter: 'gt(start_time, "2023-07-15T12:34:56Z")'})`
-        ),
-    ]}
-    groupId="client-language"
+  tabs={[
+    PythonBlock(
+      `client.list_runs(project_name="<your_project>", filter='gt(start_time, "2023-07-15T12:34:56Z")')`
+    ),
+    TypeScriptBlock(
+      `client.listRuns({projectName: "<your_project>", filter: 'gt(start_time, "2023-07-15T12:34:56Z")'})`
+    ),
+  ]}
+  groupId="client-language"
 />
 
 ### List all runs that contain the string "substring"
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `client.list_runs(project_name="<your_project>", filter='search("substring")')`
-        ),
-        TypeScriptBlock(
-            `client.listRuns({projectName: "<your_project>", filter: 'search("substring")'})`
-        ),
-    ]}
-    groupId="client-language"
+  tabs={[
+    PythonBlock(
+      `client.list_runs(project_name="<your_project>", filter='search("substring")')`
+    ),
+    TypeScriptBlock(
+      `client.listRuns({projectName: "<your_project>", filter: 'search("substring")'})`
+    ),
+  ]}
+  groupId="client-language"
 />
 
 ### List all runs that are tagged with the git hash "2aa1cf4"
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `client.list_runs(project_name="<your_project>", filter='has(tags, "2aa1cf4")')`
-        ),
-        TypeScriptBlock(
-            `client.listRuns({projectName: "<your_project>", filter: 'has(tags, "2aa1cf4")'})`
-        ),
-    ]}
-    groupId="client-language"
+  tabs={[
+    PythonBlock(
+      `client.list_runs(project_name="<your_project>", filter='has(tags, "2aa1cf4")')`
+    ),
+    TypeScriptBlock(
+      `client.listRuns({projectName: "<your_project>", filter: 'has(tags, "2aa1cf4")'})`
+    ),
+  ]}
+  groupId="client-language"
 />
 
 ### List all "chain" type runs that took more than 10 seconds and
@@ -272,17 +273,17 @@ For more complex queries, you can use the query language described in the [filte
 had `total_tokens` greater than 5000
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`client.list_runs(
+  tabs={[
+    PythonBlock(`client.list_runs(
   project_name="<your_project>",
   filter='and(eq(run_type, "chain"), gt(latency, 10), gt(total_tokens, 5000))'
 )`),
-        TypeScriptBlock(`client.listRuns({
+    TypeScriptBlock(`client.listRuns({
   projectName: "<your_project>",
   filter: 'and(eq(run_type, "chain"), gt(latency, 10), gt(total_tokens, 5000))'
 })`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### List all runs that started after a specific timestamp and either
@@ -290,21 +291,21 @@ had `total_tokens` greater than 5000
 have "error" not equal to null or a "Correctness" feedback score equal to 0
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `client.list_runs(
+  tabs={[
+    PythonBlock(
+      `client.list_runs(
   project_name="<your_project>",
   filter='and(gt(start_time, "2023-07-15T12:34:56Z"), or(neq(error, null), and(eq(feedback_key, "Correctness"), eq(feedback_score, 0.0))))'
 )`
-        ),
-        TypeScriptBlock(
-            `client.listRuns({
+    ),
+    TypeScriptBlock(
+      `client.listRuns({
   projectName: "<your_project>",
   filter: 'and(gt(start_time, "2023-07-15T12:34:56Z"), or(neq(error, null), and(eq(feedback_key, "Correctness"), eq(feedback_score, 0.0))))'
 })`
-        ),
-    ]}
-    groupId="client-language"
+    ),
+  ]}
+  groupId="client-language"
 />
 
 ### Complex query: List all runs where `tags` include "experimental" or "beta" and
@@ -312,21 +313,21 @@ have "error" not equal to null or a "Correctness" feedback score equal to 0
 `latency` is greater than 2 seconds
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `client.list_runs(
+  tabs={[
+    PythonBlock(
+      `client.list_runs(
   project_name="<your_project>",
   filter='and(or(has(tags, "experimental"), has(tags, "beta")), gt(latency, 2))'
 )`
-        ),
-        TypeScriptBlock(
-            `client.listRuns({
+    ),
+    TypeScriptBlock(
+      `client.listRuns({
   projectName: "<your_project>",
   filter: 'and(or(has(tags, "experimental"), has(tags, "beta")), gt(latency, 2))'
 })`
-        ),
-    ]}
-    groupId="client-language"
+    ),
+  ]}
+  groupId="client-language"
 />
 
 ### Search trace trees by full text You can use the `search()` function without
@@ -335,21 +336,21 @@ any specific field to do a full text search across all string fields in a run. T
 allows you to quickly find traces that match a search term.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(
-            `client.list_runs(
+  tabs={[
+    PythonBlock(
+      `client.list_runs(
   project_name="<your_project>",
   filter='search("image classification")'
 )`
-        ),
-        TypeScriptBlock(
-            `client.listRuns({
+    ),
+    TypeScriptBlock(
+      `client.listRuns({
   projectName: "<your_project>",
   filter: 'search("image classification")'
 })`
-        ),
-    ]}
-    groupId="client-language"
+    ),
+  ]}
+  groupId="client-language"
 />
 
 ### Check for presence of metadata
@@ -358,8 +359,8 @@ If you want to check for the presence of metadata, you can use the `eq` operator
 about your runs.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`
+  tabs={[
+    PythonBlock(`
 to_search = {
     "user_id": ""
 }\n
@@ -373,7 +374,7 @@ client.list_runs(
   project_name="default",
   filter="and(eq(metadata_key, 'user_id'), eq(metadata_value, '4070f233-f61e-44eb-bff1-da3c163895a3'))"
 )`),
-        TypeScriptBlock(`// Check for any run with the "user_id" metadata key
+    TypeScriptBlock(`// Check for any run with the "user_id" metadata key
 client.listRuns({
   projectName: 'default',
   filter: \`eq(metadata_key, 'user_id')\`
@@ -383,8 +384,8 @@ client.listRuns({
   projectName: 'default',
   filter: \`and(eq(metadata_key, 'user_id'), eq(metadata_value, '4070f233-f61e-44eb-bff1-da3c163895a3'))\`
 });`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### Check for environment details in metadata.
@@ -394,17 +395,17 @@ information to your traces via metadata. If you want to filter for runs containi
 environment metadata, you can use the same pattern as above:
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`client.list_runs(
+  tabs={[
+    PythonBlock(`client.list_runs(
   project_name="default",
   filter="and(eq(metadata_key, 'environment'), eq(metadata_value, 'production'))"
 )`),
-        TypeScriptBlock(`client.listRuns({
+    TypeScriptBlock(`client.listRuns({
   projectName: 'default',
   filter: \`and(eq(metadata_key, 'environment'), eq(metadata_value, 'production'))\`
 });`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### Check for conversation ID in metadata
@@ -414,17 +415,17 @@ in the same conversation is by using a shared conversation ID. If you want to fi
 runs based on a conversation ID in this way, you can search for that ID in the metadata.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`client.list_runs(
+  tabs={[
+    PythonBlock(`client.list_runs(
   project_name="default",
   filter="and(eq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
 )`),
-        TypeScriptBlock(`client.listRuns({
+    TypeScriptBlock(`client.listRuns({
   projectName: 'default',
   filter: \`and(eq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))\`
 });`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### Combine multiple filters
@@ -434,17 +435,17 @@ filtering functions. Here's how you can search for runs named "ChatOpenAI" that 
 have a specific `conversation_id` in their metadata:
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`client.list_runs(
+  tabs={[
+    PythonBlock(`client.list_runs(
   project_name="default",
   filter="and(eq(name, 'ChatOpenAI'), eq(metadata_key, 'conversation_id'), eq(metadata_value, '69b12c91-b1e2-46ce-91de-794c077e8151'))"
 )`),
-        TypeScriptBlock(`client.listRuns({
+    TypeScriptBlock(`client.listRuns({
   projectName: 'default',
   filter: \`and(eq(name, 'ChatOpenAI'), eq(metadata_key, 'conversation_id'), eq(metadata_value, '69b12c91-b1e2-46ce-91de-794c077e8151'))\`
 });`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ### Tree Filter
@@ -454,19 +455,19 @@ List all runs named "RetrieveDocs" whose root run has a "user_score" feedback of
 This type of query is useful if you want to extract a specific run conditional on various states or steps being reached within the trace.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`client.list_runs(
+  tabs={[
+    PythonBlock(`client.list_runs(
     project_name="<your_project>",
     filter='eq(name, "RetrieveDocs")',
     trace_filter='and(eq(feedback_key, "user_score"), eq(feedback_score, 1))',
     tree_filter='eq(name, "ExpandQuery")'
 )`),
-        TypeScriptBlock(`client.listRuns({
+    TypeScriptBlock(`client.listRuns({
   projectName: "<your_project>",
   filter: 'eq(name, "RetrieveDocs")',
   traceFilter: 'and(eq(feedback_key, "user_score"), eq(feedback_score, 1))',
   treeFilter: 'eq(name, "ExpandQuery")'
 })`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />

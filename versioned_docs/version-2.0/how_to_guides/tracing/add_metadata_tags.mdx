@@ -3,9 +3,9 @@ sidebar_position: 5
 ---
 
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Add metadata and tags to traces
@@ -18,8 +18,8 @@ Both are useful for associating additional information with a trace, such as the
 For more information on metadata and tags, see the [Concepts](/tracing/concepts) page. For information on how to query traces and runs by metadata and tags, see the [Querying Traces](/tracing/faq/querying_traces) page.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`import openai
+  tabs={[
+    PythonBlock(`import openai
 from langsmith import traceable
 from langsmith.run_trees import RunTree\n
 client = openai.Client()\n
@@ -68,7 +68,7 @@ chat_completion = client.chat.completions.create(
 # End and submit the run
 rt.end(outputs=chat_completion)
 rt.post()`),
-        TypeScriptBlock(`import OpenAI from "openai";
+    TypeScriptBlock(`import OpenAI from "openai";
 import { traceable } from "langsmith/traceable";
 import { wrapOpenAI } from "langsmith/wrappers";
 import { RunTree} from "langsmith";\n
@@ -110,6 +110,6 @@ const chatCompletion = await client.chat.completions.create({
 // End and submit the run
 rt.end(chatCompletion);
 await rt.postRun();`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />

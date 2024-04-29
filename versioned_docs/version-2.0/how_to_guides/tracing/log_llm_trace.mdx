@@ -1,13 +1,15 @@
 ---
 sidebar_position: 10
 ---
+
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Log custom LLM traces
+
 :::note
 Nothing will break if you don't log LLM traces in the correct format and data will still be logged. However, the data will not be processed or rendered in a way that is specific to LLMs.
 :::
@@ -26,8 +28,8 @@ The output must return a dictionary/object that contains the key `choices` with 
 The input to your function should be named `messages`.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith import traceable\n
+  tabs={[
+    PythonBlock(`from langsmith import traceable\n
 inputs = [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "I'd like to book a table for two."},
@@ -46,7 +48,7 @@ output = {
 def chat_model(messages: list):
     return output\n
 chat_model(inputs)`),
-        TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "I'd like to book a table for two." }
@@ -68,8 +70,8 @@ const chatModel = traceable(
   { run_type: "llm", name: "chat_model" }
 );\n
 await chatModel({ messages });`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 The above code will log the following trace:
@@ -77,11 +79,12 @@ The above code will log the following trace:
 ![](../static/chat_model.png)
 
 ## Specify model name
+
 You can configure the model name by passing the `model` parameter to the function you are wrapping/decorating with `traceable`. The `model` parameter is used to match cost information.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith import traceable\n
+  tabs={[
+    PythonBlock(`from langsmith import traceable\n
 inputs = [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "I'd like to book a table for two."},
@@ -100,7 +103,7 @@ output = {
 def chat_model(messages: list, model: str):
     return output\n
 chat_model(inputs, "gpt-3.5-turbo")`),
-        TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "I'd like to book a table for two." }
@@ -122,8 +125,8 @@ const chatModel = traceable(
   { run_type: "llm", name: "chat_model" }
 );\n
 await chatModel({ messages, model: "gpt-3.5-turbo" });`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ## Stream outputs
@@ -165,8 +168,8 @@ list(
 By default, LangSmith uses tiktoken to count tokens, utilizing a best guess at the model's tokenizer based on the `model` parameter you provide. To manually provide token counts, you can add a `usage` key to the function's response, containing a dictionary with the keys `prompt_tokens` and `completion_tokens`.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith import traceable
+  tabs={[
+    PythonBlock(`from langsmith import traceable
 from langsmith.run_helpers import get_current_run_tree\n
 inputs = [
     {"role": "system", "content": "You are a helpful assistant."},
@@ -192,7 +195,7 @@ def chat_model(messages: list, model: str):
     run_tree.extra["batch_size"] = 1
     return output\n
 chat_model(inputs, "gpt-3.5-turbo")`),
-        TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";\n
+    TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";\n
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "I'd like to book a table for two." },
@@ -226,8 +229,8 @@ const chatModel = traceable(
   { run_type: "llm", name: "chat_model" }
 );\n
 await chatModel({ messages, model: "gpt-3.5-turbo" });`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 ## Instruct-style models
@@ -235,8 +238,8 @@ await chatModel({ messages, model: "gpt-3.5-turbo" });`),
 For instruct-style models (string in, string out), your inputs must contain a key `prompt` with a string value. Other inputs are also permitted. The output must return an object that, when serialized, contains the key `choices` with a list of dictionaries/objects. Each must contain the key `text` with a string value.
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`@traceable(run_type="llm")
+  tabs={[
+    PythonBlock(`@traceable(run_type="llm")
 def hello_llm(prompt: str):
     return {
         "choices": [
@@ -244,7 +247,7 @@ def hello_llm(prompt: str):
         ],
     }\n
 hello_llm("polly the parrot\\n")`),
-        TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
 const helloLLM = traceable(
   ({ prompt }: { prompt: string }) => {
     return {
@@ -256,8 +259,8 @@ const helloLLM = traceable(
   { run_type: "llm", name: "hello_llm" }
 );\n
 await helloLLM({ prompt: "polly the parrot\\n" });`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
 
 The above code will log the following trace:

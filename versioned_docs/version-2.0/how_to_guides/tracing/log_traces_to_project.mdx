@@ -3,11 +3,11 @@ sidebar_position: 3
 ---
 
 import {
-    CodeTabs,
-    PythonBlock,
-    TypeScriptBlock,
-    LangChainPyBlock,
-    LangChainJSBlock,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+  LangChainPyBlock,
+  LangChainJSBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Log traces to specific project
@@ -33,8 +33,8 @@ Setting the project name dynamically using one of the below methods overrides th
 :::
 
 <CodeTabs
-    tabs={[
-        PythonBlock(`import openai
+  tabs={[
+    PythonBlock(`import openai
 from langsmith import traceable
 from langsmith.run_trees import RunTree\n
 client = openai.Client()\n
@@ -94,7 +94,7 @@ chat_completion = client.chat.completions.create(
 rt.end(outputs=chat_completion)
 rt.post()
 `),
-        TypeScriptBlock(`import OpenAI from "openai";
+    TypeScriptBlock(`import OpenAI from "openai";
 import { traceable } from "langsmith/traceable";
 import { wrapOpenAI } from "langsmith/wrappers";
 import { RunTree} from "langsmith";\n
@@ -128,7 +128,6 @@ const rt = new RunTree({
 // Execute a chat completion and handle it within RunTree
 rt.end({outputs: chatCompletion});
 await rt.postRun();`),
-    ]}
-    groupId="client-language"
+  ]}
+  groupId="client-language"
 />
-
