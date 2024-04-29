@@ -8,9 +8,9 @@ def write_code_files(language_and_code_list: Tuple[str, str]) -> str:
     code = language_and_code_list[1].replace('\\n', """
 """).replace('\\`', '`')
 
-    if language == "python":
+    if language == "PythonBlock":
         file_extension = ".py"
-    elif language == "typescript":
+    elif language == "TypeScriptBlock":
         file_extension = ".ts"
     else:
         # Return the code, unmodified if the language is not python or typescript
@@ -32,9 +32,9 @@ def write_code_files(language_and_code_list: Tuple[str, str]) -> str:
     ts_format_cmd = "yarn prettier --write"
     py_format_cmd = "ruff format"
 
-    if language == "typescript":
+    if file_extension == ".ts":
         os.system(f"{ts_format_cmd} {absolute_path}")
-    elif language == "python":
+    elif file_extension == ".py":
         os.system(f"{py_format_cmd} {absolute_path}")
 
     # Read the formatted code from the file and return it
@@ -49,27 +49,29 @@ def write_code_files(language_and_code_list: Tuple[str, str]) -> str:
     return formatted_code
 
 def extract_codeblock_props(mdx_content: str) -> str:
-    code_str_pattern = r'content: `(.*?)(?<![^\\\\]\\\\)`,'
+    code_str_pattern = r'(PythonBlock|TypeScriptBlock)\(`(.*?)(?<![^\\\\]\\\\)`(?:\)|\\n\)),\s*|'
     code_tabs_pattern = r'<CodeTabs\s+tabs=\{(.*?)\}\s*(groupId=".*?")?\s*^/>'
-    language_pattern = r'language: "(\w+)"'
+    block_pattern = r'(PythonBlock|TypeScriptBlock)\(.*?\)'
 
     matches = re.findall(code_tabs_pattern, mdx_content, re.DOTALL + re.MULTILINE)
 
+    iters = 0
     for match in matches:
+        iters += 1
         code_obj = match[0]
-        language_matches = re.findall(language_pattern, code_obj, re.DOTALL + re.MULTILINE)
+        block_matches = re.findall(block_pattern, code_obj, re.DOTALL)
         code_matches = re.findall(code_str_pattern, code_obj, re.DOTALL + re.MULTILINE)
 
-        if len(language_matches) == 0 or len(code_matches) == 0:
+        # iterate over code_matches and only return the nested arrays where the first item is PythonBlock or TypeScriptBlock
+        code_matches = [code_match for code_match in code_matches if code_match[0] in ["PythonBlock", "TypeScriptBlock"]]
+        if len(code_matches) == 0:
             print("No matches found")
             continue
-        if len(language_matches) != len(code_matches):
-            raise ValueError("Number of languages and code blocks do not match")
 
-        language_and_code_list = list(zip(language_matches, code_matches))
+        print(code_matches[0])
         # Iterate over the list of tuples, format the code and replace the
         # unformatted code with the formatted code.
-        for language_and_code in language_and_code_list:
+        for language_and_code in code_matches:
             formatted_code = write_code_files(language_and_code)
             code = language_and_code[1]
             mdx_content = mdx_content.replace(code, formatted_code)
