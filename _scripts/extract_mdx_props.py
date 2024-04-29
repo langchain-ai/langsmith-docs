@@ -6,9 +6,7 @@ def write_code_files(language_and_code_list: Tuple[str, str]) -> str:
     language = language_and_code_list[0]
     # Replace `\n` with actual newlines.
     code = language_and_code_list[1].replace('\\n', """
-""")
-    # Replace escaped characters with temporary placeholders
-    code = re.sub(r'\\(.)', r'__ESCAPED_\1__', code)
+""").replace('\\`', '`')
 
     if language == "python":
         file_extension = ".py"
@@ -43,8 +41,7 @@ def write_code_files(language_and_code_list: Tuple[str, str]) -> str:
     with open(absolute_path, "r") as file:
         formatted_code = file.read()
 
-    # Replace the temporary placeholders back with escaped characters
-    formatted_code = re.sub(r'__ESCAPED_(.?)__', r'\\\1', formatted_code)
+    formatted_code = formatted_code.replace('`', '\\`')
 
     # Cleanup, delete the file
     os.remove(absolute_path)
