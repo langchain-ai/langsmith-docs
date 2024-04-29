@@ -23,25 +23,26 @@ def write_code_files(language_and_code_list: Tuple[str, str]) -> str:
     formatted_code = ""
     file_name = f"code_block_{len(os.listdir(tmp_folder))}_{language}{file_extension}"
     file_path = os.path.join(tmp_folder, file_name)
+    absolute_path = os.path.abspath(file_path)
 
     # Write the un-formatted code to a file
-    with open(file_path, "w") as file:
+    with open(absolute_path, "w") as file:
         file.write(code)
 
     ts_format_cmd = "yarn prettier --write"
     py_format_cmd = "ruff format"
 
     if language == "typescript":
-        os.system(f"{ts_format_cmd} {file_path}")
+        os.system(f"{ts_format_cmd} {absolute_path}")
     elif language == "python":
-        os.system(f"{py_format_cmd} {file_path}")
+        os.system(f"{py_format_cmd} {absolute_path}")
 
     # Read the formatted code from the file and return it
-    with open(file_path, "r") as file:
+    with open(absolute_path, "r") as file:
         formatted_code = file.read()
 
     # Cleanup, delete the file
-    os.remove(file_path)
+    os.remove(absolute_path)
 
     return formatted_code
 
