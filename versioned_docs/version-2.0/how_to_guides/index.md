@@ -1,4 +1,7 @@
-# How-To Guides
+---
+sidebar_position: 1
+---
+# How-to guides
 
 Step-by-step guides that cover key tasks and operations in LangSmith.
 
@@ -34,6 +37,8 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   * [Instruct-style models](./how_to_guides/tracing/log_llm_trace#instruct-style-models)
 * [Prevent logging of inputs and outputs in traces](./how_to_guides/tracing/mask_inputs_outputs)
 * [Export traces](./how_to_guides/tracing/export_traces)
+  * [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
+  * [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
 - [ ] Decorating a generator function
 - [ ] Log a trace using LangChain
 - [ ] Log a trace using instructor
@@ -66,14 +71,14 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Run a pairwise evaluation (coming soon)
 - [ ] Audit evaluation scores (coming soon)
 
-### Human Feedback
+### Human feedback
 
 - [ ] Attach user feedback from your application to traces
 - [ ] Annotate traces inline
 - [ ] Add trace to annotation queue
 - [ ] Annotate traces in the annotation queue
 
-### Monitoring and Automations
+### Monitoring and automations
 
 - [ ] Filter for runs
 - [ ] Use a trace filter
@@ -87,7 +92,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Group traces as threads
 - [ ] View threads
 
-### Prompt Hub
+### Prompt hub
 
 - [ ] Create a prompt
 - [ ] Update a prompt
