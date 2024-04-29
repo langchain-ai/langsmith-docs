@@ -47,6 +47,8 @@ messages = [
 @traceable(
     run_type="llm",
     name="OpenAI Call Decorator",
+    # highlight-next-line
+    project_name="My Project"
 )
 def call_openai(
     messages: list[dict], model: str = "gpt-3.5-turbo"
@@ -55,11 +57,14 @@ def call_openai(
         model=model,
         messages=messages,
     ).choices[0].message.content\n
-# You can specify the Project via the project_name parameter
+# Call the decorated function
+call_openai(messages)\n
+# You can also specify the Project via the project_name parameter
+# This will override the project_name specified in the @traceable decorator
 call_openai(
     messages,
     # highlight-next-line
-    langsmith_extra={"project_name": "My Project"},
+    langsmith_extra={"project_name": "My Overriden Project"},
 )\n
 # The wrapped OpenAI client accepts all the same langsmith_extra parameters
 # as @traceable decorated functions, and logs traces to LangSmith automatically.
@@ -109,21 +114,9 @@ const traceableCallOpenAI = traceable(async (messages: {role: string, content: s
     name: "OpenAI Call Traceable",
     // highlight-next-line
     project_name: "My Project"
-});\n
+});
 // Call the traceable function
-await traceableCallOpenAI(messages, "gpt-3.5-turbo", {project_name: "My Project"});\n
-// Wrap the OpenAI client to automatically log traces
-const wrappedClient = wrapOpenAI(client);
-wrappedClient.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: messages,
-    // highlight-next-line
-    project_name: "My Project"
-});\n
-const chatCompletion = await client.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: messages,
-});\n
+await traceableCallOpenAI(messages, "gpt-3.5-turbo");\n
 // Create and use a RunTree object
 const rt = new RunTree({
     runType: "llm",

@@ -21,14 +21,22 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   * [Set the destination project statically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-statically)
   * [Set the destination project dynamically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-dynamically)
 * [Set a sampling rate for traces](./how_to_guides/tracing/sample_traces)
-- [ ] Add metadata and tags to traces
-- [ ] Get run_id and trace_id
-- [ ] Mask inputs and outputs
+* [Add metadata and tags to traces](./how_to_guides/tracing/add_metadata_tags)
+* [Implement distributed tracing](./how_to_guides/tracing/distributed_tracing)
+* [Access the current span within a traced function](./how_to_guides/tracing/access_current_span)
+* [Log multimodal traces](./how_to_guides/tracing/log_multimodal_traces)
+* [Log retriever traces](./how_to_guides/tracing/log_retriever_trace)
+* [Log custom LLM traces](./how_to_guides/tracing/log_llm_trace)
+  * [Chat-style models](./how_to_guides/tracing/log_llm_trace#chat-style-models)
+  * [Specify model name](./how_to_guides/tracing/log_llm_trace#specify-model-name)
+  * [Stream outputs](./how_to_guides/tracing/log_llm_trace#stream-outputs)
+  * [Manually provide token counts](./how_to_guides/tracing/log_llm_trace#manually-provide-token-counts)
+  * [Instruct-style models](./how_to_guides/tracing/log_llm_trace#instruct-style-models)
+* [Prevent logging of inputs and outputs in traces](./how_to_guides/tracing/mask_inputs_outputs)
+* [Export traces](./how_to_guides/tracing/export_traces)
+- [ ] Decorating a generator function
 - [ ] Log a trace using LangChain
 - [ ] Log a trace using instructor
-- [ ] Exporting traces
-  - [ ] Link to data format in reference section
-- [ ] Log multi-modal traces
 
 ### Datasets
 

@@ -31,9 +31,9 @@ To log traces to a different project, see [this section](/tracing/faq/customizin
 <CodeTabs
     tabs={[
         PythonBlock(
-            `from langsmith import traceable\n
+            `from langsmith import traceable
 from openai import Client\n
-openai = Client()\n\n
+openai = Client()\n
 @traceable
 def format_prompt(subject):
     return [
@@ -49,7 +49,7 @@ def format_prompt(subject):
 @traceable(run_type="llm")
 def invoke_llm(messages):
     return openai.chat.completions.create(
-        messages=prompt, model="gpt-3.5-turbo", temperature=0
+        messages=messages, model="gpt-3.5-turbo", temperature=0
     )\n
 @traceable
 def parse_output(response):
@@ -67,34 +67,46 @@ run_pipeline()
             `import { traceable } from "langsmith/traceable";
 import OpenAI from "openai";\n
 const openai = new OpenAI();\n
-const formatPrompt = traceable((subject: string) => {
+const formatPrompt = traceable(
+  (subject: string) => {
     return [
-        {
-            role: "system" as const,
-            content: "You are a helpful assistant.",
-        },
-        {
-            role: "user" as const,
-            content: \`What's a good name for a store that sells \${subject}?\`
-        }
-    ];
-}, { name: "formatPrompt" });\n
-const invokeLLM = traceable(async (messages: { role: string; content: string }[]) => {
-    return openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messages,
-        temperature: 0
-    });
-}, { run_type: "llm", name: "invokeLLM" });\n
-const parseOutput = traceable((response: any) => {
-    return response.choices[0].message.content;
-}, { name: "parseOutput" });\n
-const runPipeline = traceable(async () => {
-    const messages = await formatPrompt("colorful socks");
-    const response = await invokeLLM(messages);
-    return parseOutput(response);
-}, { name: "runPipeline" });\n
-await runPipeline()
+      {
+        role: "system" as const,
+        content: "You are a helpful assistant.",
+      },
+      {
+        role: "user" as const,
+        content: \`What's a good name for a store that sells \${subject}?\`,
+    },
+];
+},
+{ name: "formatPrompt" }
+);\n
+const invokeLLM = traceable(
+    async ({ messages }: { messages: { role: string; content: string }[] }) => {
+        return openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: messages,
+            temperature: 0,
+        });
+    },
+    { run_type: "llm", name: "invokeLLM" }
+);\n
+const parseOutput = traceable(
+    (response: any) => {
+        return response.choices[0].message.content;
+    },
+    { name: "parseOutput" }
+);\n
+const runPipeline = traceable(
+    async () => {
+        const messages = await formatPrompt("colorful socks");
+        const response = await invokeLLM({ messages });
+        return parseOutput(response);
+    },
+    { name: "runPipeline" }
+);\n
+await runPipeline();
 `,
             `The \`traceable\` function is a simple way to log traces from the LangSmith TypeScript SDK. Simply wrap any function with \`traceable\`.\n
 Note that when wrapping a sync function with \`traceable\`, (e.g. \`formatPrompt\` in the example below), you should use the \`await\` keyword when calling it to ensure the trace is logged correctly.`
@@ -103,10 +115,14 @@ Note that when wrapping a sync function with \`traceable\`, (e.g. \`formatPrompt
     groupId="client-language"
 />
 
+![](../static/annotate_code_trace.gif)
+
 ## Wrap the OpenAI client
 
 The `wrap_openai`/`wrapOpenAI` methods in Python/TypeScript allow you to wrap your OpenAI client in order to automatically log traces -- no decorator or function wrapping required!
 The wrapper works seamlessly with the `@traceable` decorator or `traceable` function and you can use both in the same application.
+
+Tool calls are automatically rendered
 
 :::note
 The `LANGCHAIN_TRACING_V2` environment variable must be set to `'true'` in order for traces to be logged to LangSmith, even when using `wrap_openai` or `wrapOpenAI`. This allows you to toggle tracing on and off without changing your code.
