@@ -1,0 +1,268 @@
+---
+sidebar_position: 10
+---
+
+import {
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# Log custom LLM traces
+
+:::note
+Nothing will break if you don't log LLM traces in the correct format and data will still be logged. However, the data will not be processed or rendered in a way that is specific to LLMs.
+:::
+
+The best way to logs traces from OpenAI models is to use the [wrapper](./annotate_code#wrap-the-openai-client) available in the `langsmith` SDK for Python and TypeScript. However, you can also log traces from custom models by following the guidelines below.
+
+LangSmith provides special rendering and processing for LLM traces, including token counting (assuming token counts are not available from the model provider).
+In order to make the most of this feature, you must log your LLM traces in a specific, OpenAI-compatible format.
+
+## Chat-style models
+
+For chat-style models, inputs must be a list of messages, represented as Python dictionaries or TypeScript object. Each message must contain the key `role` and `content`.
+
+The output must return a dictionary/object that contains the key `choices` with a value that is a list of dictionaries/objects. Each dictionary/object must contain the key `message`, which maps to a message object with the keys `role` and `content`.
+
+The input to your function should be named `messages`.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import traceable\n
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."},
+]\n
+output = {
+    "choices": [
+        {
+            "message": {
+                "role": "assistant",
+                "content": "Sure, what time would you like to book the table for?"
+            }
+        }
+    ]
+}\n
+@traceable(run_type="llm")
+def chat_model(messages: list):
+    return output\n
+chat_model(inputs)`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+const messages = [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "I'd like to book a table for two." }
+];\n
+const output = {
+  choices: [
+    {
+      message: {
+        role: "assistant",
+        content: "Sure, what time would you like to book the table for?"
+      }
+    }
+  ]
+};\n
+const chatModel = traceable(
+  async ({ messages }: { messages: { role: string; content: string }[] }) => {
+    return output;
+  },
+  { run_type: "llm", name: "chat_model" }
+);\n
+await chatModel({ messages });`),
+  ]}
+  groupId="client-language"
+/>
+
+The above code will log the following trace:
+
+![](../static/chat_model.png)
+
+## Specify model name
+
+You can configure the model name by passing the `model` parameter to the function you are wrapping/decorating with `traceable`. The `model` parameter is used to match cost information.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import traceable\n
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."},
+]\n
+output = {
+    "choices": [
+        {
+            "message": {
+                "role": "assistant",
+                "content": "Sure, what time would you like to book the table for?"
+            }
+        }
+    ]
+}\n
+@traceable(run_type="llm")
+def chat_model(messages: list, model: str):
+    return output\n
+chat_model(inputs, "gpt-3.5-turbo")`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+const messages = [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "I'd like to book a table for two." }
+];\n
+const output = {
+  choices: [
+    {
+      message: {
+        role: "assistant",
+        content: "Sure, what time would you like to book the table for?"
+      }
+    }
+  ]
+};\n
+const chatModel = traceable(
+  async ({ messages, model }: { messages: { role: string; content: string }[]; model: string }) => {
+    return output;
+  },
+  { run_type: "llm", name: "chat_model" }
+);\n
+await chatModel({ messages, model: "gpt-3.5-turbo" });`),
+  ]}
+  groupId="client-language"
+/>
+
+## Stream outputs
+
+For streaming, you can "reduce" the outputs into the same format as the non-streaming version:
+
+```python
+def _reduce_chunks(chunks: list):
+    all_text = "".join([chunk["choices"][0]["message"]["content"] for chunk in chunks])
+    return {"choices": [{"message": {"content": all_text, "role": "assistant"}}]}
+
+@traceable(run_type="llm", reduce_fn=_reduce_chunks)
+def my_streaming_chat_model(messages: list, model: str):
+    for chunk in ["Hello, " + messages[1]["content"]]:
+        yield {
+            "choices": [
+                {
+                    "message": {
+                        "content": chunk,
+                        "role": "assistant",
+                    }
+                }
+            ]
+        }
+
+list(
+    my_streaming_chat_model(
+        [
+            {"role": "system", "content": "You are a helpful assistant. Please greet the user."},
+            {"role": "user", "content": "polly the parrot"},
+        ],
+        model="gpt-3.5-turbo",
+    )
+)
+```
+
+## Manually provide token counts
+
+By default, LangSmith uses tiktoken to count tokens, utilizing a best guess at the model's tokenizer based on the `model` parameter you provide. To manually provide token counts, you can add a `usage` key to the function's response, containing a dictionary with the keys `prompt_tokens` and `completion_tokens`.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import traceable
+from langsmith.run_helpers import get_current_run_tree\n
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."},
+]\n
+output = {
+    "choices": [
+        {
+            "message": {
+                "role": "assistant",
+                "content": "Sure, what time would you like to book the table for?"
+            }
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 27,
+        "completion_tokens": 13,
+    },
+}\n
+@traceable(run_type="llm")
+def chat_model(messages: list, model: str):
+    run_tree = get_current_run_tree()
+    run_tree.extra["batch_size"] = 1
+    return output\n
+chat_model(inputs, "gpt-3.5-turbo")`),
+    TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";\n
+const messages = [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "I'd like to book a table for two." },
+];\n
+const output = {
+  choices: [
+    {
+      message: {
+        role: "assistant",
+        content: "Sure, what time would you like to book the table for?",
+      },
+    },
+  ],
+  usage: {
+    "prompt_tokens": 27,
+    "completion_tokens": 13,
+  },
+};\n
+const chatModel = traceable(
+  async ({
+    messages,
+    model,
+  }: {
+    messages: { role: string; content: string }[];
+    model: string;
+  }) => {
+    const run = getCurrentRunTree();
+    run.extra.batch_size = 1
+    return output;
+  },
+  { run_type: "llm", name: "chat_model" }
+);\n
+await chatModel({ messages, model: "gpt-3.5-turbo" });`),
+  ]}
+  groupId="client-language"
+/>
+
+## Instruct-style models
+
+For instruct-style models (string in, string out), your inputs must contain a key `prompt` with a string value. Other inputs are also permitted. The output must return an object that, when serialized, contains the key `choices` with a list of dictionaries/objects. Each must contain the key `text` with a string value.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`@traceable(run_type="llm")
+def hello_llm(prompt: str):
+    return {
+        "choices": [
+            {"text": "Hello, " + prompt}
+        ],
+    }\n
+hello_llm("polly the parrot\\n")`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+const helloLLM = traceable(
+  ({ prompt }: { prompt: string }) => {
+    return {
+      choices: [
+        { text: "Hello, " + prompt }
+      ]
+    };
+  },
+  { run_type: "llm", name: "hello_llm" }
+);\n
+await helloLLM({ prompt: "polly the parrot\\n" });`),
+  ]}
+  groupId="client-language"
+/>
+
+The above code will log the following trace:
+
+![](../static/hello_llm.png)

@@ -1,0 +1,115 @@
+---
+sidebar_position: 5
+---
+
+import {
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# Add metadata and tags to traces
+
+LangSmith supports sending arbitrary metadata and tags along with traces.
+
+Tags are strings that can be used to categorize or label a trace. Metadata is a dictionary of key-value pairs that can be used to store additional information about a trace.
+
+Both are useful for associating additional information with a trace, such as the environment in which it was executed, the user who initiated it, or an internal correlation ID.
+For more information on metadata and tags, see the [Concepts](/tracing/concepts) page. For information on how to query traces and runs by metadata and tags, see the [Querying Traces](/tracing/faq/querying_traces) page.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`import openai
+from langsmith import traceable
+from langsmith.run_trees import RunTree\n
+client = openai.Client()\n
+messages = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Hello!"}
+]\n
+# Use the @traceable decorator with tags and metadata
+# Ensure that the LANGCHAIN_TRACING_V2 environment variables are set for @traceable to work
+@traceable(
+    run_type="llm",
+    name="OpenAI Call Decorator",
+    # highlight-next-line
+    tags=["my-tag"],
+    # highlight-next-line
+    metadata={"my-key": "my-value"}
+)
+def call_openai(
+    messages: list[dict], model: str = "gpt-3.5-turbo"
+) -> str:
+    return client.chat.completions.create(
+        model=model,
+        messages=messages,
+    ).choices[0].message.content\n
+call_openai(
+    messages,
+    # You can also provide tags and metadata at invocation time
+    # via the langsmith_extra parameter
+    # highlight-next-line
+    langsmith_extra={"tags": ["my-other-tag"], "metadata": {"my-other-key": "my-value"}}
+)\n
+# Alternatively, you can create a RunTree object with tags and metadata
+rt = RunTree(
+    run_type="llm",
+    name="OpenAI Call RunTree",
+    inputs={"messages": messages},
+    # highlight-next-line
+    tags=["my-tag"],
+    # highlight-next-line
+    extra={"metadata": {"my-key": "my-value"}}
+)
+chat_completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=messages,
+)
+# End and submit the run
+rt.end(outputs=chat_completion)
+rt.post()`),
+    TypeScriptBlock(`import OpenAI from "openai";
+import { traceable } from "langsmith/traceable";
+import { wrapOpenAI } from "langsmith/wrappers";
+import { RunTree} from "langsmith";\n
+const client = new OpenAI();\n
+const messages = [
+    {role: "system", content: "You are a helpful assistant."},
+    {role: "user", content: "Hello!"}
+];\n
+const traceableCallOpenAI = traceable(async (messages: {role: string, content: string}[]) => {
+    const completion = await client.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: messages,
+    });
+    return completion.choices[0].message.content;
+},{
+    run_type: "llm",
+    name: "OpenAI Call Traceable",
+    // highlight-next-line
+    tags: ["my-tag"],
+    // highlight-next-line
+    metadata: { "my-key": "my-value" }
+});
+// Call the traceable function
+await traceableCallOpenAI(messages, "gpt-3.5-turbo");\n
+// Create a RunTree object
+const rt = new RunTree({
+  run_type: "llm",
+  name: "OpenAI Call RunTree",
+  inputs: { messages },
+   // highlight-next-line
+  tags: ["my-tag"],
+   // highlight-next-line
+  extra: { metadata: { "my-key": "my-value" } },
+});
+const chatCompletion = await client.chat.completions.create({
+  model: "gpt-3.5-turbo",
+  messages: messages,
+});
+// End and submit the run
+rt.end(chatCompletion);
+await rt.postRun();`),
+  ]}
+  groupId="client-language"
+/>
