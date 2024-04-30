@@ -1,0 +1,162 @@
+---
+sidebar_position: 7
+---
+
+# Evaluate on intermediate steps
+
+While, in many scenarios, it is sufficient to evaluate the final output of your task, in some cases you might want to evaluate the intermediate steps of your pipeline.
+
+For example, for retrieval-augmented generation (RAG), you might want to
+1. Evaluate the retrieval step to ensure that the correct documents are retrieved w.r.t the input query.
+2. Evaluate the generation step to ensure that the correct answer is generated w.r.t the retrieved documents.
+
+In this guide, we will use a simple, fully-custom evaluator for evaluating criteria 1 and an LLM-based evaluator for evaluating criteria 2 to highlight both scenarios.
+
+In order to evaluate the intermediate steps of your pipeline, your evaluator function should traverse and process the `root_run` argument, which is a `Run` object that contains the intermediate steps of your pipeline.
+
+## 1. Define your LLM pipeline
+
+The below RAG pipeline consists of 1) generating a Wikipedia query given the input question, 2) retrieving relevant documents from Wikipedia, and 3) generating an answer given the retrieved documents.
+
+```python
+import openai
+import wikipedia as wp
+
+from langsmith import traceable
+from langsmith.wrappers import wrap_openai
+
+openai = wrap_openai(openai.Client())
+
+def _convert_docs(results):
+    return [
+        {
+            "page_content": r,
+            "type": "Document",
+        }
+        for r in results
+    ]
+
+@traceable
+def generate_wiki_search(question):
+    messages = [
+        {"role": "system", "content": "Generate a search query to pass into wikipedia to answer the user's question. Return only the search query and nothing more. This will passed in directly to the wikipedia search engine."},
+        {"role": "user", "content": question}
+    ]
+    result = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo", temperature=0)
+    return result.choices[0].message.content
+
+@traceable(run_type="retriever")
+def retrieve(query):
+    results = []
+    for term in wp.search(query, results = 10):
+        try:
+            page = wp.page(term, auto_suggest=False)
+            results.append({
+                "page_content": page.summary,
+                "type": "Document",
+                "metadata": {"url": page.url}
+            })
+        except wp.DisambiguationError:
+            pass
+        if len(results) >= 2:
+            return results
+
+@traceable
+def generate_answer(question, context):
+    messages = [
+        {"role": "system", "content": f"Answer the user's question based ONLY on the content below:\n\n{context}"},
+        {"role": "user", "content": question}
+    ]
+    result = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo", temperature=0)
+    return result.choices[0].message.content
+
+@traceable
+def rag_pipeline(question):
+    query = generate_wiki_search(question)
+    context = "\n\n".join([doc["page_content"] for doc in retrieve(query)])
+    answer = generate_answer(question, context)
+    return answer
+```
+
+## 2. Create a dataset and examples to evaluate the pipeline
+
+We are building a very simple dataset with a couple of examples to evaluate the pipeline.
+
+```python
+from langsmith import Client
+from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
+client = Client()
+
+examples = [
+    ("What is LangChain?", "LangChain is an open-source framework for building applications using large language models."),
+    ("What is LangSmith?", "LangSmith is an observability and evaluation tool for LLM products, built by LangChain Inc.")
+]
+
+dataset_name = "Wikipedia RAG"
+if not client.has_dataset(dataset_name=dataset_name):
+    dataset = client.create_dataset(dataset_name=dataset_name)
+    inputs, outputs = zip(
+        *[({"input": input}, {"expected": expected}) for input, expected in examples]
+    )
+    client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+```
+
+## 3. Define your custom evaluators
+
+As mentioned above, we will define two evaluators: one that evaluates the relevance of the retrieved documents w.r.t the input query and another that evaluates the hallucination of the generated answer w.r.t the retrieved documents.
+We will be using the `LangChainStringEvaluator` to evaluate the hallucination of the generated answer, but you can modify this as needed.
+
+```python
+from langsmith.schemas import Example, Run
+
+def document_relevance(root_run: Run, example: Example) -> dict:
+    """
+    A very simple evaluator that checks to see if the input of the retrieval step exists
+    in the retrieved docs.
+    """
+    rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
+    retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
+    page_contents = "\n\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
+    score = retrieve_run.inputs["query"] in page_contents
+    return {"key": "simple_document_relevance", "score": score}
+
+
+hallucination_evaluator = LangChainStringEvaluator(
+    "labeled_score_string",
+    config={
+        "criteria": {
+            "accuracy": """Is the Assistant's Answer grounded in the Ground Truth documentation? A score of [[0]] means that the
+            Assistant answer contains is not at all based upon / grounded in the Ground Truth documentation. A score of [[5]] means
+            that the Assistant answer contains some information (e.g., a hallucination) that is not captured in the Ground Truth
+            documentation. A score of [[10]] means that the Assistant answer is fully based upon the in the Ground Truth documentation."""
+        },
+        # If you want the score to be saved on a scale from 0 to 1
+        "normalize_by": 10,
+    }
+)
+
+def hallucination(root_run: Run, example: Example) -> dict:
+    """
+    An evaluator that uses LangChainString evaluator to use an LLM to judge whether or not the correct
+    answer is generated w.r.t the retrieved documents.
+    """
+    rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
+    retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
+    page_contents = "\n\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
+    result = hallucination_evaluator.evaluator.evaluate_strings(prediction=rag_pipeline_run.outputs["output"], reference=page_contents, input=rag_pipeline_run.inputs["question"])
+    return {"key": "answer_hallucination", "score": result["score"], "comment": result["reasoning"]}
+```
+
+## 4. Evaluate the pipeline
+
+Finally, we'll run `evaluate` with the custom evaluators defined above.
+
+```python
+experiment_results = evaluate(
+    lambda inputs: rag_pipeline(inputs["input"]),
+    data=dataset_name,
+    evaluators=[document_relevance, hallucination],
+    experiment_prefix="rag-wiki-oai"
+)
+```
