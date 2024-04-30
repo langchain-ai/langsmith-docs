@@ -79,6 +79,9 @@ def rag_pipeline(question):
     return answer
 ```
 
+This pipeline will produce a trace that looks something like:
+![](../static/evaluation_intermediate_trace.png)
+
 ## 2. Create a dataset and examples to evaluate the pipeline
 
 We are building a very simple dataset with a couple of examples to evaluate the pipeline.
@@ -107,6 +110,8 @@ if not client.has_dataset(dataset_name=dataset_name):
 
 As mentioned above, we will define two evaluators: one that evaluates the relevance of the retrieved documents w.r.t the input query and another that evaluates the hallucination of the generated answer w.r.t the retrieved documents.
 We will be using the `LangChainStringEvaluator` to evaluate the hallucination of the generated answer, but you can modify this as needed.
+
+The key here is that the evaluator function should traverse the `root_run` argument to access the intermediate steps of the pipeline. The evaluator can then process the inputs and outputs of the intermediate steps to evaluate according to the desired criteria.
 
 ```python
 from langsmith.schemas import Example, Run
@@ -161,3 +166,6 @@ experiment_results = evaluate(
     experiment_prefix="rag-wiki-oai"
 )
 ```
+
+The experiment will contain the results of the evaluation, including the scores and comments from the evaluators:
+![](../static/evaluation_intermediate_experiment.png)
