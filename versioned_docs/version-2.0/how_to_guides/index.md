@@ -64,7 +64,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Run an evaluation on subset of dataset
 - [ ] Use off-the-shelf LangChain evaluators
 - [ ] Use custom evaluators
-- [ ] Evaluate on intermediate steps
+- [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [ ] Compare experiment results
 - [ ] Track regressions and improvements
 - [ ] Export experiment
