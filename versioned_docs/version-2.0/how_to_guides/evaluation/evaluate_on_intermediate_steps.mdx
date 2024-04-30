@@ -2,6 +2,12 @@
 sidebar_position: 7
 ---
 
+import {
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
 # Evaluate on intermediate steps
 
 While, in many scenarios, it is sufficient to evaluate the final output of your task, in some cases you might want to evaluate the intermediate steps of your pipeline.
@@ -19,24 +25,13 @@ In order to evaluate the intermediate steps of your pipeline, your evaluator fun
 
 The below RAG pipeline consists of 1) generating a Wikipedia query given the input question, 2) retrieving relevant documents from Wikipedia, and 3) generating an answer given the retrieved documents.
 
-```python
-import openai
-import wikipedia as wp
-
+<CodeTabs
+  tabs={[
+    PythonBlock(`import openai
+import wikipedia as wp\n
 from langsmith import traceable
-from langsmith.wrappers import wrap_openai
-
-openai = wrap_openai(openai.Client())
-
-def _convert_docs(results):
-    return [
-        {
-            "page_content": r,
-            "type": "Document",
-        }
-        for r in results
-    ]
-
+from langsmith.wrappers import wrap_openai\n
+openai = wrap_openai(openai.Client())\n
 @traceable
 def generate_wiki_search(question):
     messages = [
@@ -44,8 +39,7 @@ def generate_wiki_search(question):
         {"role": "user", "content": question}
     ]
     result = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo", temperature=0)
-    return result.choices[0].message.content
-
+    return result.choices[0].message.content\n
 @traceable(run_type="retriever")
 def retrieve(query):
     results = []
@@ -60,8 +54,7 @@ def retrieve(query):
         except wp.DisambiguationError:
             pass
         if len(results) >= 2:
-            return results
-
+            return results\n
 @traceable
 def generate_answer(question, context):
     messages = [
@@ -69,15 +62,81 @@ def generate_answer(question, context):
         {"role": "user", "content": question}
     ]
     result = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo", temperature=0)
-    return result.choices[0].message.content
-
+    return result.choices[0].message.content\n
 @traceable
 def rag_pipeline(question):
     query = generate_wiki_search(question)
     context = "\n\n".join([doc["page_content"] for doc in retrieve(query)])
     answer = generate_answer(question, context)
-    return answer
-```
+    return answer`),
+    TypeScriptBlock(`import OpenAI from "openai";
+import wiki from "wikipedia";
+import { Client } from "langsmith";
+import { traceable } from "langsmith/traceable";
+import { wrapOpenAI } from "langsmith/wrappers";\n
+const openai = wrapOpenAI(new OpenAI());\n
+const generateWikiSearch = traceable(async (input: { question: string }) => {
+  const messages = [
+    {
+      role: "system" as const,
+      content:
+        "Generate a search query to pass into Wikipedia to answer the user's question. Return only the search query and nothing more. This will be passed in directly to the Wikipedia search engine.",
+    },
+    { role: "user" as const, content: input.question },
+  ];\n
+  const chatCompletion = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: messages,
+    temperature: 0,
+  });\n
+  return chatCompletion.choices[0].message.content ?? "";
+}, { name: "generateWikiSearch" });\n
+const retrieve = traceable(async (input: { query: string; numDocuments: number }) => {
+  const { results } = await wiki.search(input.query, { limit: 10 });
+  const finalResults: Array<{ summary: string; url: string }> = [];\n
+  for (const result of results) {
+    if (finalResults.length >= input.numDocuments) {
+      // Just return the top 2 pages for now
+      break;
+    }
+    const page = await wiki.page(result.title, { autoSuggest: false });
+    const summary = await page.summary();
+    finalResults.push({
+      page_content: summary.extract,
+      type: "Document",
+      metadata: { url: page.fullurl },
+    });
+  }\n
+  return finalResults;
+}, { name: "generateWikiSearch" , run_type: "retriever" });\n
+const generateAnswer = traceable(async (input: { question: string; context: string }) => {
+  const messages = [
+    {
+      role: "system" as const,
+      content: \`Answer the user's question based only on the content below:\\n\\n\${input.context}\`,
+    },
+    { role: "user" as const, content: input.question },
+];\n
+const chatCompletion = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: messages,
+    temperature: 0,
+});
+return chatCompletion.choices[0].message.content ?? "";
+}, { name: "generateWikiSearch" });\n
+const ragPipeline = traceable(async ({ question }, numDocuments: number = 2) => {
+    const query = await generateWikiSearch({ question });
+    const retrieverResults = await retrieve({ query, numDocuments });
+    const context = retrieverResults
+        .map((result) => result.page_content)
+        .join("\\n\\n");
+    const answer = await generateAnswer({ question, context });
+    return answer;
+}, { name: "ragPipeline" });
+`),
+  ]}
+  groupId="client-language"
+/>
 
 This pipeline will produce a trace that looks something like:
 ![](../static/evaluation_intermediate_trace.png)
