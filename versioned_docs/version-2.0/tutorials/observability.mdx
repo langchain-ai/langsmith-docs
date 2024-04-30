@@ -1,26 +1,23 @@
-# Adding Observability to your Project
+# Add observability to your LLM application
 
 Observability is important for any software application, but especially so for LLM applications.
 LLMs are non-deterministic by nature, meaning they can produce unexpected results.
 This makes them trickier than normal to debug.
 
 Luckily, this is where LangSmith can help!
-LangSmith has LLM-native observability, letting you get all sorts of insights into your application.
-In this tutorial we will walk through an example of setting up observability for your application.
+LangSmith has LLM-native observability, allowing you to get meaningful insights into your application.
 
 Note that observability is important throughout all stages of application development - from prototyping, to beta testing, to production.
 There are different considerations at all stages, but they are all intricately tied together.
 In this tutorial we walk through the natural progression.
 
 Let's assume that we're building a simple RAG application using the OpenAI SDK.
-We will go about adding observability into this application.
-The simple application we're adding observability into looks something like:
+The simple application we're adding observability to looks like:
 
 ```python
 from openai import OpenAI
 
 openai_client = OpenAI()
-
 
 # This is the retriever we will use in RAG
 # This is mocked out, but it could be anything we want
@@ -45,8 +42,8 @@ def rag(question):
 
 ## Prototyping
 
-Having observability set up from the start can you help iterate **much** more quickly that normal.
-It allows you to have great visibility into your application as you are rapidly changing the prompt, model, data, etc.
+Having observability set up from the start can you help iterate **much** more quickly than you would otherwise be able to.s
+It allows you to have great visibility into your application as you are rapidly iterating on the prompt, or changing the data and models you are using.
 In this section we'll walk through how to set up observability so you can have maximal observability as you are prototyping.
 
 ### Set up your environment
@@ -59,7 +56,7 @@ Next, install the LangSmith SDK:
 pip install langsmith
 ```
 
-Finally, set up the appropriate environment variables. This will log traces to `default` project (though you can easily change that).
+Finally, set up the appropriate environment variables. This will log traces to the `default` project (though you can easily change that).
 
 ```
 export LANGCHAIN_TRACING_V2=true
@@ -106,12 +103,12 @@ rag("where did harrison work")
 
 This will produce a trace of just the OpenAI call - it should look something like [this](https://smith.langchain.com/public/e7b7d256-10fe-4d49-a8d5-36ca8e5af0d2/r)
 
-![](../static/tracing_tutorial_openai.png)
+![](./static/tracing_tutorial_openai.png)
 
 ### Trace the whole chain
 
 Great - we've traced the LLM call. But it's often very informative to trace more than that.
-LangSmith is **built** for tracing the whole trace - so let's do that!
+LangSmith is **built** for tracing the entire LLM pipeline - so let's do that!
 We can do this by modifying the code to now look something like this:
 
 ```python
@@ -146,9 +143,9 @@ What happens if you call it in the following way?
 rag("where did harrison work")
 ```
 
-This will produce a trace of just the whole chain (with the OpenAI call as a sub-run) - it should look something like [this](https://smith.langchain.com/public/2174f4e9-48ab-4f9e-a8c4-470372d976f1/r)
+This will produce a trace of just the entire pipeline (with the OpenAI call as a child run) - it should look something like [this](https://smith.langchain.com/public/2174f4e9-48ab-4f9e-a8c4-470372d976f1/r)
 
-![](../static/tracing_tutorial_chain.png)
+![](./static/tracing_tutorial_chain.png)
 
 ### Trace the retrieval step
 
@@ -189,9 +186,9 @@ What happens if you call it in the following way?
 rag("where did harrison work")
 ```
 
-This will produce a trace of just the whole chain INCLUDING the retrieval step - it should look something like [this](https://smith.langchain.com/public/7b3fe3b1-b287-49ec-9e3b-feecbe460144/r)
+This will produce a trace of just the whole chain including the retrieval step - it should look something like [this](https://smith.langchain.com/public/7b3fe3b1-b287-49ec-9e3b-feecbe460144/r)
 
-![](../static/tracing_tutorial_retriever.png)
+![](./static/tracing_tutorial_retriever.png)
 
 ## Beta Testing
 
@@ -238,12 +235,12 @@ ls_client.create_feedback(
 Once the feedback is logged, you can then see it associated with each run by clicking into the `Metadata` tab when inspecting the run.
 It should look something like [this](https://smith.langchain.com/public/8cafba6a-1a6d-4a73-8565-483186f31c29/r)
 
-![](../static/tracing_tutorial_feedback.png)
+![](./static/tracing_tutorial_feedback.png)
 
 You can also query for all runs with positive (or negative) feedback by using the filtering logic in the runs table.
 You can do this by creating a filter like the following:
 
-![](../static/tracing_tutorial_filtering.png)
+![](./static/tracing_tutorial_filtering.png)
 
 ### Logging Metadata
 
@@ -298,11 +295,11 @@ rag(
 
 Now that we've logged these two pieces of metadata, we should be able to see them both show up in the UI [here](https://smith.langchain.com/public/37adf7e5-97aa-42d0-9850-99c0199bddf6/r).
 
-![](../static/tracing_tutorial_metadata.png)
+![](./static/tracing_tutorial_metadata.png)
 
 We can filter for these pieces of information by constructing a filter like the following:
 
-![](../static/tracing_tutorial_metadata_filtering.png)
+![](./static/tracing_tutorial_metadata_filtering.png)
 
 ## Production
 
@@ -322,7 +319,7 @@ If you click on the `Monitor` tab in a project, you will see a series of monitor
 Here we track lots of LLM specific statistics - number of traces, feedback, time-to-first-token, etc.
 You can view these over time across a few different time bins.
 
-![](../static/tracing_tutorial_monitor.png)
+![](./static/tracing_tutorial_monitor.png)
 
 ### AB Testing
 
@@ -334,11 +331,11 @@ This allows us to experiment with different LLMs (or prompts, or other) and trac
 In order to do this, we just need to click on the `Metadata` button at the top.
 This will give us a drop down of options to choose from to group by:
 
-![](../static/tracing_tutorial_monitor_metadata.png)
+![](./static/tracing_tutorial_monitor_metadata.png)
 
 Once we select this, we will start to see charts grouped by this attribute:
 
-![](../static/tracing_tutorial_monitor_grouped.png)
+![](./static/tracing_tutorial_monitor_grouped.png)
 
 ### Drilldown
 
@@ -348,7 +345,7 @@ In order to do this, you can simply hover over a datapoint in the monitoring cha
 When you do this, you will be able to click the datapoint.
 This will lead you back to the runs table with a filtered view:
 
-![](../static/tracing_tutorial_monitor_drilldown.png)
+![](./static/tracing_tutorial_monitor_drilldown.png)
 
 ## Conclusion
 
