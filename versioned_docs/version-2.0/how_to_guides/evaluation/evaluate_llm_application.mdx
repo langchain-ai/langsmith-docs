@@ -1,0 +1,254 @@
+---
+sidebar_position: 1
+---
+
+# Evaluate an LLM Application
+
+:::tip Recommended Reading
+Before diving into this content, it might be helpful to read the following:
+
+- [Conceptual guide on evaluation](../../concepts/evaluation)
+- [Reference guide on evaluation]
+- [How-to guide on managing datasets](../datasets/managee_datasets_in_application)
+- [How-to guide on managing datasets programmatically](../datasets/manage_datasets_programmatically)
+
+:::
+
+Evaluating the performance of your LLM application is a critical step in the development process. LangSmith makes it easy to run evaluations and track evaluation performance over time.
+This section provides guidance on how to evaluate the performance of your LLM application.
+
+## Run an evaluation
+
+At a high-level, the evaluation process involves the following steps:
+
+1. Define your LLM application or target task.
+2. Creating or selecting a dataset to evaluate your LLM application. Your evaluation criteria may or may not require expected outputs in the dataset.
+3. Configuring evaluators to score the outputs of your LLM application, sometimes against expected outputs.
+4. Running the evaluation and viewing the results.
+
+The following example involves evaluating a very simple LLM pipeline as classifier to label input data as "toxic" or "non-toxic".
+
+### Step 1: Define your target task
+
+In this case, we are defining a simple evaluation target consisting of an LLM pipeline that classifies text as toxic or non-toxic.
+We've optionally enabled tracing to capture the inputs and outputs of each step in the pipeline.
+To understand how to annotate your code for tracing, please refer to [this guide](../tracing/annotate_code).
+
+```python
+from langsmith import traceable, wrappers
+from openai import Client
+
+openai = wrappers.wrap_openai(Client())
+
+@traceable
+def label_text(text):
+    messages = [
+        {
+            "role": "system",
+            "content": "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't.",
+        },
+        {"role": "user", "content": text},
+    ]
+    result = openai.chat.completions.create(
+        messages=messages, model="gpt-3.5-turbo", temperature=0
+    )
+    return result.choices[0].message.content
+```
+
+### Step 2: Create or select a dataset
+
+In this case, we are creating a dataset to evaluate the performance of our LLM application. The dataset contains examples of toxic and non-toxic text.
+
+Each `Example` in the dataset contains three dictionaries / objects:
+
+- `outputs`: The reference labels or other context found in your dataset
+- `inputs`: The inputs to your pipeline
+- `metadata`: Any other metadata you have stored in that example within the dataset
+
+These dictionaries / objects can have arbitrary keys and values, but the keys must be consistent across all examples in the dataset.
+The values in the examples can also take any form, such as strings, numbers, lists, or dictionaries, but for this example, we are simply using strings.
+
+```python
+from langsmith import Client
+
+client = Client()
+
+# Create a dataset
+toxic_examples = [
+    ("Shut up, idiot", "Toxic"),
+    ("You're a wonderful person", "Not toxic"),
+    ("This is the worst thing ever", "Toxic"),
+    ("I had a great day today", "Not toxic"),
+    ("Nobody likes you", "Toxic"),
+    ("This is unacceptable. I want to speak to the manager.", "Not toxic"),
+]
+
+dataset_name = "Toxic Queries"
+toxic_dataset = client.create_dataset(dataset_name=toxic_dataset_name)
+inputs, outputs = zip(
+    *[({"text": text}, {"label": label}) for text, label in toxic_examples]
+)
+client.create_examples(inputs=inputs, outputs=outputs, dataset_id=toxic_dataset.id)
+```
+
+### Step 3. Configure evaluators to score the outputs
+
+In this case, we are using a dead-simple evaluator that compares the output of our LLM pipeline to the expected output in the dataset.
+Writing evaluators is discussed in more detail in the [following section](#custom-evaluators).
+
+```python
+# Row-level evaluator
+def correct_label(root_run, example) -> dict:
+    score = run.outputs.get("output") == example.outputs.get("label")
+    return {"score": int(score)}
+```
+
+### Step 4. Run the evaluation and view the results
+
+You can use the `evaluate` method in Python and TypeScript to run an evaluation.
+
+At its simplest, the `evaluate` method takes the following arguments:
+
+- a function that takes an input dictionary or object and returns an output dictionary or object
+- `data` - the name OR UUID of the LangSmith dataset to evaluate on, or an iterator of examples
+- `evaluators` - a list of evaluators to score the outputs of the function
+- `experiment_prefix` - a string to prefix the experiment name with. A name will be generated if not provided.
+
+```python
+from langsmith.evaluation import evaluate
+
+results = evaluate(
+    lambda inputs: label_text(inputs["text"]),
+    data=dataset_name,
+    evaluators=[correct_label],
+    experiment_prefix="Toxic Queries",
+)
+```
+
+Each invocation of `evaluate` produces an experiment which is bound to the dataset, and can be viewed in the LangSmith UI.
+Evaluation scores are stored against each individual output produced by the target task as feedback, with the name and score configured in the evaluator.
+
+![](../static/view_experiment.gif)
+
+With tracing enabled, you can open the trace of each row in a side panel view.
+
+## Use custom evaluators
+
+Evaluators are functions that take in a `Run` and an `Example` and return a dictionary or object with a keys `score` (numeric) and `key` (string).
+The `key` will be associated with the score in the LangSmith UI.
+
+To learn more about the `Run` format, you can read the following [reference](../../reference/data_formats/run_data_format). However, many of the fields are not relevant nor required for writing evaluators.
+The `root_run` is always available and contains the inputs and outputs of the target task. If tracing is enabled, the `root_run` will also contain child runs for each step in the pipeline.
+
+Here is an example of a very simple custom evaluator that compares the output of a model to the expected output in the dataset:
+
+```python
+from langsmith.schemas import Example, Run
+
+def correct_label(root_run: Run, example: Example) -> dict:
+    score = run.outputs.get("output") == example.outputs.get("label")
+    return {"score": int(score)}
+```
+
+To view a more advanced example that traverses the `root_run` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
+
+## Use off-the-shelf LangChain evaluators
+
+LangSmith provides a number of off-the-shelf evaluators that can be used to evaluate the performance of your LLM application.
+
+## Evaluate on a particular version of a dataset
+
+:::tip Recommended Reading
+Before diving into this content, it might be helpful to read the [guide on versioning datasets](../datasets/version_datasets).
+Additionally, it might be helpful to read the [guide on fetching examples](../datasets/manage_datasets_programmatically#fetch-examples)
+:::
+
+You can take advantage of the fact that `evaluate` allows passing in an iterable of examples to evaluate on a particular version of a dataset.
+Simply use `list_examples` to fetch examples from a particular version tag using `as_of`.
+
+```python
+from langsmith.evaluation import evaluate
+
+results = evaluate(
+    lambda inputs: label_text(inputs["text"]),
+    data=client.list_examples(dataset_name=toxic_dataset_name, as_of="latest"),
+    evaluators=[correct_label],
+    experiment_prefix="Toxic Queries",
+)
+```
+
+## Evaluate on a subset of a dataset
+
+## Use a summary evaluator
+
+Some metrics can only be defined on the entire experiment level as opposed to the individual runs of the experiment.
+For example, you may want to compute the overall pass rate or f1 score of your evaluation target across all examples in the dataset.
+These are called `summary_evaluators`. Instead of taking in a single `Run` and `Example`, these evaluators take a list of each.
+
+Below, we'll implement a very simple summary evaluator that computes overall pass rate:
+
+```python
+from langsmith.schemas import Example, Run
+
+def summary_eval(runs: list[Run], examples: list[Example]) -> dict:
+    correct = 0
+    for i, run in enumerate(runs):
+        if run.outputs["output"] == examples[i].outputs["label"]:
+            correct += 1
+    if correct / len(runs) > 0.5:
+        return {"key": "pass", "score": True}
+    else:
+        return {"key": "pass", "score": False}
+```
+
+You can then pass this evaluator to the `evaluate` method as follows:
+
+```python
+results = evaluate(
+    lambda inputs: label_query(inputs["text"]),
+    data=dataset_name,
+    evaluators=[correct_label],
+    summary_evaluators=[summary_eval],
+    experiment_prefix="Toxic Queries",
+)
+```
+
+In the LangSmith UI, you'll the summary evaluator's score displayed with the corresponding key.
+
+![](../static/summary_eval.png)
+
+## Evaluate a LangChain runnable
+
+You can configure a `LangChain` runnable to be evaluated by passing `runnable.invoke` it to the `evaluate` method.
+
+First, define your `LangChain` runnable:
+
+```python
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+prompt = ChatPromptTemplate.from_messages([
+  ("system", "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't."),
+  ("user", "{text}")
+])
+chat_model = ChatOpenAI()
+output_parser = StrOutputParser()
+
+chain = prompt | chat_model | output_parser
+```
+
+Then, pass the `runnable.invoke` method to the `evaluate` method. Note that the input variables of the runnable must match the keys of the example inputs.
+
+```python
+results = evaluate(
+    chain.invoke,
+    data=dataset_name,
+    evaluators=[correct_label],
+    experiment_prefix="Toxic Queries",
+)
+```
+
+The runnable is traced appropriately for each output.
+
+![](../static/runnable_eval.png)
