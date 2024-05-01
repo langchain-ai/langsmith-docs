@@ -68,20 +68,18 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [Evaluate an LLM application](./how_to_guides/evaluation/evaluate_llm_application)
   - [Run an evaluation](./how_to_guides/evaluation/evaluate_llm_application#run-an-evaluation)
   - [Use custom evaluators](./how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators)
-  - [Use off-the-shelf LangChain evaluators](./how_to_guides/evaluation/evaluate_llm_application#use-off-the-shelf-langchain-evaluators)
   - [Evaluate on a particular version of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-particular-version-of-a-dataset)
   - [Evaluate on a subset of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-subset-of-a-dataset)
   - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
-- [ ] Evaluate an existing experiment
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
-- [ ] Compare experiment results
+- [Use LangChain off-the-shelf evaluators]
+- [ ] Evaluate an existing experiment - will
+- [ ] Compare experiment results 
 - [ ] Track regressions and improvements
-- [ ] Export experiment
-- [ ] Unit test LLM applications
-- [ ] Run a pairwise evaluation (coming soon)
-- [ ] Audit evaluation scores (coming soon)
+- [ ] Export experiment results - will
+- [ ] Unit test LLM applications with `pytest` (Python only) - will
 
 ### Human feedback
 
