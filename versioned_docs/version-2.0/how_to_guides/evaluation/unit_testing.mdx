@@ -7,6 +7,7 @@ sidebar_position: 4
 
 LangSmith unit tests are assertions and expectations designed to **quickly** identify obvious bugs and regressions in your AI system. Relative to evaluations, tests are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases.
 We recommend using LangSmith to track any unit tests that touch an LLM or other non-deterministic part of your AI system.
+These should run on every commit in your CI pipeline to catch regressions early.
 
 :::note
 `@unit` currently requires `langsmith` python version `>=0.1.42`. If you are interested in unit testing functionality in TypeScript or other languages, please let us know at [support@langchain.dev](mailto:support@langchain.dev).  
