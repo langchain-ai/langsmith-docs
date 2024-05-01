@@ -2,6 +2,13 @@
 sidebar_position: 1
 ---
 
+import {
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+import dedent from "dedent";
+
 # Evaluate an LLM Application
 
 :::tip Recommended Reading
@@ -34,26 +41,58 @@ In this case, we are defining a simple evaluation target consisting of an LLM pi
 We've optionally enabled tracing to capture the inputs and outputs of each step in the pipeline.
 To understand how to annotate your code for tracing, please refer to [this guide](../tracing/annotate_code).
 
-```python
-from langsmith import traceable, wrappers
-from openai import Client
-
-openai = wrappers.wrap_openai(Client())
-
-@traceable
-def label_text(text):
-    messages = [
-        {
-            "role": "system",
-            "content": "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't.",
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      dedent`
+        from langsmith import traceable, wrappers
+        from openai import Client\n
+        openai = wrappers.wrap_openai(Client())\n
+        @traceable
+        def label_text(text):
+            messages = [
+                {
+                    "role": "system",
+                    "content": "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't.",
+                },
+                {"role": "user", "content": text},
+            ]
+            result = openai.chat.completions.create(
+                messages=messages, model="gpt-3.5-turbo", temperature=0
+            )
+            return result.choices[0].message.content
+        `
+    ),
+    TypeScriptBlock(
+      dedent`
+        import { OpenAI } from "openai";
+        import { wrapOpenAI } from "langsmith/wrappers";
+        import { traceable } from "langsmith/traceable";\n
+        const client = wrapOpenAI(new OpenAI());\n
+        const labelText = traceable(
+        async (text: string) => {
+            const result = await client.chat.completions.create({
+            messages: [
+                {
+                role: "system",
+                content:
+                    "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't.",
+                },
+                {
+                role: "user",
+                content: text,
+                },
+            ],
+            model: "gpt-3.5-turbo",
+            temperature: 0,
+            });\n
+            return result.choices[0].message.content;
         },
-        {"role": "user", "content": text},
-    ]
-    result = openai.chat.completions.create(
-        messages=messages, model="gpt-3.5-turbo", temperature=0
-    )
-    return result.choices[0].message.content
-```
+        { name: "labelText" }
+      );`
+    ),
+  ]}
+/>
 
 ### Step 2: Create or select a dataset
 

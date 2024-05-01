@@ -50,6 +50,7 @@
     "@docusaurus/module-type-aliases": "^2.4.1",
     "@tsconfig/docusaurus": "^1.0.7",
     "@types/jest": "^29.5.3",
+    "dedent": "^1.5.3",
     "docusaurus-plugin-typedoc": "next",
     "dotenv": "^16.4.5",
     "eslint": "^8.19.0",
