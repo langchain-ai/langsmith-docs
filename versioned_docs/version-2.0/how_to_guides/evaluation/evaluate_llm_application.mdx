@@ -4,10 +4,9 @@ sidebar_position: 1
 
 import {
   CodeTabs,
-  PythonBlock,
-  TypeScriptBlock,
+  python,
+  typescript,
 } from "@site/src/components/InstructionsWithCode";
-import dedent from "dedent";
 
 # Evaluate an LLM Application
 
@@ -42,55 +41,53 @@ We've optionally enabled tracing to capture the inputs and outputs of each step 
 To understand how to annotate your code for tracing, please refer to [this guide](../tracing/annotate_code).
 
 <CodeTabs
+  groupId="client-language"
   tabs={[
-    PythonBlock(
-      dedent`
-        from langsmith import traceable, wrappers
-        from openai import Client\n
-        openai = wrappers.wrap_openai(Client())\n
-        @traceable
-        def label_text(text):
-            messages = [
-                {
-                    "role": "system",
-                    "content": "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't.",
-                },
-                {"role": "user", "content": text},
-            ]
-            result = openai.chat.completions.create(
-                messages=messages, model="gpt-3.5-turbo", temperature=0
-            )
-            return result.choices[0].message.content
-        `
-    ),
-    TypeScriptBlock(
-      dedent`
-        import { OpenAI } from "openai";
-        import { wrapOpenAI } from "langsmith/wrappers";
-        import { traceable } from "langsmith/traceable";\n
-        const client = wrapOpenAI(new OpenAI());\n
-        const labelText = traceable(
+    python`
+      from langsmith import traceable, wrappers
+      from openai import Client
+      
+      openai = wrappers.wrap_openai(Client())
+      
+      @traceable
+      def label_text(text):
+          messages = [
+              {
+                  "role": "system",
+                  "content": "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't.",
+              },
+              {"role": "user", "content": text},
+          ]
+          result = openai.chat.completions.create(
+              messages=messages, model="gpt-3.5-turbo", temperature=0
+          )
+          return result.choices[0].message.content
+      `,
+    typescript`
+      import { OpenAI } from "openai";
+      import { wrapOpenAI } from "langsmith/wrappers";
+      import { traceable } from "langsmith/traceable";
+      
+      const client = wrapOpenAI(new OpenAI());
+      
+      const labelText = traceable(
         async (text: string) => {
-            const result = await client.chat.completions.create({
+          const result = await client.chat.completions.create({
             messages: [
-                {
+              { 
                 role: "system",
-                content:
-                    "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't.",
-                },
-                {
-                role: "user",
-                content: text,
-                },
+                content: "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't.",
+              },
+              { role: "user", content: text },
             ],
             model: "gpt-3.5-turbo",
             temperature: 0,
-            });\n
-            return result.choices[0].message.content;
+          });
+          
+          return result.choices[0].message.content;
         },
         { name: "labelText" }
-      );`
-    ),
+      );`,
   ]}
 />
 
@@ -107,40 +104,91 @@ Each `Example` in the dataset contains three dictionaries / objects:
 These dictionaries / objects can have arbitrary keys and values, but the keys must be consistent across all examples in the dataset.
 The values in the examples can also take any form, such as strings, numbers, lists, or dictionaries, but for this example, we are simply using strings.
 
-```python
-from langsmith import Client
-
-client = Client()
-
-# Create a dataset
-toxic_examples = [
-    ("Shut up, idiot", "Toxic"),
-    ("You're a wonderful person", "Not toxic"),
-    ("This is the worst thing ever", "Toxic"),
-    ("I had a great day today", "Not toxic"),
-    ("Nobody likes you", "Toxic"),
-    ("This is unacceptable. I want to speak to the manager.", "Not toxic"),
-]
-
-dataset_name = "Toxic Queries"
-toxic_dataset = client.create_dataset(dataset_name=toxic_dataset_name)
-inputs, outputs = zip(
-    *[({"text": text}, {"label": label}) for text, label in toxic_examples]
-)
-client.create_examples(inputs=inputs, outputs=outputs, dataset_id=toxic_dataset.id)
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith import Client
+      
+      client = Client()
+      
+      # Create a dataset
+      toxic_examples = [
+          ("Shut up, idiot", "Toxic"),
+          ("You're a wonderful person", "Not toxic"),
+          ("This is the worst thing ever", "Toxic"),
+          ("I had a great day today", "Not toxic"),
+          ("Nobody likes you", "Toxic"),
+          ("This is unacceptable. I want to speak to the manager.", "Not toxic"),
+      ]
+      
+      dataset_name = "Toxic Queries"
+      toxic_dataset = client.create_dataset(dataset_name=toxic_dataset_name)
+      inputs, outputs = zip(
+          *[({"text": text}, {"label": label}) for text, label in toxic_examples]
+      )
+      client.create_examples(inputs=inputs, outputs=outputs, dataset_id=toxic_dataset.id)
+    `,
+    typescript`
+      import { Client } from "langsmith";
+      
+      const langsmith = new Client();
+      
+      // create a dataset
+      const toxicExamples = [
+        ["Shut up, idiot", "Toxic"],
+        ["You're a wonderful person", "Not toxic"],
+        ["This is the worst thing ever", "Toxic"],
+        ["I had a great day today", "Not toxic"],
+        ["Nobody likes you", "Toxic"],
+        ["This is unacceptable. I want to speak to the manager.", "Not toxic"],
+      ];
+      
+      const [inputs, outputs] = toxicExamples.reduce<
+        [Array<{ input: string }>, Array<{ outputs: string }>]
+      >(
+        ([inputs, outputs], item) => [
+          [...inputs, { input: item[0] }],
+          [...outputs, { outputs: item[1] }],
+        ],
+        [[], []]
+      );
+      
+      const datasetName = "Toxic Queries";
+      const toxicDataset = await langsmith.createDataset(datasetName);
+      await langsmith.createExamples({ inputs, outputs, datasetId: toxicDataset.id });
+    `,
+  ]}
+/>
 
 ### Step 3. Configure evaluators to score the outputs
 
 In this case, we are using a dead-simple evaluator that compares the output of our LLM pipeline to the expected output in the dataset.
 Writing evaluators is discussed in more detail in the [following section](#custom-evaluators).
 
-```python
-# Row-level evaluator
-def correct_label(root_run, example) -> dict:
-    score = run.outputs.get("output") == example.outputs.get("label")
-    return {"score": int(score)}
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.schemas import Example, Run
+      
+      # Row-level evaluator
+      def correct_label(root_run: Run, example: Example) -> dict:
+          score = root_run.outputs.get("output") == example.outputs.get("label")
+          return {"score": int(score)}
+    `,
+    typescript`
+      import type { EvaluationResult } from "langsmith/evaluation";
+      import type { Run, Example } from "langsmith/schemas";
+      
+      // Row-level evaluator
+      function correctLabel(rootRun: Run, example: Example): EvaluationResult {
+        const score = rootRun.outputs?.outputs === example.outputs?.output;
+        return { key: "correct_label", score };
+      }
+    `,
+  ]}
+/>
 
 ### Step 4. Run the evaluation and view the results
 
@@ -153,16 +201,34 @@ At its simplest, the `evaluate` method takes the following arguments:
 - `evaluators` - a list of evaluators to score the outputs of the function
 - `experiment_prefix` - a string to prefix the experiment name with. A name will be generated if not provided.
 
-```python
-from langsmith.evaluation import evaluate
-
-results = evaluate(
-    lambda inputs: label_text(inputs["text"]),
-    data=dataset_name,
-    evaluators=[correct_label],
-    experiment_prefix="Toxic Queries",
-)
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      dataset_name = "Toxic Queries"
+      
+      results = evaluate(
+          lambda inputs: label_text(inputs["text"]),
+          data=dataset_name,
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      const datasetName = "Toxic Queries";
+      
+      await evaluate((inputs) => labelText(inputs["input"]), {
+        data: datasetName,
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
 
 Each invocation of `evaluate` produces an experiment which is bound to the dataset, and can be viewed in the LangSmith UI.
 Evaluation scores are stored against each individual output produced by the target task as feedback, with the name and score configured in the evaluator.
@@ -181,13 +247,29 @@ The `root_run` is always available and contains the inputs and outputs of the ta
 
 Here is an example of a very simple custom evaluator that compares the output of a model to the expected output in the dataset:
 
-```python
-from langsmith.schemas import Example, Run
-
-def correct_label(root_run: Run, example: Example) -> dict:
-    score = run.outputs.get("output") == example.outputs.get("label")
-    return {"score": int(score)}
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.schemas import Example, Run
+      
+      # Row-level evaluator
+      def correct_label(root_run: Run, example: Example) -> dict:
+          score = root_run.outputs.get("output") == example.outputs.get("label")
+          return {"score": int(score)}
+    `,
+    typescript`
+      import type { EvaluationResult } from "langsmith/evaluation";
+      import type { Run, Example } from "langsmith/schemas";
+      
+      // Row-level evaluator
+      function correctLabel(rootRun: Run, example: Example): EvaluationResult {
+        const score = rootRun.outputs?.outputs === example.outputs?.output;
+        return { key: "correct_label", score };
+      }
+    `,
+  ]}
+/>
 
 To view a more advanced example that traverses the `root_run` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
 
@@ -291,3 +373,4 @@ results = evaluate(
 The runnable is traced appropriately for each output.
 
 ![](../static/runnable_eval.png)
+import { CodeTabs } from "../../../../src/components/InstructionsWithCode"
