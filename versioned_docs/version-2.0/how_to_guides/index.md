@@ -47,19 +47,23 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 
 ### Datasets
 
-- [ ] Create a dataset in the application
-- [ ] Create a dataset using the API
-- [ ] Export datasets
-- [ ] Import datasets
+- [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
+  - [Create a new dataset and add examples manually](./how_to_guides/datasets/manage_datasets_in_application#create-a-new-dataset-and-add-examples-manually)
+  - [Add inputs and outputs from traces to datasets](./how_to_guides/datasets/manage_datasets_in_application#add-inputs-and-outputs-from-traces-to-datasets)
+  - [Upload a CSV file to create a dataset](./how_to_guides/datasets/manage_datasets_in_application#upload-a-csv-file-to-create-a-dataset)
+  - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
+- [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
+  - [Create a dataset from list of values](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-list-of-values)
+  - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces)
+  - [Create a dataset from a CSV file](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-csv-file)
+  - [Create a dataset from a pandas DataFrame](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-pandas-dataframe)
 - [ ] Version datasets
-- [ ] Add metadata to examples
 - [ ] Filter examples from a dataset
-- [ ] Add a trace to a dataset
 
 ### Evaluation
 
 - [ ] Run an evaluation
-- [ ] Run an evaluation from the playground
+- [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [ ] Run an evaluation on a particular version of dataset
 - [ ] Run an evaluation on subset of dataset
 - [ ] Use off-the-shelf LangChain evaluators
