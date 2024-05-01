@@ -57,8 +57,11 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces)
   - [Create a dataset from a CSV file](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-csv-file)
   - [Create a dataset from a pandas DataFrame](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-pandas-dataframe)
-- [ ] Version datasets
-- [ ] Filter examples from a dataset
+  - [Fetch datasets](./how_to_guides/datasets/manage_datasets_programmatically#fetch-datasets)
+  - [Fetch examples](./how_to_guides/datasets/manage_datasets_programmatically#fetch-examples)
+- [Version datasets](./how_to_guides/datasets/version_datasets)
+  - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
+  - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
 
 ### Evaluation
 

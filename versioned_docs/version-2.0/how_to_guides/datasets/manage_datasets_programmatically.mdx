@@ -42,14 +42,7 @@ for input_prompt, output_answer in example_inputs:
         dataset_id=dataset.id,
     )`),
     TypeScriptBlock(`import { Client } from "langsmith";\n
-const client = new Client({
-  // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
-  // apiKey: "my_api_key", // Defaults to the LANGCHAIN_API_KEY env var
-  /* callerOptions: {
-         maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
-         maxRetries?: 6; // Maximum number of retries to make
-  }*/
-});\n
+const client = new Client();\n
 const exampleInputs: [string, string][] = [
   ["What is the largest mammal?", "The blue whale"],
   ["What do mammals and birds have in common?", "They are both warm-blooded"],
@@ -189,3 +182,146 @@ dataset = client.upload_dataframe(
     data_type="kv" # The default
 )
 ```
+
+## Fetch datasets
+
+You can programmatically fetch datasets from LangSmith using the `list_datasets`/`listDatasets` method in the Python and TypeScript SDKs. Below are some common calls.
+
+:::important Prerequisites
+Initialize the client before running the below code snippets.
+:::
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+client = Client()`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client();`),
+  ]}
+  groupId="client-language"
+/>
+
+### Query all datasets
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets()`),
+    TypeScriptBlock(`const datasets = await client.listDatasets();`),
+  ]}
+  groupId="client-language"
+/>
+
+### List datasets by name
+
+If you want to search by the exact name, you can do the following:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `datasets = client.list_datasets(dataset_name="My Test Dataset 1")`
+    ),
+    TypeScriptBlock(
+      `const datasets = await client.listDatasets({datasetName: "My Test Dataset 1"});`
+    ),
+  ]}
+  groupId="client-language"
+/>
+
+If you want to do a case-invariant substring search, try the following:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `datasets = client.list_datasets(dataset_name_contains="some substring")`
+    ),
+    TypeScriptBlock(
+      `const datasets = await client.listDatasets({datasetNameContains: "some substring"});`
+    ),
+  ]}
+  groupId="client-language"
+/>
+
+### List datasets by type
+
+You can filter datasets by type. Below is an example querying for chat datasets.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`datasets = client.list_datasets(data_type="chat")`),
+    TypeScriptBlock(
+      `const datasets = await client.listDatasets({dataType: "chat"});`
+    ),
+  ]}
+  groupId="client-language"
+/>
+
+## Fetch examples
+
+You can programmatically fetch examples from LangSmith using the `list_examples`/`listExamples` method in the Python and TypeScript SDKs. Below are some common calls.
+
+:::important Prerequisites
+Initialize the client before running the below code snippets.
+:::
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+client = Client()`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client();`),
+  ]}
+  groupId="client-language"
+/>
+
+### List all examples for a dataset
+
+You can filter by dataset ID:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `examples = client.list_examples(dataset_id="c9ace0d8-a82c-4b6c-13d2-83401d68e9ab")`
+    ),
+    TypeScriptBlock(
+      `const examples = await client.listExamples({datasetId: "c9ace0d8-a82c-4b6c-13d2-83401d68e9ab"});`
+    ),
+  ]}
+  groupId="client-language"
+/>
+
+Or you can filter by dataset name (this must exactly match the dataset name you want to query)
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `examples = client.list_examples(dataset_name="My Test Dataset")`
+    ),
+    TypeScriptBlock(
+      `const examples = await client.listExamples({datasetName: "My test Dataset"});`
+    ),
+  ]}
+  groupId="client-language"
+/>
+
+### List examples by id
+
+You can also list multiple examples all by ID.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`example_ids = [
+ '734fc6a0-c187-4266-9721-90b7a025751a',
+ 'd6b4c1b9-6160-4d63-9b61-b034c585074f',
+ '4d31df4e-f9c3-4a6e-8b6c-65701c2fed13',
+]
+examples = client.list_examples(example_ids=example_ids)`),
+    TypeScriptBlock(`
+const exampleIds = [
+  "734fc6a0-c187-4266-9721-90b7a025751a",
+  "d6b4c1b9-6160-4d63-9b61-b034c585074f",
+  "4d31df4e-f9c3-4a6e-8b6c-65701c2fed13",
+];
+const examples = await client.listExamples({exampleIds: exampleIds});`),
+  ]}
+  groupId="client-language"
+/>
