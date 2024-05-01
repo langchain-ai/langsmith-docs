@@ -5,6 +5,7 @@ import CodeBlock from "@theme/CodeBlock";
 import { marked } from "marked";
 import DOMPurify from "isomorphic-dompurify";
 import prettier from "prettier";
+import dedent from "dedent";
 import parserTypeScript from "prettier/parser-typescript";
 
 export function LangChainPyBlock(content) {
@@ -99,6 +100,7 @@ export function CodeTabs({ tabs, groupId }) {
           <TabItem key={key} value={tab.value} label={tab.label}>
             {tab.caption && (
               <div
+                // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(marked.parse(tab.caption)),
                 }}
@@ -116,3 +118,19 @@ export function CodeTabs({ tabs, groupId }) {
     </Tabs>
   );
 }
+
+export const typescript = (strings, ...values) => {
+  let result = "";
+  strings.forEach((string, i) => {
+    result += string + String(values[i] ?? "");
+  });
+  return TypeScriptBlock(dedent(result));
+};
+
+export const python = (strings, ...values) => {
+  let result = "";
+  strings.forEach((string, i) => {
+    result += string + String(values[i] ?? "");
+  });
+  return PythonBlock(dedent(result));
+};
