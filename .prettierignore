@@ -2,3 +2,5 @@ node_modules
 build
 .docusaurus
 docs/api
+subdirectories/
+sdk-api-js/

@@ -38,7 +38,7 @@ const config = {
       },
     ],
     [
-      'docusaurus-plugin-typedoc',
+      "docusaurus-plugin-typedoc",
       {
         out: "sdk-api-js",
         sort: [
@@ -46,7 +46,7 @@ const config = {
           "visibility",
           "instance-first",
           "required-first",
-          "alphabetical"
+          "alphabetical",
         ],
         tsconfig: "./subdirectories/langsmith-sdk/js/tsconfig.json",
         readme: "none",
@@ -55,15 +55,14 @@ const config = {
         excludeExternals: true,
         excludeNotDocumented: false,
         includeVersion: true,
-        sourceLinkTemplate: "https://github.com/langchain-ai/langsmith-sdk/blob/{gitRevision}/{path}#L{line}",
+        sourceLinkTemplate:
+          "https://github.com/langchain-ai/langsmith-sdk/blob/{gitRevision}/{path}#L{line}",
         logLevel: "Error",
         name: "LangSmith SDK (JS/TS)",
         skipErrorChecking: true,
-        exclude: [
-          "dist"
-        ]
+        exclude: ["dist"],
       },
-    ]
+    ],
   ],
 
   presets: [

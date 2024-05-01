@@ -5,3 +5,4 @@
 [submodule "subdirectories/langsmith-sdk"]
 	path = subdirectories/langsmith-sdk
 	url = https://github.com/langchain-ai/langsmith-sdk.git
+	branch = main
