@@ -47,31 +47,39 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 
 ### Datasets
 
-- [ ] Create a dataset in the application
-- [ ] Create a dataset using the API
-- [ ] Export datasets
-- [ ] Import datasets
-- [ ] Version datasets
-- [ ] Add metadata to examples
-- [ ] Filter examples from a dataset
-- [ ] Add a trace to a dataset
+- [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
+  - [Create a new dataset and add examples manually](./how_to_guides/datasets/manage_datasets_in_application#create-a-new-dataset-and-add-examples-manually)
+  - [Add inputs and outputs from traces to datasets](./how_to_guides/datasets/manage_datasets_in_application#add-inputs-and-outputs-from-traces-to-datasets)
+  - [Upload a CSV file to create a dataset](./how_to_guides/datasets/manage_datasets_in_application#upload-a-csv-file-to-create-a-dataset)
+  - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
+- [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
+  - [Create a dataset from list of values](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-list-of-values)
+  - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces)
+  - [Create a dataset from a CSV file](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-csv-file)
+  - [Create a dataset from a pandas DataFrame](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-pandas-dataframe)
+  - [Fetch datasets](./how_to_guides/datasets/manage_datasets_programmatically#fetch-datasets)
+  - [Fetch examples](./how_to_guides/datasets/manage_datasets_programmatically#fetch-examples)
+- [Version datasets](./how_to_guides/datasets/version_datasets)
+  - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
+  - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
 
 ### Evaluation
 
-- [ ] Run an evaluation
-- [ ] Run an evaluation from the playground
-- [ ] Run an evaluation on a particular version of dataset
-- [ ] Run an evaluation on subset of dataset
-- [ ] Use off-the-shelf LangChain evaluators
-- [ ] Use custom evaluators
+- [Evaluate an LLM application](./how_to_guides/evaluation/evaluate_llm_application)
+  - [Run an evaluation](./how_to_guides/evaluation/evaluate_llm_application#run-an-evaluation)
+  - [Use custom evaluators](./how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators)
+  - [Evaluate on a particular version of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-particular-version-of-a-dataset)
+  - [Evaluate on a subset of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-subset-of-a-dataset)
+  - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
+  - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
+- [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
+- [Use LangChain off-the-shelf evaluators]
+- [ ] Evaluate an existing experiment - will
 - [ ] Compare experiment results
 - [ ] Track regressions and improvements
-- [ ] Export experiment
-- [ ] Unit test LLM applications
-- [ ] View trace for an evaluation run
-- [ ] Run a pairwise evaluation (coming soon)
-- [ ] Audit evaluation scores (coming soon)
+- [ ] Export experiment results - will
+- [ ] Unit test LLM applications with `pytest` (Python only) - will
 
 ### Human feedback
 
