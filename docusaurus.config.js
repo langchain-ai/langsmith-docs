@@ -37,6 +37,33 @@ const config = {
         },
       },
     ],
+    [
+      'docusaurus-plugin-typedoc',
+      {
+        out: "sdk-api-js",
+        sort: [
+          "kind",
+          "visibility",
+          "instance-first",
+          "required-first",
+          "alphabetical"
+        ],
+        tsconfig: "./subdirectories/langsmith-sdk/js/tsconfig.json",
+        readme: "none",
+        excludePrivate: true,
+        excludeInternal: true,
+        excludeExternals: true,
+        excludeNotDocumented: false,
+        includeVersion: true,
+        sourceLinkTemplate: "https://github.com/langchain-ai/langsmith-sdk/blob/{gitRevision}/{path}#L{line}",
+        logLevel: "Error",
+        name: "LangSmith SDK (JS/TS)",
+        skipErrorChecking: true,
+        exclude: [
+          "dist"
+        ]
+      },
+    ]
   ],
 
   presets: [
@@ -109,6 +136,11 @@ const config = {
           srcDark: "img/langsmith-logo-white.svg",
         },
         items: [
+          {
+            to: "/sdk-api-js",
+            position: "left",
+            label: "LangSmith SDK (JS/TS) API",
+          },
           {
             type: "search",
             position: "right",
