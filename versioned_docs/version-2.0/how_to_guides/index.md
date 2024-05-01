@@ -76,7 +76,6 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Track regressions and improvements
 - [ ] Export experiment
 - [ ] Unit test LLM applications
-- [ ] View trace for an evaluation run
 - [ ] Run a pairwise evaluation (coming soon)
 - [ ] Audit evaluation scores (coming soon)
 
