@@ -41,9 +41,9 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
 
-* [ ] Decorating a generator function
-* [ ] Log a trace using LangChain
-* [ ] Log a trace using instructor
+* [ ] Trace a generator function
+* [ ] Trace with LangChain
+* [ ] Trace using instructor
 
 ## Datasets
 

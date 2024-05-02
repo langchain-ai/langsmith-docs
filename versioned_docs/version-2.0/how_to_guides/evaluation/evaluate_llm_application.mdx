@@ -310,11 +310,20 @@ One common workflow is to fetch examples that have a certain metadata key-value 
 ```python
 from langsmith.evaluation import evaluate
 
+# First, create an example with metadata
+example = client.create_example(
+    inputs={"text": "What's up!"},
+    outputs={"label": "Not toxic"},
+    metadata={"foo": "bar", "baz": "qux"},
+    dataset_name=dataset_name
+)
+
+# Then, later, you can fetch examples that match the metadata filter
 results = evaluate(
     lambda inputs: label_text(inputs["text"]),
-    data=client.list_examples(dataset_name=dataset_name, metadata={"desired_key": "desired_value"}),
+    data=client.list_examples(dataset_name=dataset_name, metadata='{"foo": "bar"}'),
     evaluators=[correct_label],
-    experiment_prefix="Toxic Queries",
+    experiment_prefix=dataset_name,
 )
 ```
 
