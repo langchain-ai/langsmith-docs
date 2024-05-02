@@ -329,17 +329,17 @@ const examples = await client.listExamples({exampleIds: exampleIds});`),
 ### List examples by metadata
 
 You can also filter examples by metadata. Below is an example querying for examples with a specific metadata key-value pair.
-Note that this is a JSON string. Under the hood, we check to see if the example's metadata contains the key-value pair(s) you specify.
+Under the hood, we check to see if the example's metadata contains the key-value pair(s) you specify.
 
 For example, if you have an example with metadata `{"foo": "bar", "baz": "qux"}`, both `{foo: bar}` and `{baz: qux}` would match, as would `{foo: bar, baz: qux}`.
 
 <CodeTabs
   tabs={[
     PythonBlock(
-      `examples = client.list_examples(dataset_name=dataset_name, metadata='{"foo": "bar"}')`
+      `examples = client.list_examples(dataset_name=dataset_name, metadata={"foo": "bar"})`
     ),
     TypeScriptBlock(
-      `const examples = await client.listExamples({datasetName: datasetName, metadata: '{"foo": "bar"}'});`
+      `const examples = await client.listExamples({datasetName: datasetName, metadata: {foo: "bar"}});`
     ),
   ]}
   groupId="client-language"

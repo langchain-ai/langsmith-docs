@@ -60,7 +60,7 @@ def retrieve(query):
 @traceable
 def generate_answer(question, context):
     messages = [
-        {"role": "system", "content": f"Answer the user's question based ONLY on the content below:\n\n{context}"},
+        {"role": "system", "content": f"Answer the user's question based ONLY on the content below:\\n\\n{context}"},
         {"role": "user", "content": question}
     ]
     result = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo", temperature=0)
@@ -68,7 +68,7 @@ def generate_answer(question, context):
 @traceable
 def rag_pipeline(question):
     query = generate_wiki_search(question)
-    context = "\n\n".join([doc["page_content"] for doc in retrieve(query)])
+    context = "\\n\\n".join([doc["page_content"] for doc in retrieve(query)])
     answer = generate_answer(question, context)
     return answer`),
     typescript`
@@ -135,7 +135,7 @@ def rag_pipeline(question):
         const messages = [
           {
             role: "system" as const,
-            content: \`Answer the user's question based only on the content below:\n\n$\{input.context\}\`,
+            content: \`Answer the user's question based only on the content below:\\n\\n$\{input.context\}\`,
           },
           { role: "user" as const, content: input.question },
         ];
@@ -156,7 +156,7 @@ def rag_pipeline(question):
         const retrieverResults = await retrieve({ query, numDocuments });
         const context = retrieverResults
           .map((result) => result.page_content)
-          .join("\n\n");
+          .join("\\n\\n");
         const answer = await generateAnswer({ question, context });
         return answer;
       },
