@@ -242,7 +242,7 @@ Evaluators are functions that take in a `Run` and an `Example` and return a dict
 The `key` will be associated with the score in the LangSmith UI.
 
 To learn more about the `Run` format, you can read the following [reference](../../reference/data_formats/run_data_format). However, many of the fields are not relevant nor required for writing evaluators.
-The `root_run` is always available and contains the inputs and outputs of the target task. If tracing is enabled, the `root_run` will also contain child runs for each step in the pipeline.
+The `root_run` / `rootRun` is always available and contains the inputs and outputs of the target task. If tracing is enabled, the `root_run` / `rootRun` will also contain child runs for each step in the pipeline.
 
 Here is an example of a very simple custom evaluator that compares the output of a model to the expected output in the dataset:
 
@@ -270,7 +270,7 @@ Here is an example of a very simple custom evaluator that compares the output of
   ]}
 />
 
-To view a more advanced example that traverses the `root_run` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
+To view a more advanced example that traverses the `root_run` / `rootRun` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
 
 ## Evaluate on a particular version of a dataset
 
@@ -282,18 +282,35 @@ Additionally, it might be helpful to read the [guide on fetching examples](../da
 :::
 
 You can take advantage of the fact that `evaluate` allows passing in an iterable of examples to evaluate on a particular version of a dataset.
-Simply use `list_examples` to fetch examples from a particular version tag using `as_of`.
+Simply use `list_examples` / `listExamples` to fetch examples from a particular version tag using `as_of` / `asOf`.
 
-```python
-from langsmith.evaluation import evaluate
-
-results = evaluate(
-    lambda inputs: label_text(inputs["text"]),
-    data=client.list_examples(dataset_name=toxic_dataset_name, as_of="latest"),
-    evaluators=[correct_label],
-    experiment_prefix="Toxic Queries",
-)
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      results = evaluate(
+          lambda inputs: label_text(inputs["text"]),
+          data=client.list_examples(dataset_name=toxic_dataset_name, as_of="latest"),
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate((inputs) => labelText(inputs["input"]), {
+        data: langsmith.listExamples({
+          datasetName: datasetName,
+          asOf: "latest",
+        }),
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
 
 ## Evaluate on a subset of a dataset
 
@@ -303,20 +320,37 @@ Before diving into this content, it might be helpful to read the [guide on fetch
 
 :::
 
-You can use the `list_examples` method to fetch a subset of examples from a dataset to evaluate on. You can refer to guide above to learn more about the different ways to fetch examples.
+You can use the `list_examples` / `listExamples` method to fetch a subset of examples from a dataset to evaluate on. You can refer to guide above to learn more about the different ways to fetch examples.
 
 One common workflow is to fetch examples that have a certain metadata key-value pair.
 
-```python
-from langsmith.evaluation import evaluate
-
-results = evaluate(
-    lambda inputs: label_text(inputs["text"]),
-    data=client.list_examples(dataset_name=dataset_name, metadata={"desired_key": "desired_value"}),
-    evaluators=[correct_label],
-    experiment_prefix="Toxic Queries",
-)
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      results = evaluate(
+          lambda inputs: label_text(inputs["text"]),
+          data=client.list_examples(dataset_name=dataset_name, metadata={"desired_key": "desired_value"}),
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate((inputs) => labelText(inputs["input"]), {
+        data: langsmith.listExamples({
+          datasetName: datasetName,
+          metadata: {"desired_key": "desired_value"},
+        }),
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
 
 ## Use a summary evaluator
 
