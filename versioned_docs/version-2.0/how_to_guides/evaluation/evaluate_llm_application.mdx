@@ -113,7 +113,7 @@ The values in the examples can also take any form, such as strings, numbers, lis
       client = Client()
       
       # Create a dataset
-      toxic_examples = [
+      examples = [
           ("Shut up, idiot", "Toxic"),
           ("You're a wonderful person", "Not toxic"),
           ("This is the worst thing ever", "Toxic"),
@@ -123,11 +123,11 @@ The values in the examples can also take any form, such as strings, numbers, lis
       ]
       
       dataset_name = "Toxic Queries"
-      toxic_dataset = client.create_dataset(dataset_name=toxic_dataset_name)
+      dataset = client.create_dataset(dataset_name=dataset_name)
       inputs, outputs = zip(
-          *[({"text": text}, {"label": label}) for text, label in toxic_examples]
+          *[({"text": text}, {"label": label}) for text, label in examples]
       )
-      client.create_examples(inputs=inputs, outputs=outputs, dataset_id=toxic_dataset.id)
+      client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
     `,
     typescript`
       import { Client } from "langsmith";
