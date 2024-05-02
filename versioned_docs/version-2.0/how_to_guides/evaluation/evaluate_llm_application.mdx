@@ -465,14 +465,30 @@ First, define your `LangChain` runnable:
 
 Then, pass the `runnable.invoke` method to the `evaluate` method. Note that the input variables of the runnable must match the keys of the example inputs.
 
-```python
-results = evaluate(
-    chain.invoke,
-    data=dataset_name,
-    evaluators=[correct_label],
-    experiment_prefix="Toxic Queries",
-)
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      results = evaluate(
+          chain.invoke,
+          data=dataset_name,
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate(chain.invoke.bind(chain), {
+        data: datasetName,
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
 
 The runnable is traced appropriately for each output.
 
