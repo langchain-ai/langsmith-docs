@@ -485,7 +485,7 @@ Then, pass the `runnable.invoke` method to the `evaluate` method. Note that the 
     typescript`
       import { evaluate } from "langsmith/evaluation";
       
-      await evaluate(chain.invoke.bind(chain), {
+      await evaluate(chain, {
         data: datasetName,
         evaluators: [correctLabel],
         experimentPrefix: "Toxic Queries",
