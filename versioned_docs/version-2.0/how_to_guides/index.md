@@ -45,7 +45,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 * [ ] Log a trace using LangChain
 * [ ] Log a trace using instructor
 
-### Datasets
+## Datasets
 
 - [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
   - [Create a new dataset and add examples manually](./how_to_guides/datasets/manage_datasets_in_application#create-a-new-dataset-and-add-examples-manually)
@@ -63,7 +63,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
   - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
 
-### Evaluation
+## Evaluation
 
 - [Evaluate an LLM application](./how_to_guides/evaluation/evaluate_llm_application)
   - [Run an evaluation](./how_to_guides/evaluation/evaluate_llm_application#run-an-evaluation)
@@ -74,21 +74,20 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
-- [Use LangChain off-the-shelf evaluators]
+- [Use LangChain off-the-shelf evaluators (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
 - [ ] Evaluate an existing experiment - will
 - [ ] Compare experiment results
-- [ ] Track regressions and improvements
 - [ ] Export experiment results - will
 - [ ] Unit test LLM applications with `pytest` (Python only) - will
 
-### Human feedback
+## Human feedback
 
 - [ ] Attach user feedback from your application to traces
 - [ ] Annotate traces inline
 - [ ] Add trace to annotation queue
 - [ ] Annotate traces in the annotation queue
 
-### Monitoring and automations
+## Monitoring and automations
 
 - [ ] Filter for runs
 - [ ] Use a trace filter
@@ -102,7 +101,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Group traces as threads
 - [ ] View threads
 
-### Prompt hub
+## Prompt hub
 
 - [ ] Create a prompt
 - [ ] Update a prompt
@@ -110,12 +109,12 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Open a prompt from a trace
 - [ ] Open a prompt from an experiment
 
-### Playground
+## Playground
 
 - [ ] Run a prompt in the playground
 - [ ] Run a prompt on a custom model
 
-### Proxy
+## Proxy
 
 - [ ] Run proxy
 - [ ] Make a request to the proxy
