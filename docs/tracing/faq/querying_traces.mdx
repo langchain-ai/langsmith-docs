@@ -696,3 +696,76 @@ df.head()`),
   ]}
   groupId="client-language"
 />
+
+#### Find unused projects with no traces in the last 'n' days
+
+Sometimes, for hygeine or data retrention purposes, you may wish to find and deleted outdated Projects that don't have any recent traces.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
+  import os
+  import datetime 
+
+  ## Set a delta of 90 days
+  d = datetime.timedelta(days = 90)
+
+  ## Determine the current time
+  tod = datetime.datetime.now()
+
+  ## Determine the timestamp from n days ago
+  a = tod - d
+  print('Date Filter is: ' + 'gt(start_time,"' + str(a.strftime('%Y-%m-%dT%H:%M:%SZ')) + '")')
+
+  ## Initialize the LangSmith SDK
+  client = Client()
+
+  ## List projects (uncomment limit and set a limit if you want to test against a smaller number of prjects)
+  projects = client.list_projects(
+      # limit=100
+  )
+
+  ## Initialize lists
+  processed_projects = []
+  excluded_projects = []
+  projects_outdated = []
+
+  ## Iterate over projects
+
+  for p in projects:
+      found_runs_counter = 0
+      print('Processing ' + p.name + ' - ' + str(p.id))
+
+      ## search for traces in the project -- all we need is 1 that meets the critera
+      traces = client.list_runs(
+          project_id=p.id, 
+          filter='gt(start_time,"' + str(a) + '")',
+          is_root=True,
+          limit=1
+      )
+
+      ## process the trace (if returned)
+      for t in traces:
+          found_runs_counter = found_runs_counter + 1
+
+          if found_runs_counter > 0:
+              print('Found recent run in ' + p.name + ' - ' + str(p.id) + ' -- excluding due to trace ID ' + str(t.id) + ' with start time ' + str(t.start_time))
+              
+              # append to the list of excluded projects
+              excluded_projects.append(p.id)
+              break
+      
+
+      ## if no traces found, append to the list of projects to delete
+      if found_runs_counter == 0:
+          projects_outdated.append(p.id)
+
+      ## append to list of processed projects
+      processed_projects.append(p.id)
+
+  print('Projects with no Recent Runs:')
+  print(projects_outdated)  
+`),
+    ]}
+    groupId="client-language"
+/>
