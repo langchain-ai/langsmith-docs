@@ -11,41 +11,42 @@ Before diving into this content, it might be helpful to read the following:
 
 :::
 
-:::tip Pre-requisites
+LangChain provides a suite of off-the-shelf evaluators you can use right away to evaluate your application performance without writing any custom code.
+These evaluators are meant to be used more as a starting point for evaluation.
+
+:::tip Prerequisites
 
 Create a dataset and set up the LangSmith client in Python to follow along
 
 :::
 
 ```python
-  from langsmith import Client
+from langsmith import Client
 
-  client = Client()
+client = Client()
 
-  # Create a dataset
-  toxic_examples = [
-      ("Shut up, idiot", "Toxic"),
-      ("You're a wonderful person", "Not toxic"),
-      ("This is the worst thing ever", "Toxic"),
-      ("I had a great day today", "Not toxic"),
-      ("Nobody likes you", "Toxic"),
-      ("This is unacceptable. I want to speak to the manager.", "Not toxic"),
-  ]
+# Create a dataset
+examples = [
+    ("Ankush", "Hello Ankush"),
+    ("Harrison", "Hello Harrison"),
+]
 
-  dataset_name = "Toxic Queries"
-  toxic_dataset = client.create_dataset(dataset_name=toxic_dataset_name)
-  inputs, outputs = zip(
-      *[({"text": text}, {"label": label}) for text, label in toxic_examples]
-  )
-  client.create_examples(inputs=inputs, outputs=outputs, dataset_id=toxic_dataset.id)
+dataset_name = "Hello Set"
+dataset = client.create_dataset(dataset_name=dataset_name)
+inputs, outputs = zip(
+    *[({"input": input}, {"expected": expected}) for input, expected in examples]
+)
+client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
 ```
 
-## Correctness: QA evaluation
+## Use question and answer (correctness) evaluators
 
-QA evalutors help to measure the correctness of a response to a user query or question. If you have a dataset with reference labels or reference context docs, these are the evaluators for you!
-Three QA evaluators you can load are: `"qa"`, `"context_qa"`, `"cot_qa"`. Based on our meta-evals, we recommend using `"cot_qa"` for best results.
+Question and answer (QA) evaluators help to measure the correctness of a response to a user query or question. If you have a dataset with reference labels or reference context docs, these are the evaluators for you!
+Three QA evaluators you can load are: `"qa"`, `"context_qa"`, `"cot_qa"`. Based on our meta-evals, we recommend using `"cot_qa"`, or Chain of Thought QA.
 
-```
+Here is a trivial example that uses a `"cot_qa"` evaluator to evaluate a simple pipeline that prefixes the input with "Hello":
+
+```python
 from langsmith import Client
 from langsmith.evaluation import LangChainStringEvaluator, evaluate
 
@@ -53,121 +54,174 @@ cot_qa_evaluator = LangChainStringEvaluator("cot_qa")
 
 client = Client()
 evaluate(
-    <your pipeline>,
-    data="<dataset_name>",
+    lambda input: "Hello " + input["input"],
+    data=dataset_name,
     evaluators=[cot_qa_evaluator],
 )
 ```
-You can customize the evaluator by specifying the LLM used to power its LLM chain
-or even by customizing the prompt itself. Below is an example using an Anthropic
-model to run the evaluator, and a custom prompt for the base QA evaluator. Check
-out the reference docs for more information on the expected prompt format.
-<CodeTabs
-    tabs={[
-        PythonBlock(`from langchain.chat_models import ChatAnthropic
-from langchain_core.prompts.prompt import PromptTemplate
-from langsmith.evaluation import LangChainStringEvaluator\n
-_PROMPT_TEMPLATE = """You are an expert professor specialized in grading students' answers to questions.
-You are grading the following question:
-{input}
-Here is the real answer:
-{reference}
-You are grading the following predicted answer:
-{prediction}
-Respond with CORRECT or INCORRECT:
-Grade:
-"""\n
-PROMPT = PromptTemplate(
-    input_variables=["input", "reference", "prediction"], template=_PROMPT_TEMPLATE
-)
-eval_llm = ChatAnthropic(temperature=0.0)\n
-qa_evaluator = LangChainStringEvaluator("qa", config={"llm": eval_llm, "prompt": PROMPT})
-context_qa_evaluator = LangChainStringEvaluator("context_qa", config={"llm": eval_llm})
-cot_qa_evaluator = LangChainStringEvaluator("cot_qa", config={"llm": eval_llm})
-evaluate(
-    <your pipeline>,
-    data="<dataset_name>",
-    evaluators=[qa_evaluator, context_qa_evaluator, cot_qa_evaluator],
-)
-`),
-    ]}
-    groupId="client-language"
-/>
 
-## Criteria Evaluators (No Labels)
+## Use criteria evaluators
 
-If you don't have ground truth reference labels, you can evaluate your run against a custom set of criteria using the `"criteria"` or `"score"` evaluators. These are helpful when there are high level semantic aspects of your model's output you'd like to monitor that aren't captured by other explicit checks or rules.
+If you don't have ground truth reference labels, you can evaluate your run against a custom set of criteria using the `"criteria"` evaluators. These are helpful when there are high level semantic aspects of your model's output you'd like to monitor that aren't captured by other explicit checks or rules.
 
-- The `"criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.CriteriaEvalChain.html#langchain.evaluation.criteria.eval_chain.CriteriaEvalChain)) instructs an LLM to assess if a prediction satisfies the given criteria, outputting a binary score
-- The `"score_string"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.scoring.eval_chain.ScoreStringEvalChain.html#langchain.evaluation.scoring.eval_chain.ScoreStringEvalChain)) has the LLM score the prediction on a numeric scale (default 1-10) based on how well it satisfies the criteria
+- The `"criteria"` evaluator instructs an LLM to assess if a prediction satisfies the given criteria, outputting a binary score (0 or 1) for each criterion
 
-<CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith import Client
-from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
+```python
+from langsmith import Client
+from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
 criteria_evaluator = LangChainStringEvaluator(
     "criteria",
     config={
         "criteria": {
-            "creativity": "Is this submission creative, imaginative, or novel?",
-            "conciseness": "Is this response concise and to the point?",
+            "says_hello": "Does the submission say hello?",
         }
     }
 )
-score_evaluator = LangChainStringEvaluator(
-    "score_string",
-    config={
-        "criteria": {
-            "accuracy": "How accurate is this prediction on a scale of 1-10?"
-        },
-        # If you want the score to be saved on a scale from 0 to 1
-        "normalize_by": 10,
-    }
-)\n
+
 client = Client()
 evaluate(
-    <your pipeline>,
-    data="<dataset_name>",
+    lambda input: "Hello " + input["input"],
+    data=dataset_name,
     evaluators=[
         criteria_evaluator,
-        score_evaluator
     ],
-    metadata={"revision_id": "the version of your pipeline you are testing"},
-)`),
-    ]}
-    groupId="client-language"
-/>
+)
+```
 
-::::tip Supported Criteria
+:::tip Supported Criteria
+
 Default criteria are implemented for the following aspects: conciseness, relevance, correctness, coherence, harmfulness, maliciousness, helpfulness, controversiality, misogyny, and criminality.
-    To specify custom criteria, write a mapping of a criterion name to its description, such as:
+To specify custom criteria, write a mapping of a criterion name to its description, such as:
 
-```
-    criterion = {"creativity": "Is this submission creative, imaginative, or novel?"}
-    criteria_evaluator = LangChainStringEvaluator(
-        "labeled_criteria",
-        config={"criteria": criterion}
-    )
+```python
+criterion = {"creativity": "Is this submission creative, imaginative, or novel?"}
+criteria_evaluator = LangChainStringEvaluator(
+    "labeled_criteria",
+    config={"criteria": criterion}
+)
 ```
 
-::::
-    ::::tip Interpreting the Score
+:::
+
+:::tip Interpreting the Score
+
 Evaluation scores don't have an inherent "direction" (i.e., higher is not necessarily better).
 The direction of the score depends on the criteria being evaluated. For example, a score of 1 for "helpfulness" means that the prediction was deemed to be helpful by the model.
-    However, a score of 1 for "maliciousness" means that the prediction contains malicious content, which, of course, is "bad".
-    ::::
+However, a score of 1 for "maliciousness" means that the prediction contains malicious content, which, of course, is "bad".
 
-## Criteria Evaluators (With Labels)
+:::
+
+## Use labeled criteria evaluators
 
 If you have ground truth reference labels, you can evaluate your run against custom criteria while also providing that reference information to the LLM using the `"labeled_criteria"` or `"labeled_score_string"` evaluators.
 
-- The `"labeled_criteria"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.criteria.eval_chain.LabeledCriteriaEvalChain.html#langchain.evaluation.criteria.eval_chain.LabeledCriteriaEvalChain)) instructs an LLM to assess if a prediction satisfies the criteria, taking into account the reference label
-- The `"labeled_score_string"` evaluator ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.scoring.eval_chain.LabeledScoreStringEvalChain.html#langchain.evaluation.scoring.eval_chain.LabeledScoreStringEvalChain)) has the LLM score the prediction on a numeric scale based on how well it satisfies the criteria compared to the reference
+- The `"labeled_criteria"` evaluator instructs an LLM to assess if a prediction satisfies the criteria, taking into account the reference label
+- The `"labeled_score_string"` evaluator instructs an LLM to assess the prediction against a reference label on a specified scale
 
-<CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith import Client
-from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
+```python
+from langsmith import Client
+from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
+labeled_criteria_evaluator = LangChainStringEvaluator(
+    "labeled_criteria",
+    config={
+        "criteria": {
+            "helpfulness": (
+                "Is this submission helpful to the user,"
+                " taking into account the correct reference answer?"
+            )
+        }
+    }
+)
+
+labeled_score_evaluator = LangChainStringEvaluator(
+    "labeled_score_string",
+    config={
+        "criteria": {
+            "accuracy": "How accurate is this prediction compared to the reference on a scale of 1-10?"
+        },
+        "normalize_by": 10,
+    }
+)
+
+client = Client()
+evaluate(
+    lambda input: "Hello " + input["input"],
+    data=dataset_name,
+    evaluators=[
+        labeled_criteria_evaluator,
+        labeled_score_evaluator
+    ],
+)
+```
+
+## Use string or embedding distance metrics
+
+To measure the similarity between a predicted string and a reference, you can use string distance metrics:
+
+- The `"string_distance"` evaluator computes a normalized string edit distance between the prediction and reference
+- The `"embedding_distance"` evaluator computes the distance between the text embeddings of the prediction and reference
+
+```python
+# !pip install rapidfuzz
+from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
+string_distance_evaluator = LangChainStringEvaluator(
+    "string_distance",
+    config={"distance": "levenshtein", "normalize_score": True}
+)
+
+embedding_distance_evaluator = LangChainStringEvaluator(
+    "embedding_distance",
+    config={
+      # Defaults to OpenAI, but you can customize which embedding provider to use:
+      # "embeddings": HuggingFaceEmbeddings(model="distilbert-base-uncased"),
+      # Can also choose "euclidean", "chebyshev", "hamming", and "manhattan"
+        "distance_metric": "cosine",
+      }
+)
+
+evaluate(
+    lambda input: "Hello " + input["input"],
+    data=dataset_name,
+    evaluators=[
+        string_distance_evaluator,
+        embedding_distance_evaluator,
+    ],
+)
+```
+
+## Use a custom LLM in off-the-shelf evaluators
+
+You can customize the model used for any LLM-based evaluator (criteria or QA). Note that this currently requires using LangChain libraries.
+
+```python
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts.prompt import PromptTemplate
+from langsmith.evaluation import LangChainStringEvaluator
+
+eval_llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo")
+cot_qa_evaluator = LangChainStringEvaluator("cot_qa", config={"llm": eval_llm})
+
+evaluate(
+    lambda input: "Hello " + input["input"],
+    data=dataset_name,
+    evaluators=[cot_qa_evaluator],
+)
+```
+
+## Handle multiple input or output fields
+
+LangChain off-the-shelf evaluators work seamlessly if your input dictionary, output dictionary, or example dictionary each have single fields. If you have multiple fields, you can use the `prepare_data` function to extract the relevant fields for evaluation.
+These map the keys `"prediction"`, `"reference"`, and `"input"` to the correct fields in the input and output dictionaries.
+
+For the below example, we have a model that outputs two fields: `"greeting"` and `"foo"`. We want to evaluate the `"greeting"` field against the `"expected"` field in the output dictionary.
+
+```python
+from langsmith import Client
+from langsmith.evaluation import LangChainStringEvaluator, evaluate
+
 labeled_criteria_evaluator = LangChainStringEvaluator(
     "labeled_criteria",
     config={
@@ -179,142 +233,18 @@ labeled_criteria_evaluator = LangChainStringEvaluator(
         }
     },
     prepare_data=lambda run, example: {
-        "prediction": run.outputs["output"],
-        "reference": example.outputs["answer"],
-        "input": example.inputs["question"],
+        "prediction": run.outputs["greeting"],
+        "reference": example.outputs["expected"],
+        "input": example.inputs["input"],
     }
 )
-labeled_score_evaluator = LangChainStringEvaluator(
-    "labeled_score_string",
-    config={
-        "criteria": {
-            "accuracy": "How accurate is this prediction compared to the reference on a scale of 1-10?"
-        },
-        "normalize_by": 10,
-    },
-    prepare_data=lambda run, example: {
-        "prediction": run.outputs["output"],
-        "reference": example.outputs["answer"],
-        "input": example.inputs["question"],
-    }
-)\n
+
 client = Client()
 evaluate(
-    <your pipeline>,
-    data="<dataset_name>",
+    lambda input: {"greeting": "Hello " + input["input"], "foo": "bar"},
+    data=dataset_name,
     evaluators=[
-        labeled_criteria_evaluator,
-        labeled_score_evaluator
+        labeled_criteria_evaluator
     ],
-    metadata={"revision_id": "the version of your pipeline you are testing"},
-)`),
-    ]}
-    groupId="client-language"
-/>
-
-## JSON Evaluators
-
-Evaluating extraction and function calling applications often comes down to validating that the LLM's string output can be parsed correctly and comparing it to a reference object. The JSON evaluators provide functionality to check your model's output consistency:
-
-- The `"json_validity"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonValidityEvaluator.html#langchain.evaluation.parsing.base.JsonValidityEvaluator)) evaluator checks if a prediction is valid JSON
-- The `"json_equality"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.base.JsonEqualityEvaluator.html#langchain.evaluation.parsing.base.JsonEqualityEvaluator)) evaluator checks if a JSON prediction exactly matches a JSON reference, after normalization
-- The `"json_edit_distance"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator.html#langchain.evaluation.parsing.json_distance.JsonEditDistanceEvaluator)) evaluator computes the normalized edit distance between a JSON prediction and reference
-- The `"json_schema"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator.html#langchain.evaluation.parsing.json_schema.JsonSchemaEvaluator)) evaluator checks if a JSON prediction satisfies a provided JSON schema
-
-<CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
-json_validity_evaluator = LangChainStringEvaluator("json_validity")
-json_equality_evaluator = LangChainStringEvaluator("json_equality")
-json_edit_distance_evaluator = LangChainStringEvaluator("json_edit_distance")
-json_schema_evaluator = LangChainStringEvaluator(
-    "json_schema",
-    config={
-        "schema": {
-            "type": "object",
-            "properties": {
-                "name": {"type": "string"},
-                "age": {"type": "integer", "minimum": 0}
-            },
-            "required": ["name"]
-        }
-    }
-)\n
-evaluate(
-    <your pipeline>,
-    data="<dataset_name>",
-    evaluators=[
-        json_validity_evaluator,
-        json_equality_evaluator,
-        json_edit_distance_evaluator,
-        json_schema_evaluator
-    ],
-)`),
-    ]}
-    groupId="client-language"
-/>
-
-## String or Embedding Distance
-
-To measure the similarity between a predicted string and a reference, you can use string distance metrics:
-
-- The `"string_distance"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.string_distance.base.StringDistanceEvalChain.html#langchain.evaluation.string_distance.base.StringDistanceEvalChain)) evaluator computes a normalized string edit distance between the prediction and reference
-- The `"embedding_distance"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.embedding_distance.base.EmbeddingDistance.html#langchain.evaluation.embedding_distance.base.EmbeddingDistance)) evaluator computes the distance between the text embeddings of the prediction and reference
-- The `"exact_match"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.exact_match.base.ExactMatchStringEvaluator.html#langchain.evaluation.exact_match.base.ExactMatchStringEvaluator)) evaluator checks for an exact string match between prediction and reference
-
-<CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
-string_distance_evaluator = LangChainStringEvaluator(
-    "string_distance",
-    config={"distance": "levenshtein", "normalize_score": True}
 )
-embedding_distance_evaluator = LangChainStringEvaluator(
-    "embedding_distance",
-    config={
-      # Defaults to OpenAI, but you can customize which embedding provider to use:
-      # "embeddings": HuggingFaceEmbeddings(model="distilbert-base-uncased"),
-      # Can also choose "euclidean", "chebyshev", "hamming", and "manhattan"
-        "distance_metric": "cosine",
-      }
-)
-exact_match_evaluator = LangChainStringEvaluator(
-    "exact_match",
-    config={"ignore_case": True, "ignore_punctuation": True}
-)\n
-evaluate(
-    <your pipeline>,
-    data="<dataset_name>",
-    evaluators=[
-        string_distance_evaluator,
-        embedding_distance_evaluator,
-        exact_match_evaluator
-    ],
-)`),
-    ]}
-    groupId="client-language"
-/>
-
-## Regex Match
-
-To evaluate predictions against a reference regular expression pattern, you can use the `"regex_match"` ([reference](https://api.python.langchain.com/en/latest/evaluation/langchain.evaluation.regex_match.base.RegexMatchStringEvaluator.html#langchain.evaluation.regex_match.base.RegexMatchStringEvaluator)) evaluator.
-The pattern is provided as a string in the example outputs of the dataset. The evaluator checks if the prediction matches the pattern.
-
-<CodeTabs
-    tabs={[
-        PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate\n
-regex_evaluator = LangChainStringEvaluator(
-    "regex_match",
-    config={
-        # Optionally control which flags to use in the regex match
-        "flags": re.IGNORECASE
-    }
-)\n
-evaluate(
-    <your pipeline>,
-    data="<dataset_name>",
-    evaluators=[regex_evaluator],
-)`),
-    ]}
-    groupId="client-language"
-/>
+```

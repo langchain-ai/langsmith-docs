@@ -14,7 +14,6 @@ import {
 Before diving into this content, it might be helpful to read the following:
 
 - [Conceptual guide on evaluation](../../concepts/evaluation)
-- [Reference guide on evaluation]
 - [How-to guide on managing datasets](../datasets/manage_datasets_in_application)
 - [How-to guide on managing datasets programmatically](../datasets/manage_datasets_programmatically)
 
@@ -276,8 +275,10 @@ To view a more advanced example that traverses the `root_run` object, please ref
 ## Evaluate on a particular version of a dataset
 
 :::tip Recommended Reading
+
 Before diving into this content, it might be helpful to read the [guide on versioning datasets](../datasets/version_datasets).
-Additionally, it might be helpful to read the [guide on fetching examples](../datasets/manage_datasets_programmatically#fetch-examples)
+Additionally, it might be helpful to read the [guide on fetching examples](../datasets/manage_datasets_programmatically#fetch-examples).
+
 :::
 
 You can take advantage of the fact that `evaluate` allows passing in an iterable of examples to evaluate on a particular version of a dataset.
@@ -295,6 +296,27 @@ results = evaluate(
 ```
 
 ## Evaluate on a subset of a dataset
+
+:::tip Recommended Reading
+
+Before diving into this content, it might be helpful to read the [guide on fetching examples](../datasets/manage_datasets_programmatically#fetch-examples).
+
+:::
+
+You can use the `list_examples` method to fetch a subset of examples from a dataset to evaluate on. You can refer to guide above to learn more about the different ways to fetch examples.
+
+One common workflow is to fetch examples that have a certain metadata key-value pair.
+
+```python
+from langsmith.evaluation import evaluate
+
+results = evaluate(
+    lambda inputs: label_text(inputs["text"]),
+    data=client.list_examples(dataset_name=dataset_name, metadata={"desired_key": "desired_value"}),
+    evaluators=[correct_label],
+    experiment_prefix="Toxic Queries",
+)
+```
 
 ## Use a summary evaluator
 

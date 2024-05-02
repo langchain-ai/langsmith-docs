@@ -325,3 +325,19 @@ const examples = await client.listExamples({exampleIds: exampleIds});`),
   ]}
   groupId="client-language"
 />
+
+### List examples by metadata
+
+You can also filter examples by metadata. Below is an example querying for examples with a specific metadata key-value pair.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `examples = client.list_examples(dataset_name=dataset_name, metadata={"desired_key": "desired_value"})`
+    ),
+    TypeScriptBlock(
+      `const examples = await client.listExamples({datasetName: datasetName, metadata: {desiredKey: "desiredValue"}});`
+    ),
+  ]}
+  groupId="client-language"
+/>

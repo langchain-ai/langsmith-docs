@@ -75,6 +75,12 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [Use LangChain off-the-shelf evaluators (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
+  - [Use question and answer (correctness) evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-question-and-answer-correctness-evaluators)
+  - [Use criteria evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-criteria-evaluators)
+  - [Use labeled criteria evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-labeled-criteria-evaluators)
+  - [Use string or embedding distance metrics](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-string-or-embedding-distance-metrics)
+  - [Use a custom LLM in off-the-shelf evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-a-custom-llm-in-off-the-shelf-evaluators)
+  - [Handle multiple input or output fields](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#handle-multiple-input-or-output-fields)
 - [ ] Evaluate an existing experiment - will
 - [ ] Compare experiment results
 - [ ] Export experiment results - will
