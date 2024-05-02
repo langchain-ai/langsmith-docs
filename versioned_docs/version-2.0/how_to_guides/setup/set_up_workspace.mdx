@@ -1,11 +1,32 @@
-# Create an organization
+# Set up a workspace
 
-When you log in for the first time, a personal tenant will be created for you automatically. If you'd like to collaborate with others, you can create an organizational and invite your team members to join.
-
-To do this, head to the [setting pages](https://smith.langchain.com/settings) and click **Create Organization**.
-You can currently invite 4 members to your organization for free.
-:::note
-We charge for additional seats and usage. Please see the [pricing page](../../pricing) for more information.
+:::info
+Workspaces are not launched yet but are projected to launch by June 2024.
 :::
 
-![](../static/create_organization.png)
+When you log in for the first time, a default [workspace](../../concepts/admin/admin.mdx#workspaces) will be created for you automatically in your personal organization. 
+Workspaces are often used to separate resources between different teams, business units, or deployment environments. Most LangSmith activity happens in the context of a workspace, each of which has its own settings that are distinct from an organization's.<br />
+
+```mermaid
+graph TD
+  Organization --> WorkspaceA[Workspace A]
+  Organization --> WorkspaceB[Workspace B]
+  Organization --> WorkspaceC[Workspace C]
+  WorkspaceA --> tg1(Trace Project 1)
+  WorkspaceA --> tg2(Trace Project 2)
+  WorkspaceB --> tg3(Trace Project 3)
+  WorkspaceB --> tg4(Trace Project 4)
+  WorkspaceC --> tg5(Trace Project 5)
+  WorkspaceC --> tg6(Trace Project 6)
+```
+<br />
+
+To create a new workspace, head to the [setting pages](https://smith.langchain.com/settings) Workspaces tab and click **Create Workspace**.
+Once your workspace has been created, you can manage its members and other configuration by selecting it on this page.
+
+![](../static/create_workspace.png)
+
+:::note
+Different plans have different limits placed on the number of workspaces that can be used in an organization.
+Please see the [pricing page](../../pricing) for more information.
+:::
