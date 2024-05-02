@@ -21,6 +21,7 @@ If you want to track the full nested trace of the system or component being test
 ```python
 # my_app/main.py
 from langsmith import traceable
+
 @traceable # Optional
 def generate_sql(user_query):
     # Replace with your SQL generation logic
@@ -57,7 +58,7 @@ Each time you run this test suite, LangSmith collects the pass/fail rate and oth
 
 The test suite syncs to a corresponding dataset named after your package or github repository.
 
-![Unit Test Example](../static/unit-test-suite.png)
+![Unit Test Example](./static/unit-test-suite.png)
 
 ## Going Further
 
