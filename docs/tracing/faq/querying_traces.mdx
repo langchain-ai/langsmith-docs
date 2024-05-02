@@ -707,36 +707,36 @@ Sometimes, for hygeine or data retrention purposes, you may wish to find and del
   import os
   import datetime 
 
-  ## Set a delta of 90 days
+  # Set a delta of 90 days
   d = datetime.timedelta(days = 90)
 
-  ## Determine the current time
+  # Determine the current time
   tod = datetime.datetime.now()
 
-  ## Determine the timestamp from n days ago
+  # Determine the timestamp from n days ago
   a = tod - d
   print('Date Filter is: ' + 'gt(start_time,"' + str(a.strftime('%Y-%m-%dT%H:%M:%SZ')) + '")')
 
-  ## Initialize the LangSmith SDK
+  # Initialize the LangSmith SDK
   client = Client()
 
-  ## List projects (uncomment limit and set a limit if you want to test against a smaller number of prjects)
+  # List projects (uncomment limit and set a limit if you want to test against a smaller number of prjects)
   projects = client.list_projects(
       # limit=100
   )
 
-  ## Initialize lists
+  # Initialize lists
   processed_projects = []
   excluded_projects = []
   projects_outdated = []
 
-  ## Iterate over projects
+  # Iterate over projects
 
   for p in projects:
       found_runs_counter = 0
       print('Processing ' + p.name + ' - ' + str(p.id))
 
-      ## search for traces in the project -- all we need is 1 that meets the critera
+      # search for traces in the project -- all we need is 1 that meets the critera
       traces = client.list_runs(
           project_id=p.id, 
           filter='gt(start_time,"' + str(a) + '")',
@@ -744,7 +744,7 @@ Sometimes, for hygeine or data retrention purposes, you may wish to find and del
           limit=1
       )
 
-      ## process the trace (if returned)
+      # process the trace (if returned)
       for t in traces:
           found_runs_counter = found_runs_counter + 1
 
@@ -756,11 +756,11 @@ Sometimes, for hygeine or data retrention purposes, you may wish to find and del
               break
       
 
-      ## if no traces found, append to the list of projects to delete
+      # if no traces found, append to the list of projects to delete
       if found_runs_counter == 0:
           projects_outdated.append(p.id)
 
-      ## append to list of processed projects
+      # append to list of processed projects
       processed_projects.append(p.id)
 
   print('Projects with no Recent Runs:')
