@@ -5,7 +5,9 @@ sidebar_position: 3
 import {
   CodeTabs,
   PythonBlock,
+  python,
   TypeScriptBlock,
+  typescript,
 } from "@site/src/components/InstructionsWithCode";
 
 # Evaluate on intermediate steps
@@ -69,71 +71,97 @@ def rag_pipeline(question):
     context = "\n\n".join([doc["page_content"] for doc in retrieve(query)])
     answer = generate_answer(question, context)
     return answer`),
-    TypeScriptBlock(`import OpenAI from "openai";
-import wiki from "wikipedia";
-import { Client } from "langsmith";
-import { traceable } from "langsmith/traceable";
-import { wrapOpenAI } from "langsmith/wrappers";\n
-const openai = wrapOpenAI(new OpenAI());\n
-const generateWikiSearch = traceable(async (input: { question: string }) => {
-  const messages = [
-    {
-      role: "system" as const,
-      content:
-        "Generate a search query to pass into Wikipedia to answer the user's question. Return only the search query and nothing more. This will be passed in directly to the Wikipedia search engine.",
-    },
-    { role: "user" as const, content: input.question },
-  ];\n
-  const chatCompletion = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: messages,
-    temperature: 0,
-  });\n
-  return chatCompletion.choices[0].message.content ?? "";
-}, { name: "generateWikiSearch" });\n
-const retrieve = traceable(async (input: { query: string; numDocuments: number }) => {
-  const { results } = await wiki.search(input.query, { limit: 10 });
-  const finalResults: Array<{ summary: string; url: string }> = [];\n
-  for (const result of results) {
-    if (finalResults.length >= input.numDocuments) {
-      // Just return the top 2 pages for now
-      break;
-    }
-    const page = await wiki.page(result.title, { autoSuggest: false });
-    const summary = await page.summary();
-    finalResults.push({
-      page_content: summary.extract,
-      type: "Document",
-      metadata: { url: page.fullurl },
-    });
-  }\n
-  return finalResults;
-}, { name: "generateWikiSearch" , run_type: "retriever" });\n
-const generateAnswer = traceable(async (input: { question: string; context: string }) => {
-  const messages = [
-    {
-      role: "system" as const,
-      content: \`Answer the user's question based only on the content below:\\n\\n\${input.context}\`,
-    },
-    { role: "user" as const, content: input.question },
-];\n
-const chatCompletion = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: messages,
-    temperature: 0,
-});
-return chatCompletion.choices[0].message.content ?? "";
-}, { name: "generateWikiSearch" });\n
-const ragPipeline = traceable(async ({ question }, numDocuments: number = 2) => {
-    const query = await generateWikiSearch({ question });
-    const retrieverResults = await retrieve({ query, numDocuments });
-    const context = retrieverResults
-        .map((result) => result.page_content)
-        .join("\\n\\n");
-    const answer = await generateAnswer({ question, context });
-    return answer;
-}, { name: "ragPipeline" });
-`),
+    typescript`
+    import OpenAI from "openai";
+    import wiki from "wikipedia";
+    import { Client } from "langsmith";
+    import { traceable } from "langsmith/traceable";
+    import { wrapOpenAI } from "langsmith/wrappers";
+    
+    const openai = wrapOpenAI(new OpenAI());
+    
+    const generateWikiSearch = traceable(
+      async (input: { question: string }) => {
+        const messages = [
+          {
+            role: "system" as const,
+            content:
+              "Generate a search query to pass into Wikipedia to answer the user's question. Return only the search query and nothing more. This will be passed in directly to the Wikipedia search engine.",
+          },
+          { role: "user" as const, content: input.question },
+        ];
+        
+        const chatCompletion = await openai.chat.completions.create({
+          model: "gpt-3.5-turbo",
+          messages: messages,
+          temperature: 0,
+        });
+        
+        return chatCompletion.choices[0].message.content ?? "";
+      },
+      { name: "generateWikiSearch" }
+    );
+    
+    const retrieve = traceable(
+      async (input: { query: string; numDocuments: number }) => {
+        const { results } = await wiki.search(input.query, { limit: 10 });
+        const finalResults: Array<{
+          page_content: string;
+          type: "Document";
+          metadata: { url: string };
+        }> = [];
+      
+        for (const result of results) {
+          if (finalResults.length >= input.numDocuments) {
+            // Just return the top 2 pages for now
+            break;
+          }
+          const page = await wiki.page(result.title, { autoSuggest: false });
+          const summary = await page.summary();
+          finalResults.push({
+            page_content: summary.extract,
+            type: "Document",
+            metadata: { url: page.fullurl },
+          });
+        }
+    
+        return finalResults;
+      },
+      { name: "retrieve", run_type: "retriever" }
+    );
+    
+    const generateAnswer = traceable(
+      async (input: { question: string; context: string }) => {
+        const messages = [
+          {
+            role: "system" as const,
+            content: \`Answer the user's question based only on the content below:\n\n$\{input.context\}\`,
+          },
+          { role: "user" as const, content: input.question },
+        ];
+      
+        const chatCompletion = await openai.chat.completions.create({
+          model: "gpt-3.5-turbo",
+          messages: messages,
+          temperature: 0,
+        });
+        return chatCompletion.choices[0].message.content ?? "";
+      },
+      { name: "generateAnswer" }
+    );
+    
+    const ragPipeline = traceable(
+      async ({ question }: { question: string }, numDocuments: number = 2) => {
+        const query = await generateWikiSearch({ question });
+        const retrieverResults = await retrieve({ query, numDocuments });
+        const context = retrieverResults
+          .map((result) => result.page_content)
+          .join("\n\n");
+        const answer = await generateAnswer({ question, context });
+        return answer;
+      },
+      { name: "ragPipeline" }
+    );`,
   ]}
   groupId="client-language"
 />
@@ -145,86 +173,197 @@ This pipeline will produce a trace that looks something like:
 
 We are building a very simple dataset with a couple of examples to evaluate the pipeline.
 
-```python
-from langsmith import Client
-from langsmith.evaluation import LangChainStringEvaluator, evaluate
-
-client = Client()
-
-examples = [
-    ("What is LangChain?", "LangChain is an open-source framework for building applications using large language models."),
-    ("What is LangSmith?", "LangSmith is an observability and evaluation tool for LLM products, built by LangChain Inc.")
-]
-
-dataset_name = "Wikipedia RAG"
-if not client.has_dataset(dataset_name=dataset_name):
-    dataset = client.create_dataset(dataset_name=dataset_name)
-    inputs, outputs = zip(
-        *[({"input": input}, {"expected": expected}) for input, expected in examples]
-    )
-    client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
-```
+<CodeTabs
+  tabs={[
+    python`
+      from langsmith import Client
+      
+      client = Client()
+      
+      examples = [
+          ("What is LangChain?", "LangChain is an open-source framework for building applications using large language models."),
+          ("What is LangSmith?", "LangSmith is an observability and evaluation tool for LLM products, built by LangChain Inc.")
+      ]
+      
+      dataset_name = "Wikipedia RAG"
+      if not client.has_dataset(dataset_name=dataset_name):
+          dataset = client.create_dataset(dataset_name=dataset_name)
+          inputs, outputs = zip(
+              *[({"input": input}, {"expected": expected}) for input, expected in examples]
+          )
+          client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+    `,
+    typescript`
+      import { Client } from "langsmith";
+      const client = new Client();
+      
+      const examples = [
+        [
+          "What is LangChain?",
+          "LangChain is an open-source framework for building applications using large language models.",
+        ],
+        [
+          "What is LangSmith?",
+          "LangSmith is an observability and evaluation tool for LLM products, built by LangChain Inc.",
+        ],
+      ];
+      
+      const datasetName = "Wikipedia RAG";
+      
+      const inputs = examples.map(([input, _]) => ({ input }));
+      const outputs = examples.map(([_, expected]) => ({ expected }));
+      
+      const dataset = await client.createDataset(datasetName);
+      await client.createExamples({ datasetId: dataset.id, inputs, outputs });
+    `,
+  ]}
+  groupId="client-language"
+/>
 
 ## 3. Define your custom evaluators
 
 As mentioned above, we will define two evaluators: one that evaluates the relevance of the retrieved documents w.r.t the input query and another that evaluates the hallucination of the generated answer w.r.t the retrieved documents.
-We will be using the `LangChainStringEvaluator` to evaluate the hallucination of the generated answer, but you can modify this as needed.
+We will be using the `LangChainStringEvaluator` / `loadEvaluator` to evaluate the hallucination of the generated answer, but you can modify this as needed.
 
-The key here is that the evaluator function should traverse the `root_run` argument to access the intermediate steps of the pipeline. The evaluator can then process the inputs and outputs of the intermediate steps to evaluate according to the desired criteria.
+The key here is that the evaluator function should traverse the `root_run` / `rootRun` argument to access the intermediate steps of the pipeline. The evaluator can then process the inputs and outputs of the intermediate steps to evaluate according to the desired criteria.
 
-```python
-from langsmith.schemas import Example, Run
-
-def document_relevance(root_run: Run, example: Example) -> dict:
-    """
-    A very simple evaluator that checks to see if the input of the retrieval step exists
-    in the retrieved docs.
-    """
-    rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
-    retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
-    page_contents = "\n\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
-    score = retrieve_run.inputs["query"] in page_contents
-    return {"key": "simple_document_relevance", "score": score}
-
-
-hallucination_evaluator = LangChainStringEvaluator(
-    "labeled_score_string",
-    config={
-        "criteria": {
-            "accuracy": """Is the Assistant's Answer grounded in the Ground Truth documentation? A score of [[0]] means that the
-            Assistant answer contains is not at all based upon / grounded in the Ground Truth documentation. A score of [[5]] means
-            that the Assistant answer contains some information (e.g., a hallucination) that is not captured in the Ground Truth
-            documentation. A score of [[10]] means that the Assistant answer is fully based upon the in the Ground Truth documentation."""
+<CodeTabs
+  tabs={[
+    python`
+      from langsmith.evaluation import LangChainStringEvaluator, evaluate
+      from langsmith.schemas import Example, Run
+      
+      def document_relevance(root_run: Run, example: Example) -> dict:
+          """
+          A very simple evaluator that checks to see if the input of the retrieval step exists
+          in the retrieved docs.
+          """
+          rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
+          retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
+          page_contents = "\\n\\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
+          score = retrieve_run.inputs["query"] in page_contents
+          return {"key": "simple_document_relevance", "score": score}
+      
+      
+      hallucination_evaluator = LangChainStringEvaluator(
+          "labeled_score_string",
+          config={
+              "criteria": {
+                  "accuracy": """Is the Assistant's Answer grounded in the Ground Truth documentation? A score of [[0]] means that the
+                  Assistant answer contains is not at all based upon / grounded in the Ground Truth documentation. A score of [[5]] means
+                  that the Assistant answer contains some information (e.g., a hallucination) that is not captured in the Ground Truth
+                  documentation. A score of [[10]] means that the Assistant answer is fully based upon the in the Ground Truth documentation."""
+              },
+              # If you want the score to be saved on a scale from 0 to 1
+              "normalize_by": 10,
+          }
+      )
+      
+      def hallucination(root_run: Run, example: Example) -> dict:
+          """
+          An evaluator that uses LangChainString evaluator to use an LLM to judge whether or not the correct
+          answer is generated w.r.t the retrieved documents.
+          """
+          rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
+          retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
+          page_contents = "\\n\\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
+          result = hallucination_evaluator.evaluator.evaluate_strings(prediction=rag_pipeline_run.outputs["output"], reference=page_contents, input=rag_pipeline_run.inputs["question"])
+          return {"key": "answer_hallucination", "score": result["score"], "comment": result["reasoning"]}
+      
+    `,
+    typescript`
+      import { EvaluationResult } from "langsmith/evaluation";
+      import { Run, Example } from "langsmith/schemas";
+      import { loadEvaluator } from "langchain/evaluation";
+      
+      function findNestedRun(run: Run, search: (run: Run) => boolean): Run | null {
+        const queue: Run[] = [run];
+        while (queue.length > 0) {
+          const currentRun = queue.shift()!;
+          if (search(currentRun)) return currentRun;
+          queue.push(...currentRun.child_runs);
+        }
+        return null;
+      }
+      
+      function documentRelevance(rootRun: Run, example: Example): EvaluationResult {
+        const retrieveRun = findNestedRun(rootRun, (run) => run.name === "retrieve");
+        const docs: Array<{ page_content: string }> | undefined =
+          retrieveRun.outputs?.outputs;
+        
+        const pageContents = docs?.map((doc) => doc.page_content).join("\\n\\n");
+        const score = pageContents.includes(retrieveRun.inputs?.query);
+        return { key: "simple_document_relevance", score };
+      }
+      
+      const hallucinationEvaluator = await loadEvaluator("criteria", {
+        criteria: {
+          accuracy: [
+            "Is the Assistant's Answer grounded in the Ground Truth documentation? A score of [[0]] means that the",
+            "Assistant answer contains is not at all based upon / grounded in the Ground Truth documentation. A score of [[5]] means",
+            "that the Assistant answer contains some information (e.g., a hallucination) that is not captured in the Ground Truth",
+            "documentation. A score of [[10]] means that the Assistant answer is fully based upon the in the Ground Truth documentation.",
+          ].join("\\n"),
         },
-        # If you want the score to be saved on a scale from 0 to 1
-        "normalize_by": 10,
-    }
-)
-
-def hallucination(root_run: Run, example: Example) -> dict:
-    """
-    An evaluator that uses LangChainString evaluator to use an LLM to judge whether or not the correct
-    answer is generated w.r.t the retrieved documents.
-    """
-    rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
-    retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
-    page_contents = "\n\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
-    result = hallucination_evaluator.evaluator.evaluate_strings(prediction=rag_pipeline_run.outputs["output"], reference=page_contents, input=rag_pipeline_run.inputs["question"])
-    return {"key": "answer_hallucination", "score": result["score"], "comment": result["reasoning"]}
-```
+      });
+      
+      async function hallucination(
+        rootRun: Run,
+        example: Example
+      ): Promise<EvaluationResult> {
+        const rag = findNestedRun(rootRun, (run) => run.name === "ragPipeline");
+        const retrieve = findNestedRun(rootRun, (run) => run.name === "retrieve");
+        
+        const docs: Array<{ page_content: string }> | undefined =
+          retrieve.outputs?.outputs;
+        
+        const pageContents = docs?.map((doc) => doc.page_content).join("\\n\\n");
+        
+        const result = await hallucinationEvaluator.evaluateStrings({
+          input: rag.inputs?.question,
+          prediction: rag.outputs?.outputs,
+          reference: pageContents,
+        });
+        
+        return {
+          key: "answer_hallucination",
+          score: result["score"],
+          comment: result["reasoning"],
+        };
+      }
+    `,
+  ]}
+  groupId="client-language"
+/>
 
 ## 4. Evaluate the pipeline
 
 Finally, we'll run `evaluate` with the custom evaluators defined above.
 
-```python
-experiment_results = evaluate(
-    lambda inputs: rag_pipeline(inputs["input"]),
-    data=dataset_name,
-    evaluators=[document_relevance, hallucination],
-    experiment_prefix="rag-wiki-oai"
-)
-```
+<CodeTabs
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      experiment_results = evaluate(
+          lambda inputs: rag_pipeline(inputs["input"]),
+          data=dataset_name,
+          evaluators=[document_relevance, hallucination],
+          experiment_prefix="rag-wiki-oai"
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate((inputs) => ragPipeline({ question: inputs.input }), {
+        data: datasetName,
+        evaluators: [hallucination, documentRelevance],
+        experimentPrefix: "rag-wiki-oai",
+      });
+    `,
+  ]}
+  groupId="client-language"
+/>
 
 The experiment will contain the results of the evaluation, including the scores and comments from the evaluators:
 ![](../static/evaluation_intermediate_experiment.png)

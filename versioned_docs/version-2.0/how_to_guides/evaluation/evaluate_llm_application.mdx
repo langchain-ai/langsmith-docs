@@ -242,7 +242,7 @@ Evaluators are functions that take in a `Run` and an `Example` and return a dict
 The `key` will be associated with the score in the LangSmith UI.
 
 To learn more about the `Run` format, you can read the following [reference](../../reference/data_formats/run_data_format). However, many of the fields are not relevant nor required for writing evaluators.
-The `root_run` is always available and contains the inputs and outputs of the target task. If tracing is enabled, the `root_run` will also contain child runs for each step in the pipeline.
+The `root_run` / `rootRun` is always available and contains the inputs and outputs of the target task. If tracing is enabled, the `root_run` / `rootRun` will also contain child runs for each step in the pipeline.
 
 Here is an example of a very simple custom evaluator that compares the output of a model to the expected output in the dataset:
 
@@ -270,7 +270,7 @@ Here is an example of a very simple custom evaluator that compares the output of
   ]}
 />
 
-To view a more advanced example that traverses the `root_run` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
+To view a more advanced example that traverses the `root_run` / `rootRun` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
 
 ## Evaluate on a particular version of a dataset
 
@@ -282,18 +282,35 @@ Additionally, it might be helpful to read the [guide on fetching examples](../da
 :::
 
 You can take advantage of the fact that `evaluate` allows passing in an iterable of examples to evaluate on a particular version of a dataset.
-Simply use `list_examples` to fetch examples from a particular version tag using `as_of`.
+Simply use `list_examples` / `listExamples` to fetch examples from a particular version tag using `as_of` / `asOf`.
 
-```python
-from langsmith.evaluation import evaluate
-
-results = evaluate(
-    lambda inputs: label_text(inputs["text"]),
-    data=client.list_examples(dataset_name=toxic_dataset_name, as_of="latest"),
-    evaluators=[correct_label],
-    experiment_prefix="Toxic Queries",
-)
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      results = evaluate(
+          lambda inputs: label_text(inputs["text"]),
+          data=client.list_examples(dataset_name=toxic_dataset_name, as_of="latest"),
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate((inputs) => labelText(inputs["input"]), {
+        data: langsmith.listExamples({
+          datasetName: datasetName,
+          asOf: "latest",
+        }),
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
 
 ## Evaluate on a subset of a dataset
 
@@ -303,29 +320,37 @@ Before diving into this content, it might be helpful to read the [guide on fetch
 
 :::
 
-You can use the `list_examples` method to fetch a subset of examples from a dataset to evaluate on. You can refer to guide above to learn more about the different ways to fetch examples.
+You can use the `list_examples` / `listExamples` method to fetch a subset of examples from a dataset to evaluate on. You can refer to guide above to learn more about the different ways to fetch examples.
 
 One common workflow is to fetch examples that have a certain metadata key-value pair.
 
-```python
-from langsmith.evaluation import evaluate
-
-# First, create an example with metadata
-example = client.create_example(
-    inputs={"text": "What's up!"},
-    outputs={"label": "Not toxic"},
-    metadata={"foo": "bar", "baz": "qux"},
-    dataset_name=dataset_name
-)
-
-# Then, later, you can fetch examples that match the metadata filter
-results = evaluate(
-    lambda inputs: label_text(inputs["text"]),
-    data=client.list_examples(dataset_name=dataset_name, metadata='{"foo": "bar"}'),
-    evaluators=[correct_label],
-    experiment_prefix=dataset_name,
-)
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      results = evaluate(
+          lambda inputs: label_text(inputs["text"]),
+          data=client.list_examples(dataset_name=dataset_name, metadata={"desired_key": "desired_value"}),
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate((inputs) => labelText(inputs["input"]), {
+        data: langsmith.listExamples({
+          datasetName: datasetName,
+          metadata: {"desired_key": "desired_value"},
+        }),
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
 
 ## Use a summary evaluator
 
@@ -335,31 +360,64 @@ These are called `summary_evaluators`. Instead of taking in a single `Run` and `
 
 Below, we'll implement a very simple summary evaluator that computes overall pass rate:
 
-```python
-from langsmith.schemas import Example, Run
-
-def summary_eval(runs: list[Run], examples: list[Example]) -> dict:
-    correct = 0
-    for i, run in enumerate(runs):
-        if run.outputs["output"] == examples[i].outputs["label"]:
-            correct += 1
-    if correct / len(runs) > 0.5:
-        return {"key": "pass", "score": True}
-    else:
-        return {"key": "pass", "score": False}
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.schemas import Example, Run
+      
+      def summary_eval(runs: list[Run], examples: list[Example]) -> dict:
+          correct = 0
+          for i, run in enumerate(runs):
+              if run.outputs["output"] == examples[i].outputs["label"]:
+                  correct += 1
+          if correct / len(runs) > 0.5:
+              return {"key": "pass", "score": True}
+          else:
+              return {"key": "pass", "score": False}
+    `,
+    typescript`
+      import { Run, Example } from "langsmith/schemas";
+      
+      function summaryEval(runs: Run[], examples: Example[]) {
+        let correct = 0;
+        
+        for (let i = 0; i < runs.length; i++) {
+          if (runs[i].outputs["output"] === examples[i].outputs["label"]) {
+            correct += 1;
+          }
+        }
+        
+        return { key: "pass", score: correct / runs.length > 0.5 };
+      }
+    `,
+  ]}
+/>
 
 You can then pass this evaluator to the `evaluate` method as follows:
 
-```python
-results = evaluate(
-    lambda inputs: label_query(inputs["text"]),
-    data=dataset_name,
-    evaluators=[correct_label],
-    summary_evaluators=[summary_eval],
-    experiment_prefix="Toxic Queries",
-)
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      results = evaluate(
+          lambda inputs: label_query(inputs["text"]),
+          data=dataset_name,
+          evaluators=[correct_label],
+          summary_evaluators=[summary_eval],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      await evaluate((inputs) => labelQuery(inputs["input"]), {
+        data: datasetName,
+        evaluators: [correctLabel],
+        summaryEvaluators: [summaryEval],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
 
 In the LangSmith UI, you'll the summary evaluator's score displayed with the corresponding key.
 
@@ -371,33 +429,67 @@ You can configure a `LangChain` runnable to be evaluated by passing `runnable.in
 
 First, define your `LangChain` runnable:
 
-```python
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-
-prompt = ChatPromptTemplate.from_messages([
-  ("system", "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't."),
-  ("user", "{text}")
-])
-chat_model = ChatOpenAI()
-output_parser = StrOutputParser()
-
-chain = prompt | chat_model | output_parser
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langchain_openai import ChatOpenAI
+      from langchain_core.prompts import ChatPromptTemplate
+      from langchain_core.output_parsers import StrOutputParser
+      
+      prompt = ChatPromptTemplate.from_messages([
+        ("system", "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't."),
+        ("user", "{text}")
+      ])
+      chat_model = ChatOpenAI()
+      output_parser = StrOutputParser()
+      
+      chain = prompt | chat_model | output_parser
+    `,
+    typescript`
+      import { ChatOpenAI } from "@langchain/openai";
+      import { ChatPromptTemplate } from "@langchain/core/prompts";
+      import { StringOutputParser } from "@langchain/core/output_parsers";
+      
+      const prompt = ChatPromptTemplate.fromMessages([
+        ["system", "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't."],
+        ["user", "{text}"]
+      ]);
+      const chatModel = new ChatOpenAI();
+      const outputParser = new StringOutputParser();
+      
+      const chain = prompt.pipe(chatModel).pipe(outputParser);
+    `,
+  ]}
+/>
 
 Then, pass the `runnable.invoke` method to the `evaluate` method. Note that the input variables of the runnable must match the keys of the example inputs.
 
-```python
-results = evaluate(
-    chain.invoke,
-    data=dataset_name,
-    evaluators=[correct_label],
-    experiment_prefix="Toxic Queries",
-)
-```
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      results = evaluate(
+          chain.invoke,
+          data=dataset_name,
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate(chain.invoke.bind(chain), {
+        data: datasetName,
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
 
 The runnable is traced appropriately for each output.
 
 ![](../static/runnable_eval.png)
-import { CodeTabs } from "../../../../src/components/InstructionsWithCode"
