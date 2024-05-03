@@ -13,11 +13,13 @@ LangSmith supports two types of API keys: Service Keys and Personal Access Token
 Both types of tokens can be used to authenticate requests to the LangSmith API, but they have different use cases.
 
 ### Personal Access Tokens
+
 Personal Access Tokens are meant for individual users to authenticate their requests and are associated with a user.
 Personal Access Tokens will mirror the permissions of the user who created them. Any changes to the user's permissions will be reflected in the token.
 Personal Access Tokens will be deleted when the user is deleted and so should not be used for production services.
 
 ### Service Keys
+
 Service Keys act as service accounts for applications to authenticate their requests and are associated with a tenant.
 These tokens create a service account and are granted `Admin` permissions by default. Only other `Admins` can create Service Keys.
 
