@@ -279,3 +279,25 @@ html[data-theme="dark"] {
   box-shadow: var(--ifm-global-shadow-lw);
   border-radius: var(--ifm-code-border-radius);
 }
+
+.menu__list-item > .menu__list {
+  transition: all 0.2s ease-in-out !important;
+}
+
+.menu__list-item:not(.menu__list-item--collapsed) > .menu__list {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.menu__list-item.menu__list-item--collapsed > .menu__list {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .menu__list-item > .menu__list {
+    transition: none !important;
+    opacity: 1 !important;
+  }
+}
