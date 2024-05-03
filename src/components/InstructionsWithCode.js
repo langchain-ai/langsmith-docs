@@ -61,6 +61,7 @@ export function ShellBlock(content, value = "shell", label = "Shell") {
     value,
     label,
     content,
+    language: "shell",
   };
 }
 
@@ -93,13 +94,14 @@ function formatCode(code, language) {
 
 export function CodeTabs({ tabs, groupId }) {
   return (
-    <Tabs groupId={groupId}>
+    <Tabs groupId={groupId} className="code-tabs">
       {tabs.map((tab, index) => {
         const key = `${groupId}-${index}`;
         return (
           <TabItem key={key} value={tab.value} label={tab.label}>
             {tab.caption && (
               <div
+                className="code-caption"
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(marked.parse(tab.caption)),
@@ -133,4 +135,28 @@ export const python = (strings, ...values) => {
     result += string + String(values[i] ?? "");
   });
   return PythonBlock(dedent(result));
+};
+
+export const shell = (strings, ...values) => {
+  if (
+    values.length === 0 &&
+    typeof strings === "object" &&
+    strings != null &&
+    !Array.isArray(strings)
+  ) {
+    const { value, label } = strings;
+    return (innerStrings, ...innerValues) => {
+      let result = "";
+      innerStrings.forEach((string, i) => {
+        result += string + String(innerValues[i] ?? "");
+      });
+      return ShellBlock(dedent(result), value ?? undefined, label ?? undefined);
+    };
+  }
+
+  let result = "";
+  strings.forEach((string, i) => {
+    result += string + String(values[i] ?? "");
+  });
+  return ShellBlock(dedent(result));
 };

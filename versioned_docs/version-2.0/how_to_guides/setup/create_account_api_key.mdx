@@ -7,12 +7,28 @@ We support logging in with Google, GitHub, Discord, and email.
 
 ![](../static/create_account.png)
 
+## API Keys
+
+LangSmith supports two types of API keys: Service Keys and Personal Access Tokens.
+Both types of tokens can be used to authenticate requests to the LangSmith API, but they have different use cases.
+
+### Personal Access Tokens
+
+Personal Access Tokens are meant for individual users to authenticate their requests and are associated with a user.
+Personal Access Tokens will mirror the permissions of the user who created them. Any changes to the user's permissions will be reflected in the token.
+Personal Access Tokens will be deleted when the user is deleted and so should not be used for production services.
+
+### Service Keys
+
+Service Keys act as service accounts for applications to authenticate their requests and are associated with a tenant.
+These tokens create a service account and are granted `Admin` permissions by default. Only other `Admins` can create Service Keys.
+
 ## Create an API key
 
 To log traces and run evaluations with LangSmith, you will need to create an API key to authenticate your requests.
 Currently, an API key is scoped to a tenant, so you will need to create an API key for each tenant you want to use.
 
-To create an API key head to the [setting pages](https://smith.langchain.com/settings), then scroll to the **API Keys** section. Then click **Create API Key.**
+To create an API key head to the [Settings page](https://smith.langchain.com/settings), then scroll to the **API Keys** section. Then click **Create API Key.**
 :::note
 The API key will be shown only once, so make sure to copy it and store it in a safe place.
 :::
