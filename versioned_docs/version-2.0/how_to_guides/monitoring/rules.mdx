@@ -1,0 +1,13 @@
+---
+sidebar_position: 3
+---
+
+# Set up automation rules
+
+While you can manually sift through and process production logs from our LLM application, it often becomes difficult as your application scales to more users.
+LangSmith provides a powerful feature called automations that allow you to trigger certain actions on your trace data.
+At a high level, automations are defined by a **filter**, **sampling rate**, and **action**.
+
+Automation rules can trigger actions such as online evaluation, adding inputs/outputs of traces to a dataset, adding to an annotation queue, and triggering a webhook.
+
+An example of an automation you can set up can be *"trigger an online evaluation that grades on vagueness for all of my downvoted traces."*

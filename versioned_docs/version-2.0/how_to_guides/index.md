@@ -7,6 +7,7 @@ sidebar_position: 1
 Step-by-step guides that cover key tasks and operations in LangSmith.
 
 ## Setup
+
 See the following guides to set up your LangSmith account.
 
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
@@ -16,6 +17,7 @@ See the following guides to set up your LangSmith account.
 - [ ] Assign roles (enterprise only)
 
 ## Tracing
+
 Get started with LangSmith's tracing features to start adding observability to your LLM applications.
 
 - [Annotate code for tracing](./how_to_guides/tracing/annotate_code)
@@ -49,6 +51,7 @@ Get started with LangSmith's tracing features to start adding observability to y
 * [ ] Trace using instructor
 
 ## Datasets
+
 Manage datasets in LangSmith to evaluate and improve your LLM applications.
 
 - [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
@@ -58,7 +61,7 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
   - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
 - [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
   - [Create a dataset from list of values](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-list-of-values)
-  - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces)
+  - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces) (TODO: to automate this process, use rules)
   - [Create a dataset from a CSV file](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-csv-file)
   - [Create a dataset from a pandas DataFrame](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-pandas-dataframe)
   - [Fetch datasets](./how_to_guides/datasets/manage_datasets_programmatically#fetch-datasets)
@@ -69,6 +72,7 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
 - [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
 
 ## Evaluation
+
 Evaluate your LLM applications to measure their performance over time.
 
 - [Evaluate an LLM application](./how_to_guides/evaluation/evaluate_llm_application)
@@ -101,6 +105,7 @@ Evaluate your LLM applications to measure their performance over time.
 - [ ] Unit test LLM applications with `pytest` (Python only) - will
 
 ## Human feedback
+
 Collect human feedback to improve your LLM applications.
 
 - [ ] Attach user feedback from your application to traces
@@ -109,21 +114,27 @@ Collect human feedback to improve your LLM applications.
 - [ ] Annotate traces in the annotation queue
 
 ## Monitoring and automations
+
 Leverage LangSmith's powerful monitoring and automations features to make sense of your production data.
 
-- [ ] Filter for runs
-- [ ] Use a trace filter
-- [ ] View the monitor charts
-- [ ] Slice chart by metadata and tag
-- [ ] Set up a rule
-  - [ ] Online evaluation
-  - [ ] Annotation Queue addition
-  - [ ] Dataset addition
-  - [ ] Webhook action
+- [Filter traces in the application](./how_to_guides/monitoring/filter_traces_in_application)
+  - [Create a filter](./how_to_guides/monitoring/filter_traces_in_application#create-a-filter)
+  - [Filter for intermediate runs (spans)](./how_to_guides/monitoring/filter_traces_in_application#filter-for-intermediate-runs-spans)
+  - [Advanced: filter for intermediate runs (spans) on properties of the root](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-intermediate-runs-spans-on-properties-of-the-root)
+  - [Advanced: filter for runs (spans) whose child runs have some attribute](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-runs-spans-whose-child-runs-have-some-attribute)
+  - [Copy the filter](./how_to_guides/monitoring/filter_traces_in_application#copy-the-filter)
+  - [Manually specify a raw query in LangSmith query language](./how_to_guides/monitoring/filter_traces_in_application#manually-specify-a-raw-query-in-langsmith-query-language)
+  - [Use an AI Query to auto-generate a query](./how_to_guides/monitoring/filter_traces_in_application#use-an-ai-query-to-auto-generate-a-query)
+- [Use monitoring charts](./how_to_guides/monitoring/use_monitoring_charts)
+  - [Change the time period](./how_to_guides/monitoring/use_monitoring_charts#change-the-time-period)
+  - [Slice data by metadata or tag](./how_to_guides/monitoring/use_monitoring_charts#slice-data-by-metadata-or-tag)
+  - [Drill down into specific subsets](./how_to_guides/monitoring/use_monitoring_charts#drill-down-into-specific-subsets)
+- [Set up automation rules](./how_to_guides/monitoring/rules)
+  - [Use a rule to create a dataset from traces](./how_to
 - [ ] Group traces as threads
-- [ ] View threads
 
 ## Prompt hub
+
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
 - [ ] Create a prompt
@@ -133,12 +144,14 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
 - [ ] Open a prompt from an experiment
 
 ## Playground
+
 Use the prompt playground to test your prompts and models.
 
 - [ ] Run a prompt in the playground
 - [ ] Run a prompt on a custom model
 
 ## Proxy
+
 Use the LangSmith proxy to cache and log LLM results.
 
 - [ ] Run proxy
