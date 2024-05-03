@@ -24,3 +24,7 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 ## System architecture
 
 - [High-level architecture](./reference/system_architecture/high_level_architecture)
+
+## Authentication and Authorization
+
+- [Authentication methods](./reference/authentication_authorization/authentication_methods)
