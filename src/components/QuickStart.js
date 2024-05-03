@@ -223,7 +223,7 @@ const model = new ChatOpenAI({
 await model.invoke("Hello, world!", { callbacks: [tracer] })`;
 
   return (
-    <Tabs groupId="client-language">
+    <Tabs groupId="client-language" className="code-tabs">
       <TabItem key="python" value="python" label="Python">
         <CodeBlock className="python" language="python">
           {`from langchain_openai import ChatOpenAI
