@@ -73,8 +73,6 @@ const config = {
             sidebarItems = sidebarItems.filter(
               (i) => !(i.type === "doc" && i.id.split("/").at(-1) === "index")
             );
-            
-            console.dir(sidebarItems, { depth: null });
 
             sidebarItems.forEach((subItem) => {
               // This allows breaking long sidebar labels into multiple lines
