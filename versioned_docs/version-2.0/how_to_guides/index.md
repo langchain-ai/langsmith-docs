@@ -13,7 +13,7 @@ See the following guides to set up your LangSmith account.
 
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
 - [Create an organization](./how_to_guides/setup/create_organization)
-- [Setup billing](./how_to_guides/setup/setup_billing)
+- [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
 - [ ] Assign roles (enterprise only)
 
