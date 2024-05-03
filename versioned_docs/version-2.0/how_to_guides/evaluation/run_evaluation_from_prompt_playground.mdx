@@ -43,6 +43,15 @@ Importantly, evaluator prompts can only contain the following input variables:
 - `output` (required): the output of the target you are evaluating
 - `reference`: the reference output, taken from the dataset
 
+:::note
+
+Automatic evaluators you configure in the application will only work if the `inputs` to your evaluation target, `outputs` from your evaluation target, and `examples` in your dataset are all single-key dictionaries.
+LangSmith will automatically extract the values from the dictionaries and pass them to the evaluator.
+
+LangSmith currently doesn't support setting up evaluators in the application that act on multiple keys in the `inputs` or `outputs` or `examples` dictionaries.
+
+:::
+
 You can specify the scoring criteria in the "schema" field. In this example, we are asking the LLM to grade on "correctness" of the output with respect to the reference, with a boolean output of 0 or 1. The name of the field in the schema will be interpreted as the feedback key and the type will be the type of the score.
 
 ![Evaluator prompt](../static/evaluator_prompt.png)

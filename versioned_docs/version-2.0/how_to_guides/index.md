@@ -7,6 +7,7 @@ sidebar_position: 1
 Step-by-step guides that cover key tasks and operations in LangSmith.
 
 ## Setup
+See the following guides to set up your LangSmith account.
 
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
 - [Create an organization](./how_to_guides/setup/create_organization)
@@ -15,6 +16,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Assign roles (enterprise only)
 
 ## Tracing
+Get started with LangSmith's tracing features to start adding observability to your LLM applications.
 
 - [Annotate code for tracing](./how_to_guides/tracing/annotate_code)
   - [Use `@traceable`/`traceable`](./how_to_guides/tracing/annotate_code#use-traceable--traceable)
@@ -47,6 +49,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 * [ ] Trace using instructor
 
 ## Datasets
+Manage datasets in LangSmith to evaluate and improve your LLM applications.
 
 - [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
   - [Create a new dataset and add examples manually](./how_to_guides/datasets/manage_datasets_in_application#create-a-new-dataset-and-add-examples-manually)
@@ -66,6 +69,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
 
 ## Evaluation
+Evaluate your LLM applications to measure their performance over time.
 
 - [Evaluate an LLM application](./how_to_guides/evaluation/evaluate_llm_application)
   - [Run an evaluation](./how_to_guides/evaluation/evaluate_llm_application#run-an-evaluation)
@@ -97,6 +101,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Unit test LLM applications with `pytest` (Python only) - will
 
 ## Human feedback
+Collect human feedback to improve your LLM applications.
 
 - [ ] Attach user feedback from your application to traces
 - [ ] Annotate traces inline
@@ -104,6 +109,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Annotate traces in the annotation queue
 
 ## Monitoring and automations
+Leverage LangSmith's powerful monitoring and automations features to make sense of your production data.
 
 - [ ] Filter for runs
 - [ ] Use a trace filter
@@ -118,6 +124,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] View threads
 
 ## Prompt hub
+Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
 - [ ] Create a prompt
 - [ ] Update a prompt
@@ -126,11 +133,13 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Open a prompt from an experiment
 
 ## Playground
+Use the prompt playground to test your prompts and models.
 
 - [ ] Run a prompt in the playground
 - [ ] Run a prompt on a custom model
 
 ## Proxy
+Use the LangSmith proxy to cache and log LLM results.
 
 - [ ] Run proxy
 - [ ] Make a request to the proxy
