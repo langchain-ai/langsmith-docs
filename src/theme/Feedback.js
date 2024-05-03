@@ -178,7 +178,7 @@ export default function Feedback() {
       paddingBottom: "10px",
       paddingLeft: "22px",
       paddingRight: "22px",
-      border: "1px solid gray",
+      border: "1px solid var(--joy-palette-divider)",
       borderRadius: "6px",
       gap: "10px",
       cursor: "pointer",

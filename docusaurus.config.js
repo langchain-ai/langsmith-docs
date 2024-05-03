@@ -68,7 +68,14 @@ const config = {
             defaultSidebarItemsGenerator,
             ...args
           }) {
-            const sidebarItems = await defaultSidebarItemsGenerator(args);
+            let sidebarItems = await defaultSidebarItemsGenerator(args);
+
+            sidebarItems = sidebarItems.filter(
+              (i) => !(i.type === "doc" && i.id.split("/").at(-1) === "index")
+            );
+            
+            console.dir(sidebarItems, { depth: null });
+
             sidebarItems.forEach((subItem) => {
               // This allows breaking long sidebar labels into multiple lines
               // by inserting a zero-width space after each slash.
