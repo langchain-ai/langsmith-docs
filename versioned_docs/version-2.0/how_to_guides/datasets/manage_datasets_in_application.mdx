@@ -1,0 +1,68 @@
+---
+sidebar_position: 1
+---
+
+# Manage datasets in the application
+
+:::tip Recommended Reading
+Before diving into this content, it might be helpful to read the following:
+
+- [Concepts guide on evaluation and datasets](../../concepts/evaluation#datasets-and-examples)
+
+:::
+
+The easiest way to interact with datasets is directly in the LangSmith app. Here, you can create and edit datasets and example.
+
+## Create a new dataset and add examples manually
+
+To get started, you can create a new datasets by heading to the "Datasets and Testing" section of the application and clicking on "+ New Dataset".
+
+![](../static/new_dataset.png)
+
+Then, enter the relevant dataset details, including a name, optional description, and dataset type. Please see the [concepts](../../concepts/evaluation#datasets-and-examples) for more information on dataset types. For most flexibility, the key-value dataset type is recommended.
+
+![](../static/enter_dataset_details.png)
+
+You can then add examples to the dataset by clicking on "Add Example". Here, you can enter the input and output as JSON objects.
+
+![](../static/add_manual_example.png)
+
+## Add inputs and outputs from traces to datasets
+
+We typically construct datasets over time by collecting representative examples from debugging or other runs. To do this, we first filter the traces to find the ones we want to add to the dataset. Then we add the inputs and outputs from these traces to the dataset.
+
+You can do this from any 'run' details page by clicking the 'Add to Dataset' button in the top right-hand corner.
+
+:::tip
+An extremely powerful technique to build datasets is to drill-down into the most interesting traces, such as traces that were tagged with poor user feedback, and add them to a dataset.
+For tips on how to filter traces, see the [filtering traces] guide.
+:::
+
+![Add to Dataset](../static/add_to_dataset.png)
+
+From there, we select the dataset to organize it in and update the ground truth output values if necessary.
+
+![Modify example](../static/modify_example.png)
+
+## Upload a CSV file to create a dataset
+
+The easiest way to create a dataset from your own data is by clicking the 'upload a CSV dataset' button on the home page or in the top right-hand corner of the 'Datasets & Testing' page.
+
+![Upload CSV](../static/create_dataset_csv.png)
+
+Select a name and description for the dataset, and then confirm that the inferred input and output columns are correct.
+
+![Confirm Columns](../static/select_columns.png)
+
+## Export a dataset
+
+You can export your LangSmith dataset to CSV or OpenAI evals format directly from the web application.
+
+To do so, click "Export Dataset" from the homepage.
+To do so, select a dataset, click on "Examples", and then click the "Export Dataset" button at the top of the examples table.
+
+![Export Dataset Button](../static/export-dataset-button.png)
+
+This will open a modal where you can select the format you want to export to.
+
+![Export Dataset Modal](../static/export-dataset-modal.png)
