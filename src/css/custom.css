@@ -120,6 +120,9 @@ html[data-theme="dark"] {
   gap: 0.125rem;
 
   position: relative;
+}
+
+.menu__list:not(.theme-doc-sidebar-menu) {
   padding-left: 1.125rem !important;
 }
 
@@ -133,10 +136,6 @@ html[data-theme="dark"] {
   position: absolute;
 
   background-color: var(--joy-palette-divider);
-}
-
-.theme-doc-sidebar-menu {
-  padding-left: 0 !important;
 }
 
 .theme-doc-sidebar-menu.menu__list::before {
