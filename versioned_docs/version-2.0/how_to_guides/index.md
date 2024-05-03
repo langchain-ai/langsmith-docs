@@ -40,6 +40,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [Export traces](./how_to_guides/tracing/export_traces)
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
+- [Share or unshare a trace publicly](./how_to_guides/tracing/share_trace)
 
 * [ ] Trace a generator function
 * [ ] Trace with LangChain
@@ -62,6 +63,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [Version datasets](./how_to_guides/datasets/version_datasets)
   - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
   - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
+- [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
 
 ## Evaluation
 
@@ -82,7 +84,15 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Use a custom LLM in off-the-shelf evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-a-custom-llm-in-off-the-shelf-evaluators)
   - [Handle multiple input or output fields](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#handle-multiple-input-or-output-fields)
 - [ ] Evaluate an existing experiment - will
-- [ ] Compare experiment results
+- [Compare experiment results](./how_to_guides/evaluation/compare_experiment_results)
+  - [Open the comparison view](./how_to_guides/evaluation/compare_experiment_results#open-the-comparison-view)
+  - [View regressions and improvements](./how_to_guides/evaluation/compare_experiment_results#view-regressions-and-improvements)
+  - [Filter on regressions or improvements](./how_to_guides/evaluation/compare_experiment_results#filter-on-regressions-or-improvements)
+  - [Update baseline experiment](./how_to_guides/evaluation/compare_experiment_results#update-baseline-experiment)
+  - [Select feedback key](./how_to_guides/evaluation/compare_experiment_results#select-feedback-key)
+  - [Open a trace](./how_to_guides/evaluation/compare_experiment_results#open-a-trace)
+  - [Expand detailed view](./how_to_guides/evaluation/compare_experiment_results#expand-detailed-view)
+  - [Update display settings](./how_to_guides/evaluation/compare_experiment_results#update-display-settings)
 - [ ] Export experiment results - will
 - [ ] Unit test LLM applications with `pytest` (Python only) - will
 
