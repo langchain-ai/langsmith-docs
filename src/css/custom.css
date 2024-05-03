@@ -147,13 +147,6 @@ html[data-theme="dark"] {
   padding-left: 0.5rem;
 }
 
-.menu__caret::before, .menu__link--sublist-caret::after {
-  min-width: 0.75rem !important;
-  width: 0.75rem !important;
-  min-height: 0.75rem !important;
-  height: 0.75rem !important;
-}
-
 .theme-doc-sidebar-menu > .theme-doc-sidebar-item-category:not(:first-of-type),
 .theme-doc-sidebar-menu > .theme-doc-sidebar-item-link,
 .theme-doc-sidebar-menu
