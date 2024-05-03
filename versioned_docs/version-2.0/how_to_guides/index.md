@@ -10,8 +10,8 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
 - [Create an organization](./how_to_guides/setup/create_organization)
+- [Setup billing](./how_to_guides/setup/setup_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
-- [ ] Setup billing
 - [ ] Assign roles (enterprise only)
 
 ## Tracing
