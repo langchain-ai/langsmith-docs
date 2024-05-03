@@ -172,8 +172,8 @@ html[data-theme="dark"] {
 }
 
 .theme-doc-sidebar-item-category,
-.theme-doc-sidebar-menu > .theme-doc-sidebar-item-link {
-  font-size: 1rem;
+.theme-doc-sidebar-item-link {
+  font-size: 0.9rem !important;
   font-weight: 500;
 }
 
