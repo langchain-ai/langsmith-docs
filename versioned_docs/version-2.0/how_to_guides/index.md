@@ -1,5 +1,6 @@
 ---
-sidebar_position: 1
+sidebar_label: How-to guides
+sidebar_position: 0
 ---
 
 # How-to guides
