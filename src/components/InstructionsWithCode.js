@@ -101,6 +101,7 @@ export function CodeTabs({ tabs, groupId }) {
           <TabItem key={key} value={tab.value} label={tab.label}>
             {tab.caption && (
               <div
+                className="code-caption"
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(marked.parse(tab.caption)),

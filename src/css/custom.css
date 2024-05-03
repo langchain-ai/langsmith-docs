@@ -275,6 +275,16 @@ html[data-theme="dark"] {
   border-top-right-radius: 0px !important;
 }
 
+.tabs-container > .code-tabs + div .code-caption {
+  border: 1px solid var(--joy-palette-divider);
+  border-bottom: none;
+  padding: 1rem;
+}
+
+.tabs-container > .code-tabs + div .code-caption p:last-child {
+  margin-bottom: 0;
+}
+
 .tabs-container:has(> .code-tabs) {
   box-shadow: var(--ifm-global-shadow-lw);
   border-radius: var(--ifm-code-border-radius);
