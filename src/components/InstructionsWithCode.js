@@ -29,7 +29,7 @@ export function LangChainJSBlock(content) {
 export function TypeScriptBlock(content, caption = "") {
   return {
     value: "typescript",
-    label: "TypeScript SDK",
+    label: "TypeScript",
     content,
     caption,
     language: "typescript",
@@ -39,7 +39,7 @@ export function TypeScriptBlock(content, caption = "") {
 export function PythonBlock(content, caption = "") {
   return {
     value: "python",
-    label: "Python SDK",
+    label: "Python",
     content,
     caption,
     language: "python",

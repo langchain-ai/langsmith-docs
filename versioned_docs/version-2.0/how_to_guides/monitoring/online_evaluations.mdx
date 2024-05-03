@@ -1,0 +1,62 @@
+---
+sidebar_label: Online Evaluation
+sidebar_position: 4
+---
+
+# Set up online evaluations
+
+:::tip Recommended Reading
+Before diving into this content, it might be helpful to read the following:
+
+- [Set up automation rules](./rules)
+
+:::
+
+Online evaluations is a powerful LangSmith feature that allows you to run an LLM-as-a-judge evaluator on a set of your production traces. They are implemented as a possible action in an automation rule.
+
+Currently, we provide support for specifying a prompt template, a model, and a set of criteria to evaluate the runs on.
+
+After entering [rules setup](./rules), you can select `Online Evaluation` from the list of possible actions:
+
+![](../static/automations.png)
+
+## Configure online evaluations
+
+When selection `Online Evaluation` as an action in an automation, you are presented with a panel from which you can configure online evaluation.
+
+![](../static/evaluator.png)
+
+You can configure the model, the prompt template, and the criteria
+
+### Model
+
+You can choose any model available in the dropdown. Currently, we support **OpenAI**, **AzureOpenAI**, and models hosted on **Fireworks**.
+
+### Prompt template
+
+You can customize the prompt template to be whatever you want.
+The prompt template is a LangChain prompt template - this means that anything in `{...}` is treated as a variable to format.
+Importantly, evaluator prompts can only contain the following input variables:
+
+- `input` (required): the input to the target you are evaluating
+- `output` (required): the output of the target you are evaluating
+
+:::note
+
+Automatic evaluators you configure in the application will only work if the `inputs` to your trace and `outputs` from our trace are single-keyed objects.
+LangSmith will automatically extract the values from the dictionaries and pass them to the evaluator.
+
+LangSmith currently doesn't support setting up evaluators in the application that act on multiple keys in the `inputs` or `outputs` of a trace.
+
+:::
+
+### Criteria
+
+An evaluator will attach arbitrary metadata tags to a run. These tags will have a name and a value. You can configure this in the `Criteria` section.
+The names and the descriptions of the fields will be passed in to the prompt. Behind the scenes, we use tool calling to coerce the output of the LLM in to the score you specify.
+
+## Set API keys
+
+Online evaluation uses LLM-as-a-judge evaluation. In order to set the API keys to use for these invocations, navigate to the `Settings -> Secrets -> Add secret` page and add any API keys there.
+
+![](../static/secrets.png)

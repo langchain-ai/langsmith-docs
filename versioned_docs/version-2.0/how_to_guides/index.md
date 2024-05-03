@@ -15,7 +15,8 @@ See the following guides to set up your LangSmith account.
 - [Create an organization](./how_to_guides/setup/create_organization)
 - [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
-- [ ] Assign roles (enterprise only)
+
+* [ ] Assign roles (enterprise only)
 
 ## Tracing
 
@@ -46,6 +47,8 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
 - [Share or unshare a trace publicly](./how_to_guides/tracing/share_trace)
+- [Trace with `LangChain`](./how_to_guides/tracing/trace_with_langchain)
+- [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
 
 * [ ] Trace a generator function
 * [ ] Trace with LangChain
@@ -62,7 +65,7 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
   - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
 - [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
   - [Create a dataset from list of values](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-list-of-values)
-  - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces) (TODO: to automate this process, use rules)
+  - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces)
   - [Create a dataset from a CSV file](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-csv-file)
   - [Create a dataset from a pandas DataFrame](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-pandas-dataframe)
   - [Fetch datasets](./how_to_guides/datasets/manage_datasets_programmatically#fetch-datasets)
@@ -92,8 +95,8 @@ Evaluate your LLM applications to measure their performance over time.
   - [Use string or embedding distance metrics](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-string-or-embedding-distance-metrics)
   - [Use a custom LLM in off-the-shelf evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-a-custom-llm-in-off-the-shelf-evaluators)
   - [Handle multiple input or output fields](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#handle-multiple-input-or-output-fields)
-- [ ] Evaluate an existing experiment - will
 - [Compare experiment results](./how_to_guides/evaluation/compare_experiment_results)
+
   - [Open the comparison view](./how_to_guides/evaluation/compare_experiment_results#open-the-comparison-view)
   - [View regressions and improvements](./how_to_guides/evaluation/compare_experiment_results#view-regressions-and-improvements)
   - [Filter on regressions or improvements](./how_to_guides/evaluation/compare_experiment_results#filter-on-regressions-or-improvements)
@@ -102,6 +105,8 @@ Evaluate your LLM applications to measure their performance over time.
   - [Open a trace](./how_to_guides/evaluation/compare_experiment_results#open-a-trace)
   - [Expand detailed view](./how_to_guides/evaluation/compare_experiment_results#expand-detailed-view)
   - [Update display settings](./how_to_guides/evaluation/compare_experiment_results#update-display-settings)
+
+- [ ] Evaluate an existing experiment - will
 - [ ] Export experiment results - will
 - [ ] Unit test LLM applications with `pytest` (Python only) - will
 
@@ -131,8 +136,17 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
   - [Slice data by metadata or tag](./how_to_guides/monitoring/use_monitoring_charts#slice-data-by-metadata-or-tag)
   - [Drill down into specific subsets](./how_to_guides/monitoring/use_monitoring_charts#drill-down-into-specific-subsets)
 - [Set up automation rules](./how_to_guides/monitoring/rules)
-  - [Use a rule to create a dataset from traces](./how_to
-- [ ] Group traces as threads
+  - [Create a rule](./how_to_guides/monitoring/rules#create-a-rule)
+  - [View logs for your automations](./how_to_guides/monitoring/rules#view-logs-for-your-automations)
+- [Set up online evaluations](./how_to_guides/monitoring/online_evaluations)
+  - [Configure online evaluations](./how_to_guides/monitoring/online_evaluations#configure-online-evaluations)
+  - [Set API keys](./how_to_guides/monitoring/online_evaluations#set-api-keys)
+- [Set up webhook notifications for rules (beta)](./how_to_guides/monitoring/webhook_notifications)
+  - [Webhook payload](./how_to_guides/monitoring/webhook_notifications#webhook-payload)
+  - [Example with Modal](./how_to_guides/monitoring/webhook_notifications#example-with-modal)
+- [Set up threads](./how_to_guides/monitoring/threads)
+  - [Group traces into threads](./how_to_guides/monitoring/threads#group-traces-into-threads)
+  - [View threads](./how_to_guides/monitoring/threads#view-threads)
 
 ## Prompt hub
 
