@@ -26,11 +26,7 @@ export function LangChainJSBlock(content) {
   };
 }
 
-export function TypeScriptBlock(
-  content,
-  caption = "",
-  label = "TypeScript"
-) {
+export function TypeScriptBlock(content, caption = "", label = "TypeScript") {
   return {
     value: "typescript",
     label,

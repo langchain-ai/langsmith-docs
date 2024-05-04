@@ -16,7 +16,6 @@ See the following guides to set up your LangSmith account.
 - [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
 
-
 * [ ] Assign roles (enterprise only)
 
 ## Tracing
@@ -56,10 +55,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Customize run name](./how_to_guides/tracing/trace_with_langchain#customize-run-name)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
 
-
 * [ ] Trace a generator function
-* [ ] Trace with LangChain
-* [ ] Trace using instructor
 
 ## Datasets
 
@@ -103,6 +99,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [Use a custom LLM in off-the-shelf evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-a-custom-llm-in-off-the-shelf-evaluators)
   - [Handle multiple input or output fields](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#handle-multiple-input-or-output-fields)
 - [Compare experiment results](./how_to_guides/evaluation/compare_experiment_results)
+
   - [Open the comparison view](./how_to_guides/evaluation/compare_experiment_results#open-the-comparison-view)
   - [View regressions and improvements](./how_to_guides/evaluation/compare_experiment_results#view-regressions-and-improvements)
   - [Filter on regressions or improvements](./how_to_guides/evaluation/compare_experiment_results#filter-on-regressions-or-improvements)
@@ -111,7 +108,6 @@ Evaluate your LLM applications to measure their performance over time.
   - [Open a trace](./how_to_guides/evaluation/compare_experiment_results#open-a-trace)
   - [Expand detailed view](./how_to_guides/evaluation/compare_experiment_results#expand-detailed-view)
   - [Update display settings](./how_to_guides/evaluation/compare_experiment_results#update-display-settings)
-
 
 - [ ] Evaluate an existing experiment - will
 - [ ] Export experiment results - will
