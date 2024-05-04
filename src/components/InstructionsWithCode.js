@@ -26,20 +26,24 @@ export function LangChainJSBlock(content) {
   };
 }
 
-export function TypeScriptBlock(content, caption = "") {
+export function TypeScriptBlock(
+  content,
+  caption = "",
+  label = "TypeScript SDK"
+) {
   return {
     value: "typescript",
-    label: "TypeScript",
+    label,
     content,
     caption,
     language: "typescript",
   };
 }
 
-export function PythonBlock(content, caption = "") {
+export function PythonBlock(content, caption = "", label = "Python SDK") {
   return {
     value: "python",
-    label: "Python",
+    label,
     content,
     caption,
     language: "python",
@@ -122,6 +126,26 @@ export function CodeTabs({ tabs, groupId }) {
 }
 
 export const typescript = (strings, ...values) => {
+  if (
+    values.length === 0 &&
+    typeof strings === "object" &&
+    strings != null &&
+    !Array.isArray(strings)
+  ) {
+    const { caption, label } = strings;
+    return (innerStrings, ...innerValues) => {
+      let result = "";
+      innerStrings.forEach((string, i) => {
+        result += string + String(innerValues[i] ?? "");
+      });
+      return TypeScriptBlock(
+        dedent(result),
+        caption ?? undefined,
+        label ?? undefined
+      );
+    };
+  }
+
   let result = "";
   strings.forEach((string, i) => {
     result += string + String(values[i] ?? "");
@@ -130,6 +154,26 @@ export const typescript = (strings, ...values) => {
 };
 
 export const python = (strings, ...values) => {
+  if (
+    values.length === 0 &&
+    typeof strings === "object" &&
+    strings != null &&
+    !Array.isArray(strings)
+  ) {
+    const { caption, label } = strings;
+    return (innerStrings, ...innerValues) => {
+      let result = "";
+      innerStrings.forEach((string, i) => {
+        result += string + String(innerValues[i] ?? "");
+      });
+      return PythonBlock(
+        dedent(result),
+        caption ?? undefined,
+        label ?? undefined
+      );
+    };
+  }
+
   let result = "";
   strings.forEach((string, i) => {
     result += string + String(values[i] ?? "");
