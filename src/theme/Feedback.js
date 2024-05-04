@@ -185,11 +185,17 @@ export default function Feedback() {
       fontSize: "16px",
       fontWeight: "600",
     },
-    onMouseEnter: (e) => (e.currentTarget.style.backgroundColor = "var(--joy-palette-background-level1)"),
+    onMouseEnter: (e) =>
+      (e.currentTarget.style.backgroundColor =
+        "var(--joy-palette-background-level1)"),
     onMouseLeave: (e) =>
       (e.currentTarget.style.backgroundColor = "transparent"),
-    onMouseDown: (e) => (e.currentTarget.style.backgroundColor = "var(--joy-palette-background-level2)"),
-    onMouseUp: (e) => (e.currentTarget.style.backgroundColor = "var(--joy-palette-background-level1)"),
+    onMouseDown: (e) =>
+      (e.currentTarget.style.backgroundColor =
+        "var(--joy-palette-background-level2)"),
+    onMouseUp: (e) =>
+      (e.currentTarget.style.backgroundColor =
+        "var(--joy-palette-background-level1)"),
   };
 
   return (
