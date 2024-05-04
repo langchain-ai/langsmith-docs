@@ -135,7 +135,7 @@ html[data-theme="dark"] {
 
   position: absolute;
 
-  background-color: var(--joy-palette-divider);
+  background-color: var(--joy-palette-background-level2);
 }
 
 .theme-doc-sidebar-menu.menu__list::before {
@@ -265,8 +265,16 @@ html[data-theme="dark"] {
   border-top-right-radius: var(--ifm-code-border-radius);
 }
 
+/* media dark mode */
+@media (prefers-color-scheme: dark) {
+  .tabs-container > .code-tabs {
+    background: #1e1e1e;
+  }
+}
+
 .tabs-container > .code-tabs > [role="tab"] {
   padding: 0.5rem 1rem !important;
+  border-radius: 0;
 }
 
 .tabs-container > .code-tabs + div .theme-code-block {
@@ -310,4 +318,12 @@ html[data-theme="dark"] {
     transition: none !important;
     opacity: 1 !important;
   }
+}
+
+.DocSearch .DocSearch-Button-Keys {
+  display: none;
+}
+
+hr {
+  background-color: var(--joy-palette-background-level2) !important;
 }
