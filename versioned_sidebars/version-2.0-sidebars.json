@@ -61,7 +61,6 @@
         "type": "generated-index",
         "description": "Self-hosting LangSmith requires an enterprise license. Check out the guides below for more information."
       }
-    },
-    "release_notes"
+    }
   ]
 }

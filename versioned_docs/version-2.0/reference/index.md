@@ -21,10 +21,6 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
   - [Filter arguments](./reference/data_formats/trace_query_syntax#filter-arguments)
   - [Filter query language](./reference/data_formats/trace_query_syntax#filter-query-language)
 
-## System architecture
-
-- [High-level architecture](./reference/system_architecture/high_level_architecture)
-
-## Authentication and Authorization
+## Authentication and authorization
 
 - [Authentication methods](./reference/authentication_authorization/authentication_methods)
