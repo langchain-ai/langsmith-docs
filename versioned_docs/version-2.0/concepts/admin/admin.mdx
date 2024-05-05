@@ -24,7 +24,7 @@ And workspace members are managed in workspace settings:
 
 ![Sample Workspace Members](../static/sample_workspace_members.png)
 
-## API keys
+## API Keys
 
 :::danger Dropping support July 1st, 2024
 We will be dropping support for API keys on July 1st 2024 in favor of personal access tokens (PATs) and service keys. We recommend using PATs and service keys for all new integrations. API keys prefixed with `ls__` will NO LONGER work after July 1st, 2024.
@@ -32,29 +32,41 @@ We will be dropping support for API keys on July 1st 2024 in favor of personal a
 
 API keys are used to authenticate requests to the LangSmith API. They are created by users and scoped to a workspace. This means that all requests made with an API key will be associated with the workspace that the key was created in. The API key will have the ability to create, read, update, delete all resources within that workspace.
 
-API keys are prefixed with `ls__`
+API keys are prefixed with `ls__`. These keys will also show up in the UI under the service keys tab.
 
-### Personal access tokens (PATs)
+### Personal Access Tokens (PATs)
 
-Personal access tokens (PATs) are used to authenticate requests to the LangSmith API. They are created by users and scoped to a user. The PAT will have the same permissions as the user that created it.
+Personal Access Tokens (PATs) are used to authenticate requests to the LangSmith API. They are created by users and scoped to a user. The PAT will have the same permissions as the user that created it.
 
 PATs are prefixed with `lsv2_pt_`
 
-### Service keys
+### Service Keys
 
 Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account.
 
 Service keys are prefixed with `lsv2_sk_`
 
 :::note
-For more information on PATs and service keys, see the [setup guide](../../how_to_guides/setup/create_account_api_key.mdx)
+To see how to create a service key or Personal Access Token, see the [setup guide](../../how_to_guides/setup/create_account_api_key.mdx)
 :::
 
 ## Roles
 
-Roles are used to define the permissions that a user has within a workspace. There are three built-in roles:
+:::note
+RBAC (Role-Based Access Control) is a feature that is only available to Enterprise customers. If you are interested in this feature, please contact our sales team at sales@langchain.dev
+Other plans default to using the Admin role for all users.
+:::
 
-- `admin` - has full access to all resources within the workspace
-- `viewer` - has read-only access to all resources within the workspace
-- `user` - has full permissions except for workspace management (adding/removing users, changing roles, configuring service keys)
-- `annotator` - has write permissions for feedback and notes in the workspace, but read-only access to other resources
+Roles are used to define the set of permissions that a user has within a workspace. There are three built-in roles that cannot be edited:
+
+- `Admin` - has full access to all resources within the workspace
+- `Viewer` - has read-only access to all resources within the workspace
+- `Editor` - has full permissions except for workspace management (adding/removing users, changing roles, configuring service keys)
+
+Admins can also create/edit custom roles with specific permissions for different resources.
+
+Roles can be managed in organization settings under the `Roles` tab:
+
+![Sample Roles](../static/roles.png)
+
+For more details on assigning and creating roles, see the [access control setup guide](../../how_to_guides/setup/set_up_access_control.mdx).
