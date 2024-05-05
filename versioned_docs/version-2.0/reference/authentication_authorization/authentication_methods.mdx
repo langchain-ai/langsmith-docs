@@ -1,0 +1,39 @@
+# Authentication Methods
+
+LangSmith supports multiple authentication methods for easy sign-up and login.
+
+## Cloud
+
+### Email/Password
+
+Users can use an email address and password to sign up and login to LangSmith.
+
+### Social Providers
+
+Users can alternatively use their credentials from GitHub, Google, or Discord.
+
+## Self-Hosted
+
+Self-hosted customers have more control over how their users can login to LangSmith.
+For more in-depth coverage of configuration options, see [the self-hosting docs](../../category/self-hosting)
+and [Helm chart](https://github.com/langchain-ai/helm/tree/main/charts/langsmith).
+
+### OIDC
+
+Production installations should configure OIDC in order to use an external identity provider.
+This enables users to login through an identity platform like Auth0/Okta or a social provider like Google.
+
+### Email/Password a.k.a. Basic Auth (coming soon)
+
+This auth method requires very little configuration as it does not require an external identity provider.
+It is most appropriate to use for self-hosted trials.
+
+### None
+
+:::warning
+This authentication mode will be removed after the launch of Basic Auth.
+:::
+
+If zero authentication methods are enabled, a self-hosted installation does not require any login/sign-up.
+This configuration should only be used for verifying installation at the infrastructure level, as the feature set
+supported in this mode is restricted with only a single organization and workspace.

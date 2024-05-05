@@ -26,20 +26,24 @@ export function LangChainJSBlock(content) {
   };
 }
 
-export function TypeScriptBlock(content, caption = "") {
+export function TypeScriptBlock(
+  content,
+  caption = "",
+  label = "TypeScript SDK"
+) {
   return {
     value: "typescript",
-    label: "TypeScript SDK",
+    label,
     content,
     caption,
     language: "typescript",
   };
 }
 
-export function PythonBlock(content, caption = "") {
+export function PythonBlock(content, caption = "", label = "Python SDK") {
   return {
     value: "python",
-    label: "Python SDK",
+    label,
     content,
     caption,
     language: "python",
@@ -61,6 +65,7 @@ export function ShellBlock(content, value = "shell", label = "Shell") {
     value,
     label,
     content,
+    language: "shell",
   };
 }
 
@@ -93,13 +98,14 @@ function formatCode(code, language) {
 
 export function CodeTabs({ tabs, groupId }) {
   return (
-    <Tabs groupId={groupId}>
+    <Tabs groupId={groupId} className="code-tabs">
       {tabs.map((tab, index) => {
         const key = `${groupId}-${index}`;
         return (
           <TabItem key={key} value={tab.value} label={tab.label}>
             {tab.caption && (
               <div
+                className="code-caption"
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(marked.parse(tab.caption)),
@@ -120,6 +126,26 @@ export function CodeTabs({ tabs, groupId }) {
 }
 
 export const typescript = (strings, ...values) => {
+  if (
+    values.length === 0 &&
+    typeof strings === "object" &&
+    strings != null &&
+    !Array.isArray(strings)
+  ) {
+    const { caption, label } = strings;
+    return (innerStrings, ...innerValues) => {
+      let result = "";
+      innerStrings.forEach((string, i) => {
+        result += string + String(innerValues[i] ?? "");
+      });
+      return TypeScriptBlock(
+        dedent(result),
+        caption ?? undefined,
+        label ?? undefined
+      );
+    };
+  }
+
   let result = "";
   strings.forEach((string, i) => {
     result += string + String(values[i] ?? "");
@@ -128,9 +154,53 @@ export const typescript = (strings, ...values) => {
 };
 
 export const python = (strings, ...values) => {
+  if (
+    values.length === 0 &&
+    typeof strings === "object" &&
+    strings != null &&
+    !Array.isArray(strings)
+  ) {
+    const { caption, label } = strings;
+    return (innerStrings, ...innerValues) => {
+      let result = "";
+      innerStrings.forEach((string, i) => {
+        result += string + String(innerValues[i] ?? "");
+      });
+      return PythonBlock(
+        dedent(result),
+        caption ?? undefined,
+        label ?? undefined
+      );
+    };
+  }
+
   let result = "";
   strings.forEach((string, i) => {
     result += string + String(values[i] ?? "");
   });
   return PythonBlock(dedent(result));
+};
+
+export const shell = (strings, ...values) => {
+  if (
+    values.length === 0 &&
+    typeof strings === "object" &&
+    strings != null &&
+    !Array.isArray(strings)
+  ) {
+    const { value, label } = strings;
+    return (innerStrings, ...innerValues) => {
+      let result = "";
+      innerStrings.forEach((string, i) => {
+        result += string + String(innerValues[i] ?? "");
+      });
+      return ShellBlock(dedent(result), value ?? undefined, label ?? undefined);
+    };
+  }
+
+  let result = "";
+  strings.forEach((string, i) => {
+    result += string + String(values[i] ?? "");
+  });
+  return ShellBlock(dedent(result));
 };

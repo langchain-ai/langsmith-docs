@@ -4,15 +4,25 @@ This conceptual guide covers topics related to managing users, organizations, an
 
 ## Organizations
 
-An organization is a logical grouping of users within LangSmith. Typically, there is one organization per company. An organization can have multiple workspaces.
+An organization is a logical grouping of users within LangSmith with its own billing configuration. Typically, there is one organization per company. An organization can have multiple workspaces. For more details, see the [setup guide](../../how_to_guides/setup/create_organization.mdx).
 
-## Workspaces (coming soon)
+## Workspaces (coming soon) {#workspaces}
 
-A workspace is a logical grouping of users and resources within an organization. Users may have permissions in a workspace that grant them access to the resources in that workspace, including tracing projects, datasets, annotation queues, and prompts.
+A workspace is a logical grouping of users and resources within an organization. Users may have permissions in a workspace that grant them access to the resources in that workspace, including tracing projects, datasets, annotation queues, and prompts. For more details, see the [setup guide](../../how_to_guides/setup/set_up_workspace.mdx).
+
+![Sample Workspace](../static/sample_workspace.png)
 
 ## Users
 
 A user is a person who has access to LangSmith. Users can be members of one or more organizations and workspaces within those organizations.
+
+Organization members are managed in organization settings:
+
+![Sample Organization Members](../static/sample_organization_members.png)
+
+And workspace members are managed in workspace settings:
+
+![Sample Workspace Members](../static/sample_workspace_members.png)
 
 ## API keys
 
@@ -24,17 +34,21 @@ API keys are used to authenticate requests to the LangSmith API. They are create
 
 API keys are prefixed with `ls__`
 
-## Personal access tokens (PATs)
+### Personal access tokens (PATs)
 
 Personal access tokens (PATs) are used to authenticate requests to the LangSmith API. They are created by users and scoped to a user. The PAT will have the same permissions as the user that created it.
 
 PATs are prefixed with `lsv2_pt_`
 
-## Service keys
+### Service keys
 
 Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account.
 
 Service keys are prefixed with `lsv2_sk_`
+
+:::note
+For more information on PATs and service keys, see the [setup guide](../../how_to_guides/setup/create_account_api_key.mdx)
+:::
 
 ## Roles
 

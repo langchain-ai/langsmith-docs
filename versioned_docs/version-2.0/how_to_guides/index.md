@@ -1,5 +1,6 @@
 ---
-sidebar_position: 1
+sidebar_label: How-to guides
+sidebar_position: 0
 ---
 
 # How-to guides
@@ -10,8 +11,8 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
 - [Create an organization](./how_to_guides/setup/create_organization)
-- [ ] Set up a workspace
-- [ ] Setup billing
+- [Setup billing](./how_to_guides/setup/setup_billing)
+- [Set up a workspace](./how_to_guides/setup/set_up_workspace)
 - [ ] Assign roles (enterprise only)
 
 ## Tracing
@@ -40,12 +41,13 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [Export traces](./how_to_guides/tracing/export_traces)
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
+- [Share or unshare a trace publicly](./how_to_guides/tracing/share_trace)
 
-* [ ] Decorating a generator function
-* [ ] Log a trace using LangChain
-* [ ] Log a trace using instructor
+* [ ] Trace a generator function
+* [ ] Trace with LangChain
+* [ ] Trace using instructor
 
-### Datasets
+## Datasets
 
 - [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
   - [Create a new dataset and add examples manually](./how_to_guides/datasets/manage_datasets_in_application#create-a-new-dataset-and-add-examples-manually)
@@ -62,8 +64,9 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [Version datasets](./how_to_guides/datasets/version_datasets)
   - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
   - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
+- [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
 
-### Evaluation
+## Evaluation
 
 - [Evaluate an LLM application](./how_to_guides/evaluation/evaluate_llm_application)
   - [Run an evaluation](./how_to_guides/evaluation/evaluate_llm_application#run-an-evaluation)
@@ -74,21 +77,34 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
-- [Use LangChain off-the-shelf evaluators]
+- [Use LangChain off-the-shelf evaluators (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
+  - [Use question and answer (correctness) evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-question-and-answer-correctness-evaluators)
+  - [Use criteria evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-criteria-evaluators)
+  - [Use labeled criteria evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-labeled-criteria-evaluators)
+  - [Use string or embedding distance metrics](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-string-or-embedding-distance-metrics)
+  - [Use a custom LLM in off-the-shelf evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-a-custom-llm-in-off-the-shelf-evaluators)
+  - [Handle multiple input or output fields](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#handle-multiple-input-or-output-fields)
 - [ ] Evaluate an existing experiment - will
-- [ ] Compare experiment results
-- [ ] Track regressions and improvements
+- [Compare experiment results](./how_to_guides/evaluation/compare_experiment_results)
+  - [Open the comparison view](./how_to_guides/evaluation/compare_experiment_results#open-the-comparison-view)
+  - [View regressions and improvements](./how_to_guides/evaluation/compare_experiment_results#view-regressions-and-improvements)
+  - [Filter on regressions or improvements](./how_to_guides/evaluation/compare_experiment_results#filter-on-regressions-or-improvements)
+  - [Update baseline experiment](./how_to_guides/evaluation/compare_experiment_results#update-baseline-experiment)
+  - [Select feedback key](./how_to_guides/evaluation/compare_experiment_results#select-feedback-key)
+  - [Open a trace](./how_to_guides/evaluation/compare_experiment_results#open-a-trace)
+  - [Expand detailed view](./how_to_guides/evaluation/compare_experiment_results#expand-detailed-view)
+  - [Update display settings](./how_to_guides/evaluation/compare_experiment_results#update-display-settings)
 - [ ] Export experiment results - will
 - [ ] Unit test LLM applications with `pytest` (Python only) - will
 
-### Human feedback
+## Human feedback
 
 - [ ] Attach user feedback from your application to traces
 - [ ] Annotate traces inline
 - [ ] Add trace to annotation queue
 - [ ] Annotate traces in the annotation queue
 
-### Monitoring and automations
+## Monitoring and automations
 
 - [ ] Filter for runs
 - [ ] Use a trace filter
@@ -102,7 +118,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Group traces as threads
 - [ ] View threads
 
-### Prompt hub
+## Prompt hub
 
 - [ ] Create a prompt
 - [ ] Update a prompt
@@ -110,12 +126,12 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Open a prompt from a trace
 - [ ] Open a prompt from an experiment
 
-### Playground
+## Playground
 
 - [ ] Run a prompt in the playground
 - [ ] Run a prompt on a custom model
 
-### Proxy
+## Proxy
 
 - [ ] Run proxy
 - [ ] Make a request to the proxy

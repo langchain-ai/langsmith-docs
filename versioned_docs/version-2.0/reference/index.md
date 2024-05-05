@@ -8,12 +8,11 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 
 ## API reference
 
-- [LangSmith API Reference](https://api.smith.langchain.com/redoc)
+- [LangSmith API Reference](https://docs.smith.langchain.com/api-docs)
 
 ## SDK reference
 
-- [ ] Python SDK
-- [ ] TypeScript SDK
+- [LangChain off-the-shelf evaluators (Python only)](./reference/sdk_reference/langchain_evaluators)
 
 ## Data formats
 
@@ -25,3 +24,7 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 ## System architecture
 
 - [High-level architecture](./reference/system_architecture/high_level_architecture)
+
+## Authentication and Authorization
+
+- [Authentication methods](./reference/authentication_authorization/authentication_methods)
