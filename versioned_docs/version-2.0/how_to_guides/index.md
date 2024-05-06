@@ -118,10 +118,21 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [ ] Group traces as threads
 - [ ] View threads
 
-## Prompt hub
+## Prompts
 
-- [ ] Create a prompt
-- [ ] Update a prompt
+- [Create a prompt](./how_to_guides/prompts/create_a_prompt)
+  - [Choose a handle](./how_to_guides/prompts/create_a_prompt#choose-a-handle)
+  - [Name your new prompt](./how_to_guides/prompts/create_a_prompt#name-your-new-prompt)
+  - [Pick a prompt type](./how_to_guides/prompts/create_a_prompt#pick-a-prompt-type)
+  - [Compose your prompt](./how_to_guides/prompts/create_a_prompt#compose-your-prompt)
+  - [Save your prompt](./how_to_guides/prompts/create_a_prompt#save-your-prompt)
+  - [View your prompts](./how_to_guides/prompts/create_a_prompt#view-your-prompts)
+- [Update a prompt](./how_to_guides/prompts/update_a_prompt)
+  - [Update metadata](./how_to_guides/prompts/update_a_prompt#update-metadata)
+  - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
+  - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
+  - [Versioning](./how_to_guides/prompts/update_a_prompt#versioning)
+- [ ] Create an example for your prompt
 - [ ] Pull prompts in code
 - [ ] Open a prompt from a trace
 - [ ] Open a prompt from an experiment
