@@ -127,7 +127,8 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Compose your prompt](./how_to_guides/prompts/create_a_prompt#compose-your-prompt)
   - [Save your prompt](./how_to_guides/prompts/create_a_prompt#save-your-prompt)
   - [Congrats!](./how_to_guides/prompts/create_a_prompt#congrats)
-- [ ] Update a prompt
+- [Update a prompt](./how_to_guides/prompts/update_a_prompt)
+- [ ] Create an example for your prompt
 - [ ] Pull prompts in code
 - [ ] Open a prompt from a trace
 - [ ] Open a prompt from an experiment
