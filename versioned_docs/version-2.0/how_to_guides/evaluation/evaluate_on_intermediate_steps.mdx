@@ -232,6 +232,9 @@ The key here is that the evaluator function should traverse the `root_run` / `ro
     python`
       from langsmith.evaluation import LangChainStringEvaluator, evaluate
       from langsmith.schemas import Example, Run
+      from langchain_openai import ChatOpenAI
+      from langchain_core.prompts import ChatPromptTemplate 
+      from langchain_core.pydantic_v1 import BaseModel, Field
       
       def document_relevance(root_run: Run, example: Example) -> dict:
           """
@@ -244,31 +247,40 @@ The key here is that the evaluator function should traverse the `root_run` / `ro
           score = retrieve_run.inputs["query"] in page_contents
           return {"key": "simple_document_relevance", "score": score}
       
-      
-      hallucination_evaluator = LangChainStringEvaluator(
-          "labeled_score_string",
-          config={
-              "criteria": {
-                  "accuracy": """Is the Assistant's Answer grounded in the Ground Truth documentation? A score of [[0]] means that the
-                  Assistant answer contains is not at all based upon / grounded in the Ground Truth documentation. A score of [[5]] means
-                  that the Assistant answer contains some information (e.g., a hallucination) that is not captured in the Ground Truth
-                  documentation. A score of [[10]] means that the Assistant answer is fully based upon the in the Ground Truth documentation."""
-              },
-              # If you want the score to be saved on a scale from 0 to 1
-              "normalize_by": 10,
-          }
-      )
-      
       def hallucination(root_run: Run, example: Example) -> dict:
           """
-          An evaluator that uses LangChainString evaluator to use an LLM to judge whether or not the correct
-          answer is generated w.r.t the retrieved documents.
+          A simple evaluator that checks to see the answer is grounded in the documents
           """
-          rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
-          retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
-          page_contents = "\\n\\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
-          result = hallucination_evaluator.evaluator.evaluate_strings(prediction=rag_pipeline_run.outputs["output"], reference=page_contents, input=rag_pipeline_run.inputs["question"])
-          return {"key": "answer_hallucination", "score": result["score"], "comment": result["reasoning"]}
+
+          # Get documents and answer
+          rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "get_answer")
+          retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve_docs")
+          doc_txt = "\n\n".join(doc.page_content for doc in retrieve_run.outputs["output"])
+          generation = rag_pipeline_run.outputs["output"]
+          
+          # Data model
+          class GradeHallucinations(BaseModel):
+              """Binary score for hallucination present in generation answer."""
+          
+              binary_score: int = Field(description="Answer is grounded in the facts, 1 or 0")
+          
+          # LLM with function call 
+          llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+          structured_llm_grader = llm.with_structured_output(GradeHallucinations)
+          
+          # Prompt 
+          system = """You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts. \n 
+              Give a binary score 1 or 0, where 1 means that the answer is grounded in / supported by the set of facts."""
+          hallucination_prompt = ChatPromptTemplate.from_messages(
+              [
+                  ("system", system),
+                  ("human", "Set of facts: \n\n {documents} \n\n LLM generation: {generation}"),
+              ]
+          )
+          
+          hallucination_grader = hallucination_prompt | structured_llm_grader
+          score = hallucination_grader.invoke({"documents": doc_txt, "generation": generation})
+          return {"key": "answer_hallucination", "score": int(score.binary_score)}
       
     `,
     typescript`
