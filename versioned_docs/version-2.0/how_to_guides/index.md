@@ -14,6 +14,8 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 - [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
 - [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
+  - [Creating a role](./how_to_guides/setup/set_up_access_control#creating-a-role)
+  - [Assigning a role to a user](./how_to_guides/setup/set_up_access_control#assigning-a-role-to-a-user)
 
 ## Tracing
 
