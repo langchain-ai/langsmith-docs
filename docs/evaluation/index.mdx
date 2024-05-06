@@ -129,14 +129,14 @@ The evaluator itself can be any arbitrary function. There are a few different ty
   which would be considered a **ground truth** evaluator because it compares the output to a reference. See [How to create custom evaluators](evaluation/faq/custom-evaluators).
 - **LLM-as-judge**: An LLM-as-judge evaluator uses an LLM to score system output. For example, you might want to check whether your system is outputting
   offensive content. This is **reference-free**, as there is no comparison to an example output. You might also want to check whether the system output has the same
-  meaning as the example output, which would be a **ground truth** evaluator. To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators](https://docs.smith.langchain.com/evaluation/faq/evaluator-implementations)!
+  meaning as the example output, which would be a **ground truth** evaluator. To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators](evaluation/faq/evaluator-implementations)!
 - **Human**: You can also evaluate your runs manually. This can be done in LangSmith [via the SDK](tracing/faq/logging_feedback#capturing-feedback-programmatically),
   or [in the LangSmith UI](http://localhost:3000/tracing/faq/logging_feedback#annotating-traces-with-feedback).
 
 ## Next steps
 
-To get started with code, check out the [Quick Start Guide](/evaluation/quickstart).
+To get started with code, check out the [Quick Start Guide](evaluation/quickstart).
 
-If you want to learn how to accomplish a particular task, check out our comprehensive [How-To Guides](/evaluation/faq)
+If you want to learn how to accomplish a particular task, check out our comprehensive [How-To Guides](evaluation/faq)
 
-For a higher-level set of recommendations on how to think about testing and evaluating your LLM app, check out the [evaluation recommendations](/evaluation/recommendations) page.
+For a higher-level set of recommendations on how to think about testing and evaluating your LLM app, check out the [evaluation recommendations](evaluation/recommendations) page.

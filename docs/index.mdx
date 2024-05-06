@@ -61,11 +61,9 @@ To create an API key head to the [Settings page](https://smith.langchain.com/set
 
 ## Log your first trace
 
-<p>
-  We provide multiple ways to log traces to LangSmith. Below, we'll highlight
-  how to use <code>traceable</code>. See more on the{" "}
-  <a href="./tracing/integrations">Integrations</a> page.
-</p>
+We provide multiple ways to log traces to LangSmith. Below, we'll highlight
+how to use `traceable`. See more on the [Integrations](./tracing/integrations/index.mdx) page.
+
 <CodeTabs
   tabs={[
     {
@@ -85,11 +83,11 @@ To create an API key head to the [Settings page](https://smith.langchain.com/set
 />
 
 - View a [sample output trace](https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r).
-- Learn more about tracing on the [tracing page](/tracing).
+- Learn more about tracing on the [tracing page](./tracing/index.mdx).
 
 ## Create your first evaluation
 
-Evalution requires a system to test, [data](evaluation/faq) to serve as test cases, and optionally evaluators to grade the results. Here we use a built-in accuracy evaluator.
+Evalution requires a system to test, [data](./evaluation/faq/index.mdx) to serve as test cases, and optionally evaluators to grade the results. Here we use a built-in accuracy evaluator.
 
 <CodeTabs
   tabs={[
@@ -176,19 +174,19 @@ await runOnDataset(
   groupId="client-language"
 />
 
-- See more on the [evaluation quick start page](/evaluation/quickstart).
+- See more on the [evaluation quick start page](./evaluation/quickstart.mdx).
 
 ## Next Steps
 
 Check out the following sections to learn more about LangSmith:
 
-- **[User Guide](/user_guide)**: Learn about the workflows LangSmith supports at each stage of the LLM application lifecycle.
+- **[User Guide](./user_guide.mdx)**: Learn about the workflows LangSmith supports at each stage of the LLM application lifecycle.
 - **[Pricing](/pricing)**: Learn about the pricing model for LangSmith.
 - **[Self-Hosting](/category/self-hosting)**: Learn about self-hosting options for LangSmith.
-- **[Proxy](/category/proxy)**: Learn about the proxy capabilities of LangSmith.
-- **[Tracing](/tracing)**: Learn about the tracing capabilities of LangSmith.
-- **[Evaluation](/evaluation)**: Learn about the evaluation capabilities of LangSmith.
-- **[Prompt Hub](/category/prompt-hub)** Learn about the Prompt Hub, a prompt management tool built into LangSmith.
+- **[Proxy](/1.0/category/proxy)**: Learn about the proxy capabilities of LangSmith.
+- **[Tracing](./tracing/index.mdx)**: Learn about the tracing capabilities of LangSmith.
+- **[Evaluation](./evaluation/index.mdx)**: Learn about the evaluation capabilities of LangSmith.
+- **[Prompt Hub](/1.0/category/prompt-hub)** Learn about the Prompt Hub, a prompt management tool built into LangSmith.
 
 ## Additional Resources
 
@@ -202,7 +200,7 @@ Check out the following sections to learn more about LangSmith:
 
 ### How do I migrate projects between organizations?
 
-Currently we do not support project migration betwen organizations. While you can manually imitate this by reading and writing runs and datasets using the SDK (see the querying runs and traces guide [here](/tracing/faq/querying_traces)), it will be fastest to create a new project within your organization and go from there.
+Currently we do not support project migration betwen organizations. While you can manually imitate this by reading and writing runs and datasets using the SDK (see the querying runs and traces guide [here](./tracing/faq/querying_traces.mdx)), it will be fastest to create a new project within your organization and go from there.
 
 ### Why aren't my runs aren't showing up in my project?
 

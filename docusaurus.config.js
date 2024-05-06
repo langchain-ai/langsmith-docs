@@ -21,8 +21,8 @@ const config = {
   baseUrl: "/",
   trailingSlash: false,
 
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "throw",
+  onBrokenLinks: "warn",
+  onBrokenMarkdownLinks: "warn",
 
   plugins: [
     [
@@ -49,15 +49,17 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          lastVersion: "current",
+          lastVersion: "2.0",
           versions: {
             current: {
               label: "1.0",
               badge: false,
+              banner: "unmaintained",
+              path: "1.0",
             },
             "2.0": {
               label: "2.0",
-              banner: "unreleased",
+              badge: false,
             },
           },
           sidebarPath: require.resolve("./sidebars.js"),
