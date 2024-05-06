@@ -11,9 +11,11 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
 - [Create an organization](./how_to_guides/setup/create_organization)
-- [Setup billing](./how_to_guides/setup/setup_billing)
+- [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
-- [ ] Assign roles (enterprise only)
+- [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
+  - [Creating a role](./how_to_guides/setup/set_up_access_control#creating-a-role)
+  - [Assigning a role to a user](./how_to_guides/setup/set_up_access_control#assigning-a-role-to-a-user)
 
 ## Tracing
 
