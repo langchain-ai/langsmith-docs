@@ -49,7 +49,7 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          lastVersion: "current",
+          lastVersion: "2.0",
           versions: {
             current: {
               label: "1.0",
@@ -57,7 +57,6 @@ const config = {
             },
             "2.0": {
               label: "2.0",
-              banner: "unreleased",
             },
           },
           sidebarPath: require.resolve("./sidebars.js"),
