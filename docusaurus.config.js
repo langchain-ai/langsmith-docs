@@ -54,9 +54,12 @@ const config = {
             current: {
               label: "1.0",
               badge: false,
+              banner: "unmaintained",
+              path: "1.0",
             },
             "2.0": {
               label: "2.0",
+              badge: false,
             },
           },
           sidebarPath: require.resolve("./sidebars.js"),
