@@ -9,15 +9,19 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 
 ## Setup
 
+See the following guides to set up your LangSmith account.
+
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
 - [Create an organization](./how_to_guides/setup/create_organization)
 - [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
 - [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
-  - [Creating a role](./how_to_guides/setup/set_up_access_control#creating-a-role)
-  - [Assigning a role to a user](./how_to_guides/setup/set_up_access_control#assigning-a-role-to-a-user)
+  - [Create a role](./how_to_guides/setup/set_up_access_control#create-a-role)
+  - [Assign a role to a user](./how_to_guides/setup/set_up_access_control#assign-a-role-to-a-user)
 
 ## Tracing
+
+Get started with LangSmith's tracing features to start adding observability to your LLM applications.
 
 - [Annotate code for tracing](./how_to_guides/tracing/annotate_code)
   - [Use `@traceable`/`traceable`](./how_to_guides/tracing/annotate_code#use-traceable--traceable)
@@ -44,12 +48,18 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
 - [Share or unshare a trace publicly](./how_to_guides/tracing/share_trace)
-
-* [ ] Trace a generator function
-* [ ] Trace with LangChain
-* [ ] Trace using instructor
+- [Trace generator functions](./how_to_guides/tracing/trace_generator_functions)
+- [Trace with `LangChain`](./how_to_guides/tracing/trace_with_langchain)
+  - [Installation](./how_to_guides/tracing/trace_with_langchain#installation)
+  - [Quick start](./how_to_guides/tracing/trace_with_langchain#quick-start)
+  - [Log to specific project](./how_to_guides/tracing/trace_with_langchain#log-to-specific-project)
+  - [Add metadata and tags to traces](./how_to_guides/tracing/trace_with_langchain#add-metadata-and-tags-to-traces)
+  - [Customize run name](./how_to_guides/tracing/trace_with_langchain#customize-run-name)
+- [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
 
 ## Datasets
+
+Manage datasets in LangSmith to evaluate and improve your LLM applications.
 
 - [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
   - [Create a new dataset and add examples manually](./how_to_guides/datasets/manage_datasets_in_application#create-a-new-dataset-and-add-examples-manually)
@@ -70,6 +80,8 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 
 ## Evaluation
 
+Evaluate your LLM applications to measure their performance over time.
+
 - [Evaluate an LLM application](./how_to_guides/evaluation/evaluate_llm_application)
   - [Run an evaluation](./how_to_guides/evaluation/evaluate_llm_application#run-an-evaluation)
   - [Use custom evaluators](./how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators)
@@ -86,7 +98,6 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Use string or embedding distance metrics](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-string-or-embedding-distance-metrics)
   - [Use a custom LLM in off-the-shelf evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-a-custom-llm-in-off-the-shelf-evaluators)
   - [Handle multiple input or output fields](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#handle-multiple-input-or-output-fields)
-- [ ] Evaluate an existing experiment - will
 - [Compare experiment results](./how_to_guides/evaluation/compare_experiment_results)
   - [Open the comparison view](./how_to_guides/evaluation/compare_experiment_results#open-the-comparison-view)
   - [View regressions and improvements](./how_to_guides/evaluation/compare_experiment_results#view-regressions-and-improvements)
@@ -96,31 +107,53 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Open a trace](./how_to_guides/evaluation/compare_experiment_results#open-a-trace)
   - [Expand detailed view](./how_to_guides/evaluation/compare_experiment_results#expand-detailed-view)
   - [Update display settings](./how_to_guides/evaluation/compare_experiment_results#update-display-settings)
-- [ ] Export experiment results - will
-- [ ] Unit test LLM applications with `pytest` (Python only) - will
+- [Evaluate an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
+- [Unit test LLM applications (Python only)](./how_to_guides/evaluation/unit_testing)
 
 ## Human feedback
 
-- [ ] Attach user feedback from your application to traces
-- [ ] Annotate traces inline
-- [ ] Add trace to annotation queue
-- [ ] Annotate traces in the annotation queue
+Collect human feedback to improve your LLM applications.
+
+- [Capture user feedback from your application to traces](./how_to_guides/human_feedback/attach_user_feedback)
+- [Set up a new feedback criteria](./how_to_guides/human_feedback/set_up_feedback_criteria)
+- [Annotate traces inline](./how_to_guides/human_feedback/annotate_traces_inline)
+- [Use annotation queues](./how_to_guides/human_feedback/annotation_queues)
+  - [Create an annotation queue](./how_to_guides/human_feedback/annotation_queues#create-an-annotation-queue)
+  - [Assign runs to an annotation queue](./how_to_guides/human_feedback/annotation_queues#assign-runs-to-an-annotation-queue)
+  - [Review runs in an annotation queue](./how_to_guides/human_feedback/annotation_queues#review-runs-in-an-annotation-queue)
 
 ## Monitoring and automations
 
-- [ ] Filter for runs
-- [ ] Use a trace filter
-- [ ] View the monitor charts
-- [ ] Slice chart by metadata and tag
-- [ ] Set up a rule
-  - [ ] Online evaluation
-  - [ ] Annotation Queue addition
-  - [ ] Dataset addition
-  - [ ] Webhook action
-- [ ] Group traces as threads
-- [ ] View threads
+Leverage LangSmith's powerful monitoring and automations features to make sense of your production data.
+
+- [Filter traces in the application](./how_to_guides/monitoring/filter_traces_in_application)
+  - [Create a filter](./how_to_guides/monitoring/filter_traces_in_application#create-a-filter)
+  - [Filter for intermediate runs (spans)](./how_to_guides/monitoring/filter_traces_in_application#filter-for-intermediate-runs-spans)
+  - [Advanced: filter for intermediate runs (spans) on properties of the root](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-intermediate-runs-spans-on-properties-of-the-root)
+  - [Advanced: filter for runs (spans) whose child runs have some attribute](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-runs-spans-whose-child-runs-have-some-attribute)
+  - [Copy the filter](./how_to_guides/monitoring/filter_traces_in_application#copy-the-filter)
+  - [Manually specify a raw query in LangSmith query language](./how_to_guides/monitoring/filter_traces_in_application#manually-specify-a-raw-query-in-langsmith-query-language)
+  - [Use an AI Query to auto-generate a query](./how_to_guides/monitoring/filter_traces_in_application#use-an-ai-query-to-auto-generate-a-query)
+- [Use monitoring charts](./how_to_guides/monitoring/use_monitoring_charts)
+  - [Change the time period](./how_to_guides/monitoring/use_monitoring_charts#change-the-time-period)
+  - [Slice data by metadata or tag](./how_to_guides/monitoring/use_monitoring_charts#slice-data-by-metadata-or-tag)
+  - [Drill down into specific subsets](./how_to_guides/monitoring/use_monitoring_charts#drill-down-into-specific-subsets)
+- [Set up automation rules](./how_to_guides/monitoring/rules)
+  - [Create a rule](./how_to_guides/monitoring/rules#create-a-rule)
+  - [View logs for your automations](./how_to_guides/monitoring/rules#view-logs-for-your-automations)
+- [Set up online evaluations](./how_to_guides/monitoring/online_evaluations)
+  - [Configure online evaluations](./how_to_guides/monitoring/online_evaluations#configure-online-evaluations)
+  - [Set API keys](./how_to_guides/monitoring/online_evaluations#set-api-keys)
+- [Set up webhook notifications for rules (beta)](./how_to_guides/monitoring/webhook_notifications)
+  - [Webhook payload](./how_to_guides/monitoring/webhook_notifications#webhook-payload)
+  - [Example with Modal](./how_to_guides/monitoring/webhook_notifications#example-with-modal)
+- [Set up threads](./how_to_guides/monitoring/threads)
+  - [Group traces into threads](./how_to_guides/monitoring/threads#group-traces-into-threads)
+  - [View threads](./how_to_guides/monitoring/threads#view-threads)
 
 ## Prompts
+
+Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
 - [Create a prompt](./how_to_guides/prompts/create_a_prompt)
   - [Choose a handle](./how_to_guides/prompts/create_a_prompt#choose-a-handle)
@@ -133,21 +166,4 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
   - [Update metadata](./how_to_guides/prompts/update_a_prompt#update-metadata)
   - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
   - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
-  - [Versioning](./how_to_guides/prompts/update_a_prompt#versioning)
-- [ ] Create an example for your prompt
-- [ ] Pull prompts in code
-- [ ] Open a prompt from a trace
-- [ ] Open a prompt from an experiment
-
-## Playground
-
-- [ ] Run a prompt in the playground
-- [ ] Run a prompt on a custom model
-
-## Proxy
-
-- [ ] Run proxy
-- [ ] Make a request to the proxy
-- [ ] Turn off caching
-- [ ] Stream results
-- [ ] Turn on tracing
+  - [Version a prompt](./how_to_guides/prompts/update_a_prompt#versioning)

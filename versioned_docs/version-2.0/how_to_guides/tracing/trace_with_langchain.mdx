@@ -1,0 +1,146 @@
+---
+sidebar_position: 14
+---
+
+import {
+  LangChainInstallationCodeTabs,
+  LangChainQuickStartCodeTabs,
+} from "@site/src/components/QuickStart";
+
+import {
+  CodeTabs,
+  TypeScriptBlock,
+  PythonBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# Trace with `LangChain` (Python and JS/TS)
+
+LangSmith integrates seamlessly with LangChain ([Python](https://python.langchain.com/) and [JS](https://js.langchain.com/docs/get_started/introduction)), the popular open-source framework for building LLM applications.
+
+## Installation
+
+Install the core library and the OpenAI integration for Python and JS (we use the OpenAI integration for the code snippets below).
+
+For a full list of packages available, see the [LangChain Python docs](https://python.langchain.com/docs/integrations/platforms/) and [LangChain JS docs](https://js.langchain.com/docs/integrations/platforms/).
+
+<LangChainInstallationCodeTabs />
+
+## Quick start
+
+### 1. Configure your environment
+
+```shell
+export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_API_KEY=<your-api-key>
+
+# The below examples use the OpenAI API, so you will need
+export OPENAI_API_KEY=<your-openai-api-key>
+```
+
+### 2. Log a trace
+
+No extra code is needed to log a trace to LangSmith. Just run your LangChain code as you normally would.
+
+<LangChainQuickStartCodeTabs />
+
+### 3. View your trace
+
+By default, the trace will be logged to the project with the name `default`. An example of a trace logged using the above code is made public and can be viewed [here](https://smith.langchain.com/public/e6a46eb2-d785-4804-a1e3-23f167a04300/r).
+
+![](../static/langchain_trace.png)
+
+## Log to a specific project
+
+### Statically
+
+As mentioned [here](../../concepts/tracing) LangSmith uses the concept of a Project to group traces. If left unspecified, the tracer project is set to default. You can set the `LANGCHAIN_PROJECT` environment variable to configure a custom project name for an entire application run. This should be done before executing your application.
+
+```shell
+export LANGCHAIN_PROJECT=my-project
+```
+
+### Dynamically
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`# You can set the project name for a specific tracer instance:
+from langchain.callbacks.tracers import LangChainTracer\n
+tracer = LangChainTracer(project_name="My Project")
+chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"callbacks": [tracer]})\n
+# LangChain python also supports a context manager for tracing a specific block of code.
+# You can set the project name using the project_name parameter.
+from langchain_core.tracers.context import tracing_v2_enabled
+with tracing_v2_enabled(project_name="My Project"):
+    chain.invoke({"query": "How many people live in canada as of 2023?"})`),
+    TypeScriptBlock(`// You can set the project name for a specific tracer instance:
+import { LangChainTracer } from "langchain/callbacks";\n
+const tracer = new LangChainTracer({ projectName: "My Project" });
+await chain.invoke(
+  {
+    query: "How many people live in canada as of 2023?"
+  },
+  { callbacks: [tracer] }
+);`),
+  ]}
+  groupId="client-language"
+/>
+
+## Add metadata and tags to traces
+
+LangSmith supports sending arbitrary metadata and tags along with traces.
+This is useful for associating additional information with a trace, such as the environment in which it was executed, or the user who initiated it.
+For information on how to query traces and runs by metadata and tags, see [this guide](./export_traces)
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser\n
+prompt = ChatPromptTemplate.from_messages([
+  ("system", "You are a helpful AI."),
+  ("user", "{input}")
+])
+chat_model = ChatOpenAI()
+output_parser = StrOutputParser()\n
+# Tags and metadata can be configured with RunnableConfig
+chain = (prompt | chat_model | output_parser).with_config({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}})\n
+# Tags and metadata can also be passed at runtime
+chain.invoke({"input": "What is the meaning of life?"}, {"tags": ["shared-tags"], "metadata": {"shared-key": "shared-value"}})`),
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";\n
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful AI."],
+  ["user", "{input}"]
+])
+const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const outputParser = new StringOutputParser();\n
+// Tags and metadata can be configured with RunnableConfig
+const chain = (prompt.pipe(model).pipe(outputParser)).withConfig({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}});\n
+// Tags and metadata can also be passed at runtime
+await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags"], metadata: {"shared-key": "shared-value"}})`),
+  ]}
+  groupId="client-language"
+/>
+
+## Customize run name
+
+When you create a run, you can specify a name for the run. This name is used to identify the run in LangSmith and can be used to filter and group runs. The name is also used as the title of the run in the LangSmith UI.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`# When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
+# (Note: this is not currently supported directly on LLM objects.)
+...
+configured_chain = chain.with_config({"run_name": "MyCustomChain"})
+configured_chain.invoke({"query": "What is the meaning of life?"})`),
+    TypeScriptBlock(`// When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
+// (Note: this is not currently supported directly on LLM objects.)
+...
+const configuredChain = chain.withConfig({ runName: "MyCustomChain" });
+await configuredChain.invoke({query: "What is the meaning of life?"});`),
+  ]}
+  groupId="client-language"
+/>
+
+## Interoperability with SDK
