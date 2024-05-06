@@ -53,6 +53,22 @@
     {
       "source": "/docs/:path*",
       "destination": "/:path*"
+    },
+    {
+      "source": "/evaluation/:path*",
+      "destination": "/1.0/evaluation/:path*"
+    },
+    {
+      "source": "/monitoring/:path*",
+      "destination": "/1.0/monitoring/:path*"
+    },
+    {
+      "source": "/proxy/:path*",
+      "destination": "/1.0/proxy/:path*"
+    },
+    {
+      "source": "/tracing/:path*",
+      "destination": "/1.0/tracing/:path*"
     }
   ],
   "builds": [
