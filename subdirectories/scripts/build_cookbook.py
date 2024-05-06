@@ -346,12 +346,12 @@ We suggest running the code by forking or cloning the repository.
                                 path_parts.pop()
                             relative_link = "/".join(relative_parts)
                             absolute_link = os.path.join(
-                                "/cookbook", *path_parts, relative_link
+                                "/old/cookbook", *path_parts, relative_link
                             )
                         else:
                             # Convert the relative link to an absolute link
                             absolute_link = os.path.join(
-                                "/cookbook",
+                                "/old/cookbook",
                                 os.path.relpath(dirpath, root_path),
                                 match_group,
                             )
