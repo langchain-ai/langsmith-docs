@@ -45,6 +45,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
 - [Share or unshare a trace publicly](./how_to_guides/tracing/share_trace)
+- [Trace generator functions](./how_to_guides/tracing/trace_generator_functions)
 - [Trace with `LangChain`](./how_to_guides/tracing/trace_with_langchain)
   - [Installation](./how_to_guides/tracing/trace_with_langchain#installation)
   - [Quick start](./how_to_guides/tracing/trace_with_langchain#quick-start)
@@ -103,6 +104,8 @@ Evaluate your LLM applications to measure their performance over time.
   - [Open a trace](./how_to_guides/evaluation/compare_experiment_results#open-a-trace)
   - [Expand detailed view](./how_to_guides/evaluation/compare_experiment_results#expand-detailed-view)
   - [Update display settings](./how_to_guides/evaluation/compare_experiment_results#update-display-settings)
+- [Evaluate an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
+- [Unit test LLM applications (Python only)](./how_to_guides/evaluation/unit_testing)
 
 ## Human feedback
 
@@ -148,4 +151,3 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
 ## Prompt hub
 
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
-
