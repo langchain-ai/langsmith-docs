@@ -15,6 +15,9 @@ See the following guides to set up your LangSmith account.
 - [Create an organization](./how_to_guides/setup/create_organization)
 - [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
+- [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
+  - [Create a role](./how_to_guides/setup/set_up_access_control#create-a-role)
+  - [Assign a role to a user](./how_to_guides/setup/set_up_access_control#assign-a-role-to-a-user)
 
 ## Tracing
 
