@@ -148,6 +148,19 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
   - [Group traces into threads](./how_to_guides/monitoring/threads#group-traces-into-threads)
   - [View threads](./how_to_guides/monitoring/threads#view-threads)
 
-## Prompt hub
+## Prompts
 
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
+
+- [Create a prompt](./how_to_guides/prompts/create_a_prompt)
+  - [Choose a handle](./how_to_guides/prompts/create_a_prompt#choose-a-handle)
+  - [Name your new prompt](./how_to_guides/prompts/create_a_prompt#name-your-new-prompt)
+  - [Pick a prompt type](./how_to_guides/prompts/create_a_prompt#pick-a-prompt-type)
+  - [Compose your prompt](./how_to_guides/prompts/create_a_prompt#compose-your-prompt)
+  - [Save your prompt](./how_to_guides/prompts/create_a_prompt#save-your-prompt)
+  - [View your prompts](./how_to_guides/prompts/create_a_prompt#view-your-prompts)
+- [Update a prompt](./how_to_guides/prompts/update_a_prompt)
+  - [Update metadata](./how_to_guides/prompts/update_a_prompt#update-metadata)
+  - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
+  - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
+  - [Version a prompt](./how_to_guides/prompts/update_a_prompt#versioning)
