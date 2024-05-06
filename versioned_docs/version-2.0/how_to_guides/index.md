@@ -16,8 +16,6 @@ See the following guides to set up your LangSmith account.
 - [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
 
-* [ ] Assign roles (enterprise only)
-
 ## Tracing
 
 Get started with LangSmith's tracing features to start adding observability to your LLM applications.
@@ -54,8 +52,6 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Add metadata and tags to traces](./how_to_guides/tracing/trace_with_langchain#add-metadata-and-tags-to-traces)
   - [Customize run name](./how_to_guides/tracing/trace_with_langchain#customize-run-name)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
-
-* [ ] Trace a generator function
 
 ## Datasets
 
@@ -112,10 +108,13 @@ Evaluate your LLM applications to measure their performance over time.
 
 Collect human feedback to improve your LLM applications.
 
-- [ ] Attach user feedback from your application to traces
-- [ ] Annotate traces inline
-- [ ] Add trace to annotation queue
-- [ ] Annotate traces in the annotation queue
+- [Capture user feedback from your application to traces](./how_to_guides/human_feedback/attach_user_feedback)
+- [Set up a new feedback criteria](./how_to_guides/human_feedback/set_up_feedback_criteria)
+- [Annotate traces inline](./how_to_guides/human_feedback/annotate_traces_inline)
+- [Use annotation queues](./how_to_guides/human_feedback/annotation_queues)
+  - [Create an annotation queue](./how_to_guides/human_feedback/annotation_queues#create-an-annotation-queue)
+  - [Assign runs to an annotation queue](./how_to_guides/human_feedback/annotation_queues#assign-runs-to-an-annotation-queue)
+  - [Review runs in an annotation queue](./how_to_guides/human_feedback/annotation_queues#review-runs-in-an-annotation-queue)
 
 ## Monitoring and automations
 
@@ -150,25 +149,3 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
 
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
-- [ ] Create a prompt
-- [ ] Update a prompt
-- [ ] Pull prompts in code
-- [ ] Open a prompt from a trace
-- [ ] Open a prompt from an experiment
-
-## Playground
-
-Use the prompt playground to test your prompts and models.
-
-- [ ] Run a prompt in the playground
-- [ ] Run a prompt on a custom model
-
-## Proxy
-
-Use the LangSmith proxy to cache and log LLM results.
-
-- [ ] Run proxy
-- [ ] Make a request to the proxy
-- [ ] Turn off caching
-- [ ] Stream results
-- [ ] Turn on tracing
