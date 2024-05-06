@@ -96,20 +96,20 @@ from langchain.prompts.chat import ChatPromptTemplate
 
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
 
-hub.push("<handle>/topic-joke-generator", prompt)`;
+hub.push("<handle>/topic-joke-generator", prompt, new_repo_is_public=False)`;
 
   const jsBlock = `import * as hub from "langchain/hub";
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
-} from 'langchain/prompts';
+} from '@langchain/core/prompts';
 
 const message = HumanMessagePromptTemplate.fromTemplate(
   'tell me a joke about {topic}'
 );
-const prompt = ChatPromptTemplate.fromPromptMessages([message]);
+const prompt = ChatPromptTemplate.fromMessages([message]);
 
-await hub.push("<handle>/my-first-prompt", prompt);`;
+await hub.push("<handle>/my-first-prompt", prompt, { newRepoIsPublic: false });`;
 
   return (
     <Tabs groupId="client-language">
