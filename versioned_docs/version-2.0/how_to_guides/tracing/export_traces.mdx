@@ -16,7 +16,8 @@ Before diving into this content, it might be helpful to read the following:
 - [Run (span) data format](../../reference/data_formats/run_data_format)
 - [LangSmith API Reference](https://api.smith.langchain.com/redoc)
 - [LangSmith trace query syntax](../../reference/data_formats/trace_query_syntax)
-  :::
+
+:::
 
 The recommended way to export runs (the span data in LangSmith traces) is to use the `list_runs` method in the SDK or `/runs/query` endpoint in the API.
 
@@ -489,7 +490,6 @@ To optimize the query, the example:
     PythonBlock(`from collections import defaultdict
 from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import datetime, timedelta\n
-import pandas as pd
 from langsmith import Client
 from tqdm.auto import tqdm\n
 client = Client()
@@ -532,15 +532,15 @@ with ThreadPoolExecutor(max_workers=2) as executor:
                         select=["name", "inputs", "outputs", "run_type"],
                     )
                 )
-if this_batch := list(tool_runs_by_parent.keys())[trace_cursor:]:
-    futures.append(
-        executor.submit(
-            client.list_runs,
-            project_name=project_name,
-            run_ids=this_batch,
-            select=["name", "inputs", "outputs", "run_type"],
-        )
-    )\n
+    if this_batch := list(tool_runs_by_parent.keys())[trace_cursor:]:
+        futures.append(
+            executor.submit(
+                client.list_runs,
+                project_name=project_name,
+                run_ids=this_batch,
+                select=["name", "inputs", "outputs", "run_type"],
+            )
+        )\n
 for future in tqdm(futures):
     root_runs = future.result()
     for root_run in root_runs:
@@ -555,7 +555,109 @@ for future in tqdm(futures):
                 "tools_involved": list(root_data["tools_involved"]),
             }
         )\n
-# Convert to a pandas DataFrame\n
+# (Optional): Convert to a pandas DataFrame\n
+import pandas as pd\n
+df = pd.DataFrame(data)
+df.head()`),
+  ]}
+  groupId="client-language"
+/>
+
+### Advanced: export retriever IO for traces with feedback
+
+This query is useful if you want to fine-tune embeddings or diagnose end-to-end system performance issues based on retriever behavior.
+The following Python example demonstrates how to export retriever inputs and outputs within traces that have a specific feedback score.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from collections import defaultdict
+from concurrent.futures import Future, ThreadPoolExecutor
+from datetime import datetime, timedelta\n
+import pandas as pd
+from langsmith import Client
+from tqdm.auto import tqdm\n
+client = Client()
+project_name = "your-project-name"
+num_days = 1\n
+# List all tool runs
+retriever_runs = client.list_runs(
+    project_name=project_name,
+    start_time=datetime.now() - timedelta(days=num_days),
+    # highlight-next-line
+    run_type="retriever",
+    # This time we do want to fetch the inputs and outputs, since they
+    # may be adjusted by query expansion steps.
+    select=["trace_id", "name", "run_type", "inputs", "outputs"],
+    trace_filter='eq(feedback_key, "user_score")',
+)\n
+data = []
+futures: list[Future] = []
+trace_cursor = 0
+trace_batch_size = 50\n
+retriever_runs_by_parent = defaultdict(lambda: defaultdict(list))
+# Do not exceed rate limit
+with ThreadPoolExecutor(max_workers=2) as executor:
+    # Group retriever runs by parent run ID
+    for run in tqdm(retriever_runs):
+        # Collect all retriever calls invoked within a given trace
+        for k, v in run.inputs.items():
+            retriever_runs_by_parent[run.trace_id][f"retriever.inputs.{k}"].append(v)
+        for k, v in (run.outputs or {}).items():
+            # Extend the docs
+            retriever_runs_by_parent[run.trace_id][f"retriever.outputs.{k}"].extend(v)
+        # maybe send a batch of parent run IDs to the server
+        # this lets us query for the root runs in batches
+        # while still processing the retriever runs
+        if len(retriever_runs_by_parent) % trace_batch_size == 0:
+            if this_batch := list(retriever_runs_by_parent.keys())[
+                trace_cursor : trace_cursor + trace_batch_size
+            ]:
+                trace_cursor += trace_batch_size
+                futures.append(
+                    executor.submit(
+                        client.list_runs,
+                        project_name=project_name,
+                        run_ids=this_batch,
+                        select=[
+                            "name",
+                            "inputs",
+                            "outputs",
+                            "run_type",
+                            "feedback_stats",
+                        ],
+                    )
+                )
+    if this_batch := list(retriever_runs_by_parent.keys())[trace_cursor:]:
+        futures.append(
+            executor.submit(
+                client.list_runs,
+                project_name=project_name,
+                run_ids=this_batch,
+                select=["name", "inputs", "outputs", "run_type"],
+            )
+        )\n
+for future in tqdm(futures):
+    root_runs = future.result()
+    for root_run in root_runs:
+        root_data = retriever_runs_by_parent[root_run.id]
+        feedback = {
+            f"feedback.{k}": v.get("avg")
+            for k, v in (root_run.feedback_stats or {}).items()
+        }
+        inputs = {f"inputs.{k}": v for k, v in root_run.inputs.items()}
+        outputs = {f"outputs.{k}": v for k, v in (root_run.outputs or {}).items()}
+        data.append(
+            {
+                "run_id": root_run.id,
+                "run_name": root_run.name,
+                **inputs,
+                **outputs,
+                **feedback,
+                **root_data,
+            }
+        )\n
+# (Optional): Convert to a pandas DataFrame
+import pandas as pd
 df = pd.DataFrame(data)
 df.head()`),
   ]}

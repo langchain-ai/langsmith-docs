@@ -1,0 +1,64 @@
+---
+sidebar_label: Evaluate Existing Experiments
+sidebar_position: 6
+---
+
+# Evaluate an existing experiment
+
+:::note
+Currently, `evaluate_existing` is only supported in the Python SDK.
+:::
+
+If you have already run an experiment and want to add additional evaluation metrics, you
+can apply any evaluators to the experiment using the `evaluate_existing` method.
+
+```python
+from langsmith.evaluation import evaluate_existing
+
+def always_half(run, example):
+    return {"score": 0.5}
+
+experiment_name = "my-experiment:abcd123" # Replace with an actual experiment name or ID
+evaluate_existing(experiment_name, evaluators=[always_half])
+```
+
+## Example
+
+Suppose you are evaluating a semantic router. You may first run an experiment:
+
+```python
+from langsmith.evaluation import evaluate
+def semantic_router(inputs: dict):
+    return {"class": 1}
+
+def accuracy(run, example):
+    prediction = run.outputs["class"]
+    expected = example.outputs["label"]
+    return {"score": prediction == expected}
+
+results = evaluate(semantic_router, data="Router Classification Dataset", evaluators=[accuracy])
+experiment_name = results.experiment_name
+```
+
+Later, you realize you want to add precision and recall summary metrics. The `evaluate_existing` method accepts the same arguments as the `evaluate` method, replacing the `target` system with the `experiment` you wish to add metrics to, meaning
+you can add both instance-level `evaluator`'s and aggregate `summary_evaluator`'s.
+
+```python
+from langsmith.evaluation import evaluate_existing
+
+def precision(runs: list, examples: list):
+    true_positives = sum([1 for run, example in zip(runs, examples) if run.outputs["class"] == example.outputs["label"]])
+    false_positives = sum([1 for run, example in zip(runs, examples) if run.outputs["class"] != example.outputs["label"]])
+    return {"score": true_positives / (true_positives + false_positives)}
+
+def recall(runs: list, examples: list):
+    true_positives = sum([1 for run, example in zip(runs, examples) if run.outputs["class"] == example.outputs["label"]])
+    false_negatives = sum([1 for run, example in zip(runs, examples) if run.outputs["class"] != example.outputs["label"]])
+    return {"score": true_positives / (true_positives + false_negatives)}
+
+evaluate_existing(experiment_name, summary_evaluators=[precision, recall])
+```
+
+The precision and recall metrics will now be available in the LangSmith UI for the `experiment_name` experiment.
+
+As is the case with the `evaluate` function, there is an identical, asynchronous `aevaluate_existing` function that can be used to evaluate experiments asynchronously.

@@ -178,18 +178,24 @@ export default function Feedback() {
       paddingBottom: "10px",
       paddingLeft: "22px",
       paddingRight: "22px",
-      border: "1px solid gray",
+      border: "1px solid var(--joy-palette-background-level2)",
       borderRadius: "6px",
       gap: "10px",
       cursor: "pointer",
       fontSize: "16px",
       fontWeight: "600",
     },
-    onMouseEnter: (e) => (e.currentTarget.style.backgroundColor = "#f0f0f0"),
+    onMouseEnter: (e) =>
+      (e.currentTarget.style.backgroundColor =
+        "var(--joy-palette-background-level1)"),
     onMouseLeave: (e) =>
       (e.currentTarget.style.backgroundColor = "transparent"),
-    onMouseDown: (e) => (e.currentTarget.style.backgroundColor = "#d0d0d0"),
-    onMouseUp: (e) => (e.currentTarget.style.backgroundColor = "#f0f0f0"),
+    onMouseDown: (e) =>
+      (e.currentTarget.style.backgroundColor =
+        "var(--joy-palette-background-level2)"),
+    onMouseUp: (e) =>
+      (e.currentTarget.style.backgroundColor =
+        "var(--joy-palette-background-level1)"),
   };
 
   return (

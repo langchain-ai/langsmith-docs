@@ -16,6 +16,7 @@ import {
   ConfigureSDKEnvironmentCodeTabs,
 } from "@site/src/components/QuickStart";
 import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
+import { CodeTabs, shell } from "@site/src/components/InstructionsWithCode";
 
 # Tracing Quick Start
 
@@ -36,9 +37,7 @@ First, create an API key by navigating to the <a href="https://smith.langchain.c
   <TabItem value="python-sdk">
     <h2>1. Install the LangSmith library</h2>
     <p>Start by installing the Python library.</p>
-    <pre>
-      <code>pip install langsmith</code>
-    </pre>
+    <CodeTabs tabs={[shell`pip install langsmith`]} />
     <h2>2. Configure your environment</h2>
     <ConfigureSDKEnvironmentCodeTabs />
     <h2>3. Log a trace</h2>
@@ -65,13 +64,14 @@ First, create an API key by navigating to the <a href="https://smith.langchain.c
   <TabItem value="typescript-sdk">
     <h2>1. Install the LangSmith library</h2>
     <p>Start by installing the TypeScript library.</p>
-    <pre>
-      <code>npm install langsmith</code>
-    </pre>
-    or
-    <pre>
-      <code>yarn add langsmith</code>
-    </pre>
+    <CodeTabs
+      tabs={[
+        shell({ value: "npm", label: "npm" })`npm install langsmith`,
+        shell({ value: "yarn", label: "yarn" })`yarn add langsmith`,
+        shell({ value: "pnpm", label: "pnpm" })`pnpm add langsmith`,
+        shell({ value: "bun", label: "bun" })`bun add langsmith`,
+      ]}
+    />
     <h2>2. Configure your environment</h2>
     <ConfigureSDKEnvironmentCodeTabs />
     <h2>3. Log a Trace</h2>
@@ -95,6 +95,7 @@ First, create an API key by navigating to the <a href="https://smith.langchain.c
         here
       </a>.
     </p>
+
   </TabItem>
   <TabItem value="langchain">
     <h2>1. Install or upgrade LangChain</h2>
