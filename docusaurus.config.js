@@ -49,15 +49,16 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          lastVersion: "current",
+          lastVersion: "2.0",
           versions: {
             current: {
-              label: "1.0",
+              label: "old",
+              path: "old",
               badge: false,
               banner: "unmaintained",
             },
             "2.0": {
-              label: "2.0",
+              label: "stable",
               banner: "none",
               badge: false,
             },
