@@ -8,12 +8,12 @@ Being able to get this insight quickly and reliably will allow you to iterate wi
 
 At a high level, in this tutorial we will go over how to:
 
-- *Create an initial golden dataset to measure performance*
-- *Define metrics to use to measure performance*
-- *Run evaluations on a few different prompts or models*
-- *Compare results manually*
-- *Track results over time*
-- *Set up automated testing to run in CI/CD*
+- _Create an initial golden dataset to measure performance_
+- _Define metrics to use to measure performance_
+- _Run evaluations on a few different prompts or models_
+- _Compare results manually_
+- _Track results over time_
+- _Set up automated testing to run in CI/CD_
 
 For more information on the evaluation workflows LangSmith supports, check out the [how-to guides](../how_to_guides).
 
@@ -23,6 +23,7 @@ Lots to cover, let's dive in!
 
 The first step when getting ready to test and evaluate your application is to define the datapoints you want to evaluate.
 There are a few aspects to consider here:
+
 - What should the schema of each datapoint be?
 - How many data-points should I gather?
 - How should I gather those data-points?
@@ -41,7 +42,7 @@ Don't worry about getting a large number to start - you can (and should) always 
 **How to get:** This is maybe the trickiest part.
 Once you know you want to gather a dataset... how do you actually go about it?
 For most teams that are starting new project, we generally see them start by collecting the first 10-20 data-points by hand.
-After starting with these data-points, these datasets are generally *living* constructs and grow over time.
+After starting with these data-points, these datasets are generally _living_ constructs and grow over time.
 They generally grow after seeing how real users will use your application, seeing the pain points that exist, and then moving a few of those datapoints into this set.
 There are also methods like synthetically generating data that can be used to augment your dataset.
 To start, we recommend not worrying about those and just hand labeling ~10-20 examples.
@@ -297,7 +298,7 @@ In order to do that, we can select all the runs we want to compare (in this case
 ![](./static/testing_tutorial_open_compare.png)
 
 We immediately see all three tests side by side.
-Some of the cells are color coded - this is showing a regression of *a certain metric* compared to *a certain baseline*.
+Some of the cells are color coded - this is showing a regression of _a certain metric_ compared to _a certain baseline_.
 We automatically choose defaults for the baseline and metric, but you can change those yourself (outlined in blue below).
 You can also choose which columns and which metrics you see by using the `Display` control (outlined in yellow below).
 You can also automatically filter to only see the runs that have improvements/regressions by clicking on the icons at the top (outlined in red below).
