@@ -121,6 +121,12 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 ## Prompts
 
 - [Create a prompt](./how_to_guides/prompts/create_a_prompt)
+  - [Choose a handle](./how_to_guides/prompts/create_a_prompt#choose-a-handle)
+  - [Name your new prompt](./how_to_guides/prompts/create_a_prompt#name-your-new-prompt)
+  - [Pick a prompt type](./how_to_guides/prompts/create_a_prompt#pick-a-prompt-type)
+  - [Compose your prompt](./how_to_guides/prompts/create_a_prompt#compose-your-prompt)
+  - [Save your prompt](./how_to_guides/prompts/create_a_prompt#save-your-prompt)
+  - [Congrats!](./how_to_guides/prompts/create_a_prompt#congrats)
 - [ ] Update a prompt
 - [ ] Pull prompts in code
 - [ ] Open a prompt from a trace
