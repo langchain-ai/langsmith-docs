@@ -7,11 +7,13 @@ import {
   useActivePlugin,
   useDocVersionSuggestions,
 } from "@docusaurus/plugin-content-docs/client";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ThemeClassNames } from "@docusaurus/theme-common";
 import {
   useDocsPreferredVersion,
   useDocsVersion,
 } from "@docusaurus/theme-common/internal";
+
 function UnreleasedVersionLabel({ siteTitle, versionMetadata }) {
   return (
     <Translate
@@ -50,6 +52,7 @@ const BannerLabelComponents = {
 };
 function BannerLabel(props) {
   const BannerLabelComponent =
+    // eslint-disable-next-line react/destructuring-assignment
     BannerLabelComponents[props.versionMetadata.banner];
   return <BannerLabelComponent {...props} />;
 }
