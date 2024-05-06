@@ -22,7 +22,7 @@ Feedback can be produced from a variety of ways, such as:
 Feedback is stored in a simple format with the following fields:
 
 | Field Name               | Type     | Description                                                                                            |
-| ------------------------ | -------- | ------------------------------------------------------------------------------------------------------ |
+| ------------------------ | -------- | ------------------------------------------------------------------------------------------------------ | --- |
 | id                       | UUID     | Unique identifier for the record itself                                                                |
 | created_at               | datetime | Timestamp when the record was created                                                                  |
 | modified_at              | datetime | Timestamp when the record was last modified                                                            |
@@ -32,7 +32,7 @@ Feedback is stored in a simple format with the following fields:
 | score                    | number   | Numerical score associated with the feedback key                                                       |
 | value                    | string   | Reserved for storing a value associated with the score. Useful for categorical feedback.               |
 | comment                  | string   | Any comment or annotation associated with the record. This can be a justification for the score given. |
-| correction               | object   | Reserved for storing correction details, if any                                                        |
+| correction               | object   | Reserved for storing correction details, if any                                                        |     |
 | feedback_source          | object   | Object containing information about the feedback source                                                |
 | feedback_source.type     | string   | The type of source where the feedback originated, eg "api", "app", "evaluator"                         |
 | feedback_source.metadata | object   | Reserved for additional metadata, currently                                                            |
