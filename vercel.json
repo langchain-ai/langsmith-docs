@@ -69,6 +69,10 @@
     {
       "source": "/tracing/:path*",
       "destination": "/old/tracing/:path*"
+    },
+    {
+      "source": "/cookbook/:path*",
+      "destination": "/old/cookbook/:path*"
     }
   ],
   "builds": [
