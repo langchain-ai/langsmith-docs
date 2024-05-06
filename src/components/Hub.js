@@ -5,9 +5,6 @@ import CodeBlock from "@theme/CodeBlock";
 
 import {
   CodeTabs,
-  PythonBlock,
-  TypeScriptBlock,
-  ShellBlock,
 } from "./InstructionsWithCode";
 
 export function HubInstallationCodeTabs() {
@@ -19,7 +16,7 @@ export function HubInstallationCodeTabs() {
           value: "python",
           label: "pip",
           language: "bash",
-          content: `pip install -U langchain langchainhub`,
+          content: `pip install -U langchain langchainhub langchain-openai`,
         },
         {
           value: "typescript",
@@ -33,12 +30,6 @@ export function HubInstallationCodeTabs() {
           language: "bash",
           content: `npm install -S langchain`,
         },
-        {
-          value: "pnpm",
-          label: "pnpm",
-          language: "bash",
-          content: `pnpm add langchain`,
-        },
       ]}
     />
   );
@@ -51,23 +42,26 @@ export function HubPullCodeTabs() {
 prompt = hub.pull("efriis/my-first-prompt")
 
 # create a model to use it with
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 model = ChatOpenAI()
 
 # use it in a runnable
 runnable = prompt | model
-runnable.invoke({
+response = runnable.invoke({
 	"profession": "biologist",
 	"question": "What is special about parrots?",
-})`;
+})
+
+print(response)
+`;
 
   const jsBlock = `// import
 import * as hub from "langchain/hub";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { ChatOpenAI } from "langchain/chat_models/openai";
+import { ChatOpenAI } from "@langchain/openai";
 
 // pull a chat prompt
-await hub.pull<ChatPromptTemplate>("efriis/my-first-prompt");
+const prompt = await hub.pull<ChatPromptTemplate>("efriis/my-first-prompt");
 
 
 // create a model to use it with

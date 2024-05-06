@@ -167,3 +167,8 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
   - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
   - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
   - [Version a prompt](./how_to_guides/prompts/update_a_prompt#versioning)
+- [Pull a prompt into your code](./how_to_guides/prompts/pull_a_prompt)
+  - [Install packages](./how_to_guides/prompts/pull_a_prompt#install_packages)
+  - [Configure environment variables](./how_to_guides/prompts/pull_a_prompt#configure_environment_variables)
+  - [Pull a prompt and use it](./how_to_guides/prompts/pull_a_prompt#pull_a_prompt_and_use_it)
+  - [Push a prompt to your personal organization](./how_to_guides/prompts/pull_a_prompt#push_a_prompt_to_your_personal_organization)
