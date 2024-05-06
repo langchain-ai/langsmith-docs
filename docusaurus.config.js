@@ -21,8 +21,8 @@ const config = {
   baseUrl: "/",
   trailingSlash: false,
 
-  onBrokenLinks: "warn",
-  onBrokenMarkdownLinks: "warn",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "throw",
 
   plugins: [
     [
