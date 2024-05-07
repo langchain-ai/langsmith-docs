@@ -4,3 +4,4 @@ New to LangSmith? This is the place to start. Here, you'll find a hands-on intro
 
 - [Add observability to your LLM application](./tutorials/observability)
 - [Evaluate your LLM application](./tutorials/evaluation)
+- [Optimize a classifier](./tutorials/optimize_classifier)
