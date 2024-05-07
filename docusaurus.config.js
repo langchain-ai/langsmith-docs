@@ -21,8 +21,8 @@ const config = {
   baseUrl: "/",
   trailingSlash: false,
 
-  onBrokenLinks: "warn",
-  onBrokenMarkdownLinks: "warn",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "throw",
 
   plugins: [
     [
@@ -52,13 +52,14 @@ const config = {
           lastVersion: "2.0",
           versions: {
             current: {
-              label: "1.0",
+              label: "old",
+              path: "old",
               badge: false,
               banner: "unmaintained",
-              path: "1.0",
             },
             "2.0": {
-              label: "2.0",
+              label: "stable",
+              banner: "none",
               badge: false,
             },
           },
