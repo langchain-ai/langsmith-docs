@@ -73,6 +73,22 @@
     {
       "source": "/cookbook/:path*",
       "destination": "/old/cookbook/:path*"
+    },
+    {
+      "source": "/hub/:path*",
+      "destination": "/old/hub/:path*"
+    },
+    {
+      "source": "/user_guide",
+      "destination": "/old/user_guide"
+    },
+    {
+      "source": "/category/prompt-hub/:path*",
+      "destination": "/old/category/prompt-hub/:path*"
+    },
+    {
+      "source": "/category/proxy/:path*",
+      "destination": "/old/category/proxy/:path*"
     }
   ],
   "builds": [
