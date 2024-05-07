@@ -249,9 +249,9 @@ def hallucination(root_run: Run, example: Example) -> dict:
     A simple evaluator that checks to see the answer is grounded in the documents
     """
     # Get documents and answer
-    rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "get_answer")
-    retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve_docs")
-    doc_txt = "\\n\\n".join(doc.page_content for doc in retrieve_run.outputs["output"])
+    rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
+    retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
+    page_contents = "\\n\\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
     generation = rag_pipeline_run.outputs["output"]\n
     # Data model
     class GradeHallucinations(BaseModel):
@@ -270,7 +270,7 @@ def hallucination(root_run: Run, example: Example) -> dict:
         ]
     )\n
     hallucination_grader = hallucination_prompt | structured_llm_grader
-    score = hallucination_grader.invoke({"documents": doc_txt, "generation": generation})
+    score = hallucination_grader.invoke({"documents": page_contents, "generation": generation})
     return {"key": "answer_hallucination", "score": int(score.binary_score)}`),
     TypeScriptBlock(`
       import { EvaluationResult } from "langsmith/evaluation";
