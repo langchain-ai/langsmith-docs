@@ -6,6 +6,7 @@ import {
   CodeTabs,
   python,
   typescript,
+  PythonBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Evaluate an LLM Application
@@ -37,6 +38,7 @@ The following example involves evaluating a very simple LLM pipeline as classifi
 
 In this case, we are defining a simple evaluation target consisting of an LLM pipeline that classifies text as toxic or non-toxic.
 We've optionally enabled tracing to capture the inputs and outputs of each step in the pipeline.
+
 To understand how to annotate your code for tracing, please refer to [this guide](../tracing/annotate_code).
 
 <CodeTabs
@@ -168,14 +170,10 @@ Writing evaluators is discussed in more detail in the [following section](#custo
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
-      from langsmith.schemas import Example, Run
-      
-      # Row-level evaluator
-      def correct_label(root_run: Run, example: Example) -> dict:
-          score = root_run.outputs.get("output") == example.outputs.get("label")
-          return {"score": int(score)}
-    `,
+    PythonBlock(`from langsmith.schemas import Example, Run\n
+def correct_label(root_run: Run, example: Example) -> dict:
+    score = root_run.outputs.get("output") == example.outputs.get("label")
+    return {"score": int(score), "key": "correct_label"}`),
     typescript`
       import type { EvaluationResult } from "langsmith/evaluation";
       import type { Run, Example } from "langsmith/schemas";
@@ -213,7 +211,7 @@ At its simplest, the `evaluate` method takes the following arguments:
           data=dataset_name,
           evaluators=[correct_label],
           experiment_prefix="Toxic Queries",
-          descriptionn="Testing the baseline system.",
+          description="Testing the baseline system.",  # optional
       )
     `,
     typescript`
@@ -233,14 +231,21 @@ At its simplest, the `evaluate` method takes the following arguments:
 Each invocation of `evaluate` produces an experiment which is bound to the dataset, and can be viewed in the LangSmith UI.
 Evaluation scores are stored against each individual output produced by the target task as feedback, with the name and score configured in the evaluator.
 
-![](../static/view_experiment.gif)
+_If you've annotated your code for tracing, you can open the trace of each row in a side panel view._
 
-With tracing enabled, you can open the trace of each row in a side panel view.
+![](../static/view_experiment.gif)
 
 ## Use custom evaluators
 
-Evaluators are functions that take in a `Run` and an `Example` and return a dictionary or object with a keys `score` (numeric) and `key` (string).
+At a high-level, evaluators are functions that take in a `Run` and an `Example` and return a dictionary or object with a keys `score` (numeric) and `key` (string).
 The `key` will be associated with the score in the LangSmith UI.
+
+:::tip advanced use-cases
+
+- Configure more feedback fields: you can configure other fields in the dictionary as well. Please see the [feedback reference](../../reference/data_formats/feedback_data_format) for more information.
+- Evaluate on intermediate steps: to view a more advanced example that traverses the `root_run` / `rootRun` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
+
+:::
 
 To learn more about the `Run` format, you can read the following [reference](../../reference/data_formats/run_data_format). However, many of the fields are not relevant nor required for writing evaluators.
 The `root_run` / `rootRun` is always available and contains the inputs and outputs of the target task. If tracing is enabled, the `root_run` / `rootRun` will also contain child runs for each step in the pipeline.
@@ -250,14 +255,10 @@ Here is an example of a very simple custom evaluator that compares the output of
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
-      from langsmith.schemas import Example, Run
-      
-      # Row-level evaluator
-      def correct_label(root_run: Run, example: Example) -> dict:
-          score = root_run.outputs.get("output") == example.outputs.get("label")
-          return {"score": int(score)}
-    `,
+    PythonBlock(`from langsmith.schemas import Example, Run\n
+def correct_label(root_run: Run, example: Example) -> dict:
+    score = root_run.outputs.get("output") == example.outputs.get("label")
+    return {"score": int(score), "key": "correct_label"}`),
     typescript`
       import type { EvaluationResult } from "langsmith/evaluation";
       import type { Run, Example } from "langsmith/schemas";
@@ -271,9 +272,9 @@ Here is an example of a very simple custom evaluator that compares the output of
   ]}
 />
 
-:::tip Advanced Example
+:::note default feedback key
 
-To view a more advanced example that traverses the `root_run` / `rootRun` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
+If the "key" field is not provided, the default key name will be the name of the evaluator function.
 
 :::
 
@@ -430,7 +431,7 @@ In the LangSmith UI, you'll the summary evaluator's score displayed with the cor
 
 ## Evaluate a LangChain runnable
 
-You can configure a `LangChain` runnable to be evaluated by passing `runnable.invoke` it to the `evaluate` method.
+You can configure a `LangChain` runnable to be evaluated by passing `runnable.invoke` it to the `evaluate` method in Python, or just the `runnable` in TypeScript.
 
 First, define your `LangChain` runnable:
 
