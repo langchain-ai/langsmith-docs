@@ -17,7 +17,7 @@ with two existing experiments. If you haven't already created experiments to com
 **Inputs:** A list of Runs and a single Example. This is exactly the same as a normal evaluator, except with a list of Runs instead of a single Run. The list of runs will have a length of two.
 
 **Output:** Your evaluator should return a dictionary with two keys: `key`, which represents the feedback key that will be logged, and `scores`, which is a
-mapping from run ID to score for that run. We strongly encourage using 0 and 1 as the score values, where 1 is better. You may also set both to 0 to represent
+mapping from run ID to score for that run. **We strongly encourage using 0 and 1 as the score values, where 1 is better.** You may also set both to 0 to represent
 "both equally bad" or both to 1 for "both equally good".
 
 Note that you should choose a feedback key that is distinct from standard feedbacks on your run. We recommend prefixing pairwise feedback keys with `pairwise` or `ranked`.
