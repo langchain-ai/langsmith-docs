@@ -110,6 +110,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [Update display settings](./how_to_guides/evaluation/compare_experiment_results#update-display-settings)
 - [Evaluate an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
 - [Unit test LLM applications (Python only)](./how_to_guides/evaluation/unit_testing)
+- [Run pairwise evaluations over experiments](./how_to_guides/evaluation/evaluate_pairwise)
 
 ## Human feedback
 
