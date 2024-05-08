@@ -1,0 +1,45 @@
+---
+sidebar_position: 3
+---
+
+import {
+  HubInstallationCodeTabs,
+  HubPullCodeTabs,
+  HubPushCodeTabs,
+} from "@site/src/components/Hub";
+
+# Pull/push a prompt
+
+## Install packages
+
+<HubInstallationCodeTabs />
+
+## Configure environment variables
+
+If you already have `LANGCHAIN_API_KEY` set to a personal organization's api key from LangSmith, you can skip this step.
+
+Otherwise, get an API key for your Personal organization by navigating to `Settings > API Keys > Create API Key` in LangSmith. (The hub will not work with your non-personal organization's api key!)
+
+Set your environment variable.
+
+```bash
+export LANGCHAIN_HUB_API_KEY="ls_..."
+```
+
+## Pull a prompt and use it
+
+You can pull your own prompts and all of the public prompts in the LangChain Hub.
+
+<HubPullCodeTabs />
+
+You can also pull a specific commit of a prompt by specifying the commit hash.
+
+```bash
+prompt = hub.pull("efriis/my-first-prompt:56489e79")
+```
+
+## Push a prompt to your personal organization
+
+For this step, you'll need the `handle` for your account!
+
+<HubPushCodeTabs />
