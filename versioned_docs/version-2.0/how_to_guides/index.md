@@ -174,3 +174,4 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
   - [Configure environment variables](./how_to_guides/prompts/pull_a_prompt#configure_environment_variables)
   - [Pull a prompt and use it](./how_to_guides/prompts/pull_a_prompt#pull_a_prompt_and_use_it)
   - [Push a prompt to your personal organization](./how_to_guides/prompts/pull_a_prompt#push_a_prompt_to_your_personal_organization)
+- [LangChain Hub](./how_to_guides/prompts/langchain_hub)
