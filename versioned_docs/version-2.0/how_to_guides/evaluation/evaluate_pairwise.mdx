@@ -9,7 +9,7 @@ sidebar_position: 8
 Currently, `evaluate_comparative` is only supported in the Python SDK.
 :::
 
-LangSmith supports evaluating existing experiments against each other. This allows you to use an LLM to judge outputs from multiple systems against each other, rather than being confined to evaluating outputs one at a time. Think [Chatbot Arena](https://chat.lmsys.org/) - this is the same concept! To do this, use the `evaluate_comparative` function
+LangSmith supports evaluating existing experiments against each other. This allows you to use automatic evaluators (especially, LLM-based evaluators) to score the outputs from multiple experiments against each other, rather than being confined to evaluating outputs one at a time. Think [Chatbot Arena](https://chat.lmsys.org/) - this is the same concept! To do this, use the `evaluate_comparative` function
 with two existing experiments. If you haven't already created experiments to compare, check out our [Quick Start guide](https://docs.smith.langchain.com/#5-run-your-first-evaluation) or our [Evaluations How-To Guide](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application) to get started with evaluations.
 
 ## Inputs and Outputs
