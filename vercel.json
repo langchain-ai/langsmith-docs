@@ -53,6 +53,42 @@
     {
       "source": "/docs/:path*",
       "destination": "/:path*"
+    },
+    {
+      "source": "/evaluation/:path*",
+      "destination": "/old/evaluation/:path*"
+    },
+    {
+      "source": "/monitoring/:path*",
+      "destination": "/old/monitoring/:path*"
+    },
+    {
+      "source": "/proxy/:path*",
+      "destination": "/old/proxy/:path*"
+    },
+    {
+      "source": "/tracing/:path*",
+      "destination": "/old/tracing/:path*"
+    },
+    {
+      "source": "/cookbook/:path*",
+      "destination": "/old/cookbook/:path*"
+    },
+    {
+      "source": "/hub/:path*",
+      "destination": "/old/hub/:path*"
+    },
+    {
+      "source": "/user_guide",
+      "destination": "/old/user_guide"
+    },
+    {
+      "source": "/category/prompt-hub/:path*",
+      "destination": "/old/category/prompt-hub/:path*"
+    },
+    {
+      "source": "/category/proxy/:path*",
+      "destination": "/old/category/proxy/:path*"
     }
   ],
   "builds": [

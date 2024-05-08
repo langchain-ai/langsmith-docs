@@ -229,53 +229,53 @@ The key here is that the evaluator function should traverse the `root_run` / `ro
 
 <CodeTabs
   tabs={[
-    python`
-      from langsmith.evaluation import LangChainStringEvaluator, evaluate
-      from langsmith.schemas import Example, Run
-      
-      def document_relevance(root_run: Run, example: Example) -> dict:
-          """
-          A very simple evaluator that checks to see if the input of the retrieval step exists
-          in the retrieved docs.
-          """
-          rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
-          retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
-          page_contents = "\\n\\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
-          score = retrieve_run.inputs["query"] in page_contents
-          return {"key": "simple_document_relevance", "score": score}
-      
-      
-      hallucination_evaluator = LangChainStringEvaluator(
-          "labeled_score_string",
-          config={
-              "criteria": {
-                  "accuracy": """Is the Assistant's Answer grounded in the Ground Truth documentation? A score of [[0]] means that the
-                  Assistant answer contains is not at all based upon / grounded in the Ground Truth documentation. A score of [[5]] means
-                  that the Assistant answer contains some information (e.g., a hallucination) that is not captured in the Ground Truth
-                  documentation. A score of [[10]] means that the Assistant answer is fully based upon the in the Ground Truth documentation."""
-              },
-              # If you want the score to be saved on a scale from 0 to 1
-              "normalize_by": 10,
-          }
-      )
-      
-      def hallucination(root_run: Run, example: Example) -> dict:
-          """
-          An evaluator that uses LangChainString evaluator to use an LLM to judge whether or not the correct
-          answer is generated w.r.t the retrieved documents.
-          """
-          rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
-          retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
-          page_contents = "\\n\\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
-          result = hallucination_evaluator.evaluator.evaluate_strings(prediction=rag_pipeline_run.outputs["output"], reference=page_contents, input=rag_pipeline_run.inputs["question"])
-          return {"key": "answer_hallucination", "score": result["score"], "comment": result["reasoning"]}
-      
-    `,
-    typescript`
+    PythonBlock(`from langsmith.evaluation import LangChainStringEvaluator, evaluate
+from langsmith.schemas import Example, Run
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.pydantic_v1 import BaseModel, Field\n
+def document_relevance(root_run: Run, example: Example) -> dict:
+    """
+    A very simple evaluator that checks to see if the input of the retrieval step exists
+    in the retrieved docs.
+    """
+    rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
+    retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
+    page_contents = "\\n\\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
+    score = retrieve_run.inputs["query"] in page_contents
+    return {"key": "simple_document_relevance", "score": score}\n
+def hallucination(root_run: Run, example: Example) -> dict:
+    """
+    A simple evaluator that checks to see the answer is grounded in the documents
+    """
+    # Get documents and answer
+    rag_pipeline_run = next(run for run in root_run.child_runs if run.name == "rag_pipeline")
+    retrieve_run = next(run for run in rag_pipeline_run.child_runs if run.name == "retrieve")
+    page_contents = "\\n\\n".join(doc["page_content"] for doc in retrieve_run.outputs["output"])
+    generation = rag_pipeline_run.outputs["output"]\n
+    # Data model
+    class GradeHallucinations(BaseModel):
+        """Binary score for hallucination present in generation answer."""\n
+        binary_score: int = Field(description="Answer is grounded in the facts, 1 or 0")\n
+    # LLM with function call
+    llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+    structured_llm_grader = llm.with_structured_output(GradeHallucinations)\n
+    # Prompt
+    system = """You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts. \\n
+        Give a binary score 1 or 0, where 1 means that the answer is grounded in / supported by the set of facts."""
+    hallucination_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", system),
+            ("human", "Set of facts: \\n\\n {documents} \\n\\n LLM generation: {generation}"),
+        ]
+    )\n
+    hallucination_grader = hallucination_prompt | structured_llm_grader
+    score = hallucination_grader.invoke({"documents": page_contents, "generation": generation})
+    return {"key": "answer_hallucination", "score": int(score.binary_score)}`),
+    TypeScriptBlock(`
       import { EvaluationResult } from "langsmith/evaluation";
       import { Run, Example } from "langsmith/schemas";
-      import { loadEvaluator } from "langchain/evaluation";
-      
+      import { loadEvaluator } from "langchain/evaluation";\n
       function findNestedRun(run: Run, search: (run: Run) => boolean): Run | null {
         const queue: Run[] = [run];
         while (queue.length > 0) {
@@ -284,18 +284,15 @@ The key here is that the evaluator function should traverse the `root_run` / `ro
           queue.push(...currentRun.child_runs);
         }
         return null;
-      }
-      
+      }\n
       function documentRelevance(rootRun: Run, example: Example): EvaluationResult {
         const retrieveRun = findNestedRun(rootRun, (run) => run.name === "retrieve");
         const docs: Array<{ page_content: string }> | undefined =
-          retrieveRun.outputs?.outputs;
-        
+          retrieveRun.outputs?.outputs;\n
         const pageContents = docs?.map((doc) => doc.page_content).join("\\n\\n");
         const score = pageContents.includes(retrieveRun.inputs?.query);
         return { key: "simple_document_relevance", score };
-      }
-      
+      }\n
       const hallucinationEvaluator = await loadEvaluator("criteria", {
         criteria: {
           accuracy: [
@@ -305,33 +302,28 @@ The key here is that the evaluator function should traverse the `root_run` / `ro
             "documentation. A score of [[10]] means that the Assistant answer is fully based upon the in the Ground Truth documentation.",
           ].join("\\n"),
         },
-      });
-      
+      });\n
       async function hallucination(
         rootRun: Run,
         example: Example
       ): Promise<EvaluationResult> {
         const rag = findNestedRun(rootRun, (run) => run.name === "ragPipeline");
-        const retrieve = findNestedRun(rootRun, (run) => run.name === "retrieve");
-        
+        const retrieve = findNestedRun(rootRun, (run) => run.name === "retrieve");\n
         const docs: Array<{ page_content: string }> | undefined =
-          retrieve.outputs?.outputs;
-        
-        const pageContents = docs?.map((doc) => doc.page_content).join("\\n\\n");
-        
+          retrieve.outputs?.outputs;\n
+        const pageContents = docs?.map((doc) => doc.page_content).join("\\n\\n");\n
         const result = await hallucinationEvaluator.evaluateStrings({
           input: rag.inputs?.question,
           prediction: rag.outputs?.outputs,
           reference: pageContents,
-        });
-        
+        });\n
         return {
           key: "answer_hallucination",
           score: result["score"],
           comment: result["reasoning"],
         };
       }
-    `,
+    `),
   ]}
   groupId="client-language"
 />

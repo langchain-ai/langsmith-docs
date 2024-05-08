@@ -89,6 +89,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [Evaluate on a subset of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-subset-of-a-dataset)
   - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
+- [Bind and evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [Use LangChain off-the-shelf evaluators (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
@@ -109,6 +110,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [Update display settings](./how_to_guides/evaluation/compare_experiment_results#update-display-settings)
 - [Evaluate an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
 - [Unit test LLM applications (Python only)](./how_to_guides/evaluation/unit_testing)
+- [Run pairwise evaluations over experiments](./how_to_guides/evaluation/evaluate_pairwise)
 
 ## Human feedback
 
