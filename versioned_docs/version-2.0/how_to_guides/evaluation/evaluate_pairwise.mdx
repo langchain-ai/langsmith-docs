@@ -13,13 +13,16 @@ LangSmith supports evaluating **existing** experiments against each other. This 
 with two existing experiments. If you haven't already created experiments to compare, check out our [Quick Start guide](https://docs.smith.langchain.com/#5-run-your-first-evaluation) or our [Evaluations How-To Guide](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application) to get started with evaluations.
 
 ## The `evaluate_comparative` Function
+
 At its simplest, `evaluate_comparative` function takes the following arguments:
+
 - `experiments`: A list of the two **existing experiments** you would like to evaluate against each other. These can be uuids or experiment names.
 - `evaluators`: A list of the pairwise evaluators that you would like to attach to this evaluation. See the section below for how to define these.
 
 Along with these, you can also pass in the following optional args:
+
 - `randomize_order`: An optional boolean indicating whether the order of the outputs should be randomized for each evaluation. This is a strategy for minimizing positional bias in your prompt: often, the LLM will be biased
-towards one of the responses based on the order. This should mainly be addressed via prompt engineering, but this is another optional mitigation. Defaults to `False`.
+  towards one of the responses based on the order. This should mainly be addressed via prompt engineering, but this is another optional mitigation. Defaults to `False`.
 - `experiment_prefix`: A prefix to be attached to the beginning of the pairwise experiment name. Defaults to `None`.
 - `description`: A description of the pairwise experiment. Defaults to `None`.
 - `max_concurrency`: The maximum number of concurrent evaluations to run. Defaults to 5.
@@ -29,7 +32,7 @@ towards one of the responses based on the order. This should mainly be addressed
 
 ## Inputs and Outputs to your Evaluator
 
-**Inputs:** A list of Runs and a single Example. This is exactly the same as a normal evaluator, except with a list of Runs instead of a single Run. The list of runs will have a length of two. You can access the inputs and outputs with 
+**Inputs:** A list of Runs and a single Example. This is exactly the same as a normal evaluator, except with a list of Runs instead of a single Run. The list of runs will have a length of two. You can access the inputs and outputs with
 `runs[0].inputs`, `runs[0].outputs`, `runs[1].inputs`, `runs[1].outputs`, `example.inputs`, and `example.outputs`.
 
 **Output:** Your evaluator should return a dictionary with two keys: `key`, which represents the feedback key that will be logged, and `scores`, which is a
@@ -52,7 +55,7 @@ prompt = hub.pull("langchain-ai/pairwise-evaluation-2")
 
 def evaluate_pairwise(runs: list[Run], example: Example):
     scores = {}
-    
+
     # Create the model to run your evaluator
     model = ChatOpenAI(model_name="gpt-4")
 
