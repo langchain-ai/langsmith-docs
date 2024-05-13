@@ -26,7 +26,7 @@ When selection `Online Evaluation` as an action in an automation, you are presen
 
 ![](../static/evaluator.png)
 
-You can configure the model, the prompt template, and the criteria
+You can configure the model, the prompt template, the template format, and the criteria.
 
 ### Model
 
@@ -34,12 +34,12 @@ You can choose any model available in the dropdown. Currently, we support **Open
 
 ### Prompt template
 
-You can customize the prompt template to be whatever you want.
-The prompt template is a LangChain prompt template - this means that anything in `{...}` is treated as a variable to format.
-Importantly, evaluator prompts can only contain the following input variables:
+You can customize the prompt template to be whatever you want. We support two template formats: f-string and mustache.
+For f-string templates, anything in `{...}` is treated as a variable to format. Mustache supports more robust templating, including nesting variables, see [mustache documentation](https://mustache.github.io/) for more information.
 
-- `input` (required): the input to the target you are evaluating
-- `output` (required): the output of the target you are evaluating
+Evaluator prompts can only contain the following root input variables:
+- `input`: the input to the target you are evaluating
+- `output`: the output of the target you are evaluating
 
 :::note
 
