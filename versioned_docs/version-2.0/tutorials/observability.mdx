@@ -502,9 +502,13 @@ You can view these over time across a few different time bins.
 
 ![](./static/tracing_tutorial_monitor.png)
 
-### AB Testing
+### A/B Testing
 
-You can also use this tab to perform a version of AB Testing.
+:::note
+Group-by functionality for A/B testing requires at least 2 different values to exist for a given metadata key.
+:::
+
+You can also use this tab to perform a version of A/B Testing.
 In the previous tutorial we starting tracking a few different metadata attributes - one of which was `llm`.
 We can group the monitoring charts by ANY metadata attribute, and instantly get grouped charts over time.
 This allows us to experiment with different LLMs (or prompts, or other) and track their performance over time.
@@ -533,8 +537,8 @@ This will lead you back to the runs table with a filtered view:
 In this tutorial you saw how to set up your LLM application with best-in-class observability.
 No matter what stage your application is in, you will still benefit from observability.
 
-If you have more in-depth questions about observability, check out the how-to section for guides.
+If you have more in-depth questions about observability, check out the [how-to section](../how_to_guides) for guides on topics like testing, prompt management, and more.
 
 Observability is not the only thing LangSmith can help with!
-It can also help with testing, prompt management, and more!
-Check out the other tutorials to see how to get started with those.
+It can also help with evaluation, optimization, and more!
+Check out the [other tutorials](../tutorials) to see how to get started with those.
