@@ -35,19 +35,23 @@ You can choose any model available in the dropdown. Currently, we support **Open
 ### Prompt template
 
 You can customize the prompt template to be whatever you want. We support two template formats: f-string and mustache.
-For f-string templates, anything in `{...}` is treated as a variable to format. Mustache supports more robust templating, including nesting variables, see [mustache documentation](https://mustache.github.io/) for more information.
+- f-string: anything in `{...}` is treated as an f-string variable.
+- mustache: anything in `{{...}}` is treated as a mustache variable. Mustache supports more robust templating, including nesting variables. See the [mustache documentation](https://mustache.github.io/) for more information.
 
 Evaluator prompts can only contain the following root input variables:
 - `input`: the input to the target you are evaluating
 - `output`: the output of the target you are evaluating
 
+In mustache templating, you can get more specific. For example, if you have a key `text` in the `input` dictionary, you can access it using `{{input.text}}`. When writing your prompt, you'll be shown suggestions based on your recent runs.
+
+![](../static/schema_suggestions.png)
+
+Previewing the prompt will show you what the formatted prompt will look like by pulling the input and output of the most recent run.
+
+![](../static/prompt_preview.png)
+
 :::note
-
-Automatic evaluators you configure in the application will only work if the `inputs` to your trace and `outputs` from our trace are single-keyed objects.
-LangSmith will automatically extract the values from the dictionaries and pass them to the evaluator.
-
-LangSmith currently doesn't support setting up evaluators in the application that act on multiple keys in the `inputs` or `outputs` of a trace.
-
+You can configure an evaluation prompt that doesn't match the schema of your recent runs, but the dropdown suggestions and preview function won't work as expected.
 :::
 
 ### Criteria
