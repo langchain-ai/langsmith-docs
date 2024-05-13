@@ -27,14 +27,14 @@ At its simplest, `evaluate_comparative` function takes the following arguments:
 
 Along with these, you can also pass in the following optional args:
 
-- `randomize_order`: An optional boolean indicating whether the order of the outputs should be randomized for each evaluation. This is a strategy for minimizing positional bias in your prompt: often, the LLM will be biased
+- `randomize_order` / `randomizeOrder`: An optional boolean indicating whether the order of the outputs should be randomized for each evaluation. This is a strategy for minimizing positional bias in your prompt: often, the LLM will be biased
   towards one of the responses based on the order. This should mainly be addressed via prompt engineering, but this is another optional mitigation. Defaults to `False`.
-- `experiment_prefix`: A prefix to be attached to the beginning of the pairwise experiment name. Defaults to `None`.
+- `experiment_prefix` / `experimentPrefix`: A prefix to be attached to the beginning of the pairwise experiment name. Defaults to `None`.
 - `description`: A description of the pairwise experiment. Defaults to `None`.
-- `max_concurrency`: The maximum number of concurrent evaluations to run. Defaults to 5.
+- `max_concurrency` / `maxConcurrency`: The maximum number of concurrent evaluations to run. Defaults to 5.
 - `client`: The LangSmith client to use. Defaults to `None`.
 - `metadata`: Metadata to attach to your pairwise experiment. Defaults to `None`.
-- `load_nested`: Whether to load all child runs for the experiment. When `False`, only the root trace will be passed to your evaluator. Defaults to `False`.
+- `load_nested` / `loadNested`: Whether to load all child runs for the experiment. When `False`, only the root trace will be passed to your evaluator. Defaults to `False`.
 
 ## Inputs and Outputs to your Evaluator
 
