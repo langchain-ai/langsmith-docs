@@ -272,10 +272,14 @@ def hallucination(root_run: Run, example: Example) -> dict:
     hallucination_grader = hallucination_prompt | structured_llm_grader
     score = hallucination_grader.invoke({"documents": page_contents, "generation": generation})
     return {"key": "answer_hallucination", "score": int(score.binary_score)}`),
-    TypeScriptBlock(`
+    typescript`
       import { EvaluationResult } from "langsmith/evaluation";
       import { Run, Example } from "langsmith/schemas";
-      import { loadEvaluator } from "langchain/evaluation";\n
+      
+      import { ChatPromptTemplate } from "@langchain/core/prompts";
+      import { ChatOpenAI } from "@langchain/openai";
+      import { z } from "zod";
+      
       function findNestedRun(run: Run, search: (run: Run) => boolean): Run | null {
         const queue: Run[] = [run];
         while (queue.length > 0) {
@@ -284,46 +288,71 @@ def hallucination(root_run: Run, example: Example) -> dict:
           queue.push(...currentRun.child_runs);
         }
         return null;
-      }\n
+      }
+      
+      // A very simple evaluator that checks to see if the input of the retrieval step exists
+      // in the retrieved docs.
       function documentRelevance(rootRun: Run, example: Example): EvaluationResult {
         const retrieveRun = findNestedRun(rootRun, (run) => run.name === "retrieve");
         const docs: Array<{ page_content: string }> | undefined =
-          retrieveRun.outputs?.outputs;\n
+          retrieveRun.outputs?.outputs;
+        
         const pageContents = docs?.map((doc) => doc.page_content).join("\\n\\n");
         const score = pageContents.includes(retrieveRun.inputs?.query);
         return { key: "simple_document_relevance", score };
-      }\n
-      const hallucinationEvaluator = await loadEvaluator("criteria", {
-        criteria: {
-          accuracy: [
-            "Is the Assistant's Answer grounded in the Ground Truth documentation? A score of [[0]] means that the",
-            "Assistant answer contains is not at all based upon / grounded in the Ground Truth documentation. A score of [[5]] means",
-            "that the Assistant answer contains some information (e.g., a hallucination) that is not captured in the Ground Truth",
-            "documentation. A score of [[10]] means that the Assistant answer is fully based upon the in the Ground Truth documentation.",
-          ].join("\\n"),
-        },
-      });\n
+      }
+      
       async function hallucination(
         rootRun: Run,
         example: Example
       ): Promise<EvaluationResult> {
         const rag = findNestedRun(rootRun, (run) => run.name === "ragPipeline");
-        const retrieve = findNestedRun(rootRun, (run) => run.name === "retrieve");\n
+        const retrieve = findNestedRun(rootRun, (run) => run.name === "retrieve");
+        
         const docs: Array<{ page_content: string }> | undefined =
-          retrieve.outputs?.outputs;\n
-        const pageContents = docs?.map((doc) => doc.page_content).join("\\n\\n");\n
-        const result = await hallucinationEvaluator.evaluateStrings({
-          input: rag.inputs?.question,
-          prediction: rag.outputs?.outputs,
-          reference: pageContents,
-        });\n
-        return {
-          key: "answer_hallucination",
-          score: result["score"],
-          comment: result["reasoning"],
-        };
+          retrieve.outputs?.outputs;
+        
+        const documents = docs?.map((doc) => doc.page_content).join("\\n\\n");
+        
+        const prompt = ChatPromptTemplate.fromMessages<{
+          documents: string;
+          generation: string;
+        }>([
+          [
+            "system",
+            [
+              \`You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts. \\n\`,
+              \`Give a binary score 1 or 0, where 1 means that the answer is grounded in / supported by the set of facts.\`,
+            ].join("\\n"),
+          ],
+          [
+            "human",
+            "Set of facts: \\n\\n {documents} \\n\\n LLM generation: {generation}",
+          ],
+        ]);
+        
+        const llm = new ChatOpenAI({
+          model: "gpt-3.5-turbo-0125",
+          temperature: 0,
+        }).withStructuredOutput(
+          z
+            .object({
+              binary_score: z
+                .number()
+                .describe("Answer is grounded in the facts, 1 or 0"),
+            })
+            .describe("Binary score for hallucination present in generation answer.")
+        );
+        
+        const grader = prompt.pipe(llm);
+        const score = await grader.invoke({
+          documents,
+          generation: rag.outputs?.outputs,
+        });
+        
+        return { key: "answer_hallucination", score: score.binary_score };
       }
-    `),
+    `,
   ]}
   groupId="client-language"
 />
