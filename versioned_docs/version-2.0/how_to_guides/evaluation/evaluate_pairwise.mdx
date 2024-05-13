@@ -88,43 +88,92 @@ which asks the LLM to decide which is better between two AI assistant responses.
           evaluators=[evaluate_pairwise],
       )
     `,
-    typescript`
-      import type { StructuredPrompt } from "@langchain/core/prompts";
-      import { ChatOpenAI } from "@langchain/openai";
-      import * as hub from "langchain/hub";
-      
+    typescript({
+      caption:
+        "Note: LangChain support inside `evaluate` / `evaluateComparative` is coming soon!",
+    })`
       import type { Run, Example } from "langsmith";
-      import { getLangChainCallbacks } from "langsmith/langchain";
+      import { evaluateComparative } from "langsmith/evaluation";
+      import { wrapOpenAI } from "langsmith/wrappers";
+      import OpenAI from "openai";
       
-      const prompt: StructuredPrompt = await hub.pull(
-        "langchain-ai/pairwise-evaluation-2"
-      );
-      
-      const model = new ChatOpenAI({ model: "gpt-4-turbo" });
-      const runnable = prompt.pipe(model);
+      const openai = wrapOpenAI(new OpenAI());
+      import { z } from "zod";
       
       async function evaluatePairwise(runs: Run[], example: Example) {
         const scores: Record<string, number> = {};
         const [runA, runB] = runs;
         
         if (!runA || !runB) throw new Error("Expected at least two runs");
-        const response = await runnable.invoke(
-          {
-            question: example.inputs?.question,
-            answer_a: runA?.outputs?.output ?? "N/A",
-            answer_b: runB?.outputs?.output ?? "N/A",
+        
+        const payload = {
+          question: example.inputs?.question,
+          answer_a: runA?.outputs?.output ?? "N/A",
+          answer_b: runB?.outputs?.output ?? "N/A",
+        };
+        
+        const output = await openai.chat.completions.create({
+          model: "gpt-4-turbo",
+          messages: [
+            {
+              role: "system",
+              content: [
+                "Please act as an impartial judge and evaluate the quality of the responses provided by two AI assistants to the user question displayed below.",
+                "You should choose the assistant that follows the user's instructions and answers the user's question better.",
+                "Your evaluation should consider factors such as the helpfulness, relevance, accuracy, depth, creativity, and level of detail of their responses.",
+                "Begin your evaluation by comparing the two responses and provide a short explanation.",
+                "Avoid any position biases and ensure that the order in which the responses were presented does not influence your decision.",
+                "Do not allow the length of the responses to influence your evaluation. Do not favor certain names of the assistants. Be as objective as possible.",
+              ].join(" "),
+            },
+            {
+              role: "user",
+              content: [
+                \`[User Question] \${payload.question}\`,
+                \`[The Start of Assistant A's Answer] \${payload.answer_a} [The End of Assistant A's Answer]\`,
+                \`The Start of Assistant B's Answer] \${payload.answer_b} [The End of Assistant B's Answer]\`,
+              ].join("\\n\\n"),
+            },
+          ],
+          tool_choice: {
+            type: "function",
+            function: { name: "Score" },
           },
-          // This is required to properly handoff tracing
-          // from LangSmith to LangChain
-          { callbacks: await getLangChainCallbacks() }
-        );
+          tools: [
+            {
+              type: "function",
+              function: {
+                name: "Score",
+                description: [
+                  \`After providing your explanation, output your final verdict by strictly following this format:\`,
+                  \`Output "1" if Assistant A answer is better based upon the factors above.\`,
+                  \`Output "2" if Assistant B answer is better based upon the factors above.\`,
+                  \`Output "0" if it is a tie.\`,
+                ].join(" "),
+                parameters: {
+                  type: "object",
+                  properties: {
+                    Preference: {
+                      type: "integer",
+                      description: "Which assistant answer is preferred?",
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        });
         
-        const score = response?.["Preference"];
-        
-        if (score === 1) {
+        const { Preference } = z
+          .object({ Preference: z.number() })
+          .parse(
+            JSON.parse(output.choices[0].message.tool_calls[0].function.arguments)
+          );
+          
+        if (Preference === 1) {
           scores[runA.id] = 1;
           scores[runB.id] = 0;
-        } else if (score === 2) {
+        } else if (Preference === 2) {
           scores[runA.id] = 0;
           scores[runB.id] = 1;
         } else {
@@ -135,7 +184,7 @@ which asks the LLM to decide which is better between two AI assistant responses.
         return { key: "ranked_preference", scores };
       }
       
-      await evaluateComparative(["my-experiment-name-1", "my-experiment-name-2"], {
+      await evaluateComparative(["earnest-name-40", "reflecting-pump-91"], {
         evaluators: [evaluatePairwise],
       });
     `,
