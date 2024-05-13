@@ -89,23 +89,55 @@ which asks the LLM to decide which is better between two AI assistant responses.
       )
     `,
     typescript`
-      import { evaluateComparative } from "langsmith/evaluation";
-      import { Run, Example } from "langsmith/schemas";
+      import type { StructuredPrompt } from "@langchain/core/prompts";
+      import { ChatOpenAI } from "@langchain/openai";
+      import * as hub from "langchain/hub";
       
-      function evaluatePairwise(runs: Run[], example: Example) {
+      import type { Run, Example } from "langsmith";
+      import { getLangChainCallbacks } from "langsmith/langchain";
+      
+      const prompt: StructuredPrompt = await hub.pull(
+        "langchain-ai/pairwise-evaluation-2"
+      );
+      
+      const model = new ChatOpenAI({ model: "gpt-4-turbo" });
+      const runnable = prompt.pipe(model);
+      
+      async function evaluatePairwise(runs: Run[], example: Example) {
         const scores: Record<string, number> = {};
-        runs.forEach((run, i) => {
-          scores[run.id] = i;
-        });
+        const [runA, runB] = runs;
+        
+        if (!runA || !runB) throw new Error("Expected at least two runs");
+        const response = await runnable.invoke(
+          {
+            question: example.inputs?.question,
+            answer_a: runA?.outputs?.output ?? "N/A",
+            answer_b: runB?.outputs?.output ?? "N/A",
+          },
+          // This is required to properly handoff tracing
+          // from LangSmith to LangChain
+          { callbacks: await getLangChainCallbacks() }
+        );
+        
+        const score = response?.["Preference"];
+        
+        if (score === 1) {
+          scores[runA.id] = 1;
+          scores[runB.id] = 0;
+        } else if (score === 2) {
+          scores[runA.id] = 0;
+          scores[runB.id] = 1;
+        } else {
+          scores[runA.id] = 0;
+          scores[runB.id] = 0;
+        }
         
         return { key: "ranked_preference", scores };
       }
       
-      await evaluateComparative(
-          // Replace the following array with the names or IDs of your experiments
-          ["test-ordinary-jug-88", "test-mundane-strait-65"],
-          { evaluators: [evaluatePairwise] },
-      );
+      await evaluateComparative(["my-experiment-name-1", "my-experiment-name-2"], {
+        evaluators: [evaluatePairwise],
+      });
     `,
   ]}
 />
