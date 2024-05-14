@@ -21,7 +21,7 @@ For example, for retrieval-augmented generation (RAG), you might want to
 
 In this guide, we will use a simple, fully-custom evaluator for evaluating criteria 1 and an LLM-based evaluator for evaluating criteria 2 to highlight both scenarios.
 
-In order to evaluate the intermediate steps of your pipeline, your evaluator function should traverse and process the `root_run` argument, which is a `Run` object that contains the intermediate steps of your pipeline.
+In order to evaluate the intermediate steps of your pipeline, your evaluator function should traverse and process the `root_run`/`rootRun` argument, which is a `Run` object that contains the intermediate steps of your pipeline.
 
 ## 1. Define your LLM pipeline
 
@@ -223,7 +223,7 @@ We are building a very simple dataset with a couple of examples to evaluate the 
 ## 3. Define your custom evaluators
 
 As mentioned above, we will define two evaluators: one that evaluates the relevance of the retrieved documents w.r.t the input query and another that evaluates the hallucination of the generated answer w.r.t the retrieved documents.
-We will be using the `LangChainStringEvaluator` / `loadEvaluator` to evaluate the hallucination of the generated answer, but you can modify this as needed.
+We will be using LangChain LLM wrappers, along with [`with_structured_output`](https://python.langchain.com/v0.1/docs/modules/model_io/chat/structured_output/) to define the evaluator for hallucination.
 
 The key here is that the evaluator function should traverse the `root_run` / `rootRun` argument to access the intermediate steps of the pipeline. The evaluator can then process the inputs and outputs of the intermediate steps to evaluate according to the desired criteria.
 
