@@ -49,11 +49,45 @@ By default, the trace will be logged to the project with the name `default`. An 
 
 ![](../static/langchain_trace.png)
 
+## Trace selectively
+
+The [previous section](#quick-start) showed how to trace all invocations of a LangChain runnables within your applications by setting a single environment variable. While this is a convenient way to get started, you may want to trace only specific invocations or parts of your application.
+
+There are two ways to do this in Python: by manually passing in a `LangChainTracer` ([reference docs](https://api.python.langchain.com/en/latest/tracers/langchain_core.tracers.langchain.LangChainTracer.html#langchain_core.tracers.langchain.LangChainTracer)) instance as a callback, or by using the `tracing_v2_enabled` context manager ([reference docs](https://api.python.langchain.com/en/latest/tracers/langchain_core.tracers.context.tracing_v2_enabled.html)).
+
+In JS/TS, you can pass a `LangChainTracer` ([reference docs](https://api.js.langchain.com/classes/langchain_core_tracers_tracer_langchain.LangChainTracer.html)) instance as a callback.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`# You can configure a LangChainTracer instance to trace a specific invocation.
+from langchain.callbacks.tracers import LangChainTracer\n
+tracer = LangChainTracer()
+chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})\n
+# LangChain Python also supports a context manager for tracing a specific block of code.
+from langchain_core.tracers.context import tracing_v2_enabled
+with tracing_v2_enabled():
+    chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})\n
+# This will NOT be traced (assuming LANGCHAIN_TRACING_V2 is not set)
+chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced"})`),
+    TypeScriptBlock(`// You can configure a LangChainTracer instance to trace a specific invocation.
+import { LangChainTracer } from "langchain/callbacks";\n
+const tracer = new LangChainTracer();
+await chain.invoke(
+  {
+    question: "Am I using a callback?",
+    context: "I'm using a callback"
+  },
+  { callbacks: [tracer] }
+);`),
+  ]}
+  groupId="client-language"
+/>
+
 ## Log to a specific project
 
 ### Statically
 
-As mentioned [here](../../concepts/tracing) LangSmith uses the concept of a Project to group traces. If left unspecified, the tracer project is set to default. You can set the `LANGCHAIN_PROJECT` environment variable to configure a custom project name for an entire application run. This should be done before executing your application.
+As mentioned in the [tracing conceptual guide](../../concepts/tracing) LangSmith uses the concept of a Project to group traces. If left unspecified, the tracer project is set to default. You can set the `LANGCHAIN_PROJECT` environment variable to configure a custom project name for an entire application run. This should be done before executing your application.
 
 ```shell
 export LANGCHAIN_PROJECT=my-project
@@ -61,23 +95,25 @@ export LANGCHAIN_PROJECT=my-project
 
 ### Dynamically
 
+This largely builds off of the [previous section](#trace-selectively) and allows you to set the project name for a specific `LangChainTracer` instance or as parameters to the `tracing_v2_enabled` context manager in Python.
+
 <CodeTabs
   tabs={[
     PythonBlock(`# You can set the project name for a specific tracer instance:
 from langchain.callbacks.tracers import LangChainTracer\n
 tracer = LangChainTracer(project_name="My Project")
-chain.invoke({"query": "How many people live in canada as of 2023?"}, config={"callbacks": [tracer]})\n
-# LangChain python also supports a context manager for tracing a specific block of code.
+chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})\n
 # You can set the project name using the project_name parameter.
 from langchain_core.tracers.context import tracing_v2_enabled
 with tracing_v2_enabled(project_name="My Project"):
-    chain.invoke({"query": "How many people live in canada as of 2023?"})`),
+    chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})`),
     TypeScriptBlock(`// You can set the project name for a specific tracer instance:
 import { LangChainTracer } from "langchain/callbacks";\n
 const tracer = new LangChainTracer({ projectName: "My Project" });
 await chain.invoke(
   {
-    query: "How many people live in canada as of 2023?"
+    question: "Am I using a callback?",
+    context: "I'm using a callback"
   },
   { callbacks: [tracer] }
 );`),
@@ -102,8 +138,10 @@ prompt = ChatPromptTemplate.from_messages([
 ])
 chat_model = ChatOpenAI()
 output_parser = StrOutputParser()\n
+# highlight-next-line
 # Tags and metadata can be configured with RunnableConfig
 chain = (prompt | chat_model | output_parser).with_config({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}})\n
+# highlight-next-line
 # Tags and metadata can also be passed at runtime
 chain.invoke({"input": "What is the meaning of life?"}, {"tags": ["shared-tags"], "metadata": {"shared-key": "shared-value"}})`),
     TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
@@ -115,8 +153,10 @@ const prompt = ChatPromptTemplate.fromMessages([
 ])
 const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
 const outputParser = new StringOutputParser();\n
+// highlight-next-line
 // Tags and metadata can be configured with RunnableConfig
 const chain = (prompt.pipe(model).pipe(outputParser)).withConfig({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}});\n
+// highlight-next-line
 // Tags and metadata can also be passed at runtime
 await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags"], metadata: {"shared-key": "shared-value"}})`),
   ]}
@@ -127,11 +167,13 @@ await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags
 
 When you create a run, you can specify a name for the run. This name is used to identify the run in LangSmith and can be used to filter and group runs. The name is also used as the title of the run in the LangSmith UI.
 
+:::note
+This feature is not currently supported directly for LLM objects.
+:::
+
 <CodeTabs
   tabs={[
     PythonBlock(`# When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
-# (Note: this is not currently supported directly on LLM objects.)
-...
 configured_chain = chain.with_config({"run_name": "MyCustomChain"})
 configured_chain.invoke({"query": "What is the meaning of life?"})`),
     TypeScriptBlock(`// When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').

@@ -52,6 +52,7 @@ Get started with LangSmith's tracing features to start adding observability to y
 - [Trace with `LangChain`](./how_to_guides/tracing/trace_with_langchain)
   - [Installation](./how_to_guides/tracing/trace_with_langchain#installation)
   - [Quick start](./how_to_guides/tracing/trace_with_langchain#quick-start)
+  - [Trace selectively](./how_to_guides/tracing/trace_with_langchain#trace-selectively)
   - [Log to specific project](./how_to_guides/tracing/trace_with_langchain#log-to-specific-project)
   - [Add metadata and tags to traces](./how_to_guides/tracing/trace_with_langchain#add-metadata-and-tags-to-traces)
   - [Customize run name](./how_to_guides/tracing/trace_with_langchain#customize-run-name)
