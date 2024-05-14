@@ -270,6 +270,10 @@ html[data-theme="dark"] {
   .tabs-container > .code-tabs {
     background: #1e1e1e;
   }
+  
+  .tabs-container .code-caption {
+    background: #1e1e1e;
+  }
 }
 
 .tabs-container > .code-tabs > [role="tab"] {
@@ -327,3 +331,4 @@ html[data-theme="dark"] {
 hr {
   background-color: var(--joy-palette-background-level2) !important;
 }
+
