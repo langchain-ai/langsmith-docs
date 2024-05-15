@@ -1,5 +1,4 @@
 ---
-sidebar_label: Unit Test
 sidebar_position: 7
 ---
 
@@ -13,7 +12,7 @@ These should run on every commit in your CI pipeline to catch regressions early.
 `@unit` currently requires `langsmith` python version `>=0.1.42`. If you are interested in unit testing functionality in TypeScript or other languages, please let us know at [support@langchain.dev](mailto:support@langchain.dev).  
 :::
 
-## Write @unit test
+## Write a @unit test
 
 To write a LangSmith unit test, decorate your test function with `@unit`.
 If you want to track the full nested trace of the system or component being tested, you can mark those functions with `@traceable`. For example:
@@ -60,7 +59,7 @@ The test suite syncs to a corresponding dataset named after your package or gith
 
 ![Unit Test Example](./static/unit-test-suite.png)
 
-## Going Further
+## Going further
 
 `@unit` is designed to stay out of your way and works well with familiar `pytest` features. For example:
 

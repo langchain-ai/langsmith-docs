@@ -9,15 +9,24 @@ import {
   typescript,
 } from "@site/src/components/InstructionsWithCode";
 
-# Run Pairwise Evaluations
+# Run pairwise evaluations
 
-LangSmith supports evaluating **existing** experiments against each other. This allows you to use automatic evaluators (especially, LLM-based evaluators) to score the outputs from multiple experiments against each other, rather than being confined to evaluating outputs one at a time. Think [Chatbot Arena](https://chat.lmsys.org/) - this is the same concept! To do this, use the `evaluate_comparative` / `evaluateComparative` function
-with two existing experiments. If you haven't already created experiments to compare, check out our [Quick Start guide](https://docs.smith.langchain.com/#5-run-your-first-evaluation) or our [Evaluations How-To Guide](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application) to get started with evaluations.
+:::tip Recommended Reading
+Before diving into this content, it might be helpful to read the following:
 
-## The `evaluate_comparative` Function
+- [How-to guide on running regular evals](./evaluate_llm_application)
+
+:::
+
+LangSmith supports evaluating **existing** experiments in a comparative manner. This allows you to use automatic evaluators (especially, LLM-based evaluators) to score the outputs from multiple experiments against each other, rather than being confined to evaluating outputs one at a time. Think [LMSYS Chatbot Arena](https://chat.lmsys.org/) - this is the same concept! To do this, use the `evaluate_comparative` / `evaluateComparative` function
+with two existing experiments.
+
+If you haven't already created experiments to compare, check out our [quick start](https://docs.smith.langchain.com/#5-run-your-first-evaluation) or oue [how-to guide](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application) to get started with evaluations.
+
+## Use the `evaluate_comparative` function
 
 :::note
-Pairwise evaluation currently requires `langsmith` Python version `>=0.1.55` or JS version `>=0.1.24`.
+Pairwise evaluations currently require `langsmith` SDK Python version `>=0.1.55` or JS version `>=0.1.24`.
 :::
 
 At its simplest, `evaluate_comparative` / `evaluateComparative` function takes the following arguments:
@@ -36,21 +45,31 @@ Along with these, you can also pass in the following optional args:
 - `metadata`: Metadata to attach to your pairwise experiment. Defaults to `None`.
 - `load_nested` / `loadNested`: Whether to load all child runs for the experiment. When `False`, only the root trace will be passed to your evaluator. Defaults to `False`.
 
-## Inputs and Outputs to your Evaluator
+## Configure inputs and outputs for pairwise evaluators
 
 **Inputs:** A list of Runs and a single Example. This is exactly the same as a normal evaluator, except with a list of Runs instead of a single Run. The list of runs will have a length of two. You can access the inputs and outputs with
 `runs[0].inputs`, `runs[0].outputs`, `runs[1].inputs`, `runs[1].outputs`, `example.inputs`, and `example.outputs`.
 
-**Output:** Your evaluator should return a dictionary with two keys: `key`, which represents the feedback key that will be logged, and `scores`, which is a
-mapping from run ID to score for that run. **We strongly encourage using 0 and 1 as the score values, where 1 is better.** You may also set both to 0 to represent
-"both equally bad" or both to 1 for "both equally good".
+**Output:** Your evaluator should return a dictionary with two keys:
 
-Note that you should choose a feedback key that is distinct from standard feedbacks on your run. We recommend prefixing pairwise feedback keys with `pairwise` or `ranked`.
+- `key`, which represents the feedback key that will be logged
+- `scores`, which is a mapping from run ID to score for that run. **We strongly encourage using 0 and 1 as the score values, where 1 is better.** You may also set both to 0 to represent "both equally bad" or both to 1 for "both equally good".
 
-## Example
+Note that you should choose a feedback key that is distinct from standard feedbacks on your run. We recommend prefixing pairwise feedback keys with `pairwise_` or `ranked_`.
 
-The following example uses [a prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-2/26647e49?organizationId=94d4125d-dba0-55c3-8b1d-2464c35e5a41)
+## Compare two experiments with LLM-based pairwise evaluators
+
+The following example uses [a prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-2)
 which asks the LLM to decide which is better between two AI assistant responses. It uses structured output to parse the AI's response: 0, 1, or 2.
+
+:::note Optional LangChain Usage
+
+In the Python example below, we are pulling [this structured prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-2) from the [LangChain Hub](../prompts/langchain_hub) and using it with a LangChain LLM wrapper.
+The prompt asks the LLM to decide which is better between two AI assistant responses. It uses structured output to parse the AI's response: 0, 1, or 2.
+
+**Usage of LangChain is totally optional.** To illustrate this point, the TypeScript example below uses the OpenAI API directly.
+
+:::
 
 <CodeTabs
   tabs={[
@@ -195,7 +214,7 @@ which asks the LLM to decide which is better between two AI assistant responses.
   ]}
 />
 
-## In LangSmith UI
+## View pairwise experiments
 
 Navigate to the "Pairwise Experiments" tab from the dataset page:
 
