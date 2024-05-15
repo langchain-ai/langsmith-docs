@@ -20,6 +20,8 @@ We've successfully tested LangSmith on the following Kubernetes distributions:
 - OpenShift
 - Minikube and Kind (for development purposes)
 
+For the most up-to-date information on deploying to kubernetes/upgrade instructions, please refer to the README in the [LangSmith Helm Chart](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/README.md).
+
 ## Prerequisites
 
 Ensure you have the following tools/items ready. Some items are marked optional but :
@@ -29,15 +31,16 @@ Ensure you have the following tools/items ready. Some items are marked optional 
    1. Recommended: At least 4 vCPUs, 16GB Memory available
       - You may need to tune resource requests/limits for all of our different services based off of organization size/usage
    2. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
-      ```bash
-      kubectl get storageclass
-      ```
+
+   ```bash
+   kubectl get storageclass
+   ```
 
    The output should show at least one storage class with a provisioner that supports dynamic provisioning. For example:
 
    ```bash
-      NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-      gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  161d
+     NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+     gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  161d
    ```
 
 2. Helm
@@ -46,20 +49,30 @@ Ensure you have the following tools/items ready. Some items are marked optional 
    1. You can get this from your Langchain representative. Contact us at sales@langchain.dev for more information.
 4. SSL(optional)
    1. This should be attachable to a load balancer that will be provisioned by your cloud provider. This will be used for the frontend service.
-5. OpenAI API Key(optional).
+5. Api Key Salt
+   1. This is a secret key that you can generate. It should be a random string of characters.
+   2. You can generate this using the following command:
+   ```bash
+   openssl rand -base64 32
+   ```
+6. OpenAI API Key(optional).
    1. Used for natural language search feature(beta). Can specify OpenAI key in browser as well for the playground feature.
-6. OAuth Configuration(optional).
+7. OAuth Configuration(optional).
    1. You can configure oauth using the `values.yaml` file. You will need to provide a `client_id` and `client_issuer_url` for your OAuth provider.
    2. Note, we do rely on the OIDC Authorization Code with PKCE flow. We currently support almost anything that is OIDC compliant however Google does not support this flow.
    3. Without OAuth, you will not be able to create users or organizations.
-7. External Postgres(optional).
+8. External Postgres(optional).
    1. You can configure external postgres using the `values.yaml` file. You will need to provide connection parameters for your postgres instance.
    2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled, or you must include that in your search path.
    3. Note: We do only officially support Postgres versions >= 14.
-8. External Redis(optional).
+9. External Redis(optional).
    1. You can configure external redis using the `values.yaml` file. You will need to provide a connection url for your redis instance.
    2. Currently, we do not support using Redis with TLS. We will be supporting this shortly.
    3. We only official support Redis versions >= 6.
+10. External ClickHouse(optional).
+    1. You can configure external clickhouse using the `values.yaml` file. You will need to provide several connection parameters for your ClickHouse instance.
+    2. If using TLS, make sure to set `clickhouse.external.tls` to `true`.
+    3. We only officially support ClickHouse versions >= 23. We also only support standalone ClickHouse or ClickHouse Cloud(not clustered or replicated).
 
 ## Configure your Helm Charts:
 
@@ -79,7 +92,7 @@ config:
   langsmithLicenseKey: ""
 ```
 
-You can also see some example configurations in the examples directory.
+You can also see some example configurations in the examples directory of the Helm Chart repository here: [LangSmith Helm Chart Examples](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/examples).
 
 ## Deploying to Kubernetes:
 
@@ -162,7 +175,7 @@ Now that LangSmith is running, you can start using it to trace your code. You ca
 
 #### How can we upgrade our application?
 
-- We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to follow the upgrade instructions in the Helm README and run a `helm upgrade langsmith --values <values file>`
+- We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to follow the upgrade instructions in the [Helm README](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/README.md) and run a `helm upgrade langsmith --values <values file>`
 
 #### How can we back up our application?
 
