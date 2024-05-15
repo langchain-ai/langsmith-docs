@@ -31,15 +31,16 @@ Ensure you have the following tools/items ready. Some items are marked optional 
    1. Recommended: At least 4 vCPUs, 16GB Memory available
       - You may need to tune resource requests/limits for all of our different services based off of organization size/usage
    2. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
-      ```bash
-      kubectl get storageclass
-      ```
+
+   ```bash
+   kubectl get storageclass
+   ```
 
    The output should show at least one storage class with a provisioner that supports dynamic provisioning. For example:
 
    ```bash
-      NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-      gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  161d
+     NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+     gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  161d
    ```
 
 2. Helm
@@ -51,9 +52,9 @@ Ensure you have the following tools/items ready. Some items are marked optional 
 5. Api Key Salt
    1. This is a secret key that you can generate. It should be a random string of characters.
    2. You can generate this using the following command:
-      ```bash
-      openssl rand -base64 32
-      ```
+   ```bash
+   openssl rand -base64 32
+   ```
 6. OpenAI API Key(optional).
    1. Used for natural language search feature(beta). Can specify OpenAI key in browser as well for the playground feature.
 7. OAuth Configuration(optional).
@@ -69,9 +70,9 @@ Ensure you have the following tools/items ready. Some items are marked optional 
    2. Currently, we do not support using Redis with TLS. We will be supporting this shortly.
    3. We only official support Redis versions >= 6.
 10. External ClickHouse(optional).
-11. You can configure external clickhouse using the `values.yaml` file. You will need to provide several connection parameters for your ClickHouse instance.
-12. If using TLS, make sure to set `clickhouse.external.tls` to `true`.
-13. We only officially support ClickHouse versions >= 23. We also only support standalone ClickHouse or ClickHouse Cloud(not clustered or replicated).
+    1. You can configure external clickhouse using the `values.yaml` file. You will need to provide several connection parameters for your ClickHouse instance.
+    2. If using TLS, make sure to set `clickhouse.external.tls` to `true`.
+    3. We only officially support ClickHouse versions >= 23. We also only support standalone ClickHouse or ClickHouse Cloud(not clustered or replicated).
 
 ## Configure your Helm Charts:
 

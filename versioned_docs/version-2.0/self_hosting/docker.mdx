@@ -21,21 +21,32 @@ This guide provides instructions for installing and setting up your environment 
    If you don't see any server information in the output, make sure Docker is installed correctly and launch the Docker daemon.
 2. LangSmith License Key
    1. You can get this from your Langchain representative. Contact us at sales@langchain.dev for more information.
-3. LangSmith Version
-   1. Our Docker Compose files are pegged to the latest self-hosted release of LangSmith. If you want to use a different version, you can specify it in the `.env` file or in the `docker-compose.yml` file.
-4. OpenAI API Key(optional).
-   1. Used for natural language search feature. Can specify OpenAI key in browser as well for the playground feature.
-5. Oauth Configuration(optional).
-   1. You can configure oauth using the `.env` file. You will need to provide a `client_id` and `client_issuer_url` for your oauth provider.
+3. SSL(optional)
+   1. This should be attachable to a load balancer that will be provisioned by your cloud provider. This will be used for the frontend service.
+4. Api Key Salt
+   1. This is a secret key that you can generate. It should be a random string of characters.
+   2. You can generate this using the following command:
+   ```bash
+   openssl rand -base64 32
+   ```
+5. OpenAI API Key(optional).
+   1. Used for natural language search feature(beta). Can specify OpenAI key in browser as well for the playground feature.
+6. OAuth Configuration(optional).
+   1. You can configure oauth using the `.env` file. You will need to provide a `client_id` and `client_issuer_url` for your OAuth provider.
    2. Note, we do rely on the OIDC Authorization Code with PKCE flow. We currently support almost anything that is OIDC compliant however Google does not support this flow.
-6. External Postgres(optional).
-   1. You can configure external postgres using the `.env` file. You will need to set the `POSTGRES_DATABASE_URI` environment variable to the connection string for your postgres instance.
-   2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled or you must include that in your search path.
+   3. Without OAuth, you will not be able to create users or organizations.
+7. External Postgres(optional).
+   1. You can configure external postgres using the `.env` file. You will need to provide connection parameters for your postgres instance.
+   2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled, or you must include that in your search path.
    3. Note: We do only officially support Postgres versions >= 14.
-7. External Redis(optional).
-   1. You can configure external redis using the `.env` file. You will need to set the `REDIS_DATABASE_URI` environment variable to the connection string for your redis instance.
+8. External Redis(optional).
+   1. You can configure external redis using the `.env` file. You will need to provide a connection url for your redis instance.
    2. Currently, we do not support using Redis with TLS. We will be supporting this shortly.
    3. We only official support Redis versions >= 6.
+9. External ClickHouse(optional).
+   1. You can configure external clickhouse using the `.env` file. You will need to provide several connection parameters for your ClickHouse instance.
+   2. If using TLS, make sure to set `clickhouse.external.tls` to `true`.
+   3. We only officially support ClickHouse versions >= 23. We also only support standalone ClickHouse or ClickHouse Cloud(not clustered or replicated).
 
 ## Running via Docker Compose
 
