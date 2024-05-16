@@ -184,3 +184,59 @@ await configuredChain.invoke({query: "What is the meaning of life?"});`),
   ]}
   groupId="client-language"
 />
+
+## Access run (span) ID for LangChain invocations
+
+When you invoke a LangChain object, you can access the run ID of the invocation. This run ID can be used to query the run in LangSmith.
+
+In Python, you can use the `collect_runs` context manager to access the run ID.
+
+In JS/TS, you can use a `RunCollectorCallbackHandler` instance to access the run ID.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.tracers.context import collect_runs\n
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
+    ("user", "Question: {question}\n\nContext: {context}")
+])
+model = ChatOpenAI(model="gpt-3.5-turbo")
+output_parser = StrOutputParser()\n
+chain = prompt | model | output_parser\n
+question = "Can you summarize this morning's meetings?"
+context = "During this morning's meeting, we solved all world conflict."
+with collect_runs() as cb:
+  result = chain.invoke({"question": question, "context": context})
+  # Get the root run id
+  # highlight-next-line
+  run_id = cb.traced_runs[0].id
+print(run_id)`),
+    TypeScriptBlock(`import { ChatOpenAI } from "npm:@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import { RunCollectorCallbackHandler } from "@langchain/core/tracers/run_collector";\n
+const prompt = ChatPromptTemplate.fromMessages([
+  ["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
+  ["user", "Question: {question}\n\nContext: {context}"],
+]);
+const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const outputParser = new StringOutputParser();\n
+const chain = prompt.pipe(model).pipe(outputParser);
+const runCollector = new RunCollectorCallbackHandler();\n
+const question = "Can you summarize this morning's meetings?"
+const context = "During this morning's meeting, we solved all world conflict."
+await chain.invoke(
+    { question: question, context: context },
+    {
+        callbacks: [runCollector],
+    }
+);
+// highlight-next-line
+const runId = runCollector.tracedRuns[0].id;
+console.log(runId);`),
+  ]}
+  groupId="client-language"
+/>
