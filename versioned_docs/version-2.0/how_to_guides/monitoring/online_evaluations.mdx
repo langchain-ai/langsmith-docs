@@ -24,9 +24,7 @@ After entering [rules setup](./rules), you can select `Online Evaluation` from t
 
 When selection `Online Evaluation` as an action in an automation, you are presented with a panel from which you can configure online evaluation.
 
-![](../static/evaluator.png)
-
-You can configure the model, the prompt template, the template format, and the criteria.
+![](../static/evaluator_options.png)
 
 ### Model
 
@@ -34,17 +32,29 @@ You can choose any model available in the dropdown. Currently, we support **Open
 
 ### Prompt template
 
-You can customize the prompt template to be whatever you want. We support two template formats: f-string and mustache.
+For the prompt template, you can select a suggested evaluator prompt, create a new prompt, or choose a prompt from the LangChain Hub.
 
-- f-string: anything in `{...}` is treated as an f-string variable.
+#### Suggested evaluator prompts
+
+We provide a list of pre-existing prompts that cater to common evaluator use cases. Once you select a prompt, you can customize it in the prompt editor to work with your run schema.
+
+![](../static/off_the_shelf_evaluators.png)
+
+#### Create your own prompt
+
+We also provide a prompt editor where you can create your own prompt.
+
+We support two template formats:
+
 - mustache: anything in `{{...}}` is treated as a mustache variable. Mustache supports more robust templating, including nesting variables. See the [mustache documentation](https://mustache.github.io/) for more information.
+- f-string: anything in `{...}` is treated as an f-string variable.
 
 Evaluator prompts can only contain the following root input variables:
 
 - `input`: the input to the target you are evaluating
 - `output`: the output of the target you are evaluating
 
-In mustache templating, you can get more specific. For example, if you have a key `text` in the `input` dictionary, you can access it using `{{input.text}}`. When writing your prompt, you'll be shown suggestions based on your recent runs.
+In mustache templating, you can get more specific. For example, if you have a key `text` in the `input` dictionary, you can access it using `{{input.text}}`. When writing your prompt, you'll be shown suggestions based on your recent run schema.
 
 ![](../static/schema_suggestions.png)
 
@@ -56,10 +66,23 @@ Previewing the prompt will show you an example of what the formatted prompt will
 You can configure an evaluation prompt that doesn't match the schema of your recent runs, but the dropdown suggestions and preview function won't work as expected.
 :::
 
+### Pull a prompt from the LangChain Hub
+
+You can also pull a prompt from the LangChain Hub. You can pull any public structured prompt.
+
+You can't edit these prompts directly within the prompt editor, but you can view the prompt and the schema it uses.
+If the prompt is your own, you can edit it in the playground and commit the version.
+If the prompt is someone else's, you can fork their prompt, make your edits in the playground and then pull in your new prompt.
+
+![](../static/hub_prompts.png)
+
 ### Criteria
 
 An evaluator will attach arbitrary metadata tags to a run. These tags will have a name and a value. You can configure this in the `Criteria` section.
 The names and the descriptions of the fields will be passed in to the prompt. Behind the scenes, we use tool calling to coerce the output of the LLM in to the score you specify.
+:::note
+The name of the criteria cannot have spaces since it is used as the name of a tool.
+:::
 
 ## Set API keys
 
