@@ -40,9 +40,9 @@ This guide provides instructions for installing and setting up your environment 
    2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled, or you must include that in your search path.
    3. Note: We do only officially support Postgres versions >= 14.
 8. External Redis(optional).
-   1. You can configure external redis using the `.env` file. You will need to provide a connection url for your redis instance.
-   2. Currently, we do not support using Redis with TLS. We will be supporting this shortly.
-   3. We only official support Redis versions >= 6.
+   1. You can configure external redis using the `values.yaml` file. You will need to provide a connection url for your redis instance.
+   2. If using TLS, ensure that you use `rediss://` instead of `redis://. E.g "rediss://langsmith-redis:6380/0?password=foo"
+   3. We only official support Redis versions >= 6. We also do not support sharded/clustered Redis(though you can point to a single node in a cluster).
 9. External ClickHouse(optional).
    1. You can configure external clickhouse using the `.env` file. You will need to provide several connection parameters for your ClickHouse instance.
    2. If using TLS, make sure to set `clickhouse.external.tls` to `true`.
