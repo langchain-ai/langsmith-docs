@@ -84,9 +84,10 @@ The first step is to generate a dataset based on the production _inputs_.
 Then copy over all the traces to serve as a baseline run.
 
 `convert_runs_to_test` is a function which takes some runs and does the following:
+
 1. The inputs, and optionally the outputs, are saved to a dataset as Examples.
 2. The inputs and outputs are stored as an experiment, as if you had run the `evaluate`
-function and received those outputs.
+   function and received those outputs.
 
 ```python
 from datetime import datetime, timedelta, timezone
