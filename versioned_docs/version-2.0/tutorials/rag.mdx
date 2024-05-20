@@ -1,9 +1,8 @@
-```python
-%capture --no-stderr
-! pip install langsmith langchain-community langchain chromadb tiktoken openai langchainhub
-```
+---
+sidebar_position: 4
+---
 
-# Use Case Tutorial: RAG
+# RAG
 
 We will walk through the evaluation workflow for RAG (retrieval augmented generation).
 
@@ -136,8 +135,6 @@ response = rag_bot.get_answer("How to build a RAG chain in LCEL?")
 response["answer"][:150]
 ```
 
-    'Building a RAG (Retrieval-Augmented Generation) chain in LangChain Expression Language (LCEL) allows you to leverage the power of document retrieval t'
-
 Define a function that will:
 
 1. Take a dataset `example`
@@ -193,9 +190,9 @@ Here is an example prompt that we can use:
 
 https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference
 
-Here is the information flow:
+Here is the a video from our LangSmith evaluation series for reference:
 
-![answer_eval_flow.png](./static/answer_eval_flow.png)
+https://youtu.be/lTfhw_9cJqc?feature=shared
 
 Here is our evaluator function:
 
@@ -252,15 +249,6 @@ experiment_results = evaluate(
 )
 ```
 
-    View the evaluation results for experiment: 'rag-answer-v-reference-552234e6' at:
-    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=03e51c9a-9aeb-4cfe-8f8c-ede797940b9e
-
-
-
-
-
-    0it [00:00, ?it/s]
-
 ### **Response vs input**
 
 Here is an example prompt that we can use:
@@ -306,24 +294,15 @@ experiment_results = evaluate(
 )
 ```
 
-    View the evaluation results for experiment: 'rag-answer-helpfulness-e64d4893' at:
-    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=60ee674a-fb59-4c68-86fe-148355fc659e
-
-
-
-
-
-    0it [00:00, ?it/s]
-
 ### **Response vs retrieved docs**
 
 Here is an example prompt that we can use:
 
 https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination
 
-Here is the information flow:
+Here is the a video from our LangSmith evaluation series for reference:
 
-![answer_hallucination_flow.png](./static/answer_hallucination_flow.png)
+https://youtu.be/IlNglM9bKLw?feature=shared
 
 ```python
 # Prompt
@@ -365,24 +344,15 @@ experiment_results = evaluate(
 )
 ```
 
-    View the evaluation results for experiment: 'rag-answer-hallucination-0bcf36cb' at:
-    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=db391b03-d4b2-4c57-9e1c-8ef33389c60d
-
-
-
-
-
-    0it [00:00, ?it/s]
-
 ### **Retrieved docs vs input**
 
 Here is an example prompt that we can use:
 
 https://smith.langchain.com/hub/langchain-ai/rag-document-relevance
 
-Here is the information flow:
+Here is the a video from our LangSmith evaluation series for reference:
 
-![document_relevance_flow.png](./static/document_relevance_flow.png)
+https://youtu.be/Fr_7HtHjcf0?feature=shared
 
 ```python
 # Grade prompt
@@ -421,16 +391,7 @@ experiment_results = evaluate(
 )
 ```
 
-    View the evaluation results for experiment: 'rag-doc-relevance-f1df6f71' at:
-    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=8cbe59eb-0e2d-4c1a-9861-fec4fc504402
-
-
-
-
-
-    0it [00:00, ?it/s]
-
-## Evaluating intermediate traces
+## Evaluating intermediate steps
 
 Above, we returned the retrieved documents as part of the final answer.
 
@@ -439,6 +400,10 @@ However, we will show that this is not required.
 We can isolate them as intermediate chain steps.
 
 See detail on isolating intermediate chain steps [here](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_on_intermediate_steps).
+
+Here is the a video from our LangSmith evaluation series for reference:
+
+https://youtu.be/yx3JMAaNggQ?feature=shared
 
 ```python
 from langsmith.schemas import Example, Run
@@ -508,38 +473,4 @@ experiment_results = evaluate(
     evaluators=[document_relevance_grader, answer_hallucination_grader],
     metadata={"version": "LCEL context, gpt-4-0125-preview"},
 )
-```
-
-    View the evaluation results for experiment: 'passionate-stomach-89' at:
-    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=72d9c039-84ff-468a-a537-e9a33f8b7e92
-
-
-
-
-
-    0it [00:00, ?it/s]
-
-## Online Evaluation
-
-Three of our evaluators do not require a `reference` (ground truth) answer:
-
-- **Response vs input**
-- **Response vs retrieved docs**
-- **Retrieved docs vs input**
-
-These simply perform a comparison between run input (question), intermediate steps (documents), and outputs (answer).
-
-This allows us to use them as online evaluators.
-
-```python
-# Project
-os.environ["LANGCHAIN_PROJECT"] = "RAG_online_evaluation"
-```
-
-```python
-result = rag_bot.get_answer("How do I create a RAG chain?")
-```
-
-```python
-result = rag_bot.get_answer("How can I use a runnable lambda?")
 ```
