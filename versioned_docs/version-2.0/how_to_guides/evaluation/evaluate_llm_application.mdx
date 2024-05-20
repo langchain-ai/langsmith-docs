@@ -358,6 +358,44 @@ One common workflow is to fetch examples that have a certain metadata key-value 
   ]}
 />
 
+## Evaluate on a dataset split
+
+:::tip Recommended Reading
+
+Before diving into this content, it might be helpful to read the [guide on creating/managing dataset splits](../datasets/manage_datasets_in_application#create-and-manage-dataset-splits).
+
+:::
+
+You can use the `list_examples` / `listExamples` method to evaluate on one or multiple splits of your dataset. The `splits` param takes a list of the splits you would like to evaluate.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      results = evaluate(
+          lambda inputs: label_text(inputs["text"]),
+          data=client.list_examples(dataset_name=dataset_name, splits=["test", "training"]),
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate((inputs) => labelText(inputs["input"]), {
+        data: langsmith.listExamples({
+          datasetName: datasetName,
+          splits: ["test", "training"],
+        }),
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
+
 ## Use a summary evaluator
 
 Some metrics can only be defined on the entire experiment level as opposed to the individual runs of the experiment.
