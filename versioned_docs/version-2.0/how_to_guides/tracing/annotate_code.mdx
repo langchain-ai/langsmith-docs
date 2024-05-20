@@ -257,3 +257,44 @@ await pipeline.postRun();`),
   ]}
   groupId="client-language"
 />
+
+## Use the `trace` context manager (Python only)
+
+In Python, you can use the `trace` context manager to log traces to LangSmith. This is useful in situations where:
+
+1. You want to log traces for a specific block of code, without setting an environment variable that would log traces for the entire application.
+2. You want control over the inputs, outputs, and other attributes of the trace.
+3. It is not feasible to use a decorator or wrapper.
+4. Any or all of the above.
+
+The context manager integrates seamlessly with the `traceable` decorator and `wrap_openai` wrapper, so you can use them together in the same application.
+
+```python
+import openai
+from langsmith import trace
+from langsmith import traceable
+from langsmith.wrappers import wrap_openai
+
+client = wrap_openai(openai.Client())
+
+@traceable(run_type="tool", name="Retrieve Context")
+def my_tool(question: str) -> str:
+    return "During this morning's meeting, we solved all world conflict."
+
+def chat_pipeline(question: str):
+    context = my_tool(question)
+    messages = [
+        { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
+        { "role": "user", "content": f"Question: {question}\nContext: {context}"}
+    ]
+    chat_completion = client.chat.completions.create(
+        model="gpt-3.5-turbo", messages=messages
+    )
+    return chat_completion.choices[0].message.content
+
+app_inputs = {"input": "Can you summarize this morning's meetings?"}
+
+with trace("Chat Pipeline", "chain", project_name="my_test", inputs=app_inputs) as rt:
+    output = chat_pipeline("Can you summarize this morning's meetings?")
+    rt.end(outputs={"output": output})
+```

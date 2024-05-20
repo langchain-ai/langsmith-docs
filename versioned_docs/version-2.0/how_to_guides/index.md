@@ -27,6 +27,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Use `@traceable`/`traceable`](./how_to_guides/tracing/annotate_code#use-traceable--traceable)
   - [Wrap the OpenAI API client](./how_to_guides/tracing/annotate_code#wrap-the-openai-client)
   - [Use the RunTree API](./how_to_guides/tracing/annotate_code#use-the-runtree-api)
+  - [Use the `trace` context manager (Python only)](./how_to_guides/tracing/annotate_code#use-the-trace-context-manager-python-only)
 - [Toggle tracing on and off](./how_to_guides/tracing/toggle_tracing)
 - [Log traces to specific project](./how_to_guides/tracing/log_traces_to_project)
   - [Set the destination project statically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-statically)
