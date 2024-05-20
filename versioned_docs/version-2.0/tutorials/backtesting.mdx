@@ -11,7 +11,7 @@ This notebook shows how to do this in LangSmith.
 The basic steps are:
 
 1. Sample runs to test against from your production tracing project.
-2. Convert runs to dataset + initial test project.
+2. Convert runs to dataset + initial experiment.
 3. Run new system against the dataset to compare.
 
 You will then have a new dataset of representative inputs you can you can version and backtest your models against.
@@ -78,10 +78,15 @@ _ = system.batch(
 )
 ```
 
-## Convert Prod Runs to Test
+## Convert Prod Runs to Experiment
 
 The first step is to generate a dataset based on the production _inputs_.
 Then copy over all the traces to serve as a baseline run.
+
+`convert_runs_to_test` is a function which takes some runs and does the following:
+1. The inputs, and optionally the outputs, are saved to a dataset as Examples.
+2. The inputs and outputs are stored as an experiment, as if you had run the `evaluate`
+function and received those outputs.
 
 ```python
 from datetime import datetime, timedelta, timezone
@@ -89,13 +94,13 @@ from datetime import datetime, timedelta, timezone
 from langsmith import Client
 from langsmith.beta import convert_runs_to_test
 
-# How we are sampling runs to include in our test
+# How we are sampling runs to include in our dataset
 end_time = datetime.now(tz=timezone.utc)
 start_time = end_time - timedelta(days=1)
 run_filter = f'and(gt(start_time, "{start_time.isoformat()}"), lt(end_time, "{end_time.isoformat()}"))'
 
 
-# Fetch the runs we want to convert to a test
+# Fetch the runs we want to convert to a dataset/experiment
 client = Client()
 
 prod_runs = list(
@@ -108,7 +113,7 @@ prod_runs = list(
 
 # Name of the dataset we want to create
 dataset_name = f'{project_name}-backtesting {start_time.strftime("%Y-%m-%d")}-{end_time.strftime("%Y-%m-%d")}'
-# This converts the runs to a dataset + test
+# This converts the runs to a dataset + experiment
 # It does not actually invoke your model
 convert_runs_to_test(
     prod_runs,
@@ -116,7 +121,7 @@ convert_runs_to_test(
     dataset_name=dataset_name,
     # Whether to include the run outputs as reference/ground truth
     include_outputs=False,
-    # Whether to include the full traces in the resulting test project
+    # Whether to include the full traces in the resulting experiment
     # (default is to just include the root run)
     load_child_runs=True,
 )
@@ -124,7 +129,7 @@ convert_runs_to_test(
 
 ## Benchmark new system
 
-Now we have the dataset and prod runs saved as a "test".
+Now we have the dataset and prod runs saved as an experiment.
 
 Let's run inference on our new system to compare.
 
