@@ -1,34 +1,60 @@
-# RAG Evaluation
-
-RAG (Retrieval Augmented Generation) is one of the most popular techniques for building applications with LLMs.
-
-For an in-depth review, see our RAG series of notebooks and videos [here](https://github.com/langchain-ai/rag-from-scratch)).
-
-## Types of RAG eval
-
-There are at least 4 types of RAG eval that users of typically interested in (here, `<>` means "compared against"):
-
-1. **Response <> reference answer**: metrics like correctness measure "*how similar/correct is the answer, relative to a ground-truth label*"
-2. **Response <> input**: metrics like answer relevance, helpfulness, etc. measure "*how well does the generated response address the initial user input*"
-3. **Response <> retrieved docs**: metrics like faithfulness, hallucinations, etc. measure "*to what extent does the generated response agree with the retrieved context*"
-5. **Retrieved docs <> input**: metrics like score @ k, mean reciprocal rank, NDCG, etc. measure "*how good are my retrieved results for this query*"
-
-![](./static/rag_eval_overview.png)
-
-## RAG pipeline 
-
-To start, we build a RAG pipeline. We will be using LangChain strictly for creating the retriever and retrieving the relevant documents. The overall pipeline does not use LangChain. LangSmith works regardless of whether or not your pipeline is built with LangChain.
-
-**Note** in the below example, we return the retrieved documents as part of the final answer. In a follow-up tutorial, we will showcase how to make use of these RAG evaluation techniques *even when your pipline returns only the final answer!*
-
-
 ```python
 %capture --no-stderr
-! pip install langsmith langchain-community langchain chromadb tiktoken
+! pip install langsmith langchain-community langchain chromadb tiktoken openai langchainhub
 ```
 
-We build an `index` using a set of LangChain docs.
+# Use Case Tutorial: RAG
 
+We will walk through the evaluation workflow for RAG (retrieval augmented generation).
+
+## Overview
+
+We will discuss each piece of the workflow below.
+
+![rag_overview.png](./static/rag_overview.png)
+
+## Dataset
+
+Here is a dataset of [LCEL (LangChain Expression Language)](https://python.langchain.com/v0.1/docs/expression_language/) related questions that we will use.
+
+This dataset was created using csv upload in the LangSmith UI:
+
+https://smith.langchain.com/public/65830565-81b2-4581-859f-c4aabaadf1cc/d
+
+Here, we ensure that API keys for OpenAI as well as LangSmith are set.
+
+```python
+import getpass
+import os
+
+def _set_env(var: str):
+    if not os.environ.get(var):
+        os.environ[var] = getpass.getpass(f"{var}: ")
+
+_set_env("OPENAI_API_KEY")
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+_set_env("LANGCHAIN_API_KEY")
+```
+
+```python
+### Dataset name
+dataset_name = "LCEL-QA"
+```
+
+## Task
+
+Here is a chain that will perform RAG on [LCEL (LangChain Expression Language)](https://python.langchain.com/v0.1/docs/expression_language/) docs.
+
+We will be using LangChain strictly for creating the retriever and retrieving the relevant documents.
+
+The overall pipeline does not use LangChain; LangSmith works regardless of whether or not your pipeline is built with LangChain.
+
+Here, we return the retrieved documents as part of the final answer.
+
+However, below we will show that this is not required (using evaluation of intermediate steps).
+
+See our [RAG-From-Scratch](https://github.com/langchain-ai/rag-from-scratch) repo and tutorial video series for more on this.
 
 ```python
 ### INDEX
@@ -39,36 +65,33 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-# Load
+# Load docs
 url = "https://python.langchain.com/v0.1/docs/expression_language/"
 loader = RecursiveUrlLoader(
     url=url, max_depth=20, extractor=lambda x: Soup(x, "html.parser").text
 )
 docs = loader.load()
 
-# Split
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=200)
+# Split into chunks
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=4500, chunk_overlap=200)
 splits = text_splitter.split_documents(docs)
 
-# Embed
+# Embed and store in Chroma
 vectorstore = Chroma.from_documents(documents=splits, embedding=OpenAIEmbeddings())
 
 # Index
 retriever = vectorstore.as_retriever()
 ```
 
-Next, we build a `RAG chain` that returns an `answer` and the retrieved documents as `contexts`.
-
-
 ```python
-### RAG
+### RAG bot
 
 import openai
 from langsmith import traceable
 from langsmith.wrappers import wrap_openai
 
-
 class RagBot:
+
     def __init__(self, retriever, model: str = "gpt-4-0125-preview"):
         self._retriever = retriever
         # Wrapping the client instruments the LLM
@@ -80,8 +103,7 @@ class RagBot:
         return self._retriever.invoke(question)
 
     @traceable()
-    def get_answer(self, question: str):
-        similar = self.retrieve_docs(question)
+    def invoke_llm(self, question, docs):
         response = self._client.chat.completions.create(
             model=self._model,
             messages=[
@@ -89,7 +111,7 @@ class RagBot:
                     "role": "system",
                     "content": "You are a helpful AI code assistant with expertise in LCEL."
                     " Use the following docs to produce a concise code solution to the user question.\n\n"
-                    f"## Docs\n\n{similar}",
+                    f"## Docs\n\n{docs}",
                 },
                 {"role": "user", "content": question},
             ],
@@ -98,199 +120,225 @@ class RagBot:
         # Evaluators will expect "answer" and "contexts"
         return {
             "answer": response.choices[0].message.content,
-            "contexts": [str(doc) for doc in similar],
+            "contexts": [str(doc) for doc in docs],
         }
 
+    @traceable()
+    def get_answer(self, question: str):
+        docs = self.retrieve_docs(question)
+        return self.invoke_llm(question, docs)
 
 rag_bot = RagBot(retriever)
 ```
 
-
 ```python
-response = rag_bot.get_answer("What is LCEL?")
+response = rag_bot.get_answer("How to build a RAG chain in LCEL?")
 response["answer"][:150]
 ```
 
+    'Building a RAG (Retrieval-Augmented Generation) chain in LangChain Expression Language (LCEL) allows you to leverage the power of document retrieval t'
 
+Define a function that will:
 
-
-    'LangChain Expression Language (LCEL) is a declarative framework designed to streamline the process of composing and deploying complex chains of logica'
-
-
-
-## RAG Dataset 
-
-Next, we build a dataset of QA pairs based upon the [documentation](https://python.langchain.com/docs/expression_language/) that we indexed.
-
+1. Take a dataset `example`
+2. Extract the relevant key (e.g., `question`) from the `example`
+3. Pass it to the RAG chain
+4. Return the relevant output values from the RAG chain
 
 ```python
-import getpass
-import os
-
-
-def _set_env(var: str):
-    if not os.environ.get(var):
-        os.environ[var] = getpass.getpass(f"{var}: ")
-
-
-_set_env("OPENAI_API_KEY")
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
-_set_env("LANGCHAIN_API_KEY")
-```
-
-
-```python
-from langsmith import Client
-
-# QA
-inputs = [
-    "How can I directly pass a string to a runnable and use it to construct the input needed for my prompt?",
-    "How can I make the output of my LCEL chain a string?",
-    "How can I apply a custom function to one of the inputs of an LCEL chain?",
-]
-
-outputs = [
-    "Use RunnablePassthrough. from langchain_core.runnables import RunnableParallel, RunnablePassthrough; from langchain_core.prompts import ChatPromptTemplate; from langchain_openai import ChatOpenAI; prompt = ChatPromptTemplate.from_template('Tell a joke about: {input}'); model = ChatOpenAI(); runnable = ({'input' : RunnablePassthrough()} | prompt | model); runnable.invoke('flowers')",
-    "Use StrOutputParser. from langchain_openai import ChatOpenAI; from langchain_core.prompts import ChatPromptTemplate; from langchain_core.output_parsers import StrOutputParser; prompt = ChatPromptTemplate.from_template('Tell me a short joke about {topic}'); model = ChatOpenAI(model='gpt-3.5-turbo') #gpt-4 or other LLMs can be used here; output_parser = StrOutputParser(); chain = prompt | model | output_parser",
-    "Use RunnableLambda with itemgetter to extract the relevant key. from operator import itemgetter; from langchain_core.prompts import ChatPromptTemplate; from langchain_core.runnables import RunnableLambda; from langchain_openai import ChatOpenAI; def length_function(text): return len(text); chain = ({'prompt_input': itemgetter('foo') | RunnableLambda(length_function),} | prompt | model); chain.invoke({'foo':'hello world'})",
-]
-
-qa_pairs = [{"question": q, "answer": a} for q, a in zip(inputs, outputs)]
-
-# Create dataset
-client = Client()
-dataset_name = "RAG_test_LCEL"
-dataset = client.create_dataset(
-    dataset_name=dataset_name,
-    description="QA pairs about LCEL.",
-)
-client.create_examples(
-    inputs=[{"question": q} for q in inputs],
-    outputs=[{"answer": a} for a in outputs],
-    dataset_id=dataset.id,
-)
-```
-
-## RAG Evaluators
-
-### Type 1: Reference Answer
-
-First, lets consider the case in which we want to compare our RAG chain answer to a reference answer.
-
-This is shown on the far right (blue):
-
-![](./static/rag_eval_overview.png)
-
-Here is the eval process we will use:
-
-![](./static/rag_eval_diagram.png)
-
-#### Eval flow
-
-We simply use an LLM-as-judge with an easily customized grader prompt: 
-
-https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference
-
-![](./static/answer_eval_flow.png)
-
-
-```python
-# RAG chain
 def predict_rag_answer(example: dict):
     """Use this for answer evaluation"""
-    response = rag_bot.get_answer(example["question"])
+    response = rag_bot.get_answer(example["input_question"])
     return {"answer": response["answer"]}
 
 def predict_rag_answer_with_context(example: dict):
     """Use this for evaluation of retrieved documents and hallucinations"""
-    response = rag_bot.get_answer(example["question"])
+    response = rag_bot.get_answer(example["input_question"])
     return {"answer": response["answer"], "contexts": response["contexts"]}
 ```
 
+## Evaluator
+
+There are at least 4 types of RAG eval that users are typically interested in.
+
+1. **Response vs reference answer**
+
+- `Goal`: Measure "_how similar/correct is the RAG chain answer, relative to a ground-truth answer_"
+- `Mode`: Uses ground truth (reference) answer supplied through a dataset
+- `Judge`: Use LLM-as-judge to assess answer correctness.
+
+2. **Response vs input**
+
+- `Goal`: Measure "_how well does the generated response address the initial user input_"
+- `Mode`: Reference-free, because it will compare the answer to the input question
+- `Judge`: Use LLM-as-judge to assess answer relevance, helpfulness, etc.
+
+3. **Response vs retrieved docs**
+
+- `Goal`: Measure "_to what extent does the generated response agree with the retrieved context_"
+- `Mode`: Reference-free, because it will compare the answer to the retrieved context
+- `Judge`: Use LLM-as-judge to assess faithfulness, hallucinations, etc.
+
+4. **Retrieved docs vs input**
+
+- `Goal`: Measure "_how good are my retrieved results for this query_"
+- `Mode`: Reference-free, because it will compare the question to the retrieved context
+- `Judge`: Use LLM-as-judge to assess relevance
+
+![](./static/rag_eval_overview.png)
+
+### **Response vs reference answer**
+
+Here is an example prompt that we can use:
+
+https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference
+
+Here is the information flow:
+
+![answer_eval_flow.png](./static/answer_eval_flow.png)
+
+Here is our evaluator function:
+
+- `run` is the invocation of `predict_rag_answer`, which has key `answer`
+- `example` is from our eval set, which has keys `input_question` and `output_answer`
+- We extract these values and pass them into our grader
 
 ```python
 from langchain import hub
 from langchain_openai import ChatOpenAI
 
-# Grade prompt 
+# Grade prompt
 grade_prompt_answer_accuracy = prompt = hub.pull("langchain-ai/rag-answer-vs-reference")
 
 def answer_evaluator(run, example) -> dict:
     """
     A simple evaluator for RAG answer accuracy
     """
-    
-    # Get summary
-    input_question = example.inputs["question"]
-    reference = example.outputs["answer"]
+
+    # Get question, ground truth answer, RAG chain answer
+    input_question = example.inputs["input_question"]
+    reference = example.outputs["output_answer"]
     prediction = run.outputs["answer"]
 
     # LLM grader
     llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
 
     # Structured prompt
-    
     answer_grader = grade_prompt_answer_accuracy | llm
 
-    # Get score
+    # Run evaluator
     score = answer_grader.invoke({"question": input_question,
                                   "correct_answer": reference,
                                   "student_answer": prediction})
     score = score["Score"]
 
-    return {"key": "answer_score", "score": score}
+    return {"key": "answer_v_reference_score", "score": score}
 ```
 
+Now, we kick off evaluation:
+
+- `predict_rag_answer`: Takes an `example` from our eval set, extracts the question, passes to our RAG chain
+- `answer_evaluator`: Passes RAG chain answer, question, and ground truth answer to an evaluator
 
 ```python
 from langsmith.evaluation import evaluate
 
-dataset_name = "RAG_test_LCEL"
 experiment_results = evaluate(
     predict_rag_answer,
     data=dataset_name,
     evaluators=[answer_evaluator],
-    experiment_prefix="rag-qa-oai",
-    metadata={"variant": "LCEL context, gpt-3.5-turbo"},
+    experiment_prefix="rag-answer-v-reference",
+    metadata={"version": "LCEL context, gpt-4-0125-preview"},
 )
 ```
 
-    View the evaluation results for experiment: 'rag-qa-oai-5b0ce02d' at:
-    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/6ffe8577-1353-4d47-b4ef-54e210b0a0a6/compare?selectedSessions=f7aa658b-a851-4959-8901-c45553e33403
-    
-    
+    View the evaluation results for experiment: 'rag-answer-v-reference-552234e6' at:
+    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=03e51c9a-9aeb-4cfe-8f8c-ede797940b9e
+
+
 
 
 
     0it [00:00, ?it/s]
 
+### **Response vs input**
 
-### Type 2: Answer Hallucination
+Here is an example prompt that we can use:
 
-#### Eval flow
+https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness
 
-We simply use an LLM-as-judge with an easily customized grader prompt: 
+The information flow is similar to above, but we simply look at the `run` answer versus the `example` question.
+
+```python
+# Grade prompt
+grade_prompt_answer_helpfulness = prompt = hub.pull("langchain-ai/rag-answer-helpfulness")
+
+def answer_helpfulness_evaluator(run, example) -> dict:
+    """
+    A simple evaluator for RAG answer helpfulness
+    """
+
+    # Get question, ground truth answer, RAG chain answer
+    input_question = example.inputs["input_question"]
+    prediction = run.outputs["answer"]
+
+    # LLM grader
+    llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
+
+    # Structured prompt
+    answer_grader = grade_prompt_answer_helpfulness | llm
+
+    # Run evaluator
+    score = answer_grader.invoke({"question": input_question,
+                                  "student_answer": prediction})
+    score = score["Score"]
+
+    return {"key": "answer_helpfulness_score", "score": score}
+```
+
+```python
+experiment_results = evaluate(
+    predict_rag_answer,
+    data=dataset_name,
+    evaluators=[answer_helpfulness_evaluator],
+    experiment_prefix="rag-answer-helpfulness",
+    metadata={"version": "LCEL context, gpt-4-0125-preview"},
+)
+```
+
+    View the evaluation results for experiment: 'rag-answer-helpfulness-e64d4893' at:
+    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=60ee674a-fb59-4c68-86fe-148355fc659e
+
+
+
+
+
+    0it [00:00, ?it/s]
+
+### **Response vs retrieved docs**
+
+Here is an example prompt that we can use:
 
 https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination
 
-![](./static/answer_hallucination_flow.png)
+Here is the information flow:
 
+![answer_hallucination_flow.png](./static/answer_hallucination_flow.png)
 
 ```python
-# Prompt 
+# Prompt
 grade_prompt_hallucinations = prompt = hub.pull("langchain-ai/rag-answer-hallucination")
 
 def answer_hallucination_evaluator(run, example) -> dict:
     """
     A simple evaluator for generation hallucination
     """
-    
+
     # RAG inputs
-    input_question = example.inputs["question"]
+    input_question = example.inputs["input_question"]
     contexts = run.outputs["contexts"]
-        
-    # RAG answer 
+
+    # RAG answer
     prediction = run.outputs["answer"]
 
     # LLM grader
@@ -301,62 +349,53 @@ def answer_hallucination_evaluator(run, example) -> dict:
 
     # Get score
     score = answer_grader.invoke({"documents": contexts,
-                                  "output": prediction})
+                                  "student_answer": prediction})
     score = score["Score"]
 
     return {"key": "answer_hallucination", "score": score}
 ```
 
-
 ```python
-dataset_name = "RAG_test_LCEL"
 experiment_results = evaluate(
     predict_rag_answer_with_context,
     data=dataset_name,
     evaluators=[answer_hallucination_evaluator],
-    experiment_prefix="rag-qa-oai-hallucination",
-    metadata={
-        "variant": "LCEL context, gpt-3.5-turbo",
-    },
+    experiment_prefix="rag-answer-hallucination",
+    metadata={"version": "LCEL context, gpt-4-0125-preview"},
 )
 ```
 
-    View the evaluation results for experiment: 'rag-qa-oai-hallucination-91ba13c6' at:
-    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/6ffe8577-1353-4d47-b4ef-54e210b0a0a6/compare?selectedSessions=b353fe12-0db9-4404-9a4d-502aa16038e8
-    
-    
+    View the evaluation results for experiment: 'rag-answer-hallucination-0bcf36cb' at:
+    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=db391b03-d4b2-4c57-9e1c-8ef33389c60d
+
+
 
 
 
     0it [00:00, ?it/s]
 
+### **Retrieved docs vs input**
 
-### Type 3: Document Relevance to Question
-
-#### Eval flow
-
-We simply use an LLM-as-judge with an easily customized grader prompt: 
+Here is an example prompt that we can use:
 
 https://smith.langchain.com/hub/langchain-ai/rag-document-relevance
 
-![](./static/document_relevance_flow.png)
+Here is the information flow:
 
+![document_relevance_flow.png](./static/document_relevance_flow.png)
 
 ```python
-# Grade prompt 
+# Grade prompt
 grade_prompt_doc_relevance = hub.pull("langchain-ai/rag-document-relevance")
 
 def docs_relevance_evaluator(run, example) -> dict:
     """
     A simple evaluator for document relevance
     """
-    
+
     # RAG inputs
-    input_question = example.inputs["question"]
+    input_question = example.inputs["input_question"]
     contexts = run.outputs["contexts"]
-        
-    # RAG answer 
-    prediction = run.outputs["answer"]
 
     # LLM grader
     llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
@@ -372,64 +411,63 @@ def docs_relevance_evaluator(run, example) -> dict:
     return {"key": "document_relevance", "score": score}
 ```
 
-
 ```python
-dataset_name = "RAG_test_LCEL"
 experiment_results = evaluate(
     predict_rag_answer_with_context,
     data=dataset_name,
     evaluators=[docs_relevance_evaluator],
-    experiment_prefix="rag-qa-oai-doc-relevance",
-    metadata={
-        "variant": "LCEL context, gpt-3.5-turbo",
-    },
+    experiment_prefix="rag-doc-relevance",
+    metadata={"version": "LCEL context, gpt-4-0125-preview"},
 )
 ```
 
-    View the evaluation results for experiment: 'rag-qa-oai-doc-relevance-4f451e75' at:
-    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/6ffe8577-1353-4d47-b4ef-54e210b0a0a6/compare?selectedSessions=cb32acd4-85b7-4d37-8d4b-7b8635dee6ec
-    
-    
+    View the evaluation results for experiment: 'rag-doc-relevance-f1df6f71' at:
+    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=8cbe59eb-0e2d-4c1a-9861-fec4fc504402
+
+
 
 
 
     0it [00:00, ?it/s]
 
-
 ## Evaluating intermediate traces
 
-What if we didn't explicity return documents from our RAG chain?
+Above, we returned the retrieved documents as part of the final answer.
 
-In this case, we can isolate them as intermediate chain values.
+However, we will show that this is not required.
 
+We can isolate them as intermediate chain steps.
+
+See detail on isolating intermediate chain steps [here](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_on_intermediate_steps).
 
 ```python
 from langsmith.schemas import Example, Run
+from langsmith.evaluation import evaluate
 
 def document_relevance_grader(root_run: Run, example: Example) -> dict:
     """
     A simple evaluator that checks to see if retrieved documents are relevant to the question
     """
 
-    # Get documents and question
+    # Get specific steps in our RAG pipeline, which are noted with @traceable decorator
     rag_pipeline_run = next(
         run for run in root_run.child_runs if run.name == "get_answer"
     )
     retrieve_run = next(
         run for run in rag_pipeline_run.child_runs if run.name == "retrieve_docs"
     )
-    doc_txt = "\n\n".join(doc.page_content for doc in retrieve_run.outputs["output"])
-    input_question = retrieve_run.inputs["question"]
+    contexts = "\n\n".join(doc.page_content for doc in retrieve_run.outputs["output"])
+    input_question = example.inputs["input_question"]
 
-     # LLM grader
+    # LLM grader
     llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
 
     # Structured prompt
     answer_grader = grade_prompt_doc_relevance | llm
 
     # Get score
-    score = answer_grader.invoke({"question": input_question,
-                                  "documents": doc_txt})
+    score = answer_grader.invoke({"question":input_question,
+                                  "documents":contexts})
     score = score["Score"]
 
     return {"key": "document_relevance", "score": score}
@@ -446,47 +484,62 @@ def answer_hallucination_grader(root_run: Run, example: Example) -> dict:
     retrieve_run = next(
         run for run in rag_pipeline_run.child_runs if run.name == "retrieve_docs"
     )
-    doc_txt = "\n\n".join(doc.page_content for doc in retrieve_run.outputs["output"])
+    contexts = "\n\n".join(doc.page_content for doc in retrieve_run.outputs["output"])
 
     # RAG output
     prediction = rag_pipeline_run.outputs["answer"]
 
     # LLM grader
     llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
-    
+
     # Structured prompt
     answer_grader = grade_prompt_hallucinations | llm
 
     # Get score
-    score = answer_grader.invoke({"documents": doc_txt,
-                                  "output": prediction})
+    score = answer_grader.invoke({"documents": contexts,
+                                  "student_answer": prediction})
     score = score["Score"]
+
     return {"key": "answer_hallucination", "score": score}
 
-dataset_name = "RAG_test_LCEL"
 experiment_results = evaluate(
     predict_rag_answer,
     data=dataset_name,
     evaluators=[document_relevance_grader, answer_hallucination_grader],
-    experiment_prefix="LCEL context, gpt-3.5-turbo",
+    metadata={"version": "LCEL context, gpt-4-0125-preview"},
 )
 ```
 
-    View the evaluation results for experiment: 'LCEL context, gpt-3.5-turbo-4f6f311a' at:
-    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/6ffe8577-1353-4d47-b4ef-54e210b0a0a6/compare?selectedSessions=615b7fdc-cf1f-40e2-a4d7-94e4e0d5537a
-    
-    
+    View the evaluation results for experiment: 'passionate-stomach-89' at:
+    https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/5f34de91-78ab-4ae2-83f3-8f7f93afc998/compare?selectedSessions=72d9c039-84ff-468a-a537-e9a33f8b7e92
+
+
 
 
 
     0it [00:00, ?it/s]
 
+## Online Evaluation
 
-Here is the dataset and associated experiments:
+Three of our evaluators do not require a `reference` (ground truth) answer:
 
-https://smith.langchain.com/public/72e1759a-a7f8-40c7-8717-13cecb284f47/d
+- **Response vs input**
+- **Response vs retrieved docs**
+- **Retrieved docs vs input**
 
+These simply perform a comparison between run input (question), intermediate steps (documents), and outputs (answer).
+
+This allows us to use them as online evaluators.
 
 ```python
+# Project
+os.environ["LANGCHAIN_PROJECT"] = "RAG_online_evaluation"
+```
 
+```python
+result = rag_bot.get_answer("How do I create a RAG chain?")
+```
+
+```python
+result = rag_bot.get_answer("How can I use a runnable lambda?")
 ```

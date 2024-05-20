@@ -20,12 +20,10 @@ You will then have a new dataset of representative inputs you can you can versio
 
 Install + set environment variables. This requires `langsmith>=0.1.29` to use the beta utilities.
 
-
 ```python
 %%capture --no-stderr
 %pip install -U --quiet langsmith langchain_anthropic langchainhub langchain
 ```
-
 
 ```python
 import os
@@ -40,11 +38,10 @@ os.environ["LANGCHAIN_PROJECT"] = project_name
 
 #### (Preliminary) Production Deployment
 
-You likely have a project already and can skip this step. 
+You likely have a project already and can skip this step.
 
-We'll simulate one here so no one reading this notebook gets left out. 
+We'll simulate one here so no one reading this notebook gets left out.
 Our example app is a "tweet critic" that revises tweets we put out.
-
 
 ```python
 from langchain import hub
@@ -81,7 +78,6 @@ _ = system.batch(
 
 The first step is to generate a dataset based on the production _inputs_.
 Then copy over all the traces to serve as a baseline run.
-
 
 ```python
 from datetime import datetime, timedelta, timezone
@@ -131,14 +127,11 @@ convert_runs_to_test(
 
     TracerSession(id=UUID('62afc62c-d831-4a05-97a2-a67db683c67e'), start_time=datetime.datetime(2024, 4, 9, 17, 42, 27, 183712), end_time=None, description=None, name='prod-baseline-90b90f', extra={'metadata': {'which': 'prod-baseline', 'dataset_version': '2024-04-09T17:42:12.001577+00:00'}}, tenant_id=UUID('ebbaf2eb-769b-4505-aca2-d11de10372a4'))
 
-
-
 ## Benchmark new system
 
 Now we have the dataset and prod runs saved as a "test".
 
 Let's run inference on our new system to compare.
-
 
 ```python
 from langsmith.evaluation import evaluate
@@ -168,13 +161,12 @@ test_results = evaluate(
 
     View the evaluation results for experiment: 'HaikuBenchmark:2a3311d' at:
     https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/79e66af2-db17-4ea1-acb0-efb070340b92/compare?selectedSessions=886b72b8-734c-4431-bf67-9b3e16d41f9c
-    
-    
+
+
 
 
 
     0it [00:00, ?it/s]
-
 
 ## Review runs
 
@@ -187,7 +179,6 @@ You can now compare the outputs in the UI.
 Congrats! You've sampled production runs and started benchmarking other systems against them.
 In this exercise, we chose not to apply any evaluators to simplify things (since we lack ground-truth answers for this task).
 You can manually review the results in LangSmith and/or apply a reference-free evaluator to the results to generate metrics instead.
-
 
 ```python
 
