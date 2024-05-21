@@ -276,3 +276,44 @@ try {
   ]}
   groupId="client-language"
 />
+
+## Hand-off between LangChain and LangSmith SDK
+
+### Tracing LangChain objects inside `traceable` (JS only)
+
+Starting with `langchain@0.2.x`, LangChain objects are traced automatically when used inside `@traceable` functions, inheriting the client, tags, metadata and project name of the traceable function.
+
+For older versions of LangChain, you will need to manually pass an instance `LangChainTracer` created from the tracing context found in `@traceable`.
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+// highlight-next-line
+import { getLangchainCallbacks } from "langsmith/langchain";
+
+const prompt = ChatPromptTemplate.fromMessages([
+  [
+    "system",
+    "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+  ],
+  ["user", "Question: {question}\nContext: {context}"],
+]);
+const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const outputParser = new StringOutputParser();
+
+const chain = prompt.pipe(model).pipe(outputParser);
+
+const main = traceable(
+  async (input: { question: string; context: string }) => {
+    // this is done automatically in langchain@0.2.x
+    // only do this if you cannot upgrade your LangChain version
+    // highlight-next-line
+    const tracer = await getLangchainCallbacks();
+    // highlight-next-line
+    const response = await chain.invoke({ callbacks: [tracer] });
+    return response;
+  },
+  { name: "main" }
+);
+```
