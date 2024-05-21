@@ -203,7 +203,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.tracers.context import collect_runs\n
 prompt = ChatPromptTemplate.from_messages([
     ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
-    ("user", "Question: {question}\n\nContext: {context}")
+    ("user", "Question: {question}\\n\\nContext: {context}")
 ])
 model = ChatOpenAI(model="gpt-3.5-turbo")
 output_parser = StrOutputParser()\n
@@ -222,7 +222,7 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunCollectorCallbackHandler } from "@langchain/core/tracers/run_collector";\n
 const prompt = ChatPromptTemplate.fromMessages([
   ["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
-  ["user", "Question: {question}\n\nContext: {context}"],
+  ["user", "Question: {question\\n\\nContext: {context}"],
 ]);
 const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
 const outputParser = new StringOutputParser();\n
@@ -232,9 +232,7 @@ const question = "Can you summarize this morning's meetings?"
 const context = "During this morning's meeting, we solved all world conflict."
 await chain.invoke(
     { question: question, context: context },
-    {
-        callbacks: [runCollector],
-    }
+    { callbacks: [runCollector] }
 );
 // highlight-next-line
 const runId = runCollector.tracedRuns[0].id;
@@ -299,7 +297,7 @@ const prompt = ChatPromptTemplate.fromMessages([
     "system",
     "You are a helpful assistant. Please respond to the user's request only based on the given context.",
   ],
-  ["user", "Question: {question}\\nContext: {context}"],
+  ["user", "Question: {question}\nContext: {context}"],
 ]);
 const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
 const outputParser = new StringOutputParser();
