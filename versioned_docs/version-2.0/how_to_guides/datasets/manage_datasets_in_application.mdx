@@ -72,3 +72,24 @@ To do so, select a dataset, click on "Examples", and then click the "Export Data
 This will open a modal where you can select the format you want to export to.
 
 ![Export Dataset Modal](../static/export-dataset-modal.png)
+
+## Create and manage dataset splits
+
+Dataset splits are divisions of your dataset that you can use to segment your data. For example, it is common
+in machine learning workflows to split datasets into training, validation, and test sets. This can be useful
+to prevent overfitting - where a model performs well on the training data but poorly on unseen data. In evaluation
+workflows, it can be useful to do this when you have a dataset with multiple categories that you may want to evaluate
+separately; or if you are testing a new use case that you may want to include in your dataset in the future, but want
+to keep separate for now. Note that the same effect can be achieved manually via metadata - but we expect splits
+to be used for higher level organization of your dataset to split it into separate groups for evaluation, whereas
+metadata would be used more for storing information on your examples like tags and information about its origin.
+
+In machine learning, it is best practice to keep your splits separate (each example belongs to exactly one split).
+However, we allow you to select multiple splits for the same example in LangSmith because it can make sense for
+some evaluation workflows - for example, if an example falls into multiple categories on which you may want to
+evaluate your application.
+
+In order to create and manage splits in the app, you can select some examples in your dataset and click "Add to Split". From the resulting popup menu,
+you can select and unselect splits for the selected examples, or create a new split.
+
+![Add to Split](../static/add_to_split2.png)
