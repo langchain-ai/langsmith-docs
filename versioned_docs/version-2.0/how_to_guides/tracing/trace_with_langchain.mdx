@@ -11,6 +11,8 @@ import {
   CodeTabs,
   TypeScriptBlock,
   PythonBlock,
+  typescript,
+  python,
 } from "@site/src/components/InstructionsWithCode";
 
 # Trace with `LangChain` (Python and JS/TS)
@@ -277,7 +279,7 @@ try {
   groupId="client-language"
 />
 
-## Hand-off between LangChain and LangSmith SDK
+## Interoperability between LangChain.JS and LangSmith SDK
 
 ### Tracing LangChain objects inside `traceable` (JS only)
 
@@ -308,12 +310,73 @@ const main = traceable(
   async (input: { question: string; context: string }) => {
     // this is done automatically in langchain@0.2.x
     // only do this if you cannot upgrade your LangChain version
-    // highlight-next-line
-    const tracer = await getLangchainCallbacks();
-    // highlight-next-line
-    const response = await chain.invoke({ callbacks: [tracer] });
+    // highlight-start
+    const callbacks = await getLangchainCallbacks();
+    const response = await chain.invoke({ callbacks });
+    // highlight-end
     return response;
   },
   { name: "main" }
 );
 ```
+
+### Manually tracing LangChain child runs via `traceable` / RunTree API (JS only)
+
+In some uses cases, you might want to run `traceable` functions as part of the RunnableSequence or trace child runs of LangChain run imperatively via the `RunTree` API.
+
+You can convert the existing LangChain `RunnableConfig` to a equivalent RunTree object by using `RunTree.fromRunnableConfig` or you can pass the `RunnableConfig` as the first argument of the wrapped function.
+
+<CodeTabs
+  tabs={[
+    typescript({ value: "traceable", label: "Traceable" })`
+      import { DynamicStructuredTool } from "@langchain/core/tools";
+      import { RunTree } from "langsmith/run_trees";
+      import { traceable } from "langsmith/traceable";
+      import { z } from "zod";
+      
+      const tracedChild = traceable((input: string) => input, {
+        name: "Child Run",
+      });
+      
+      const tool = new DynamicStructuredTool({
+        name: "Search",
+        description: "Search the web for information.",
+        schema: z.object({ text: z.string() }),
+        func: async ({ text }, manager, config) => {
+          // Pass the config to existing traceable function
+          // highlight-next-line
+          return await tracedChild(config, "Hello");
+        },
+      });
+    `,
+    typescript({ value: "runtree", label: "Run Tree" })`
+      import { DynamicStructuredTool } from "@langchain/core/tools";
+      import { RunTree } from "langsmith/run_trees";
+      import { traceable } from "langsmith/traceable";
+      import { z } from "zod";
+      
+      const tool = new DynamicStructuredTool({
+        name: "Search",
+        description: "Search the web for information.",
+        schema: z.object({ text: z.string() }),
+        func: async ({ text }, manager, config) => {
+          
+          // create a new run tree using the existing runnable config
+          // highlight-start
+          const childRunTree = RunTree.fromRunnableConfig(config, {
+            name: "Child Run",
+          });
+          // highlight-end
+          
+          childRunTree.inputs = { text };
+          await childRunTree.postRun();
+          
+          let response = "Hello";
+          
+          childRunTree.outputs = { output: "Hello" };
+          await childRunTree.patchRun();
+        },
+      });
+    `,
+  ]}
+/>
