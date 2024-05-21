@@ -58,6 +58,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Add metadata and tags to traces](./how_to_guides/tracing/trace_with_langchain#add-metadata-and-tags-to-traces)
   - [Customize run name](./how_to_guides/tracing/trace_with_langchain#customize-run-name)
   - [Access run (span) ID for LangChain invocations](./how_to_guides/tracing/trace_with_langchain#access-run-span-id-for-langchain-invocations)
+  - [Ensure all traces are submitted before exiting](./how_to_guides/tracing/trace_with_langchain#ensure-all-traces-are-submitted-before-exiting)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
 
 ## Datasets

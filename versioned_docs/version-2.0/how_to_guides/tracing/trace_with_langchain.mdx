@@ -214,7 +214,7 @@ with collect_runs() as cb:
   # highlight-next-line
   run_id = cb.traced_runs[0].id
 print(run_id)`),
-    TypeScriptBlock(`import { ChatOpenAI } from "npm:@langchain/openai";
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunCollectorCallbackHandler } from "@langchain/core/tracers/run_collector";\n
@@ -237,6 +237,42 @@ await chain.invoke(
 // highlight-next-line
 const runId = runCollector.tracedRuns[0].id;
 console.log(runId);`),
+  ]}
+  groupId="client-language"
+/>
+
+## Ensure all traces are submitted before exiting
+
+In LangChain Python, LangSmith's tracing is done in a background thread to avoid obstructing your production application. This means that your process may end before all traces are successfully posted to LangSmith. This is especially prevalent in a serverless environment, where your VM may be terminated immediately once your chain or agent completes.
+
+In LangChain JS/TS, the default is to block for a short period of time for the trace to finish due to the greater popularity of serverless environments. You can make callbacks asynchronous by setting the `LANGCHAIN_CALLBACKS_BACKGROUND` environment variable to `"true"`.
+
+For both languages, LangChain exposes methods to wait for traces to be submitted before exiting your application.
+Below is an example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.tracers.langchain import wait_for_all_tracers\n
+llm = ChatOpenAI()
+try:
+    llm.invoke("Hello, World!")
+finally:
+    # highlight-next-line
+    wait_for_all_tracers()
+`),
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { awaitAllCallbacks } from "@langchain/core/callbacks/promises";\n
+try {
+  const llm = new ChatOpenAI();
+  const response = await llm.invoke("Hello, World!");
+} catch (e) {
+  // handle error
+} finally {
+   // highlight-next-line
+  await awaitAllCallbacks();
+}
+`),
   ]}
   groupId="client-language"
 />
