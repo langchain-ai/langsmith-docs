@@ -299,7 +299,7 @@ const prompt = ChatPromptTemplate.fromMessages([
     "system",
     "You are a helpful assistant. Please respond to the user's request only based on the given context.",
   ],
-  ["user", "Question: {question}\nContext: {context}"],
+  ["user", "Question: {question}\\nContext: {context}"],
 ]);
 const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
 const outputParser = new StringOutputParser();
