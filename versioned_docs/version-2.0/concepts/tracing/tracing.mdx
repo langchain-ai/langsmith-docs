@@ -76,13 +76,15 @@ For traces ingested on or after Wednday, May 21, 2024 at xxxx LangSmith (SaaS) r
 After 400 days, the traces are permanently deleted from LangSmith, with a limited amount of metadata be retained for the purpose of showing accurate statistics such as historic usage and cost.
 
 ## Deleting Traces from LangSmith
-If you wish to remove a trace from LangSmith sooner than the expiration date, LangSmith supports deleting traces via deleting a project. 
+
+If you wish to remove a trace from LangSmith sooner than the expiration date, LangSmith supports deleting traces via deleting a project.
 
 This can be accomplished:
+
 - in the LangSmith UI via the "Delete" option on the Project's overflow menu
 - via the (Delete Tracer Sessions)[/api-docs#tag/tracer-sessions/delete/api/v1/sessions] API endpoint
-- via `delete_project()` (Python) or `deleteProject()` (JS/TS) in the LangSmith SDK 
+- via `delete_project()` (Python) or `deleteProject()` (JS/TS) in the LangSmith SDK
 
-LangSmith does not support self-service deletion of individual traces at this time. 
+LangSmith does not support self-service deletion of individual traces at this time.
 
 If you have a need to delete a single trace (or set of traces) from LangSmith project before its expiration date, please have your account owner reach out to [LangSmith Support](mailto:support@langchain.dev) with your organization ID and trace IDs.
