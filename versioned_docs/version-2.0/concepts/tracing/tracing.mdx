@@ -68,3 +68,23 @@ To learn more about how feedback is stored in the application, see [this referen
 `Metadata` is a collection of key-value pairs that can be attached to runs. Metadata can be used to store additional information about a run, such as the version of the application that generated the run, the environment in which the run was generated, or any other information that you want to associate with a run.
 Similar to tags, you can use metadata to filter runs in the LangSmith UI, and can be used to group runs together for analysis. [Learn how to add metadata to your traces](../how_to_guides/tracing/add_metadata_tags)
 ![Metadata](../static/metadata.png)
+
+## Data storage and retention
+
+For traces ingested on or after Wednesday, May 22, 2024, LangSmith (SaaS) retains trace data for a maximum of 400 days past the date and time the trace was inserted into the LangSmith trace database.
+
+After 400 days, the traces are permanently deleted from LangSmith, with a limited amount of metadata be retained for the purpose of showing accurate statistics such as historic usage and cost.
+
+## Deleting traces from LangSmith
+
+If you wish to remove a trace from LangSmith sooner than the expiration date, LangSmith supports deleting traces via deleting a project.
+
+This can be accomplished:
+
+- in the LangSmith UI via the "Delete" option on the Project's overflow menu
+- via the [Delete Tracer Sessions](/api-docs#tag/tracer-sessions/delete/api/v1/sessions) API endpoint
+- via `delete_project()` (Python) or `deleteProject()` (JS/TS) in the LangSmith SDK
+
+LangSmith does not support self-service deletion of individual traces at this time.
+
+If you have a need to delete a single trace (or set of traces) from LangSmith project before its expiration date, please have your account owner reach out to [LangSmith Support](mailto:support@langchain.dev) with your organization ID and trace IDs.
