@@ -59,15 +59,15 @@ A central consideration for RAG evaluation is whether you have a dataset with `r
 
 ### RAG evaluation summary
 
-| Use Case                      | Detail                                     | Reference-free? | LLM-as-judge?                                                                         | Pairwise relevant |
-| ----------------------------- | ------------------------------------------ | --------------- | ------------------------------------------------------------------------------------- | ----------------- |
-| Retrieved documents precision | Any retrieved docs irrelevant to question  | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-document-relevance)   | No                |
-| Retrieved documents recall    | Retrieved docs address question            | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-document-relevance)   | No                |
-| Answer faithfulness           | Answer hallucinations vs retrieved docs    | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
-| Answer relevance              | Answer relevant to retrieved docs          | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
-| Answer helpfulness            | Answer helpful to address question         | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness)   | No                |
-| Answer correctness            | Is answer correct relative to reference    | No              | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference)  | No                |
-| Chain comparison              | Compare the output of different RAG chains | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-rag)  | Yes               |
+| Use Case            | Detail                                                              | Reference-free? | LLM-as-judge?                                                                         | Pairwise relevant |
+| ------------------- | ------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------- | ----------------- |
+| Answer precision    | Fraction of docs in the context that are used to support the answer | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-context-precision)    | No                |
+| Answer recall       | Fraction of sentences in answer that are supported by context       | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-context-recall)       | No                |
+| Answer faithfulness | Answer hallucinations vs retrieved docs                             | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
+| Answer relevance    | Answer relevant to retrieved docs                                   | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
+| Answer helpfulness  | Answer helpful to address question                                  | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness)   | No                |
+| Answer correctness  | Is answer correct relative to reference                             | No              | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference)  | No                |
+| Chain comparison    | Compare the output of different RAG chains                          | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-rag)  | Yes               |
 
 ## Summarization
 
