@@ -59,7 +59,9 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Customize run name](./how_to_guides/tracing/trace_with_langchain#customize-run-name)
   - [Access run (span) ID for LangChain invocations](./how_to_guides/tracing/trace_with_langchain#access-run-span-id-for-langchain-invocations)
   - [Ensure all traces are submitted before exiting](./how_to_guides/tracing/trace_with_langchain#ensure-all-traces-are-submitted-before-exiting)
+  - [Trace withouth setting environment variables](./how_to_guides/tracing/trace_with_langchain#trace-without-setting-environment-variables)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
+- [Trace without setting environment variables](./how_to_guides/tracing/trace_without_env_vars)
 
 ## Datasets
 
