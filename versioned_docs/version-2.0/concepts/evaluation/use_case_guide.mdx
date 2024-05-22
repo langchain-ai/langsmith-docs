@@ -59,15 +59,13 @@ A central consideration for RAG evaluation is whether you have a dataset with `r
 
 ### RAG evaluation summary
 
-| Use Case            | Detail                                                              | Reference-free? | LLM-as-judge?                                                                         | Pairwise relevant |
-| ------------------- | ------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------- | ----------------- |
-| Answer precision    | Fraction of docs in the context that are used to support the answer | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-context-precision)    | No                |
-| Answer recall       | Fraction of sentences in answer that are supported by context       | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-context-recall)       | No                |
-| Answer faithfulness | Answer hallucinations vs retrieved docs                             | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
-| Answer relevance    | Answer relevant to retrieved docs                                   | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
-| Answer helpfulness  | Answer helpful to address question                                  | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness)   | No                |
-| Answer correctness  | Is answer correct relative to reference                             | No              | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference)  | No                |
-| Chain comparison    | Compare the output of different RAG chains                          | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-rag)  | Yes               |
+| Use Case            | Detail                                            | Reference-free? | LLM-as-judge?                                                                         | Pairwise relevant |
+| ------------------- | ------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------- | ----------------- |
+| Document relevance  | Are documents relevant to the question?           | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-document-relevance)   | No                |
+| Answer faithfulness | Is the answer grounded in the documents?          | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
+| Answer helpfulness  | Does the answer help address the question?        | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness)   | No                |
+| Answer correctness  | Is the answer consistent with a reference answer? | No              | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference)  | No                |
+| Chain comparison    | How do multiple answer versions compare?          | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-rag)  | Yes               |
 
 ## Summarization
 
@@ -93,13 +91,11 @@ Summarization is one specific type of free-form writing. The evaluation aim is t
 
 ### Summarization evaluation summary
 
-| Use Case         | Detail                                      | Reference-free? | LLM-as-judge?                                                                                 | Pairwise relevant |
-| ---------------- | ------------------------------------------- | --------------- | --------------------------------------------------------------------------------------------- | ----------------- |
-| Factual accuracy | Is summary consistent w/ source             | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-accurancy-evaluator)      | Yes               |
-| Faithfulness     | Does summary contain hallucinations         | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-hallucination-evaluator)  | Yes               |
-| Relevance        | Is summary relevant to source               | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-relevance-evaluator)      | Yes               |
-| Helpfulness      | Is summary helpful relative to user need    | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-helpfulness-evaluator)    | Yes               |
-| Insightfulness   | Is summary insightful relative to user need | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-insightfulness-evaluator) | Yes               |
+| Use Case         | Detail                                                                     | Reference-free? | LLM-as-judge?                                                                                | Pairwise relevant |
+| ---------------- | -------------------------------------------------------------------------- | --------------- | -------------------------------------------------------------------------------------------- | ----------------- |
+| Factual accuracy | Is the summary accurate relative to the source documents?                  | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-accurancy-evaluator)     | Yes               |
+| Faithfulness     | Is the summary grounded in the source documents (e.g., no hallucinations)? | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-hallucination-evaluator) | Yes               |
+| Helpfulness      | Is summary helpful relative to user need?                                  | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-helpfulness-evaluator)   | Yes               |
 
 ## Classification / Tagging
 
