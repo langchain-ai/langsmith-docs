@@ -34,6 +34,7 @@ You can pull your own private prompts and all of the public prompts in the LangC
 To pull a **private prompt** or your own public prompt you do not need to specify the LangChain Hub handle (though you can, if you have one set).
 
 To pull a **public prompt** from the LangChain Hub, you need to specify the handle of the prompt's author.
+
 <PullPromptTabs />
 
 You can also pull a specific commit of a prompt by specifying the commit hash.
@@ -44,11 +45,14 @@ publicPrompt = hub.pull("efriis/my-first-prompt:56489e79")
 ```
 
 Here's an example of pulling a prompt from the LangChain Hub and using it in a runnable.
+
 <HubPullCodeTabs />
 
 ## Push a prompt
-You can push an update to an already-existing prompt or create a new one. If you specify a prompt name that exists in your workspace, a new version of your prompt will be committed. 
+
+You can push an update to an already-existing prompt or create a new one. If you specify a prompt name that exists in your workspace, a new version of your prompt will be committed.
 If you specify a new prompt name, a new prompt will be created.
+
 <HubPushCodeTabs />
 
 :::note Terminology
