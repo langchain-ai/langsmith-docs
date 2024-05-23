@@ -59,7 +59,9 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Customize run name](./how_to_guides/tracing/trace_with_langchain#customize-run-name)
   - [Access run (span) ID for LangChain invocations](./how_to_guides/tracing/trace_with_langchain#access-run-span-id-for-langchain-invocations)
   - [Ensure all traces are submitted before exiting](./how_to_guides/tracing/trace_with_langchain#ensure-all-traces-are-submitted-before-exiting)
+  - [Trace withouth setting environment variables](./how_to_guides/tracing/trace_with_langchain#trace-without-setting-environment-variables)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
+- [Trace without setting environment variables](./how_to_guides/tracing/trace_without_env_vars)
 
 ## Datasets
 
@@ -70,6 +72,7 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
   - [Add inputs and outputs from traces to datasets](./how_to_guides/datasets/manage_datasets_in_application#add-inputs-and-outputs-from-traces-to-datasets)
   - [Upload a CSV file to create a dataset](./how_to_guides/datasets/manage_datasets_in_application#upload-a-csv-file-to-create-a-dataset)
   - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
+  - [Create and manage dataset splits](./how_to_guides/datasets/manage_datasets_in_application#create-and-manage-dataset-splits)
 - [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
   - [Create a dataset from list of values](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-list-of-values)
   - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces)
@@ -91,6 +94,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [Use custom evaluators](./how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators)
   - [Evaluate on a particular version of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-particular-version-of-a-dataset)
   - [Evaluate on a subset of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-subset-of-a-dataset)
+  - [Evaluate on a dataset split](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-split)
   - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
 - [Bind and evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
@@ -166,7 +170,6 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
 - [Create a prompt](./how_to_guides/prompts/create_a_prompt)
-  - [Choose a handle](./how_to_guides/prompts/create_a_prompt#choose-a-handle)
   - [Name your new prompt](./how_to_guides/prompts/create_a_prompt#name-your-new-prompt)
   - [Pick a prompt type](./how_to_guides/prompts/create_a_prompt#pick-a-prompt-type)
   - [Compose your prompt](./how_to_guides/prompts/create_a_prompt#compose-your-prompt)

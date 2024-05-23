@@ -6,9 +6,10 @@ import {
   HubInstallationCodeTabs,
   HubPullCodeTabs,
   HubPushCodeTabs,
+  PullPromptTabs,
 } from "@site/src/components/Hub";
 
-# Pull/push a prompt
+# Push/pull a prompt
 
 ## Install packages
 
@@ -16,30 +17,44 @@ import {
 
 ## Configure environment variables
 
-If you already have `LANGCHAIN_API_KEY` set to a personal organization's api key from LangSmith, you can skip this step.
+If you already have `LANGCHAIN_API_KEY` set to your current workspace's api key from LangSmith, you can skip this step.
 
-Otherwise, get an API key for your Personal organization by navigating to `Settings > API Keys > Create API Key` in LangSmith. (The hub will not work with your non-personal organization's api key!)
+Otherwise, get an API key for your workspace by navigating to `Settings > API Keys > Create API Key` in LangSmith.
 
 Set your environment variable.
 
 ```bash
-export LANGCHAIN_HUB_API_KEY="ls_..."
+export LANGCHAIN_HUB_API_KEY="lsv2_..."
 ```
 
 ## Pull a prompt and use it
 
-You can pull your own prompts and all of the public prompts in the LangChain Hub.
+You can pull your own private prompts and all of the public prompts in the LangChain Hub.
 
-<HubPullCodeTabs />
+To pull a **private prompt** or your own public prompt you do not need to specify the LangChain Hub handle (though you can, if you have one set).
+
+To pull a **public prompt** from the LangChain Hub, you need to specify the handle of the prompt's author.
+
+<PullPromptTabs />
 
 You can also pull a specific commit of a prompt by specifying the commit hash.
 
 ```bash
-prompt = hub.pull("efriis/my-first-prompt:56489e79")
+prompt = hub.pull('my-private-prompt:12344e88')
+publicPrompt = hub.pull("efriis/my-first-prompt:56489e79")
 ```
 
-## Push a prompt to your personal organization
+Here's an example of pulling a prompt from the LangChain Hub and using it in a runnable.
 
-For this step, you'll need the `handle` for your account!
+<HubPullCodeTabs />
+
+## Push a prompt
+
+You can push an update to an already-existing prompt or create a new one. If you specify a prompt name that exists in your workspace, a new version of your prompt will be committed.
+If you specify a new prompt name, a new prompt will be created.
 
 <HubPushCodeTabs />
+
+:::note Terminology
+"Prompt" used to be called "repo", so any references to "repo" in the code are referring to a prompt.
+:::

@@ -72,7 +72,7 @@ with tracing_v2_enabled():
 # This will NOT be traced (assuming LANGCHAIN_TRACING_V2 is not set)
 chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced"})`),
     TypeScriptBlock(`// You can configure a LangChainTracer instance to trace a specific invocation.
-import { LangChainTracer } from "langchain/callbacks";\n
+import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";\n
 const tracer = new LangChainTracer();
 await chain.invoke(
   {
@@ -110,7 +110,7 @@ from langchain_core.tracers.context import tracing_v2_enabled
 with tracing_v2_enabled(project_name="My Project"):
     chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})`),
     TypeScriptBlock(`// You can set the project name for a specific tracer instance:
-import { LangChainTracer } from "langchain/callbacks";\n
+import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";\n
 const tracer = new LangChainTracer({ projectName: "My Project" });
 await chain.invoke(
   {
@@ -277,6 +277,60 @@ try {
   groupId="client-language"
 />
 
+## Trace without setting environment variables
+
+As mentioned in other guides, the following environment variables allow you to configure tracing enabled, the api endpoint, the api key, and the tracing project:
+
+- `LANGCHAIN_TRACING_V2`
+- `LANGCHAIN_API_KEY`
+- `LANGCHAIN_ENDPOINT`
+- `LANGCHAIN_PROJECT`
+
+However, in some environments, it is not possible to set environment variables. In these cases, you can set the tracing configuration programmatically.
+
+This largely builds off of the [previous section](#trace-selectively).
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain.callbacks.tracers import LangChainTracer
+from langsmith import Client\n
+# You can create a client instance with an api key and api url
+client = Client(
+    api_key="YOUR_API_KEY",  # This can be retrieved from a secrets manager
+    api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations
+)\n
+# You can pass the client and project_name to the LangChainTracer instance
+# highlight-next-line
+tracer = LangChainTracer(client=client, project_name="test-no-env")
+chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})\n
+# LangChain Python also supports a context manager which allows passing the client and project_name
+from langchain_core.tracers.context import tracing_v2_enabled
+# highlight-next-line
+with tracing_v2_enabled(client=client, project_name="test-no-env"):
+    chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})`),
+    TypeScriptBlock(`import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";
+import { Client } from "langsmith";\n
+// You can create a client instance with an api key and api url
+const client = new Client(
+    {
+        apiKey: "YOUR_API_KEY",
+        apiUrl: "https://api.smith.langchain.com",
+    }
+);\n
+// You can pass the client and project_name to the LangChainTracer instance
+// highlight-next-line
+const tracer = new LangChainTracer({client, projectName: "test-no-env"});
+await chain.invoke(
+  {
+    question: "Am I using a callback?",
+    context: "I'm using a callback",
+  },
+  { callbacks: [tracer] }
+);`),
+  ]}
+  groupId="client-language"
+/>
+
 ## Interoperability between LangChain.JS and LangSmith SDK
 
 ### Tracing LangChain objects inside `traceable` (JS only)
@@ -377,4 +431,3 @@ You can convert the existing LangChain `RunnableConfig` to a equivalent RunTree 
       });
     `,
   ]}
-/>
