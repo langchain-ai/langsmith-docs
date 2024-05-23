@@ -170,7 +170,6 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
 - [Create a prompt](./how_to_guides/prompts/create_a_prompt)
-  - [Choose a handle](./how_to_guides/prompts/create_a_prompt#choose-a-handle)
   - [Name your new prompt](./how_to_guides/prompts/create_a_prompt#name-your-new-prompt)
   - [Pick a prompt type](./how_to_guides/prompts/create_a_prompt#pick-a-prompt-type)
   - [Compose your prompt](./how_to_guides/prompts/create_a_prompt#compose-your-prompt)
