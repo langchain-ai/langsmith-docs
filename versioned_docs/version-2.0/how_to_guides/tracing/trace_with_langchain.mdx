@@ -337,7 +337,7 @@ await chain.invoke(
 
 Starting with `langchain@0.2.x`, LangChain objects are traced automatically when used inside `@traceable` functions, inheriting the client, tags, metadata and project name of the traceable function.
 
-For older versions of LangChain, you will need to manually pass an instance `LangChainTracer` created from the tracing context found in `@traceable`.
+For older versions of LangChain below `0.2.x`, you will need to manually pass an instance `LangChainTracer` created from the tracing context found in `@traceable`.
 
 ```typescript
 import { ChatOpenAI } from "@langchain/openai";
@@ -360,8 +360,8 @@ const chain = prompt.pipe(model).pipe(outputParser);
 
 const main = traceable(
   async (input: { question: string; context: string }) => {
-    // this is done automatically in langchain@0.2.x
-    // only do this if you cannot upgrade your LangChain version
+    // this is done automatically in `langchain` >0.2.x
+    // only do this if you are using an older version of `langchain`
     // highlight-start
     const callbacks = await getLangchainCallbacks();
     const response = await chain.invoke({ callbacks });
