@@ -95,6 +95,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [Evaluate on a particular version of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-particular-version-of-a-dataset)
   - [Evaluate on a subset of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-subset-of-a-dataset)
   - [Evaluate on a dataset split](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-split)
+  - [Evaluate on a dataset with repetitions](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-with-repetitions)
   - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
 - [Bind and evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
