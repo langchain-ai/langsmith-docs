@@ -128,17 +128,21 @@ export const typescript = (strings, ...values) => {
     strings != null &&
     !Array.isArray(strings)
   ) {
-    const { caption, label } = strings;
+    const { caption, label, value } = strings;
+
     return (innerStrings, ...innerValues) => {
       let result = "";
       innerStrings.forEach((string, i) => {
         result += string + String(innerValues[i] ?? "");
       });
-      return TypeScriptBlock(
-        dedent(result),
-        caption ?? undefined,
-        label ?? undefined
-      );
+
+      return {
+        content: dedent(result),
+        language: "typescript",
+        value: value ?? "typescript",
+        label: label ?? "TypeScript",
+        caption: caption ?? "",
+      };
     };
   }
 
@@ -146,7 +150,14 @@ export const typescript = (strings, ...values) => {
   strings.forEach((string, i) => {
     result += string + String(values[i] ?? "");
   });
-  return TypeScriptBlock(dedent(result));
+
+  return {
+    content: dedent(result),
+    language: "typescript",
+    value: "typescript",
+    label: "TypeScript",
+    caption: "",
+  };
 };
 
 export const python = (strings, ...values) => {
@@ -156,17 +167,20 @@ export const python = (strings, ...values) => {
     strings != null &&
     !Array.isArray(strings)
   ) {
-    const { caption, label } = strings;
+    const { caption, label, value } = strings;
     return (innerStrings, ...innerValues) => {
       let result = "";
       innerStrings.forEach((string, i) => {
         result += string + String(innerValues[i] ?? "");
       });
-      return PythonBlock(
-        dedent(result),
-        caption ?? undefined,
-        label ?? undefined
-      );
+
+      return {
+        content: dedent(result),
+        language: "python",
+        value: value ?? "python",
+        label: label ?? "Python",
+        caption: caption ?? "",
+      };
     };
   }
 
@@ -174,7 +188,14 @@ export const python = (strings, ...values) => {
   strings.forEach((string, i) => {
     result += string + String(values[i] ?? "");
   });
-  return PythonBlock(dedent(result));
+
+  return {
+    content: dedent(result),
+    language: "python",
+    value: "python",
+    label: "Python",
+    caption: "",
+  };
 };
 
 export const shell = (strings, ...values) => {
