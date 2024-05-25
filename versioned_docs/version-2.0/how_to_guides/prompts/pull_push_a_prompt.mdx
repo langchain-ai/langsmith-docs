@@ -31,6 +31,13 @@ export LANGCHAIN_HUB_API_KEY="lsv2_..."
 
 You can pull your own private prompts and all of the public prompts in the LangChain Hub.
 
+:::note SDK version
+If you're using Python and encounter the error:
+`Identifier must be in the format of owner/repo:commit or owner/repo`, you need to update your package version. You can do this by running:
+
+`pip install -U langchainhub`
+:::
+
 To pull a **private prompt** or your own public prompt you do not need to specify the LangChain Hub handle (though you can, if you have one set).
 
 To pull a **public prompt** from the LangChain Hub, you need to specify the handle of the prompt's author.
