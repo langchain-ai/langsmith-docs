@@ -89,7 +89,12 @@
     {
       "source": "/category/proxy/:path*",
       "destination": "/old/category/proxy/:path*"
-    }
+    },
+    {
+      "source": "/category/release-notes", 
+      "destination": "/category/self-hosting"
+    },
+    
   ],
   "builds": [
     {
