@@ -129,6 +129,12 @@ LangSmith supports sending arbitrary metadata and tags along with traces.
 This is useful for associating additional information with a trace, such as the environment in which it was executed, or the user who initiated it.
 For information on how to query traces and runs by metadata and tags, see [this guide](./export_traces)
 
+:::note
+
+When you attach metadata or tags to a runnable (either through the RunnableConfig or at runtime with invocation params), they are inherited by all child runnables of that runnable.
+
+:::
+
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain_openai import ChatOpenAI
@@ -138,14 +144,16 @@ prompt = ChatPromptTemplate.from_messages([
   ("system", "You are a helpful AI."),
   ("user", "{input}")
 ])
-chat_model = ChatOpenAI()
+# The tag "model-tag" and metadata {"model-key": "model-value"} will be attached to the ChatOpenAI run only
+# highlight-next-line
+chat_model = ChatOpenAI().with_config({"tags": ["model-tag"], "metadata": {"model-key": "model-value"}})
 output_parser = StrOutputParser()\n
-# highlight-next-line
 # Tags and metadata can be configured with RunnableConfig
-chain = (prompt | chat_model | output_parser).with_config({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}})\n
 # highlight-next-line
+chain = (prompt | chat_model | output_parser).with_config({"tags": ["config-tag"], "metadata": {"config-key": "config-value"}})\n
 # Tags and metadata can also be passed at runtime
-chain.invoke({"input": "What is the meaning of life?"}, {"tags": ["shared-tags"], "metadata": {"shared-key": "shared-value"}})`),
+# highlight-next-line
+chain.invoke({"input": "What is the meaning of life?"}, {"tags": ["invoke-tag"], "metadata": {"invoke-key": "invoke-value"}})`),
     TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";\n
@@ -153,14 +161,13 @@ const prompt = ChatPromptTemplate.fromMessages([
   ["system", "You are a helpful AI."],
   ["user", "{input}"]
 ])
-const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+// The tag "model-tag" and metadata {"model-key": "model-value"} will be attached to the ChatOpenAI run only
+const model = new ChatOpenAI().withConfig({ tags: ["model-tag"], metadata: { "model-key": "model-value" } });
 const outputParser = new StringOutputParser();\n
-// highlight-next-line
 // Tags and metadata can be configured with RunnableConfig
-const chain = (prompt.pipe(model).pipe(outputParser)).withConfig({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}});\n
-// highlight-next-line
+const chain = (prompt.pipe(model).pipe(outputParser)).withConfig({"tags": ["config-tag"], "metadata": {"config-key": "top-level-value"}});\n
 // Tags and metadata can also be passed at runtime
-await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags"], metadata: {"shared-key": "shared-value"}})`),
+await chain.invoke({input: "What is the meaning of life?"}, {tags: ["invoke-tag"], metadata: {"invoke-key": "invoke-value"}})`),
   ]}
   groupId="client-language"
 />
@@ -168,21 +175,26 @@ await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags
 ## Customize run name
 
 When you create a run, you can specify a name for the run. This name is used to identify the run in LangSmith and can be used to filter and group runs. The name is also used as the title of the run in the LangSmith UI.
+This can be done by setting a `run_name` in the `RunnableConfig` object at construction or by passing a `run_name` in the invocation parameters in JS/TS.
 
 :::note
+
 This feature is not currently supported directly for LLM objects.
+
 :::
 
 <CodeTabs
   tabs={[
     PythonBlock(`# When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
 configured_chain = chain.with_config({"run_name": "MyCustomChain"})
-configured_chain.invoke({"query": "What is the meaning of life?"})`),
+configured_chain.invoke({"input": "What is the meaning of life?"})\n
+# You can also configure the run name at invocation time, like below
+chain.invoke({"input": "What is the meaning of life?"}, {"run_name": "MyCustomChain"})`),
     TypeScriptBlock(`// When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
-// (Note: this is not currently supported directly on LLM objects.)
-...
 const configuredChain = chain.withConfig({ runName: "MyCustomChain" });
-await configuredChain.invoke({query: "What is the meaning of life?"});`),
+await configuredChain.invoke({ input: "What is the meaning of life?" });\n
+// You can also configure the run name at invocation time, like below
+await chain.invoke({ input: "What is the meaning of life?" }, {runName: "MyCustomChain"})`),
   ]}
   groupId="client-language"
 />
