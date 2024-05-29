@@ -33,8 +33,6 @@ We see in the graph above that there are two usage metrics that LangSmith charge
 LangSmith Traces (Extended Data Retention Upgrades). The first metric tracks all traces that you send to LangSmith. The second
 tracks all traces that have our Extended 400 Day Data Retention. For more details, see [TODO: LINK]
 
-This tenant is currently using extended data retention tracing, which explains why both metrics are roughly equal each day.
-
 ### Invoices
 We head to the `Invoices` tab to see how our usage translates into spend in the current billing period. 
 
@@ -47,7 +45,7 @@ first two weeks of May. Upgrades occur for two reasons:
 2. you use base data retention tracing, and use a feature that automatically extends the data retention of a trace
 
 Given that the number of total traces per day is equal to the number of extended retention traces per day, it's most likely the 
-case that this tenant is using extended data retention tracing everywhere. As such, we start by optimizing our retention settings.
+case that this org is using extended data retention tracing everywhere. As such, we start by optimizing our retention settings.
 
 ## Optimization 1: manage data retention
 
@@ -132,7 +130,7 @@ When set without the all traces limit, the maximum cost estimator assumes that a
 :::
 
 ### Cutting maximum spend with an extended data retention limit
-If we are not a big enterprise, we may shutter at the ~$40k per month bill at Plus plan prices.
+If we are not a big enterprise, we may shutter at the ~$40k per month bill.
 
 We saw from Optimization 1 that the easiest way to cut cost was through data retention. The same can be said for limits. 
 If we only want to keep ~10% of traces to be around more than 14 days, we can set a limit on the maximum high retention
@@ -145,7 +143,7 @@ users on the platform will not accidentally cause cost to balloon.
 
 :::note
 The extended data retention limit can cause features other than traces to stop working once reached. If you plan to 
-use this feature, please read more about its functionality here.
+use this feature, please read more about its functionality here [TODO: link].
 :::
 
 ## Summary
