@@ -93,8 +93,7 @@
     {
       "source": "/category/release-notes", 
       "destination": "/category/self-hosting"
-    },
-    
+    }
   ],
   "builds": [
     {
