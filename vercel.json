@@ -92,7 +92,7 @@
     },
     {
       "source": "/category/release-notes", 
-      "destination": "/category/self-hosting"
+      "destination": "/category/self-hosting/release-notes"
     }
   ],
   "builds": [
