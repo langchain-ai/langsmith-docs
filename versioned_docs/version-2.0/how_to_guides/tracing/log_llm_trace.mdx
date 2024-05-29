@@ -16,16 +16,32 @@ Nothing will break if you don't log LLM traces in the correct format and data wi
 
 The best way to logs traces from OpenAI models is to use the [wrapper](./annotate_code#wrap-the-openai-client) available in the `langsmith` SDK for Python and TypeScript. However, you can also log traces from custom models by following the guidelines below.
 
-LangSmith provides special rendering and processing for LLM traces, including token counting (assuming token counts are not available from the model provider).
-In order to make the most of this feature, you must log your LLM traces in a specific, OpenAI-compatible format.
+LangSmith provides special rendering and processing for LLM traces, including token counting (assuming token counts are not available from the model provider) and token-based cost calculation.
+In order to make the most of this feature, you must log your LLM traces in a specific format.
+
+:::note
+
+The examples below uses the `traceable` decorator/wrapper to log the model run (which is the recommended approach for Python and JS/TS). However, the same idea applies if you are using the [RunTree](./annotate_code#use-the-runtree-api) or [API](https://docs.smith.langchain.com/api-docs) directly.
+
+:::
 
 ## Chat-style models
 
-For chat-style models, inputs must be a list of messages, represented as Python dictionaries or TypeScript object. Each message must contain the key `role` and `content`.
+For chat-style models, inputs must be a list of messages in OpenAI-compatible format, represented as Python dictionaries or TypeScript object. Each message must contain the key `role` and `content`.
 
-The output must return a dictionary/object that contains the key `choices` with a value that is a list of dictionaries/objects. Each dictionary/object must contain the key `message`, which maps to a message object with the keys `role` and `content`.
+The output is accepted in any of the following formats:
+
+- A dictionary/object that contains the key `choices` with a value that is a list of dictionaries/objects. Each dictionary/object must contain the key `message`, which maps to a message object with the keys `role` and `content`.
+- A dictionary/object that contains the key `message` with a value that is a message object with the keys `role` and `content`.
+- A tuple/array of two elements, where the first element is the role and the second element is the content.
+- A dictionary/object that contains the key `role` and `content`.
 
 The input to your function should be named `messages`.
+
+You can also provide the following `metadata` fields to help LangSmith identify the model and calculate costs. If using LangChain or [OpenAI wrapper](./annotate_code#wrap-the-openai-client), these fields will be automatically populated correctly. To learn more about how to use the `metadata` fields, see [this guide](./add_metadata_tags).
+
+- `ls_provider`: The provider of the model, eg "openai", "anthropic", etc.
+- `ls_model_name`: The name of the model, eg "gpt-3.5-turbo", "claude-3-opus-20240307", etc.
 
 <CodeTabs
   tabs={[
@@ -44,7 +60,24 @@ output = {
         }
     ]
 }\n
-@traceable(run_type="llm")
+# Can also use one of:
+# output = {
+#     "message": {
+#         "role": "assistant",
+#         "content": "Sure, what time would you like to book the table for?"
+#     }
+# }
+#
+# output = {
+#     "role": "assistant",
+#     "content": "Sure, what time would you like to book the table for?"
+# }
+#
+# output = ["assistant", "Sure, what time would you like to book the table for?"]\n
+@traceable(
+    run_type="llm",
+    metadata={"ls_provider": "my_provider", "ls_model_name": "my_model"}
+)
 def chat_model(messages: list):
     return output\n
 chat_model(inputs)`),
@@ -63,11 +96,25 @@ const output = {
     }
   ]
 };\n
+// Can also use one of:
+// const output = {
+//   message: {
+//     role: "assistant",
+//     content: "Sure, what time would you like to book the table for?"
+//   }
+// };
+//
+// const output = {
+//   role: "assistant",
+//   content: "Sure, what time would you like to book the table for?"
+// };
+//
+// const output = ["assistant", "Sure, what time would you like to book the table for?"];\n
 const chatModel = traceable(
   async ({ messages }: { messages: { role: string; content: string }[] }) => {
     return output;
   },
-  { run_type: "llm", name: "chat_model" }
+  { run_type: "llm", name: "chat_model", metadata: { ls_provider: "my_provider", ls_model_name: "my_model" } }
 );\n
 await chatModel({ messages });`),
   ]}
@@ -78,68 +125,21 @@ The above code will log the following trace:
 
 ![](../static/chat_model.png)
 
-## Specify model name
-
-You can configure the model name by passing the `model` parameter to the function you are wrapping/decorating with `traceable`. The `model` parameter is used to match cost information.
-
-<CodeTabs
-  tabs={[
-    PythonBlock(`from langsmith import traceable\n
-inputs = [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "I'd like to book a table for two."},
-]\n
-output = {
-    "choices": [
-        {
-            "message": {
-                "role": "assistant",
-                "content": "Sure, what time would you like to book the table for?"
-            }
-        }
-    ]
-}\n
-@traceable(run_type="llm")
-def chat_model(messages: list, model: str):
-    return output\n
-chat_model(inputs, "gpt-3.5-turbo")`),
-    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
-const messages = [
-  { role: "system", content: "You are a helpful assistant." },
-  { role: "user", content: "I'd like to book a table for two." }
-];\n
-const output = {
-  choices: [
-    {
-      message: {
-        role: "assistant",
-        content: "Sure, what time would you like to book the table for?"
-      }
-    }
-  ]
-};\n
-const chatModel = traceable(
-  async ({ messages, model }: { messages: { role: string; content: string }[]; model: string }) => {
-    return output;
-  },
-  { run_type: "llm", name: "chat_model" }
-);\n
-await chatModel({ messages, model: "gpt-3.5-turbo" });`),
-  ]}
-  groupId="client-language"
-/>
-
 ## Stream outputs
 
-For streaming, you can "reduce" the outputs into the same format as the non-streaming version:
+For streaming, you can "reduce" the outputs into the same format as the non-streaming version. This is currently only supported in Python.
 
 ```python
 def _reduce_chunks(chunks: list):
     all_text = "".join([chunk["choices"][0]["message"]["content"] for chunk in chunks])
     return {"choices": [{"message": {"content": all_text, "role": "assistant"}}]}
 
-@traceable(run_type="llm", reduce_fn=_reduce_chunks)
-def my_streaming_chat_model(messages: list, model: str):
+@traceable(
+    run_type="llm",
+    reduce_fn=_reduce_chunks,
+    metadata={"ls_provider": "my_provider", "ls_model_name": "my_model"}
+)
+def my_streaming_chat_model(messages: list):
     for chunk in ["Hello, " + messages[1]["content"]]:
         yield {
             "choices": [
@@ -158,14 +158,14 @@ list(
             {"role": "system", "content": "You are a helpful assistant. Please greet the user."},
             {"role": "user", "content": "polly the parrot"},
         ],
-        model="gpt-3.5-turbo",
     )
 )
 ```
 
 ## Manually provide token counts
 
-By default, LangSmith uses tiktoken to count tokens, utilizing a best guess at the model's tokenizer based on the `model` parameter you provide. To manually provide token counts, you can add a `usage` key to the function's response, containing a dictionary with the keys `prompt_tokens` and `completion_tokens`.
+By default, LangSmith uses TikToken to count tokens, utilizing a best guess at the model's tokenizer based on the `ls_model_name` provided. Many models already include token counts as part of the response. To send them to LangSmith, you can add a `usage_metadata` key to the function's response, containing a dictionary with the keys `input_tokens`, `output_tokens` and `total_tokens`.
+If using LangChain or [OpenAI wrapper](./annotate_code#wrap-the-openai-client), these fields will be automatically populated correctly.
 
 <CodeTabs
   tabs={[
@@ -184,17 +184,21 @@ output = {
             }
         }
     ],
-    "usage": {
-        "prompt_tokens": 27,
-        "completion_tokens": 13,
+    "usage_metadata": {
+        "input_tokens": 27,
+        "output_tokens": 13,
+        "total_tokens": 40,
     },
 }\n
-@traceable(run_type="llm")
-def chat_model(messages: list, model: str):
+@traceable(
+    run_type="llm",
+    metadata={"ls_provider": "my_provider", "ls_model_name": "my_model"}
+)
+def chat_model(messages: list):
     run_tree = get_current_run_tree()
     run_tree.extra["batch_size"] = 1
     return output\n
-chat_model(inputs, "gpt-3.5-turbo")`),
+chat_model(inputs)`),
     TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";\n
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
@@ -209,15 +213,15 @@ const output = {
       },
     },
   ],
-  usage: {
-    "prompt_tokens": 27,
-    "completion_tokens": 13,
+  usage_metadata: {
+    input_tokens: 27,
+    output_tokens: 13,
+    total_tokens: 40,
   },
 };\n
 const chatModel = traceable(
   async ({
     messages,
-    model,
   }: {
     messages: { role: string; content: string }[];
     model: string;
@@ -226,9 +230,9 @@ const chatModel = traceable(
     run.extra.batch_size = 1
     return output;
   },
-  { run_type: "llm", name: "chat_model" }
+  { run_type: "llm", name: "chat_model", metadata: { ls_provider: "my_provider", ls_model_name: "my_model" } }
 );\n
-await chatModel({ messages, model: "gpt-3.5-turbo" });`),
+await chatModel({ messages });`),
   ]}
   groupId="client-language"
 />
@@ -236,15 +240,24 @@ await chatModel({ messages, model: "gpt-3.5-turbo" });`),
 ## Instruct-style models
 
 For instruct-style models (string in, string out), your inputs must contain a key `prompt` with a string value. Other inputs are also permitted. The output must return an object that, when serialized, contains the key `choices` with a list of dictionaries/objects. Each must contain the key `text` with a string value.
+The same rules for `metadata` and `usage_metadata` apply as for chat-style models.
 
 <CodeTabs
   tabs={[
-    PythonBlock(`@traceable(run_type="llm")
+    PythonBlock(`@traceable(
+    run_type="llm",
+    metadata={"ls_provider": "my_provider", "ls_model_name": "my_model"}
+)
 def hello_llm(prompt: str):
     return {
         "choices": [
             {"text": "Hello, " + prompt}
         ],
+        "usage_metadata": {
+            "input_tokens": 4,
+            "output_tokens": 5,
+            "total_tokens": 9,
+        },
     }\n
 hello_llm("polly the parrot\\n")`),
     TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
@@ -253,10 +266,15 @@ const helloLLM = traceable(
     return {
       choices: [
         { text: "Hello, " + prompt }
-      ]
+      ],
+        usage_metadata: {
+            input_tokens: 4,
+            output_tokens: 5,
+            total_tokens: 9,
+        },
     };
   },
-  { run_type: "llm", name: "hello_llm" }
+  { run_type: "llm", name: "hello_llm", metadata: { ls_provider: "my_provider", ls_model_name: "my_model" } }
 );\n
 await helloLLM({ prompt: "polly the parrot\\n" });`),
   ]}
