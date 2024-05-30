@@ -94,7 +94,7 @@ with the organization level setting, this will only affect retention (and pricin
 
 ![](./static/p1projectretention.png)
 
-### Keep around 10% of traces for extended data retention
+### [NOTE TO REVIEWER: COMING SOON] Keep around 10% of traces for extended data retention
 
 We may not want all our traces to expire after 14 days if we care about historical debugging. As such, we can take advantage
 of LangSmith's built in ability to do server side sampling for extended data retention.
@@ -146,7 +146,7 @@ clearly think about your assumptions before setting a limit. For example:
 
 - **Current Load**: Our gen AI application is called between 1.2-1.5 times per second, and each API request has a trace associated with it,
   meaning we log around 100,000-130,000 traces per day
-- **Expected Growth in Load**: We expect to double in size in the near future
+- **Expected Growth in Load**: We expect to double in size in the near future.
 
 From these assumptions, we can do a quick back-of-the-envelope calculation to get a good limit of:
 
