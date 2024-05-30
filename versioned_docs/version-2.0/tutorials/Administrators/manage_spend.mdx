@@ -32,9 +32,12 @@ We can navigate to the Usage Graph under `Settings` -> `Usage and Billing` -> `U
 
 ![](./static/p1usagegraph.png)
 
-We see in the graph above that there are two usage metrics that LangSmith charges for, LangSmith Traces (Base Charge) and
-LangSmith Traces (Extended Data Retention Upgrades). The first metric tracks all traces that you send to LangSmith. The second
-tracks all traces that have our Extended 400 Day Data Retention. For more details, see [TODO: LINK]
+We see in the graph above that there are two usage metrics that LangSmith charges for:
+
+* LangSmith Traces (Base Charge)
+* LangSmith Traces (Extended Data Retention Upgrades). 
+
+The first metric tracks all traces that you send to LangSmith. The second tracks all traces that also have our Extended 400 Day Data Retention. For more details, see [TODO: LINK]
 
 ### Invoices
 
@@ -102,7 +105,7 @@ leave it to the user to find the right value that balances collecting rare event
 
 ### See results after 7 days
 
-While the total amount of traces per day stayed the same, the extended data retention traces as expected was cut heavily.
+While the total amount of traces per day stayed the same, the extended data retention traces was cut heavily.
 
 ![](./static/p1endresultgraph.png)
 
@@ -139,11 +142,11 @@ When set without the all traces limit, the maximum cost estimator assumes that a
 
 ### Cutting maximum spend with an extended data retention limit
 
-If we are not a big enterprise, we may shutter at the ~$40k per month bill.
+If we are not a big enterprise, we may shudder at the ~$40k per month bill.
 
-We saw from Optimization 1 that the easiest way to cut cost was through data retention. The same can be said for limits.
-If we only want to keep ~10% of traces to be around more than 14 days, we can set a limit on the maximum high retention
-traces we can keep. That would be `.10 * 7,800,000 = 780,000`.
+We saw from [Optimization 1](#optimization-1-manage-data-retention) that the easiest way to cut cost was through managing data retention. 
+The same can be said for limits. If we only want to keep ~10% of traces to be around more than 14 days, we can set a limit on the maximum 
+high retention traces we can keep. That would be `.10 * 7,800,000 = 780,000`.
 
 ![](./static/p2bothlimits.png)
 
