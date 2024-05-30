@@ -1,0 +1,41 @@
+# Usage Limits
+
+:::note
+This page assumes that you have already read our guide on [data retention](./data_retention_billing). Please read that page before proceeding.  
+:::
+
+## How usage limits work
+LangSmith lets you configure usage limits on tracing. Note that these are *usage* limits, not *spend* limits, which 
+mean they let you limit the quantity of occurrances of some event rather than the total amount you will spend. 
+
+LangSmith lets you set two different monthly limits, mirroring our Billable Metrics discussed in the aforementioned data retention guide:
+
+- All traces limit
+- Extended data retention traces limit
+
+These let you limit the number of total traces, and extended data retention traces respectively.
+
+## Properties of usage limiting
+Usage limiting is approximate, meaning that we do not guarantee the exactness of the limit. In rare cases, there 
+may be a small period of time where additional traces are processed above the limit threshold before usage limiting 
+begins to apply.
+
+## Side effects of extended data retention traces limit
+The extended data retention traces limit has side effects. If the limit is already reached, any feature that could
+cause an auto-upgrade of tracing tiers becomes inaccessible. This is because an auto-upgrade of a trace would cause 
+another extended retention trace to be created, which in turn should not be allowed by the limit. Therefore, you can
+no longer:
+
+1. match run rules
+2. add feedback to traces 
+3. add runs to annotation queues 
+
+Each of these features may cause an auto upgrade, so we shut them off when the limit is reached. 
+
+## Updating usage limits
+Usage limits can be updated from the `Settings` page under `Usage and Billing`. Limit values are cached, so it 
+may take a minute or two before the new limits apply.
+
+## Related content
+
+* Tutorial on how to [optimize spend](../../tutorials/Administrators/manage_spend)

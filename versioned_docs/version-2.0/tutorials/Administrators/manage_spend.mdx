@@ -18,6 +18,10 @@ and prevent future overspend on a realistic real-world example.
 
 In this tutorial, we will use an existing LangSmith tenant with high usage. Concepts can be transferred to your own tenant.
 
+For conceptual background, you can read:
+* [Data Retention Conceptual Docs](../../concepts/usage_and_billing/data_retention_billing)
+* [Usage Limiting Conceptual Docs](../../concepts/usage_and_billing/usage_limits#side-effects-of-extended-data-retention-traces-limit)
+
 ## Understand your current usage
 
 The first step of any optimization process is to understand current usage. LangSmith gives two ways to do this: Usage Graph
@@ -83,7 +87,7 @@ with the organization level setting, this will only affect retention (and pricin
 
 ![](./static/p1projectretention.png)
 
-### Optional: keep around 10% of traces for extended data retention
+### Keep around 10% of traces for extended data retention
 
 We may not want all our traces to expire after 14 days if we care about historical debugging. As such, we can take advantage
 of LangSmith's built in ability to do server side sampling for extended data retention.
@@ -156,7 +160,7 @@ users on the platform will not accidentally cause cost to balloon.
 
 :::note
 The extended data retention limit can cause features other than traces to stop working once reached. If you plan to
-use this feature, please read more about its functionality here [TODO: link].
+use this feature, please read more about its functionality [here](../../concepts/usage_and_billing/usage_limits#side-effects-of-extended-data-retention-traces-limit).
 :::
 
 ## Summary
