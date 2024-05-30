@@ -26,3 +26,7 @@ Explanations, clarification and discussion of key topics in LangSmith.
 - [Datasets and examples](./concepts/evaluation#datasets-and-examples)
 - [Experiments](./concepts/evaluation#experiments)
 - [Evaluators](./concepts/evaluation#evaluators)
+
+## Usage and Billing
+
+- [Data Retention Based Billing](./concepts/usage_and_billing/data_retention_billing)
