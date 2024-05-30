@@ -12,7 +12,7 @@ LangSmith now has two tiers of traces based on Data Retention with the following
 
 |                      | Base         | Extended     |
 | -------------------- | ------------ | ------------ |
-| **Price**            | ¢.05 / trace | ¢ .5 / trace |
+| **Price**            | ¢.05 / trace | ¢.50 / trace |
 | **Retention Period** | 14 days      | 400 days     |
 
 ### Data deletion after retention ends
@@ -43,7 +43,7 @@ We have two reasons behind the auto-upgrade model for tracing:
 
 1. We think that traces that match any of these conditions are fundamentally more interesting than other traces, and
    therefore it is good for users to be able to keep them around longer.
-2. We philosophically want to charge customers an order of magnitude lower for traces that are not interacted with meaningfully.
+2. We philosophically want to charge customers an order of magnitude lower for traces that may not be interacted with meaningfully.
    We think auto-upgrades align our pricing model with the value that LangSmith brings, where only traces with meaningful interaction
    are charged at a higher rate.
 
@@ -53,7 +53,7 @@ If you have questions or concerns about our pricing model, please feel free to r
 
 #### Annotation Queues, Run Rules, and Feedback
 
-See above note on auto-upgrades
+Traces that use these features will be [auto-upgraded](#data-retention-auto-upgrades)
 
 #### Monitoring
 
@@ -94,7 +94,7 @@ with the same timestamp.
 ### Cost breakdown
 
 The Base Charge for a trace is ¢.05 per trace. We priced the upgrade such that an `extended` retention trace
-costs 10x the price of a base tier trace (¢.5 per trace) including both metrics. Thus, each upgrade costs ¢.45.
+costs 10x the price of a base tier trace (¢.50 per trace) including both metrics. Thus, each upgrade costs ¢.45.
 
 ## Related content
 
