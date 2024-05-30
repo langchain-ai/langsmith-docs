@@ -93,3 +93,22 @@ In order to create and manage splits in the app, you can select some examples in
 you can select and unselect splits for the selected examples, or create a new split.
 
 ![Add to Split](../static/add_to_split2.png)
+
+## Edit example metadata
+
+You can add metadata to your examples by clicking on an example and then clicking on the "Metadata" tab in the side pane.
+From this page, you can update/delete existing metadata, or add new metadata. You may use this to store information about
+your examples, such as tags or version info, which you can [then filter by when you call `list_examples` in the SDK](/how_to_guides/datasets/manage_datasets_programmatically#list-examples-by-metadata).
+
+![Add Metadata](../static/add_metadata.png)
+
+## Filter examples
+
+You can filter examples by metadata key/value or full-text search. To filter examples, click "Filter" in the top left of the table:
+
+![Filter Examples](../static/filter_examples.png)
+
+Next, click "Add filter" and select "Full Text" or "Metadata" from the resulting dropdown. You may add multiple filters, and only examples that satisfy all of the
+filters will be displayed in the table.
+
+![Filters Applied to Examples](../static/filters_applied.png)

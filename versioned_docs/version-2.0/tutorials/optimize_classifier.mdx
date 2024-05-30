@@ -131,14 +131,14 @@ The first will take all runs with positive feedback and automatically add them t
 The logic behind this is that any run with positive feedback we can use as a good example in future iterations.
 Let's create a dataset called `classifier-github-issues` to add this data to.
 
-![Optimization Positive](./static/class-optimization-pos.png)
+![Optimization Negative](./static/class-optimization-neg.png)
 
 The second will take all runs with a correction and use a webhook to add them to a dataset.
 When creating this webhook, we will select the option to "Use Corrections".
 This option will make it so that when creating a dataset from a run, rather than using the output of the run
 as the gold-truth output of the datapoint, it will use the correction.
 
-![Optimization Negative](./static/class-optimization-neg.png)
+![Optimization Positive](./static/class-optimization-pos.png)
 
 ## Update the application
 
