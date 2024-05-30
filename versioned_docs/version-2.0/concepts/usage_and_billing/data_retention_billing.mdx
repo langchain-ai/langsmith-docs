@@ -1,7 +1,7 @@
 # Data Retention
 
 In May 2024, LangSmith introduced a maximum data retention period on traces of 400 days. In June 2024, LangSmith introduced
-a new data retention based pricing model where customers can configure a shorter data retention period on traces in exchange 
+a new data retention based pricing model where customers can configure a shorter data retention period on traces in exchange
 for savings up to 10x. On this page, we'll go through how data retention works and is priced at LangSmith.
 
 ## How it works
@@ -11,86 +11,91 @@ for savings up to 10x. On this page, we'll go through how data retention works a
 LangSmith now has two tiers of traces based on Data Retention with the following characteristics:
 
 |                      | Base            | Extended       |
-| -------------------- | --------        | -------        |
+| -------------------- | --------------- | -------------- |
 | **Price**            | $ .0005 / trace | $ .005 / trace |
 | **Retention Period** | 14 days         | 400 days       |
 
 ### Data deletion after retention ends
 
 After the specified retention period, traces are no longer accessible via the runs table or API. All user data associated
-with the trace (e.g. inputs and outputs) is deleted from our internal systems within a day thereafter. Some metadata 
+with the trace (e.g. inputs and outputs) is deleted from our internal systems within a day thereafter. Some metadata
 associated with each trace may be retained indefinitely for analytics and billing purposes.
 
 ### Data retention auto-upgrades
+
 :::caution
-Auto upgrades can have an impact on your bill. Please read this section carefully to fully understand your 
+Auto upgrades can have an impact on your bill. Please read this section carefully to fully understand your
 estimated LangSmith tracing costs.
 :::
 
-When you use certain features with `base` tier traces, their data retention will be automatically upgraded to 
+When you use certain features with `base` tier traces, their data retention will be automatically upgraded to
 `extended` tier. This will increase both the retention period, and the cost of the trace.
 
 The complete list of scenarios in which a trace will upgrade when:
-* **Feedback** is added to any run on the trace
-* An **Annotation Queue** receives any run from the trace
-* A **Run Rule** matches any run within a trace
+
+- **Feedback** is added to any run on the trace
+- An **Annotation Queue** receives any run from the trace
+- A **Run Rule** matches any run within a trace
 
 #### Why auto-upgrade traces?
 
-We have two reasons behind the auto-upgrade model for tracing: 
+We have two reasons behind the auto-upgrade model for tracing:
 
-1. We think that traces that match any of these conditions are fundamentally more interesting than other traces, and 
+1. We think that traces that match any of these conditions are fundamentally more interesting than other traces, and
    therefore it is good for users to be able to keep them around longer.
-2. We philosophically want to charge customers an order of magnitude lower for traces that are not interacted with meaningfully. 
+2. We philosophically want to charge customers an order of magnitude lower for traces that are not interacted with meaningfully.
    We think auto-upgrades align our pricing model with the value that LangSmith brings, where only traces with meaningful interaction
-   are charged at a higher rate. 
+   are charged at a higher rate.
 
 If you have questions or concerns about our pricing model, please feel free to reach out to support@langchain.dev and let us know your thoughts!
 
 ### How does data retention affect downstream features?
 
 #### Annotation Queues, Run Rules, and Feedback
+
 See above note on auto-upgrades
 
 #### Monitoring
+
 The monitoring tab will continue to work even after a base tier trace's data retention period ends. It is powered by
-trace metadata that exists for >30 days, meaning that your monitoring graphs will continue to stay accurate even on 
+trace metadata that exists for >30 days, meaning that your monitoring graphs will continue to stay accurate even on
 `base` tier traces.
 
 #### Datasets
-Datasets have an indefinite data retention period. Restated differently, if you add a trace's inputs and outputs to a dataset, 
-they will never be deleted. We suggest that if you are using LangSmith for data collection, you take advantage of the datasets
-feature. 
 
+Datasets have an indefinite data retention period. Restated differently, if you add a trace's inputs and outputs to a dataset,
+they will never be deleted. We suggest that if you are using LangSmith for data collection, you take advantage of the datasets
+feature.
 
 ## Billing model
 
 ### Billable metrics
+
 On your LangSmith invoice, you will see two metrics that we charge for:
 
-* LangSmith Traces (Base Charge)
-* LangSmith Traces (Extended Data Retention Upgrades).
+- LangSmith Traces (Base Charge)
+- LangSmith Traces (Extended Data Retention Upgrades).
 
-The first metric includes all traces, regardless of tier. The second metric just counts the number of extended retention traces. 
+The first metric includes all traces, regardless of tier. The second metric just counts the number of extended retention traces.
 
 ### Why measure all traces + upgrades instead of base and extended traces?
 
-A natural question to ask when considering our pricing is why not just show the number of `base` tier and `extended` tier 
+A natural question to ask when considering our pricing is why not just show the number of `base` tier and `extended` tier
 traces directly on the invoice?
 
-While we understand this would be more straightforward, it doesn't fit trace upgrades properly. Consider a 
-`base` tier trace that was recorded on June 30, and upgraded to `extended` tier on July 3. The `base` tier 
+While we understand this would be more straightforward, it doesn't fit trace upgrades properly. Consider a
+`base` tier trace that was recorded on June 30, and upgraded to `extended` tier on July 3. The `base` tier
 trace occurred in the June billing period, but the upgrade occurred in the July billing period. Therefore,
-we need to be able to measure these two events independently to properly bill our customers. 
+we need to be able to measure these two events independently to properly bill our customers.
 
 If your trace was recorded as an extended retention trace, then the `base` and `extended` metrics will both be recorded
-with the same timestamp. 
+with the same timestamp.
 
 ### Cost breakdown
+
 The Base Charge for a trace is $.0005 per trace. We priced the upgrade such that an `extended` retention trace
 costs 10x the price of a base tier trace ($.005 per trace) including both metrics. Thus, each upgrade costs $.0045.
 
-
 ## Related content
 
-* Tutorial on how to [optimize spend](../../tutorials/Administrators/manage_spend)
+- Tutorial on how to [optimize spend](../../tutorials/Administrators/manage_spend)
