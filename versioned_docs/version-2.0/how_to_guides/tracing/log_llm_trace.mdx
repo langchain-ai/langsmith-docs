@@ -169,8 +169,7 @@ If using LangChain or [OpenAI wrapper](./annotate_code#wrap-the-openai-client), 
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import traceable
-from langsmith.run_helpers import get_current_run_tree\n
+    PythonBlock(`from langsmith import traceable\n
 inputs = [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "I'd like to book a table for two."},
@@ -195,11 +194,9 @@ output = {
     metadata={"ls_provider": "my_provider", "ls_model_name": "my_model"}
 )
 def chat_model(messages: list):
-    run_tree = get_current_run_tree()
-    run_tree.extra["batch_size"] = 1
     return output\n
 chat_model(inputs)`),
-    TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";\n
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
 const messages = [
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "I'd like to book a table for two." },
@@ -226,8 +223,6 @@ const chatModel = traceable(
     messages: { role: string; content: string }[];
     model: string;
   }) => {
-    const run = getCurrentRunTree();
-    run.extra.batch_size = 1
     return output;
   },
   { run_type: "llm", name: "chat_model", metadata: { ls_provider: "my_provider", ls_model_name: "my_model" } }
