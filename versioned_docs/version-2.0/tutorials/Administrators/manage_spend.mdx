@@ -34,10 +34,11 @@ We can navigate to the Usage Graph under `Settings` -> `Usage and Billing` -> `U
 
 We see in the graph above that there are two usage metrics that LangSmith charges for:
 
-* LangSmith Traces (Base Charge)
-* LangSmith Traces (Extended Data Retention Upgrades). 
+- LangSmith Traces (Base Charge)
+- LangSmith Traces (Extended Data Retention Upgrades).
 
-The first metric tracks all traces that you send to LangSmith. The second tracks all traces that also have our Extended 400 Day Data Retention. For more details, see [TODO: LINK]
+The first metric tracks all traces that you send to LangSmith. The second tracks all traces that also have our Extended 400 Day Data Retention.
+For more details, see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing).
 
 ### Invoices
 
@@ -56,8 +57,8 @@ case that this org is using extended data retention tracing everywhere. As such,
 
 ## Optimization 1: manage data retention
 
-LangSmith charges differently based on a traces' data retention [link], where short-lived traces are
-an order of magnitude less expensive than ones that last for a long time. In this optimization, we will
+LangSmith charges differently based on a traces' data retention (see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing)),
+where short-lived traces are an order of magnitude less expensive than ones that last for a long time. In this optimization, we will
 show how to get optimal settings for data retention without sacrificing historical observability, and
 show the effect it has on our bill.
 
@@ -67,7 +68,7 @@ We navigate to the `Usage Limits` tab, and look at our organization level retent
 created going forward.
 
 :::note
-For backwards compatibility, older organizations may have this defaulted to Extended. Organizations created after [TODO: DATE]
+For backwards compatibility, older organizations may have this defaulted to Extended. Organizations created after June 3rd
 have this defaulted to Base.
 :::
 
@@ -144,8 +145,8 @@ When set without the all traces limit, the maximum cost estimator assumes that a
 
 If we are not a big enterprise, we may shudder at the ~$40k per month bill.
 
-We saw from [Optimization 1](#optimization-1-manage-data-retention) that the easiest way to cut cost was through managing data retention. 
-The same can be said for limits. If we only want to keep ~10% of traces to be around more than 14 days, we can set a limit on the maximum 
+We saw from [Optimization 1](#optimization-1-manage-data-retention) that the easiest way to cut cost was through managing data retention.
+The same can be said for limits. If we only want to keep ~10% of traces to be around more than 14 days, we can set a limit on the maximum
 high retention traces we can keep. That would be `.10 * 7,800,000 = 780,000`.
 
 ![](./static/p2bothlimits.png)
