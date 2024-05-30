@@ -30,3 +30,4 @@ Explanations, clarification and discussion of key topics in LangSmith.
 ## Usage and Billing
 
 - [Data Retention Based Billing](./concepts/usage_and_billing/data_retention_billing)
+- [Usage Limits](./concepts/usage_and_billing/usage_limits)
