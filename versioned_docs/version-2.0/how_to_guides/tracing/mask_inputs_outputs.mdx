@@ -8,7 +8,7 @@ import {
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
-# Prevent logging of inputs and outputs in traces
+# Prevent logging of sensitive data in traces
 
 In some situations, you may need to prevent the inputs and outputs of your traces from being logged for privacy or security reasons. LangSmith provides a way to filter the inputs and outputs of your traces before they are sent to the LangSmith backend.
 
@@ -21,7 +21,8 @@ LANGCHAIN_HIDE_OUTPUTS=true
 
 This works for both the LangSmith SDK (Python and TypeScript) and LangChain.
 
-You can also customize and override this behavior for a given `Client` instance. This can be done by setting the `hide_inputs` and `hide_outputs` parameters on the `Client` object.
+You can also customize and override this behavior for a given `Client` instance. This can be done by setting the `hide_inputs` and `hide_outputs` parameters on the `Client` object (`hideInputs` and `hideOutputs` in TypeScript).
+
 For the example below, we will simply return an empty object for both `hide_inputs` and `hide_outputs`, but you can customize this to your needs.
 
 <CodeTabs
@@ -78,6 +79,98 @@ await openaiClient.chat.completions.create({
       { role: "user", content: "Hello!" },
     ],
 });
+`),
+  ]}
+  groupId="client-language"
+/>
+
+## Example masking UUIDs and emails in inputs and outputs
+
+You can also customize the `hide_inputs` and `hide_outputs` functions to mask specific data in the inputs and outputs. For example, you can mask UUIDs and emails in the inputs and outputs.
+
+:::note
+
+We are in the process of adding more built-in filters for common data types. If you have a specific use case that you would like us to support, please contact support@langchain.dev.
+
+:::
+
+![](../static/hide_inputs_outputs.png)
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`import re
+from langsmith import Client, traceable\n
+# Define the regex patterns for email addresses and UUIDs
+EMAIL_REGEX = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+UUID_REGEX = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"\n
+def replace_sensitive_data(data, depth=10):
+    if depth == 0:
+        return data\n
+    if isinstance(data, dict):
+        return {k: replace_sensitive_data(v, depth-1) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [replace_sensitive_data(item, depth-1) for item in data]
+    elif isinstance(data, str):
+        data = re.sub(EMAIL_REGEX, "<email-address>", data)
+        data = re.sub(UUID_REGEX, "<UUID>", data)
+        return data
+    else:
+        return data\n
+client = Client(
+    hide_inputs=lambda inputs: replace_sensitive_data(inputs),
+    hide_outputs=lambda outputs: replace_sensitive_data(outputs)
+)\n
+inputs = {"role": "user", "content": "Hello! My email is user@example.com and my ID is 123e4567-e89b-12d3-a456-426614174000."}
+outputs = {"role": "assistant", "content": "Hi! I've noted your email as user@example.com and your ID as 123e4567-e89b-12d3-a456-426614174000."}\n
+@traceable(client=client)
+def child(inputs: dict) -> dict:
+    return outputs\n
+@traceable(client=client)
+def parent(inputs: dict) -> dict:
+    child_outputs = child(inputs)
+    return child_outputs\n
+parent(inputs)`),
+    TypeScriptBlock(`import { Client } from "langsmith";
+import { traceable } from "langsmith/traceable";\n
+// Define the regex patterns for email addresses and UUIDs
+const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+const UUID_REGEX = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/g;\n
+function replaceSensitiveData(data: any, depth: number = 10): any {
+    if (depth === 0) return data;\n
+    if (typeof data === "object" && !Array.isArray(data)) {
+        const result: Record<string, any> = {};
+        for (const [key, value] of Object.entries(data)) {
+            result[key] = replaceSensitiveData(value, depth - 1);
+        }
+        return result;
+    } else if (Array.isArray(data)) {
+        return data.map(item => replaceSensitiveData(item, depth - 1));
+    } else if (typeof data === "string") {
+        return data.replace(EMAIL_REGEX, "<email-address>").replace(UUID_REGEX, "<UUID>");
+    } else {
+        return data;
+    }
+}\n
+const langsmithClient = new Client({
+    hideInputs: (inputs) => replaceSensitiveData(inputs),
+    hideOutputs: (outputs) => replaceSensitiveData(outputs)
+});\n
+const inputs = {
+    role: "user",
+    content: "Hello! My email is user@example.com and my ID is 123e4567-e89b-12d3-a456-426614174000."
+};\n
+const outputs = {
+    role: "assistant",
+    content: "Hi! I've noted your email as <email-address> and your ID as <UUID>."
+};\n
+const child = traceable(async (inputs: any) => {
+    return outputs;
+}, { name: "child", client: langsmithClient });\n
+const parent = traceable(async (inputs: any) => {
+    const childOutputs = await child(inputs);
+    return childOutputs;
+}, { name: "parent", client: langsmithClient });\n
+await parent(inputs)
 `),
   ]}
   groupId="client-language"
