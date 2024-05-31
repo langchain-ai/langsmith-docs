@@ -92,8 +92,6 @@ An Experiment is a single execution of all your example inputs through your Task
 
 ## Evaluators
 
-Certainly! Here’s a polished and engaging version of the paragraph:
-
 Evaluators are functions that score how well your system performs on a particular example. During an evaluation, your example inputs are processed through your Task to produce Runs, which are then passed to your evaluator along with the Example. The evaluator function returns an EvaluationResult, specifying the metric name and score. Evaluations in LangSmith are executed via the evaluate() function. The following diagram provides an overview of the data flow in an evaluation:
 
 ![Flow](../static/langsmith_app_flow.png)
