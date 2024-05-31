@@ -53,7 +53,7 @@ This is thrown by our application and varies by plan tier, with organizations on
 
 ### Plan-level monthly unique traces limit
 
-This 429 is the result of reaching your maximum monthly traces ingested and is evaluated in a fixed window starting at the beginning of each calendar month in UTC and resets at the top of each new month.
+This 429 is the result of reaching your maximum monthly traces ingested and is evaluated in a fixed window starting at the beginning of each calendar month in UTC and resets at the beginning of each new month.
 
 This is thrown by our application and applies only to the Developer Plan Tier when there is no payment method on file.
 
@@ -63,7 +63,7 @@ This is thrown by our application and applies only to the Developer Plan Tier wh
 
 ### Self-configured monthly usage limit
 
-Administrators may configure a [usage limit](./usage_limits.mdx) to prevent an unexpectedly high spend and is evaluated in a fixed window starting at the beginning of each calendar month in UTC and resets at the top of each new month.
+This 429 is the result of reaching your [usage limit](./usage_limits.mdx) as configured by your organization admin and is evaluated in a fixed window starting at the beginning of each calendar month in UTC and resets at the beginning of each new month.
 
 This is thrown by our application and varies by organization based on their configured settings.
 
