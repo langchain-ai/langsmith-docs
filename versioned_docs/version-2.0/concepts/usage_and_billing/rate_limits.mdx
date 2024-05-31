@@ -1,6 +1,6 @@
 # Rate Limits
 
-LangSmith has rate and usage limits which are designed to ensure the stability of the service for all users while allowing for a continued low- or no-cost free basic service for personal development projects.
+LangSmith has rate limits which are designed to ensure the stability of the service for all users while allowing for a continued low- or no-cost free basic service for personal development projects.
 
 To ensure access and stability, LangSmith will respond with HTTP Status Code 429 indicating that rate or usage limits have been exceeded under the following circumstances:
 
@@ -61,9 +61,9 @@ This is thrown by our application and applies only to the Developer Plan Tier wh
 | ------------------------------ | ------------ | ------- |
 | Developer (no payment on file) | 5,000 traces | 1 month |
 
-### Self-configured monthly trace limit
+### Self-configured monthly usage limit
 
-Administrators may configure a trace ingest limit to prevent an unexpectedly high spend and is evaluated in a fixed window starting at the beginning of each calendar month in UTC and resets at the top of each new month.
+Administrators may configure a [usage limit](./usage_limits.mdx) to prevent an unexpectedly high spend and is evaluated in a fixed window starting at the beginning of each calendar month in UTC and resets at the top of each new month.
 
 This is thrown by our application and varies by organization based on their configured settings.
 
