@@ -38,7 +38,8 @@ This guide provides instructions for installing and setting up your environment 
 7. External Postgres(optional).
    1. You can configure external postgres using the `.env` file. You will need to provide connection parameters for your postgres instance.
    2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled, or you must include that in your search path.
-   3. Note: We do only officially support Postgres versions >= 14.
+   3. If your password contains special characters, you may need to url encode your password in the connection string.
+   4. Note: We do only officially support Postgres versions >= 14.
 8. External Redis(optional).
    1. You can configure external redis using the `values.yaml` file. You will need to provide a connection url for your redis instance.
    2. If using TLS, ensure that you use `rediss://` instead of `redis://. E.g "rediss://langsmith-redis:6380/0?password=foo"
