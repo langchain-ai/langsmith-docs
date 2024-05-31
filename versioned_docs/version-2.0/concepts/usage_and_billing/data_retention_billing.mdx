@@ -2,7 +2,20 @@
 
 In May 2024, LangSmith introduced a maximum data retention period on traces of 400 days. In June 2024, LangSmith introduced
 a new data retention based pricing model where customers can configure a shorter data retention period on traces in exchange
-for savings up to 10x. On this page, we'll go through how data retention works and is priced at LangSmith.
+for savings up to 10x. On this page, we'll go through how data retention works and is priced in LangSmith.
+
+## Why retention matters
+
+### Privacy
+
+Many data privacy regulations, such as GDPR in Europe or CCPA in California, require organizations to delete personal data
+once it's no longer necessary for the purposes for which it was collected. Setting retention periods aids in compliance with
+such regulations.
+
+### Cost
+
+LangSmith charges less for traces that have low data retention. See our tutorial on how to [optimize spend](../../tutorials/Administrators/manage_spend)
+for details.
 
 ## How it works
 
@@ -12,7 +25,7 @@ LangSmith now has two tiers of traces based on Data Retention with the following
 
 |                      | Base         | Extended     |
 | -------------------- | ------------ | ------------ |
-| **Price**            | ¢.05 / trace | ¢.50 / trace |
+| **Price**            | .05¢ / trace | .50¢ / trace |
 | **Retention Period** | 14 days      | 400 days     |
 
 ### Data deletion after retention ends
@@ -53,7 +66,7 @@ If you have questions or concerns about our pricing model, please feel free to r
 
 #### Annotation Queues, Run Rules, and Feedback
 
-Traces that use these features will be [auto-upgraded](#data-retention-auto-upgrades)
+Traces that use these features will be [auto-upgraded](#data-retention-auto-upgrades).
 
 #### Monitoring
 
@@ -93,8 +106,8 @@ with the same timestamp.
 
 ### Cost breakdown
 
-The Base Charge for a trace is ¢.05 per trace. We priced the upgrade such that an `extended` retention trace
-costs 10x the price of a base tier trace (¢.50 per trace) including both metrics. Thus, each upgrade costs ¢.45.
+The Base Charge for a trace is .05¢ per trace. We priced the upgrade such that an `extended` retention trace
+costs 10x the price of a base tier trace (.50¢ per trace) including both metrics. Thus, each upgrade costs .45¢.
 
 ## Related content
 

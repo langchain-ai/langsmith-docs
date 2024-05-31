@@ -11,6 +11,14 @@ import {
 
 # Optimize tracing spend on LangSmith
 
+:::tip Recommended Reading
+Before diving into this content, it might be helpful to read the following:
+
+- [Data Retention Conceptual Docs](../../concepts/usage_and_billing/data_retention_billing)
+- [Usage Limiting Conceptual Docs](../../concepts/usage_and_billing/usage_limits#side-effects-of-extended-data-retention-traces-limit)
+
+:::
+
 This tutorial walks through optimizing your spend on LangSmith. In it, we will learn how to optimize existing spend
 and prevent future overspend on a realistic real-world example.
 
@@ -19,15 +27,6 @@ Some of the features mentioned in this guide are not currently available in Ente
 custom nature of billing. If you are on Enterprise plan and have questions about cost optimization,
 please reach out to your sales rep or support@langchain.dev.
 :::
-
-## Tutorial background
-
-In this tutorial, we will use an existing LangSmith tenant with high usage. Concepts can be transferred to your own tenant.
-
-For conceptual background, you can read:
-
-- [Data Retention Conceptual Docs](../../concepts/usage_and_billing/data_retention_billing)
-- [Usage Limiting Conceptual Docs](../../concepts/usage_and_billing/usage_limits#side-effects-of-extended-data-retention-traces-limit)
 
 ## Understand your current usage
 
@@ -68,7 +67,7 @@ case that this org is using extended data retention tracing everywhere. As such,
 
 ## Optimization 1: manage data retention
 
-LangSmith charges differently based on a traces' data retention (see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing)),
+LangSmith charges differently based on a trace's data retention (see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing)),
 where short-lived traces are an order of magnitude less expensive than ones that last for a long time. In this optimization, we will
 show how to get optimal settings for data retention without sacrificing historical observability, and
 show the effect it has on our bill.
@@ -109,7 +108,8 @@ so our 10% sampling will upgrade 10% of traces, not 10% of runs, which could cor
 
 :::note
 If you want to keep a subset of traces for longer than 400 days for data collection purposes, you can create another run
-rule that sends some runs to a dataset of your choosing.
+rule that sends some runs to a dataset of your choosing. A dataset allows you to store the trace inputs and outputs (e.g., as a key-value dataset),
+and will persist indefinitely, even after the trace gets deleted.
 :::
 
 Choosing the right percentage of runs to sample depends on your use case. We arbitrarily picked 10% of runs here, but will
