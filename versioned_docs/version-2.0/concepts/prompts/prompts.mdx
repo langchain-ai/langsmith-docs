@@ -1,58 +1,75 @@
 # Prompts
 
 ## Prompt types
+
 Prompts are the templates that generate the input for your models. We support three types of prompt templates: `StringPromptTemplate`, `ChatPromptTemplate`, and `StructuredPromptTemplate`. You can read more about these in the [LangChain documentation](https://python.langchain.com/v0.2/docs/concepts/#prompt-templates).
 In LangSmith, you can create prompts using the Playground. When you enter the playground from the prompt view, you can choose "Chat Prompt" or "Instructional Prompt".
+
 #### Chat Prompt
+
 Chat prompts are used for conversational models and correspond to `ChatPromptTemplate`. You can have multiple messages in a chat prompt.
 You can also add an output schema to your chat prompt, which defines the expected output of your model. Adding an output schema makes your chat prompt into a `StructuredPromptTemplate`.
+
 #### Instructional Prompt
+
 Instructional prompts are `StringPromptTemplate` prompts that generate a single string input for your model.
 
 ## Template formats
+
 We support two types of template formats: f-string and mustache. You can switch between these formats when editing prompts in the Playground.
+
 ### F-string
+
 F-strings are a Python-specific string formatting method that allows you to embed expressions inside string literals, using curly braces `{}`.
 Here's an example of an f-string template:
+
 ```python
 Hello, {name}!
 ```
 
 ### Mustache
+
 Mustache is a template syntax that allows you to embed variables inside double curly braces `{{}}`.
 Here's an example of a mustache template:
+
 ```json
 Hello, {{name}}!
 ```
+
 Mustache is more robust than f-strings since it supports more complex logic. You can use conditionals, loops, and access nested keys in mustache templates.
 
 #### Conditional
+
 ```json
 Hello, {{#name}}{{name}}{{/name}}{{^name}}world{{/name}}!
 ```
+
 The template will output "Hello, Bob!" if "Bob" is provided as the `name` variable, and "Hello, world!" if the `name` variable is not provided.
 
 #### Loop
+
 ```json
 {{#names}}{{name}}{{/names}}
 ```
+
 input:
+
 ```json
 {
-  "names": [
-    { "name": "Alice" },
-    { "name": "Bob" },
-    { "name": "Charlie" }
-  ]
+  "names": [{ "name": "Alice" }, { "name": "Bob" }, { "name": "Charlie" }]
 }
 ```
+
 output: "AliceBobCharlie"
 
 #### Loop with nesting
+
 ```json
 {{#people}}{{name}} is {{age}} years old. {{/people}}
 ```
-input: 
+
+input:
+
 ```json
 {
   "people": [
@@ -62,13 +79,17 @@ input:
   ]
 }
 ```
+
 output: "Alice is 30 years old. Bob is 25 years old. Charlie is 35 years old."
 
 #### Dot notation
+
 ```json
 {{person.name}} is {{person.age}} years old.
 ```
-input: 
+
+input:
+
 ```json
 {
   "person": {
@@ -77,6 +98,7 @@ input:
   }
 }
 ```
+
 output: "Alice is 30 years old."
 
 :::note Note
