@@ -26,3 +26,8 @@ Explanations, clarification and discussion of key topics in LangSmith.
 - [Datasets and examples](./concepts/evaluation#datasets-and-examples)
 - [Experiments](./concepts/evaluation#experiments)
 - [Evaluators](./concepts/evaluation#evaluators)
+
+## Prompts
+
+- [Prompt types](./concepts/prompts#prompt-types)
+- [Template formats](./concepts/prompts#template-formats)
