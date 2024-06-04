@@ -186,3 +186,9 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
   - [Pull a prompt and use it](./how_to_guides/prompts/pull_push_a_prompt#pull_a_prompt_and_use_it)
   - [Push a prompt to your personal organization](./how_to_guides/prompts/pull_push_a_prompt#push_a_prompt_to_your_personal_organization)
 - [LangChain Hub](./how_to_guides/prompts/langchain_hub)
+
+## Playground
+
+Quickly iterate on prompts and models in the LangSmith Playground.
+
+- [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)
