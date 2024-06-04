@@ -1,6 +1,6 @@
 ---
 sidebar_label: Kubernetes
-sidebar_position: 1
+sidebar_position: 2
 table_of_contents: true
 ---
 
@@ -61,19 +61,19 @@ Ensure you have the following tools/items ready. Some items are marked optional 
    1. You can configure oauth using the `values.yaml` file. You will need to provide a `client_id` and `client_issuer_url` for your OAuth provider.
    2. Note, we do rely on the OIDC Authorization Code with PKCE flow. We currently support almost anything that is OIDC compliant however Google does not support this flow.
    3. Without OAuth, you will not be able to create users or organizations.
-8. External Postgres(optional).
+8. External Postgres(optional, but strongly recommended).
    1. You can configure external postgres using the `values.yaml` file. You will need to provide connection parameters for your postgres instance.
    2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled, or you must include that in your search path.
    3. If your password contains special characters, you may need to url encode your password in the connection string.
    4. Note: We do only officially support Postgres versions >= 14.
-9. External Redis(optional).
+9. External Redis(optional, but strongly recommended).
    1. You can configure external redis using the `values.yaml` file. You will need to provide a connection url for your redis instance.
    2. If using TLS, ensure that you use `rediss://` instead of `redis://. E.g "rediss://langsmith-redis:6380/0?password=foo"
    3. We only official support Redis versions >= 6. We also do not support sharded/clustered Redis(though you can point to a single node in a cluster).
 10. External ClickHouse(optional).
     1. You can configure external clickhouse using the `values.yaml` file. You will need to provide several connection parameters for your ClickHouse instance.
     2. If using TLS, make sure to set `clickhouse.external.tls` to `true`.
-    3. We only officially support ClickHouse versions >= 23. We also only support standalone ClickHouse or ClickHouse Cloud(not clustered or replicated).
+    3. We only officially support ClickHouse versions >= 23.9 We also only support standalone ClickHouse (not clustered or replicated) or ClickHouse Cloud.
 
 ## Configure your Helm Charts:
 
