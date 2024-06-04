@@ -1,5 +1,5 @@
 ---
-sidebar_label: Kubernetes
+sidebar_label: Overview
 sidebar_position: 1
 table_of_contents: true
 ---
@@ -50,7 +50,7 @@ The default LangSmith deployment is an unauthenticated instance. However, we str
 
 Once you have worked with your Identity Provider to configure OIDC+PKCE, details can be found in the Kubernetes or Docker reference docs on how to set the appropriate values in configuration files.
 
-What is ClickHouse and why do I need it?
+### What is ClickHouse and why do I need it?
 
 ClickHouse is a highly scalable, open-source column-oriented database management system that allows generating analytical data reports in real-time using SQL queries. Given the large potential volume of traces that would be associated with logging large percentages (or even 100%) of application-LLM interactions, such when storing traces for compliance and auditability purposes,
 and associated run data that can be populated into LangSmith, meant needing to support high throughput ingestion as well as fast filtering for drill-downs on charts in the user interface. We learned that postgres was unable to support LangSmith's analytical workloads at scale. ClickHouse is specifically designed to handle the kinds of analytical workloads that LangSmith generates.
@@ -59,11 +59,11 @@ We include an open-source, single node instance of ClickHouse that writes to a p
 
 For more information about how and why we chose ClickHouse you can learn more [here](https://clickhouse.com/blog/langchain-why-we-choose-clickhouse-to-power-langchain)
 
-How do I scale my resource?
+### How do I scale my resource?
 
 [We should write a sizing guide and link to it here]
 
-Has LangSmith been load tested, what scale can you handle?
+### Has LangSmith been load tested, what scale can you handle?
 
 The same code that we use in deploying LangSmith locally is used to power our SaaS service, which currently receives > xxx M traces per day.
 
