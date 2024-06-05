@@ -99,7 +99,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [Evaluate on a dataset with repetitions](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-with-repetitions)
   - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
-- [Bind and evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
+- [Bind an evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [Use LangChain off-the-shelf evaluators (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
@@ -125,6 +125,10 @@ Evaluate your LLM applications to measure their performance over time.
   - [Configure inputs and outputs for pairwise evaluators](./how_to_guides/evaluation/evaluate_pairwise#configure-inputs-and-outputs-for-pairwise-evaluators)
   - [Compare two experiments with LLM-based pairwise evaluators](./how_to_guides/evaluation/evaluate_pairwise#compare-two-experiments-with-llm-based-pairwise-evaluators)
   - [View pairwise experiments](./how_to_guides/evaluation/evaluate_pairwise#view-pairwise-experiments)
+- [Audit evaluator scores](./how_to_guides/evaluation/audit_evaluator_scores)
+  - [In the comparison view](./how_to_guides/evaluation/audit_evaluator_scores#in-the-comparison-view)
+  - [In the runs table](./how_to_guides/evaluation/audit_evaluator_scores#in-the-runs-table)
+  - [In the SDK](./how_to_guides/evaluation/audit_evaluator_scores#in-the-sdk)
 
 ## Human feedback
 
