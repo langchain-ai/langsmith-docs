@@ -28,8 +28,6 @@ To learn more about creating datasets in LangSmith, see our LangSmith Evaluation
 
 :::
 
-### Types of Datasets
-
 LangSmith offers three distinct dataset types:
 
 1. `kv` (Key-Value) Dataset:
@@ -76,8 +74,6 @@ The evaluator returns an `EvaluationResult` (or a similarly structured dictionar
 - `Key`: The name of the metric being evaluated.
 - `Score`: The value of the metric for this example.
 - `Comment`: The reasoning or additional string information justifying the score.
-
-### Types of scoring functions
 
 There are a few approaches and types of scoring functions that can be used in LangSmith evaluation.
 
@@ -127,16 +123,7 @@ See our [video](https://www.youtube.com/watch?v=Vn8A3BxfplE) using LangSmith to 
    - Pairwise evaluators pick the better of two task outputs based upon some criteria.
    - Often asking a human or LLM to pick the better of two options can lead to more stable results.
 
-   :::tip
-
-   It [can be easier](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/) for a human (or an LLM grader) to determine `A is better than B` than to assign an individual score to either A or B, which explains why pairwise evaluations can be more stable than assigning individual scores.
-
-   - Watch the [`Pairwise evaluation` video in our LangSmith Evaluation series](https://youtu.be/yskkOAfTwcQ?feature=shared).
-   - See our [blog post on pairwise evaluation](https://blog.langchain.dev/pairwise-evaluations-with-langsmith/).
-
-   :::
-
-## Experiments
+## Applying evaluations
 
 We can visualize the above ideas collectively in the below diagram. To review, `datasets` are composed of `examples` can be curated from a variety of sources such as historical logs or user curated examples. `Evaluators` are functions that score how well your application performs on each `example` in your `dataset`. Evaluators can use different scoring functions, such as `human`, `heuristic`, `LLM-as-judge`, or `pairwise`. And if the `dataset` contains `reference` outputs, then the evaluator can compare the application output to the `reference`.
 
@@ -146,65 +133,53 @@ Each time we run an evaluation, we are conducting an experiment. An experiment i
 
 ![Example](../static/comparing_multiple_experiments.png)
 
-### Repetitions
+In the `Dataset` section above, we discussed a few ways to build datasets (e.g., from historical logs or manual curation). One common way to use these use these datasets is offline evaluation, which is usually conducted prior to deployment of your LLM application. Below we'll discuss a few common paradigms for offline evaluation.
 
-One of the most common questions when evaluating AI applications is how to build confidence the result of an experiment? This is particularly relevant for LLM applications (e.g., agents), which can exhibit considerable run-to-run variability.
+### Unit Tests
 
-Repetitions involve running the same evaluation multiple times and aggregating the results to smooth out run-to-run variability and examine the reproducibility of the AI application's performance. LangSmith allows you to easily set the number of repetitions and aggregates the results for you in the UI.
+Unit tests are often used in software development to verify the correctness of individual system components. [Unit tests are often lightweight assertions](https://hamel.dev/blog/posts/evals/#level-1-unit-tests) on LLM inputs or outputs (e.g., type or schema checks). Often these are triggered by any change to your application as quick assertions of basic functionality.
 
 :::tip
 
-- See the [video on `Repetitions` in our LangSmith Evaluation series](https://youtu.be/Pvz24JdzzF8)
-- See our documentation on [`Repetitions`](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-with-repetitions)
+To learn more about unit tests with LangSmith, check out our unit testing [video](https://youtu.be/ZA6ygagspjA?feature=shared).
 
 :::
 
-### Offline Evaluation
+### Regression Testing
 
-In the `Dataset` section above, we discussed a few ways to build datasets (e.g., from historical logs or manual curation). One common way to use these use these datasets is offline evaluation, which is usually conducted prior to deployment of your LLM application. Below we'll discuss a few common paradigms for offline evaluation.
+Regression testing is often used to measure performance across versions of your application over time. They are used to ensure new app versions do not regress on examples that your current version is passing. In practice, they help you assess how much better or worse your new version is relative to the baseline. Often these are triggered when you are making app updates that are expected to influence the user experience.
 
-1. `Unit Tests`:
+:::tip
 
-   - Unit tests are often used in software development to verify the correctness of individual system components.
-   - [Unit tests are often lightweight assertions](https://hamel.dev/blog/posts/evals/#level-1-unit-tests) on LLM inputs or outputs (e.g., type or schema checks).
-   - Often these are triggered by any change to your application as quick assertions of basic functionality.
+- To learn more about regression testing with LangSmith, see our regression testing [video](https://youtu.be/xTMngs6JWNM?feature=shared)
+- See our video focusing on regression testing applied to GPT4-o vs GPT4-turbo [video](https://youtu.be/_ssozegykRs?feature=shared).
 
-   :::tip
-
-   To learn more about unit tests with LangSmith, check out our unit testing [video](https://youtu.be/ZA6ygagspjA?feature=shared).
-
-   :::
-
-2. `Regression Testing`:
-
-   - Regression testing is often used to measure performance across versions of your application over time.
-   - They are used to ensure new app versions do not regress on examples that your current version is passing.
-   - In practice, they help you assess how much better or worse your new version is relative to the baseline.
-   - Often these are triggered when you are making app updates that are expected to influence the user experience.
-
-   :::tip
-
-   - To learn more about regression testing with LangSmith, see our regression testing [video](https://youtu.be/xTMngs6JWNM?feature=shared)
-   - See our video focusing on regression testing applied to GPT4-o vs GPT4-turbo [video](https://youtu.be/_ssozegykRs?feature=shared).
-
-   :::
+:::
 
 LangSmith's comparison view has native support for regression testing, allowing your to quickly see examples that have changed relative to the baseline (with regressions on specific examples shown in red and improvements in green):
 
 ![Regression](../static/regression.png)
 
-3. `Back-testing`:
+### Back-testing
 
-   - Back-testing is an approach that combines dataset creation (discussed above) with evaluation.
-   - If you have a collection of production logs, you can turn them into a dataset.
-   - Then, you can re-run those production examples with with newer application versions.
-   - This allows you to assess performance on past and realistic user inputs.
+Back-testing is an approach that combines dataset creation (discussed above) with evaluation. If you have a collection of production logs, you can turn them into a dataset. Then, you can re-run those production examples with with newer application versions. This allows you to assess performance on past and realistic user inputs.
 
-   :::tip
+:::tip
 
-   See our video on [`Back-testing`](https://youtu.be/3cDtDI2W-xA?feature=shared) to learn about this workflow.
+See our video on [`Back-testing`](https://youtu.be/3cDtDI2W-xA?feature=shared) to learn about this workflow.
 
-   :::
+:::
+
+### Pairwise-testing
+
+It [can be easier](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/) for a human (or an LLM grader) to determine `A is better than B` than to assign an individual score to either A or B. This helps to explain why some have observated that pairwise evaluations can be a more stable scoring approach than assigning individual scores to each experiment, particularly when working with LLM-as-judge evaluators.
+
+:::tip
+
+- Watch the [`Pairwise evaluation` video in our LangSmith Evaluation series](https://youtu.be/yskkOAfTwcQ?feature=shared).
+- See our [blog post on pairwise evaluation](https://blog.langchain.dev/pairwise-evaluations-with-langsmith/).
+
+:::
 
 ### Online Evaluation
 
@@ -220,9 +195,32 @@ Explore our videos on online evaluation:
 
 :::
 
+### Experiment Configurations
+
+LangSmith evaluations are kicked off using a single function, `evaluate`, which takes in a `dataset`, `evaluator`, and various optional configurations, some of which we discuss below.
+
+:::tip
+
+See documentation on using `evaluate` [here](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#step-4-run-the-evaluation-and-view-the-results).
+
+:::
+
+#### Repetitions
+
+One of the most common questions when evaluating AI applications is how to build confidence the result of an experiment? This is particularly relevant for LLM applications (e.g., agents), which can exhibit considerable run-to-run variability. Repetitions involve running the same evaluation multiple times and aggregating the results to smooth out run-to-run variability and examine the reproducibility of the AI application's performance. LangSmith `evaluate` function allows you to easily set the number of repetitions and aggregates (the mean) of replicate experiments for you in the UI.
+
+:::tip
+
+- See the [video on `Repetitions` in our LangSmith Evaluation series](https://youtu.be/Pvz24JdzzF8)
+- See our documentation on [`Repetitions`](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-with-repetitions)
+
+:::
+
 ---
 
 # Evaluating Specific LLM Applications
+
+Below, we will discuss evaluation of a few specific, popular LLM applications.
 
 ## Agents
 
