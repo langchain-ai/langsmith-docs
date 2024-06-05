@@ -79,8 +79,7 @@ There are a few approaches and types of scoring functions that can be used in La
 
 ### Human
 
-- Human evaluation is [often a great starting point for evaluation](https://hamel.dev/blog/posts/evals/#looking-at-your-traces).
-- LangSmith makes it easy to review your LLM application outputs as well as the traces (all intermediate steps).
+Human evaluation is [often a great starting point for evaluation](https://hamel.dev/blog/posts/evals/#looking-at-your-traces). LangSmith makes it easy to review your LLM application outputs as well as the traces (all intermediate steps).
 
 :::tip
 
@@ -90,10 +89,7 @@ See our [video](https://www.youtube.com/watch?v=Vn8A3BxfplE) using LangSmith to 
 
 ### Heuristic
 
-- Heuristic evaluators are hard-coded functions that perform computations to determine a score.
-- To use them, you typically will need a set of rules that can be easily encoded into a function.
-- They can be `reference-free` (e.g., check the output for empty string or valid JSON).
-- Or they can compare task output to a `reference` (e.g., check if the output matches the reference exactly).
+Heuristic evaluators are hard-coded functions that perform computations to determine a score. To use them, you typically will need a set of rules that can be easily encoded into a function. They can be `reference-free` (e.g., check the output for empty string or valid JSON). Or they can compare task output to a `reference` (e.g., check if the output matches the reference exactly).
 
 :::tip
 
@@ -107,14 +103,19 @@ For some tasks, like code generation, custom heuristic evaluation (e.g., import 
 
 ### LLM-as-judge
 
-- LLM-as-judge evaluators use LLMs to score system output.
-- To use them, you typically encode the grading rules / criteria in the LLM prompt.
-- They can be `reference-free` (e.g., check if system output contains offensive content or adheres to specific criteria).
-- Or, they can compare task output to a `reference` (e.g., check if the output is factually accurate relative to the reference).
+LLM-as-judge evaluators use LLMs to score system output. To use them, you typically encode the grading rules / criteria in the LLM prompt. They can be `reference-free` (e.g., check if system output contains offensive content or adheres to specific criteria). Or, they can compare task output to a `reference` (e.g., check if the output is factually accurate relative to the reference).
 
 :::tip
 
 Check out our video on [LLM-as-judge evaluators](https://youtu.be/y5GvqOi4bJQ?feature=shared) in our LangSmith Evaluation series.
+
+:::
+
+With LLM-as-judge evaluators, it is important to carefully review the resulting scores and tune the grader prompt if needed. Often a process of trial-and-error is required to get LLM-as-judge evaluator prompts to produce reliable scores.
+
+:::tip
+
+See documentation on our workflow to audit and manually correct evaluator scores [here](https://docs.smith.langchain.com/how_to_guides/evaluation/audit_evaluator_scores).
 
 :::
 
@@ -383,37 +384,33 @@ See our LangSmith video series to go deeper on these concepts:
 
 ## Deciding which evaluation approach to use
 
-We frequently hear users ask how to get started with evaluation. Here is a decision tree to help you select the right evaluation approach for your application, summarizing the key points discussed above:
+We frequently hear users ask how to get started with evaluation.
 
-![Decision](../static/eval_decision_tree.png)
+### Collecting evaluation data
 
-### Collect your evaluation data
+![Flywheel](../static/flywheel.png)
 
-First, consider whether you want to evaluate your application in production. This can be useful for applying guardrails, such as checks for correctness and toxicity on your LLM inputs or outputs. This will not require collection of a `Dataset` and will employ a `reference-free` evaluator, since you will not have a `reference` output to compare against when you are evaluating in production.
-
-:::tip
-
-For online evaluation, it is common to consider `reference-free` LLM-as-judge evaluators, which are effective at detecting toxicity or performing simple self-consistency checks (e.g., in the case of RAG). See our examples above.
-
-:::
-
-If you do not want to evaluate in production, then you will need to collect a `Dataset`. A great starting point is often to use `historical logs` from your application. This ensures that the `Dataset` inputs are realistic and representative of your application's actual user interactions. This also enables the process of `Back-testing`, which is re-running these production examples with new app versions to see how the new versions perform on historical user interactions.
+Consider your evaluation process to be a flywheel, a virtuous cycle that results in improved application performance over time. First, you have an application in production without any evaluation. You are collecting logs from user interactions with your app, captured in LangSmith. First, consider adding `online evaluation` to your app. This can be as simple as guardrails checking for toxicity in user inputs or outputs. In LangSmith, you can quickly filter for traces that fail online evaluation, which can be examined more deeply. Second, consider adding production logs, optionally filtering on cases where `online evaluation` fails, to a `Dataset` for `Back-testing`.
 
 :::tip
 
-When creating a `Dataset` for `Back-testing`, you will have a `reference` output because you will be directly pulling user interactions. Of course, modifying the dataset to include a `reference` output is possible and can be beneficial. But, often `reference-free` evaluators are used in `Back-testing` to rapidly assess new app versions on the production examples.
+See our video [here](https://youtu.be/Kr10khtlSzs?feature=shared) showing how to attach an online evaluator to a dataset. This allows you to rerun newer app versions on this dataset and automatically have the online evaluator run, simulating what is happening in production.
 
 :::
 
-Sometimes, historical logs are not sufficient. For example, you may require `references` for your evaluation. Or you want to add user-defined edge-cases. For this, you can `manually curate` a dataset. This can be a time-consuming process, but it is sometimes necessary for high-quality evaluation.
+`Back-testing` newer app versions on production logs can be a powerful way to assess how new versions of your app perform on historical user interactions. With some confidence that we've improved our app, we can then consider adding hard or interesting cases from our production logs to a fixed, `manually curated` a dataset. At this stage, we might also consider adding a `reference` output to the examples in our fixed dataset.
+
+This fixed dataset can be used for `regression testing`, as it contains a growing set of curated, hard examples we've encountered in production. The aim here is to ensure that newer app version do not regress on past cases that we've fixed! This seems obvious, but over time it can be common for a new app version to improve on recent hard cases but regress on older hard cases that we've long forogtten about. Regression testing ensures that you app performance is improving continuously over time. Finally, `unit tests` can be added to your app to ensure that basic functionality is working as expected prior to deployment.
 
 ### Choose your scoring function
 
-A well designed scoring function should have a low cognitive burden, resulting in higher reliability. For example, scoring the factual correctness of a RAG response [on a scale](https://en.wikipedia.org/wiki/Likert_scale) of 1 (worst) to 10 (best) is cognitively demanding and, in our experience, unreliable. A human or LLM-as-judge evaluator is less likely to grade consistently with such an open-ended grading scale.
+![Score](../static/score_fxn.png)
+
+Scoring functions are applied in all of the evaluation approaches we've discussed in the flywheel above and should be carefully designed for each one. In general, a well designed scoring function should have a low cognitive burden, resulting in higher reliability. For example, scoring the factual correctness of a RAG response [on a scale](https://en.wikipedia.org/wiki/Likert_scale) of 1 (worst) to 10 (best) is cognitively demanding and, in our experience, unreliable. A human or LLM-as-judge evaluator is less likely to grade consistently with such an open-ended grading scale.
 
 One well-established trick to reduce the cognitive burden of evaluation is `pairwise evaluation`: [it is often easier to determine](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/) `A is better than B` than to assign an individual score to and A and B. With this in mind, first consider whether pairwise evaluation can improve the reliability of your evaluation.
 
-But, if you are confident in your ability to assign individual scores to our application output, then ask whether your scoring function can be a hard-coded rule. Consider the simplest case: you want to check to see if the output is empty. This can be easily hard-coded in a custom heuristic evaluator.
+But, if you are confident in your ability to assign individual scores to our application output, then ask whether your scoring function can be a hard-coded rule. Consider the simplest case: you want to check to see if the output is empty. This can be easily hard-coded in a custom heuristic evaluator, and is commonly employed in unit tests.
 
 If your scoring function cannot be hard-coded, then consider whether you can describe the scoring criteria to an LLM that can serve as judge.
 
