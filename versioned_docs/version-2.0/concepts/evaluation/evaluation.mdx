@@ -381,3 +381,39 @@ See our LangSmith video series to go deeper on these concepts:
 | Accuracy  | Standard definition             | No (ground truth class) | No                                                                   | No                |
 | Precision | Standard definition             | No (ground truth class) | No                                                                   | No                |
 | Recall    | Standard definition             | No (ground truth class) | No                                                                   | No                |
+
+## Deciding which evaluation approach to use
+
+We frequently hear users ask how to get started with evaluation, and how these pieces fit together. Below, we explain a common flywheel for collecting evaluation data and choosing your scoring functions.
+
+### Collecting evaluation data
+
+![Flywheel](../static/flywheel.png)
+
+Consider your evaluation process to be a flywheel, a virtuous cycle that improves application performance over time. Assume you have an application in production without any evaluation. You are collecting logs from user interactions with your app, captured in LangSmith. First, consider adding `online evaluation` to your app. This can be as simple as guardrails checking for toxicity in user inputs or outputs. In LangSmith, you can filter for traces that fail online evaluation for review. Second, consider adding production logs, optionally filtering on cases where `online evaluation` fails, to a `Dataset` for `Back-testing`.
+
+:::tip
+
+See our video [here](https://youtu.be/Kr10khtlSzs?feature=shared) showing how to attach an online evaluator to a dataset. This allows you to rerun newer app versions on this dataset and automatically have the online evaluator run, simulating what is happening in production.
+
+:::
+
+`Back-testing` newer app versions on production logs can be a powerful way to assess app performance on historical user interactions. Third, we can then consider adding challenging or interesting cases from our `Back-testing` production logs to a `manually curated` dataset. For this `manually curated` dataset, we might even consider adding a `reference` output to the examples. This `reference` allows for even more rigorous evaluation of our application.
+
+This `manually curated` dataset can be used for `regression testing`, as it contains a growing set of curated examples that we've encountered in production and / or curated manually. Regression testing ensures that newer app version do not regress on past cases that we've fixed. This seems obvious, but over time a new app version may improve on recent examples that we're focused on fixing, but regress on older examples we're less focused on. Regression testing provides a rigorous way to ensure app performance improves continuously over time. Finally, `unit tests` for basic app functionality serve as pre-deployment checks.
+
+### Choose your scoring function
+
+![Score](../static/score_fxn.png)
+
+Scoring functions are applied in all of the evaluation approaches we discussed above. In general, a well designed scoring function should have a low cognitive burden, resulting in higher reliability. For example, scoring the factual correctness of a RAG response [on a scale](https://en.wikipedia.org/wiki/Likert_scale) of 1 (worst) to 10 (best) is cognitively demanding and, in our experience, unreliable. A human or LLM-as-judge evaluator is less likely to grade consistently with such an open-ended grading scale.
+
+One well-established trick to reduce the cognitive burden of evaluation is `pairwise evaluation`: [it is often easier to determine](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/) `A is better than B` than to assign an individual score to and A and B. With this in mind, first consider whether pairwise evaluation can improve the reliability of your evaluation. But, if you are confident in your ability to assign individual scores to our application output, then consider whether your scoring function can be a hard-coded rule (e.g., check to see if the output is empty) in a custom heuristic evaluator. If your scoring function cannot be hard-coded, then consider whether you can describe the scoring criteria to an LLM that can serve as judge.
+
+:::tip
+
+For LLM-as-judge evaluators, we have found that binary evaluations (e.g., `yes` or `no`) are often more reliable than open-ended rating scales. See our tables above with example prompts for several use-cases.
+
+:::
+
+Finally, if you're not confident in the ability to use LLM-as-judge, then manual review is a great starting point. It can help build intuition for criteria that can be later encoded into LLM-as-judge or heuristic evaluator.
