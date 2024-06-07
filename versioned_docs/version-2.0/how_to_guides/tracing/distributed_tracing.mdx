@@ -2,11 +2,12 @@
 sidebar_position: 6
 ---
 
-# Implement distributed tracing
+import {
+  CodeTabs,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
 
-:::note
-This feature is currently only available in the Python SDK. Support for TypeScript is coming soon.
-:::
+# Implement distributed tracing
 
 Sometimes, you need to trace a request across multiple services.
 
@@ -16,6 +17,8 @@ Example client-server setup:
 
 - Trace starts on client
 - Continues on server
+
+## Distributed tracing in Python
 
 ```python
 # client.py
@@ -70,3 +73,83 @@ async def fake_route(request: Request):
     # highlight-next-line
     my_application(langsmith_extra={"parent": request.headers})
 ```
+
+## Distributed tracing in TypeScript
+
+First, we obtain the current run tree from the client and convert it to `langsmith-trace` and `baggage` header values, which we can pass to the server:
+
+```typescript
+// client.mts
+import { getCurrentRunTree, traceable } from "langsmith/traceable";
+
+const client = traceable(
+  async () => {
+    const runTree = getCurrentRunTree();
+    return await fetch("...", {
+      method: "POST",
+      // highlight-next-line
+      headers: runTree.toHeaders(),
+    }).then((a) => a.text());
+  },
+  { name: "client" }
+);
+
+await client();
+```
+
+Then, the server converts the headers back to a run tree, which it uses to further continue the tracing.
+
+To pass the newly created run tree to a traceable function, we can use the `withRunTree` helper, which will ensure the run tree is propagated within traceable invocations.
+
+<CodeTabs
+  tabs={[
+    typescript({ value: "express", label: "Express.JS" })`
+      // server.mts
+      import { RunTree } from "langsmith";
+      import { traceable, withRunTree } from "langsmith/traceable";
+      
+      import express from "express";
+      import bodyParser from "body-parser";
+      
+      const server = traceable(
+        (text: string) => \`Hello from the server! Received "\${text}"\`,
+        { name: "server" }
+      );
+      
+      const app = express();
+      
+      app.use(bodyParser.text());
+      
+      app.post("/", async (req, res) => {
+        // highlight-start
+        const runTree = RunTree.fromHeaders(req.headers);
+        const result = await withRunTree(runTree, () => server(req.body));
+        // highlight-end
+        res.send(result);
+      });
+    `,
+    typescript({ value: "hono", label: "Hono" })`
+      // server.mts
+      import { RunTree } from "langsmith";
+      import { traceable, withRunTree } from "langsmith/traceable";
+      
+      import { Hono } from "hono";
+      
+      const server = traceable(
+        (text: string) => \`Hello from the server! Received "\${text}"\`,
+        { name: "server" }
+      );
+      
+      const app = new Hono();
+      
+      app.post("/", async (c) => {
+        const body = await c.req.text();
+        // highlight-start
+        const runTree = RunTree.fromHeaders(c.req.raw.headers);
+        const result = await withRunTree(runTree, () => server(body));
+        // highlight-end
+        return c.body(result);
+      });
+    `,
+  ]}
+/>
