@@ -332,3 +332,6 @@ hr {
   background-color: var(--joy-palette-background-level2) !important;
 }
 
+.hidden {
+  display: none !important;
+}
