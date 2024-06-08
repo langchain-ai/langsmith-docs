@@ -12,7 +12,7 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 See the following guides to set up your LangSmith account.
 
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
-- [Create an organization](./how_to_guides/setup/create_organization)
+- [Set up an organization](./how_to_guides/setup/set_up_organization)
 - [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
 - [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
