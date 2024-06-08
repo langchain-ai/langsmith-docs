@@ -4,7 +4,7 @@ This conceptual guide covers topics related to managing users, organizations, an
 
 ## Organizations
 
-An organization is a logical grouping of users within LangSmith with its own billing configuration. Typically, there is one organization per company. An organization can have multiple workspaces. For more details, see the [setup guide](../../how_to_guides/setup/create_organization.mdx).
+An organization is a logical grouping of users within LangSmith with its own billing configuration. Typically, there is one organization per company. An organization can have multiple workspaces. For more details, see the [setup guide](../../how_to_guides/setup/setup_organization).
 
 ## Workspaces (coming soon) {#workspaces}
 
@@ -50,7 +50,11 @@ Service keys are prefixed with `lsv2_sk_`
 To see how to create a service key or Personal Access Token, see the [setup guide](../../how_to_guides/setup/create_account_api_key.mdx)
 :::
 
-## Roles
+## Organization Roles
+
+Organization roles are distinct from the Enterprise feature (RBAC) below and are used in the context of multiple [workspaces](#workspaces). Your organization role determines your workspace membership characteristics and your organization-level permissions. See the [organization setup guide](../../how_to_guides/setup/set_up_organization#organization-roles) for more information.
+
+## Workspace Roles
 
 :::note
 RBAC (Role-Based Access Control) is a feature that is only available to Enterprise customers. If you are interested in this feature, please contact our sales team at sales@langchain.dev
