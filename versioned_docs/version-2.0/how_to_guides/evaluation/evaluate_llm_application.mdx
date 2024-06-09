@@ -7,6 +7,7 @@ import {
   python,
   typescript,
   PythonBlock,
+  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # Evaluate an LLM Application
@@ -577,7 +578,7 @@ The runnable is traced appropriately for each output.
 
 In most cases, each evaluator returns a single key or categorical value. Alternatively, you can return evaluation metrics from a single evaluator. This is useful if your metrics share intermediate values. For example, precision and recall but rely on the same true and false positives and negative values, or you may have an LLM generate multiple metrics in a single shot.
 
-To return multiple scores, simply return a dictionary of the following form:
+To return multiple scores, simply return a dictionary/object of the following form:
 
 ```python
 {
@@ -591,19 +592,32 @@ To return multiple scores, simply return a dictionary of the following form:
 
 Each of these dictionaries can contain any or all of the [feedback fields](../../reference/data_formats/feedback_data_format); check out the linked document for more information.
 
-
 Example:
 
-```python
-from langsmith.schemas import Example, Run
-
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    PythonBlock(`from langsmith.schemas import Example, Run\n
 def multiple_scores(root_run: Run, example: Example) -> dict:
-    # Your evaluation logic here
-    return {
-        "results": [
-            {"key": "precision", "score": 0.8},
-            {"key": "recall", "score": 0.9},
-            {"key": "f1", "score": 0.85},
-        ]
-    }
-```
+  # Your evaluation logic here
+  return {
+      "results": [
+          {"key": "precision", "score": 0.8},
+          {"key": "recall", "score": 0.9},
+          {"key": "f1", "score": 0.85},
+      ]
+  }
+    `),
+    TypeScriptBlock(`import type { Run, Example } from "langsmith/schemas";\n
+function multipleScores(rootRun: Run, example: Example) {
+  // Your evaluation logic here
+  return {
+      results: [
+          { key: "precision", score: 0.8 },
+          { key: "recall", score: 0.9 },
+          { key: "f1", score: 0.85 },
+      ],
+  };
+}`),
+  ]}
+/>
