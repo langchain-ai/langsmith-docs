@@ -574,7 +574,7 @@ The runnable is traced appropriately for each output.
 
 ![](../static/runnable_eval.png)
 
-## Return Multiple Scores
+## Return multiple scores
 
 In most cases, each evaluator returns a single key or categorical value. Alternatively, you can return evaluation metrics from a single evaluator. This is useful if your metrics share intermediate values. For example, precision and recall but rely on the same true and false positives and negative values, or you may have an LLM generate multiple metrics in a single shot.
 
@@ -621,5 +621,7 @@ function multipleScores(rootRun: Run, example: Example) {
 }`),
   ]}
 />
+
+Rows from the resulting experiment will display each of the scores.
 
 ![](../static/multiple_scores.png)
