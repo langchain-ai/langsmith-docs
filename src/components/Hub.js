@@ -33,6 +33,46 @@ export function HubInstallationCodeTabs() {
   );
 }
 
+export function PullPromptTabs() {
+  const pyBlock = `from langchain import hub
+
+# pull a private prompt
+prompt = hub.pull("my-private-prompt")
+print(prompt)
+
+# pull a public prompt
+public_prompt = hub.pull("efriis/my-first-prompt")
+print(public_prompt)
+`;
+
+  const jsBlock = `import * as hub from "langchain/hub";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+
+// pull a private prompt
+const prompt = await hub.pull<ChatPromptTemplate>("my-private-prompt");
+console.log(prompt);
+
+// pull a public prompt
+const publicPrompt = await hub.pull<ChatPromptTemplate>("efriis/my-first-prompt");
+console.log(publicPrompt);
+`;
+
+  return (
+    <Tabs groupId="client-language">
+      <TabItem key="python" value="python" label="Python">
+        <CodeBlock className="python" language="python">
+          {pyBlock}
+        </CodeBlock>
+      </TabItem>
+      <TabItem key="typescript" value="typescript" label="TypeScript">
+        <CodeBlock className="typescript" language="typescript">
+          {jsBlock}
+        </CodeBlock>
+      </TabItem>
+    </Tabs>
+  );
+}
+
 export function HubPullCodeTabs() {
   const pyBlock = `from langchain import hub
 
@@ -96,7 +136,7 @@ from langchain.prompts.chat import ChatPromptTemplate
 
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
 
-hub.push("<handle>/topic-joke-generator", prompt, new_repo_is_public=False)`;
+hub.push("topic-joke-generator", prompt, new_repo_is_public=False)`;
 
   const jsBlock = `import * as hub from "langchain/hub";
 import {
@@ -109,7 +149,7 @@ const message = HumanMessagePromptTemplate.fromTemplate(
 );
 const prompt = ChatPromptTemplate.fromMessages([message]);
 
-await hub.push("<handle>/my-first-prompt", prompt, { newRepoIsPublic: false });`;
+await hub.push("my-first-prompt", prompt, { newRepoIsPublic: false });`;
 
   return (
     <Tabs groupId="client-language">

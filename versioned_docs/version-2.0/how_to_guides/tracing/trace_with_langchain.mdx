@@ -11,6 +11,8 @@ import {
   CodeTabs,
   TypeScriptBlock,
   PythonBlock,
+  typescript,
+  python,
 } from "@site/src/components/InstructionsWithCode";
 
 # Trace with `LangChain` (Python and JS/TS)
@@ -70,7 +72,7 @@ with tracing_v2_enabled():
 # This will NOT be traced (assuming LANGCHAIN_TRACING_V2 is not set)
 chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced"})`),
     TypeScriptBlock(`// You can configure a LangChainTracer instance to trace a specific invocation.
-import { LangChainTracer } from "langchain/callbacks";\n
+import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";\n
 const tracer = new LangChainTracer();
 await chain.invoke(
   {
@@ -108,7 +110,7 @@ from langchain_core.tracers.context import tracing_v2_enabled
 with tracing_v2_enabled(project_name="My Project"):
     chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})`),
     TypeScriptBlock(`// You can set the project name for a specific tracer instance:
-import { LangChainTracer } from "langchain/callbacks";\n
+import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";\n
 const tracer = new LangChainTracer({ projectName: "My Project" });
 await chain.invoke(
   {
@@ -127,6 +129,12 @@ LangSmith supports sending arbitrary metadata and tags along with traces.
 This is useful for associating additional information with a trace, such as the environment in which it was executed, or the user who initiated it.
 For information on how to query traces and runs by metadata and tags, see [this guide](./export_traces)
 
+:::note
+
+When you attach metadata or tags to a runnable (either through the RunnableConfig or at runtime with invocation params), they are inherited by all child runnables of that runnable.
+
+:::
+
 <CodeTabs
   tabs={[
     PythonBlock(`from langchain_openai import ChatOpenAI
@@ -136,14 +144,16 @@ prompt = ChatPromptTemplate.from_messages([
   ("system", "You are a helpful AI."),
   ("user", "{input}")
 ])
-chat_model = ChatOpenAI()
+# The tag "model-tag" and metadata {"model-key": "model-value"} will be attached to the ChatOpenAI run only
+# highlight-next-line
+chat_model = ChatOpenAI().with_config({"tags": ["model-tag"], "metadata": {"model-key": "model-value"}})
 output_parser = StrOutputParser()\n
-# highlight-next-line
 # Tags and metadata can be configured with RunnableConfig
-chain = (prompt | chat_model | output_parser).with_config({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}})\n
 # highlight-next-line
+chain = (prompt | chat_model | output_parser).with_config({"tags": ["config-tag"], "metadata": {"config-key": "config-value"}})\n
 # Tags and metadata can also be passed at runtime
-chain.invoke({"input": "What is the meaning of life?"}, {"tags": ["shared-tags"], "metadata": {"shared-key": "shared-value"}})`),
+# highlight-next-line
+chain.invoke({"input": "What is the meaning of life?"}, {"tags": ["invoke-tag"], "metadata": {"invoke-key": "invoke-value"}})`),
     TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";\n
@@ -151,14 +161,13 @@ const prompt = ChatPromptTemplate.fromMessages([
   ["system", "You are a helpful AI."],
   ["user", "{input}"]
 ])
-const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+// The tag "model-tag" and metadata {"model-key": "model-value"} will be attached to the ChatOpenAI run only
+const model = new ChatOpenAI().withConfig({ tags: ["model-tag"], metadata: { "model-key": "model-value" } });
 const outputParser = new StringOutputParser();\n
-// highlight-next-line
 // Tags and metadata can be configured with RunnableConfig
-const chain = (prompt.pipe(model).pipe(outputParser)).withConfig({"tags": ["top-level-tag"], "metadata": {"top-level-key": "top-level-value"}});\n
-// highlight-next-line
+const chain = (prompt.pipe(model).pipe(outputParser)).withConfig({"tags": ["config-tag"], "metadata": {"config-key": "top-level-value"}});\n
 // Tags and metadata can also be passed at runtime
-await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags"], metadata: {"shared-key": "shared-value"}})`),
+await chain.invoke({input: "What is the meaning of life?"}, {tags: ["invoke-tag"], metadata: {"invoke-key": "invoke-value"}})`),
   ]}
   groupId="client-language"
 />
@@ -166,21 +175,26 @@ await chain.invoke({input: "What is the meaning of life?"}, {tags: ["shared-tags
 ## Customize run name
 
 When you create a run, you can specify a name for the run. This name is used to identify the run in LangSmith and can be used to filter and group runs. The name is also used as the title of the run in the LangSmith UI.
+This can be done by setting a `run_name` in the `RunnableConfig` object at construction or by passing a `run_name` in the invocation parameters in JS/TS.
 
 :::note
+
 This feature is not currently supported directly for LLM objects.
+
 :::
 
 <CodeTabs
   tabs={[
     PythonBlock(`# When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
 configured_chain = chain.with_config({"run_name": "MyCustomChain"})
-configured_chain.invoke({"query": "What is the meaning of life?"})`),
+configured_chain.invoke({"input": "What is the meaning of life?"})\n
+# You can also configure the run name at invocation time, like below
+chain.invoke({"input": "What is the meaning of life?"}, {"run_name": "MyCustomChain"})`),
     TypeScriptBlock(`// When tracing within LangChain, run names default to the class name of the traced object (e.g., 'ChatOpenAI').
-// (Note: this is not currently supported directly on LLM objects.)
-...
 const configuredChain = chain.withConfig({ runName: "MyCustomChain" });
-await configuredChain.invoke({query: "What is the meaning of life?"});`),
+await configuredChain.invoke({ input: "What is the meaning of life?" });\n
+// You can also configure the run name at invocation time, like below
+await chain.invoke({ input: "What is the meaning of life?" }, {runName: "MyCustomChain"})`),
   ]}
   groupId="client-language"
 />
@@ -201,7 +215,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.tracers.context import collect_runs\n
 prompt = ChatPromptTemplate.from_messages([
     ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
-    ("user", "Question: {question}\n\nContext: {context}")
+    ("user", "Question: {question}\\n\\nContext: {context}")
 ])
 model = ChatOpenAI(model="gpt-3.5-turbo")
 output_parser = StrOutputParser()\n
@@ -214,13 +228,13 @@ with collect_runs() as cb:
   # highlight-next-line
   run_id = cb.traced_runs[0].id
 print(run_id)`),
-    TypeScriptBlock(`import { ChatOpenAI } from "npm:@langchain/openai";
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunCollectorCallbackHandler } from "@langchain/core/tracers/run_collector";\n
 const prompt = ChatPromptTemplate.fromMessages([
   ["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
-  ["user", "Question: {question}\n\nContext: {context}"],
+  ["user", "Question: {question\\n\\nContext: {context}"],
 ]);
 const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
 const outputParser = new StringOutputParser();\n
@@ -230,13 +244,199 @@ const question = "Can you summarize this morning's meetings?"
 const context = "During this morning's meeting, we solved all world conflict."
 await chain.invoke(
     { question: question, context: context },
-    {
-        callbacks: [runCollector],
-    }
+    { callbacks: [runCollector] }
 );
 // highlight-next-line
 const runId = runCollector.tracedRuns[0].id;
 console.log(runId);`),
   ]}
   groupId="client-language"
+/>
+
+## Ensure all traces are submitted before exiting
+
+In LangChain Python, LangSmith's tracing is done in a background thread to avoid obstructing your production application. This means that your process may end before all traces are successfully posted to LangSmith. This is especially prevalent in a serverless environment, where your VM may be terminated immediately once your chain or agent completes.
+
+In LangChain JS/TS, the default is to block for a short period of time for the trace to finish due to the greater popularity of serverless environments. You can make callbacks asynchronous by setting the `LANGCHAIN_CALLBACKS_BACKGROUND` environment variable to `"true"`.
+
+For both languages, LangChain exposes methods to wait for traces to be submitted before exiting your application.
+Below is an example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.tracers.langchain import wait_for_all_tracers\n
+llm = ChatOpenAI()
+try:
+    llm.invoke("Hello, World!")
+finally:
+    # highlight-next-line
+    wait_for_all_tracers()
+`),
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { awaitAllCallbacks } from "@langchain/core/callbacks/promises";\n
+try {
+  const llm = new ChatOpenAI();
+  const response = await llm.invoke("Hello, World!");
+} catch (e) {
+  // handle error
+} finally {
+   // highlight-next-line
+  await awaitAllCallbacks();
+}
+`),
+  ]}
+  groupId="client-language"
+/>
+
+## Trace without setting environment variables
+
+As mentioned in other guides, the following environment variables allow you to configure tracing enabled, the api endpoint, the api key, and the tracing project:
+
+- `LANGCHAIN_TRACING_V2`
+- `LANGCHAIN_API_KEY`
+- `LANGCHAIN_ENDPOINT`
+- `LANGCHAIN_PROJECT`
+
+However, in some environments, it is not possible to set environment variables. In these cases, you can set the tracing configuration programmatically.
+
+This largely builds off of the [previous section](#trace-selectively).
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain.callbacks.tracers import LangChainTracer
+from langsmith import Client\n
+# You can create a client instance with an api key and api url
+client = Client(
+    api_key="YOUR_API_KEY",  # This can be retrieved from a secrets manager
+    api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations
+)\n
+# You can pass the client and project_name to the LangChainTracer instance
+# highlight-next-line
+tracer = LangChainTracer(client=client, project_name="test-no-env")
+chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})\n
+# LangChain Python also supports a context manager which allows passing the client and project_name
+from langchain_core.tracers.context import tracing_v2_enabled
+# highlight-next-line
+with tracing_v2_enabled(client=client, project_name="test-no-env"):
+    chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})`),
+    TypeScriptBlock(`import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";
+import { Client } from "langsmith";\n
+// You can create a client instance with an api key and api url
+const client = new Client(
+    {
+        apiKey: "YOUR_API_KEY",
+        apiUrl: "https://api.smith.langchain.com",
+    }
+);\n
+// You can pass the client and project_name to the LangChainTracer instance
+// highlight-next-line
+const tracer = new LangChainTracer({client, projectName: "test-no-env"});
+await chain.invoke(
+  {
+    question: "Am I using a callback?",
+    context: "I'm using a callback",
+  },
+  { callbacks: [tracer] }
+);`),
+  ]}
+  groupId="client-language"
+/>
+
+## Interoperability between LangChain.JS and LangSmith SDK
+
+### Tracing LangChain objects inside `traceable` (JS only)
+
+Starting with `langchain@0.2.x`, LangChain objects are traced automatically when used inside `@traceable` functions, inheriting the client, tags, metadata and project name of the traceable function.
+
+For older versions of LangChain below `0.2.x`, you will need to manually pass an instance `LangChainTracer` created from the tracing context found in `@traceable`.
+
+```typescript
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+// highlight-next-line
+import { getLangchainCallbacks } from "langsmith/langchain";
+
+const prompt = ChatPromptTemplate.fromMessages([
+  [
+    "system",
+    "You are a helpful assistant. Please respond to the user's request only based on the given context.",
+  ],
+  ["user", "Question: {question}\nContext: {context}"],
+]);
+const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const outputParser = new StringOutputParser();
+
+const chain = prompt.pipe(model).pipe(outputParser);
+
+const main = traceable(
+  async (input: { question: string; context: string }) => {
+    // this is done automatically in `langchain` >0.2.x
+    // only do this if you are using an older version of `langchain`
+    // highlight-start
+    const callbacks = await getLangchainCallbacks();
+    const response = await chain.invoke({ callbacks });
+    // highlight-end
+    return response;
+  },
+  { name: "main" }
+);
+```
+
+### Manually tracing LangChain child runs via `traceable` / RunTree API (JS only)
+
+In some uses cases, you might want to run `traceable` functions as part of the RunnableSequence or trace child runs of LangChain run imperatively via the `RunTree` API.
+
+You can convert the existing LangChain `RunnableConfig` to a equivalent RunTree object by using `RunTree.fromRunnableConfig` or you can pass the `RunnableConfig` as the first argument of the wrapped function, which will result in the following trace tree:
+
+![Trace Tree of manual tracing](./static/trace_tree_manual_tracing.png)
+
+<CodeTabs
+  tabs={[
+    typescript({ value: "traceable", label: "Traceable" })`
+    
+      import { traceable } from "langsmith/traceable";
+      import { RunnableLambda } from "@langchain/core/runnables";
+      import { RunnableConfig } from "@langchain/core/runnables";
+      
+      const tracedChild = traceable((input: string) => \`Child Run: $\{input\}\`, {
+        name: "Child Run",
+      });
+      
+      const parrot = new RunnableLambda({
+        func: async (input: { text: string }, config?: RunnableConfig) => {
+          // highlight-start
+          // Pass the config to existing traceable function
+          await tracedChild(config, input.text);
+          // highlight-end
+          return input.text;
+        },
+      });
+    `,
+    typescript({ value: "runtree", label: "Run Tree" })`
+      import { RunTree } from "langsmith/run_trees";
+      import { RunnableLambda } from "@langchain/core/runnables";
+      import { RunnableConfig } from "@langchain/core/runnables";
+      
+      const parrot = new RunnableLambda({
+        func: async (input: { text: string }, config?: RunnableConfig) => {
+          // highlight-start
+          // create the RunTree from the RunnableConfig of the RunnableLambda
+          const childRunTree = RunTree.fromRunnableConfig(config, {
+            name: "Child Run",
+          });
+          // highlight-end
+          
+          childRunTree.inputs = { input: input.text };
+          await childRunTree.postRun();
+          
+          childRunTree.outputs = { output: \`Child Run: $\{input.text\}\` };
+          await childRunTree.patchRun();
+          
+          return input.text;
+        },
+      });
+    `,
+  ]}
 />

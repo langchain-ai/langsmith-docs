@@ -27,6 +27,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Use `@traceable`/`traceable`](./how_to_guides/tracing/annotate_code#use-traceable--traceable)
   - [Wrap the OpenAI API client](./how_to_guides/tracing/annotate_code#wrap-the-openai-client)
   - [Use the RunTree API](./how_to_guides/tracing/annotate_code#use-the-runtree-api)
+  - [Use the `trace` context manager (Python only)](./how_to_guides/tracing/annotate_code#use-the-trace-context-manager-python-only)
 - [Toggle tracing on and off](./how_to_guides/tracing/toggle_tracing)
 - [Log traces to specific project](./how_to_guides/tracing/log_traces_to_project)
   - [Set the destination project statically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-statically)
@@ -43,7 +44,8 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Stream outputs](./how_to_guides/tracing/log_llm_trace#stream-outputs)
   - [Manually provide token counts](./how_to_guides/tracing/log_llm_trace#manually-provide-token-counts)
   - [Instruct-style models](./how_to_guides/tracing/log_llm_trace#instruct-style-models)
-- [Prevent logging of inputs and outputs in traces](./how_to_guides/tracing/mask_inputs_outputs)
+- [Prevent logging of sensitive data in traces](./how_to_guides/tracing/mask_inputs_outputs)
+  - [Example masking UUIDs and emails in inputs and outputs](./how_to_guides/tracing/mask_inputs_outputs#example-masking-uuids-and-emails-in-inputs-and-outputs)
 - [Export traces](./how_to_guides/tracing/export_traces)
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
@@ -57,7 +59,10 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Add metadata and tags to traces](./how_to_guides/tracing/trace_with_langchain#add-metadata-and-tags-to-traces)
   - [Customize run name](./how_to_guides/tracing/trace_with_langchain#customize-run-name)
   - [Access run (span) ID for LangChain invocations](./how_to_guides/tracing/trace_with_langchain#access-run-span-id-for-langchain-invocations)
+  - [Ensure all traces are submitted before exiting](./how_to_guides/tracing/trace_with_langchain#ensure-all-traces-are-submitted-before-exiting)
+  - [Trace withouth setting environment variables](./how_to_guides/tracing/trace_with_langchain#trace-without-setting-environment-variables)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
+- [Trace without setting environment variables](./how_to_guides/tracing/trace_without_env_vars)
 
 ## Datasets
 
@@ -68,6 +73,7 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
   - [Add inputs and outputs from traces to datasets](./how_to_guides/datasets/manage_datasets_in_application#add-inputs-and-outputs-from-traces-to-datasets)
   - [Upload a CSV file to create a dataset](./how_to_guides/datasets/manage_datasets_in_application#upload-a-csv-file-to-create-a-dataset)
   - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
+  - [Create and manage dataset splits](./how_to_guides/datasets/manage_datasets_in_application#create-and-manage-dataset-splits)
 - [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
   - [Create a dataset from list of values](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-list-of-values)
   - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces)
@@ -89,9 +95,11 @@ Evaluate your LLM applications to measure their performance over time.
   - [Use custom evaluators](./how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators)
   - [Evaluate on a particular version of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-particular-version-of-a-dataset)
   - [Evaluate on a subset of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-subset-of-a-dataset)
+  - [Evaluate on a dataset split](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-split)
+  - [Evaluate on a dataset with repetitions](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-with-repetitions)
   - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
-- [Bind and evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
+- [Bind an evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [Use LangChain off-the-shelf evaluators (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
@@ -117,6 +125,10 @@ Evaluate your LLM applications to measure their performance over time.
   - [Configure inputs and outputs for pairwise evaluators](./how_to_guides/evaluation/evaluate_pairwise#configure-inputs-and-outputs-for-pairwise-evaluators)
   - [Compare two experiments with LLM-based pairwise evaluators](./how_to_guides/evaluation/evaluate_pairwise#compare-two-experiments-with-llm-based-pairwise-evaluators)
   - [View pairwise experiments](./how_to_guides/evaluation/evaluate_pairwise#view-pairwise-experiments)
+- [Audit evaluator scores](./how_to_guides/evaluation/audit_evaluator_scores)
+  - [In the comparison view](./how_to_guides/evaluation/audit_evaluator_scores#in-the-comparison-view)
+  - [In the runs table](./how_to_guides/evaluation/audit_evaluator_scores#in-the-runs-table)
+  - [In the SDK](./how_to_guides/evaluation/audit_evaluator_scores#in-the-sdk)
 
 ## Human feedback
 
@@ -164,12 +176,10 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
 - [Create a prompt](./how_to_guides/prompts/create_a_prompt)
-  - [Choose a handle](./how_to_guides/prompts/create_a_prompt#choose-a-handle)
-  - [Name your new prompt](./how_to_guides/prompts/create_a_prompt#name-your-new-prompt)
-  - [Pick a prompt type](./how_to_guides/prompts/create_a_prompt#pick-a-prompt-type)
   - [Compose your prompt](./how_to_guides/prompts/create_a_prompt#compose-your-prompt)
   - [Save your prompt](./how_to_guides/prompts/create_a_prompt#save-your-prompt)
   - [View your prompts](./how_to_guides/prompts/create_a_prompt#view-your-prompts)
+  - [Add metadata](./how_to_guides/prompts/create_a_prompt#add-metadata)
 - [Update a prompt](./how_to_guides/prompts/update_a_prompt)
   - [Update metadata](./how_to_guides/prompts/update_a_prompt#update-metadata)
   - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
@@ -180,3 +190,9 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
   - [Pull a prompt and use it](./how_to_guides/prompts/pull_push_a_prompt#pull_a_prompt_and_use_it)
   - [Push a prompt to your personal organization](./how_to_guides/prompts/pull_push_a_prompt#push_a_prompt_to_your_personal_organization)
 - [LangChain Hub](./how_to_guides/prompts/langchain_hub)
+
+## Playground
+
+Quickly iterate on prompts and models in the LangSmith Playground.
+
+- [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)

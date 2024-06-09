@@ -112,6 +112,7 @@ export default function Feedback() {
   const { setCookie, checkCookie } = useCookie();
   const [feedbackSent, setFeedbackSent] = useState(false);
   const { siteConfig } = useDocusaurusContext();
+  const [pathname, setPathname] = useState("");
 
   /** @param {"good" | "bad"} feedback */
   const handleFeedback = async (feedback) => {
@@ -167,6 +168,7 @@ export default function Feedback() {
       // (cookies exp in 24hrs)
       const cookieName = `${FEEDBACK_COOKIE_PREFIX}_${window.location.pathname}`;
       setFeedbackSent(checkCookie(cookieName));
+      setPathname(window.location.pathname);
     }
   }, []);
 
@@ -197,6 +199,10 @@ export default function Feedback() {
       (e.currentTarget.style.backgroundColor =
         "var(--joy-palette-background-level1)"),
   };
+
+  const newGithubIssueURL = pathname
+    ? `https://github.com/langchain-ai/langsmith-docs/issues/new?title=DOC%3A+%3CIssue+related+to+${pathname}%3E`
+    : "https://github.com/langchain-ai/langsmith-docs/issues/new?title=DOC%3A+%3CPlease+write+a+comprehensive+title+after+the+%27DOC%3A+%27+prefix%3E";
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -246,6 +252,14 @@ export default function Feedback() {
           </div>
         </>
       )}
+      <br />
+      <h4>
+        You can leave detailed feedback{" "}
+        <a target="_blank" href={newGithubIssueURL} rel="noreferrer">
+          on GitHub
+        </a>
+        .
+      </h4>
     </div>
   );
 }
