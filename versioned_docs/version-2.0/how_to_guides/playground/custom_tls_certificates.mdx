@@ -12,7 +12,16 @@ If you are interested in this plan, please contact sales@langchain.dev for more 
 
 :::
 
-You can use custom TLs certificates to connect to model providers in the LangSmith playground. This is useful if you are using a self-signed certificate or a certificate from a custom certificate authority.
+:::note Azure OpenAI only
+
+This feature is currently only available for the Azure OpenAI model provider. More model providers will be supported in the future.
+
+This will currently only affect model invocations through the **LangSmith Playground**, not [**Online Evaluation**](../monitoring/online_evaluations).
+The TLS certificates will apply to all Azure Deployment configurations in the playground.
+
+:::
+
+You can use custom TLS certificates to connect to model providers in the LangSmith playground. This is useful if you are using a self-signed certificate, a certificate from a custom certificate authority or mutual TLS authentication.
 
 To use custom TLS certificates, you need to set the following environment variables. See the [self hosted deployment section](../../category/self-hosting) for more information on how to set up application configuration.
 
