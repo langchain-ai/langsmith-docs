@@ -35,6 +35,8 @@ Get started with LangSmith's tracing features to start adding observability to y
 - [Set a sampling rate for traces](./how_to_guides/tracing/sample_traces)
 - [Add metadata and tags to traces](./how_to_guides/tracing/add_metadata_tags)
 - [Implement distributed tracing](./how_to_guides/tracing/distributed_tracing)
+  - [Distributed tracing in Python](./how_to_guides/tracing/distributed_tracing#distributed-tracing-in-python)
+  - [Distributed tracing in TypeScript](./how_to_guides/tracing/distributed_tracing#distributed-tracing-in-typescript)
 - [Access the current span within a traced function](./how_to_guides/tracing/access_current_span)
 - [Log multimodal traces](./how_to_guides/tracing/log_multimodal_traces)
 - [Log retriever traces](./how_to_guides/tracing/log_retriever_trace)
