@@ -1,12 +1,12 @@
 import {
   CodeTabs,
-  DockerBlock, HelmBlock
+  DockerBlock,
+  HelmBlock,
 } from "../../../../src/components/InstructionsWithCode";
 
 # SSO with OAuth2.0 and OIDC
 
 LangSmith Self-Hosted provides SSO via OAuth2.0 and OIDC. Once configured, this will delegate authentication to your Identity Provider(IdP) to manage access to LangSmith.
-
 
 Our implementation supports almost anything that is OIDC compliant, with a few exceptions.
 
@@ -32,7 +32,8 @@ There are a couple of requirements for using OAuth SSO with LangSmith:
       AUTH_TYPE=oauth
       OAUTH_CLIENT_ID=your-client-id
       OAUTH_ISSUER_URL=https://your-issuer-url
-    `),
+    `
+    ),
   ]}
 />
 
