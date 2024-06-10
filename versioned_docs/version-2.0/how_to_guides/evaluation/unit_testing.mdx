@@ -2,19 +2,19 @@
 sidebar_position: 7
 ---
 
-# Unit test LLM applications (Python only)
+# Test LLM applications (Python only)
 
-LangSmith unit tests are assertions and expectations designed to **quickly** identify obvious bugs and regressions in your AI system. Relative to evaluations, tests are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases.
-We recommend using LangSmith to track any unit tests that touch an LLM or other non-deterministic part of your AI system.
+LangSmith functional tests are assertions and expectations designed to **quickly** identify obvious bugs and regressions in your AI system. Relative to evaluations, tests typically are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases.
+We recommend using LangSmith to track any unit tests, end-to-end integration tests, or other specific assertions that touch an LLM or other non-deterministic part of your AI system.
 These should run on every commit in your CI pipeline to catch regressions early.
 
-:::note
-`@unit` currently requires `langsmith` python version `>=0.1.42`. If you are interested in unit testing functionality in TypeScript or other languages, please let us know at [support@langchain.dev](mailto:support@langchain.dev).  
+:::note 
+`@test` currently requires `langsmith` python version `>=0.1.74` (named `@unit` for versions `>=0.1.42`). If you are interested in unit testing functionality in TypeScript or other languages, please let us know at [support@langchain.dev](mailto:support@langchain.dev).  
 :::
 
-## Write a @unit test
+## Write a @test
 
-To write a LangSmith unit test, decorate your test function with `@unit`.
+To write a LangSmith functional test, decorate your test function with `@test`.
 If you want to track the full nested trace of the system or component being tested, you can mark those functions with `@traceable`. For example:
 
 ```python
@@ -28,14 +28,14 @@ def generate_sql(user_query):
     return "SELECT * FROM customers"
 ```
 
-Then define your unit test:
+Then define your test:
 
 ```python tests/test_my_app.py
 # tests/test_my_app.py
-from langsmith import unit
+from langsmith import test 
 from my_app.main import generate_sql
 
-@unit
+@test
 def test_sql_generation_select_all():
     user_query = "Get all users from the customers table"
     sql = generate_sql(user_query)
@@ -47,7 +47,7 @@ def test_sql_generation_select_all():
 
 ## Run tests
 
-You can use a standard unit testing framework such as `pytest` ([docs](https://docs.pytest.org/en/7.1.x/contents.html)) to run. For example:
+You can use a standard testing framework such as `pytest` ([docs](https://docs.pytest.org/en/7.1.x/contents.html)) to run. For example:
 
 ```bash
 pytest tests/
@@ -57,11 +57,11 @@ Each time you run this test suite, LangSmith collects the pass/fail rate and oth
 
 The test suite syncs to a corresponding dataset named after your package or github repository.
 
-![Unit Test Example](./static/unit-test-suite.png)
+![Test Example](./static/unit-test-suite.png)
 
 ## Going further
 
-`@unit` is designed to stay out of your way and works well with familiar `pytest` features. For example:
+`@test` is designed to stay out of your way and works well with familiar `pytest` features. For example:
 
 #### Defining inputs as fixtures
 
@@ -80,7 +80,7 @@ def expected_sql():
 
 # output_keys indicate which test arguments to save as 'outputs' in the dataset (Optional)
 # Otherwise, all arguments are saved as 'inputs'
-@unit(output_keys=["expected_sql"])
+@test(output_keys=["expected_sql"])
 def test_sql_generation_with_fixture(user_query, expected_sql):
     sql = generate_sql(user_query)
     assert sql == expected_sql
@@ -91,7 +91,7 @@ def test_sql_generation_with_fixture(user_query, expected_sql):
 Parametrizing tests lets you run the same assertions across multiple sets of inputs. Use `pytest`'s `parametrize` decorator to achieve this. For example:
 
 ```python
-@unit
+@test
 @pytest.mark.parametrize(
     "user_query, expected_sql",
     [
@@ -113,7 +113,7 @@ LangSmith provides an `expect` utility to help define expectations about your LL
 ```python
 from langsmith import expect
 
-@unit
+@test
 def test_sql_generation_select_all():
     user_query = "Get all users from the customers table"
     sql = generate_sql(user_query)
@@ -125,7 +125,7 @@ This will log the binary "expectation" score to the experiment results, addition
 `expect` also provides "fuzzy match" methods. For example:
 
 ```python
-@unit
+@test
 @pytest.mark.parametrize(
     "query, expectation",
     [
@@ -188,7 +188,7 @@ LANGCHAIN_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests
 
 ## Explanations
 
-The `@unit` test decorator converts any unit test into a parametrized LangSmith example. By default, all unit tests within a given file will be grouped as a single "test suite" with a corresponding dataset.
+The `@test` test decorator converts any test into a parametrized LangSmith example. By default, all tests within a given file will be grouped as a single "test suite" with a corresponding dataset. You can configure which test suite a test belongs to by passing the `test_suite_name` parameter to `@test`.
 
 The following metrics are available off-the-shelf:
 
@@ -207,7 +207,7 @@ from langsmith.run_helpers import get_current_run_tree
 
 client = Client()
 
-@unit
+@test
 def test_foo():
     run_tree = get_current_run_tree()
     client.create_feedback(run_id=run_tree.id, key="my_custom_feedback", score=1)
@@ -304,13 +304,13 @@ Assert that the expectation value contains the given value.
 
 Assert the expectation value against a custom function.
 
-### `unit` API
+### `test` API
 
-The `unit` decorator is used to mark a function as a test case for LangSmith. It ensures that the necessary example data is created and associated with the test function. The decorated function will be executed as a test case, and the results will be recorded and reported by LangSmith.
+The `@test` decorator is used to mark a function as a test case for LangSmith. It ensures that the necessary example data is created and associated with the test function. The decorated function will be executed as a test case, and the results will be recorded and reported by LangSmith.
 
-#### `@unit(id=None, output_keys=None, client=None, test_suite_name=None)`
+#### `@test(id=None, output_keys=None, client=None, test_suite_name=None)`
 
-Create a unit test case in LangSmith.
+Create a test case in LangSmith.
 
 **Parameters**
 
