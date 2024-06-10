@@ -8,7 +8,7 @@ LangSmith functional tests are assertions and expectations designed to **quickly
 We recommend using LangSmith to track any unit tests, end-to-end integration tests, or other specific assertions that touch an LLM or other non-deterministic part of your AI system.
 These should run on every commit in your CI pipeline to catch regressions early.
 
-:::note 
+:::note
 `@test` currently requires `langsmith` python version `>=0.1.74` (named `@unit` for versions `>=0.1.42`). If you are interested in unit testing functionality in TypeScript or other languages, please let us know at [support@langchain.dev](mailto:support@langchain.dev).  
 :::
 
@@ -32,7 +32,7 @@ Then define your test:
 
 ```python tests/test_my_app.py
 # tests/test_my_app.py
-from langsmith import test 
+from langsmith import test
 from my_app.main import generate_sql
 
 @test
