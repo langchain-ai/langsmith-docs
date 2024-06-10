@@ -20,11 +20,11 @@ We've successfully tested LangSmith on the following Kubernetes distributions:
 - OpenShift
 - Minikube and Kind (for development purposes)
 
-For the most up-to-date information on deploying to kubernetes/upgrade instructions, please refer to the README in the [LangSmith Helm Chart](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/README.md).
+To review all configuration options, look at the values.yaml for the [LangSmith Helm Chart](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/README.md).
 
 ## Prerequisites
 
-Ensure you have the following tools/items ready. Some items are marked optional but :
+Ensure you have the following tools/items ready. Some items are marked optional:
 
 1. A working Kubernetes cluster that you can access via `kubectl`. Your cluster should have the following minimum requirements:
 
@@ -62,10 +62,7 @@ Ensure you have the following tools/items ready. Some items are marked optional 
    2. Note, we do rely on the OIDC Authorization Code with PKCE flow. We currently support almost anything that is OIDC compliant however Google does not support this flow.
    3. Without OAuth, you will not be able to create users or organizations.
 8. External Postgres(optional).
-   1. You can configure external postgres using the `values.yaml` file. You will need to provide connection parameters for your postgres instance.
-   2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled, or you must include that in your search path.
-   3. If your password contains special characters, you may need to url encode your password in the connection string.
-   4. Note: We do only officially support Postgres versions >= 14.
+   1. In production settings we recommend using an external Postgres instance. You can configure external Postgres using the `values.yaml` file. You will need to provide a connection url for your Postgres instance.
 9. External Redis(optional).
    1. You can configure external redis using the `values.yaml` file. You will need to provide a connection url for your redis instance.
    2. If using TLS, ensure that you use `rediss://` instead of `redis://. E.g "rediss://langsmith-redis:6380/0?password=foo"
@@ -166,46 +163,8 @@ You can also see some example configurations in the examples directory of the He
 
    The LangSmith UI should be visible/operational
 
-   ![./static/langsmith_ui.png](./static/langsmith_ui.png)
+   ![./static/langsmith_ui.png](../static/langsmith_ui.png)
 
 ## Using LangSmith
 
 Now that LangSmith is running, you can start using it to trace your code. You can find more information on how to use self-hosted LangSmith in the [Self-Hosted Usage Guide](/self_hosting/usage).
-
-### Frequently Asked Questions:
-
-#### How can we upgrade our application?
-
-- We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to follow the upgrade instructions in the [Helm README](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/README.md) and run a `helm upgrade langsmith --values <values file>`
-
-#### How can we back up our application?
-
-- Currently, we rely on PVCs/PV to power storage for our application. We strongly encourage setting up `Persistent Volume` backups or moving to a managed service for `Postgres` to support disaster recovery
-
-#### How does load balancing work/ingress work?
-
-- Currently, our application spins up one load balancer using a k8s service of type `LoadBalancer` for our frontend. If you do not want to set up a load balancer you can simply port-forward the frontend and use that as your external ip for the application. We also have an option for the chart to provision an ingress resource for the application.
-
-#### How can we authenticate to the application?
-
-- Currently, our self-hosted solution supports oauth as an authn solution. Note, we do offer a no-auth solution but highly recommend setting up oauth before moving into production.
-
-#### How can I use External `Postgres` or `Redis`?
-
-- You can configure external postgres or redis using the external sections in the `values.yaml` file. You will need to provide the connection url/params for the database/redis instance. Look at the configuration above example for more information.
-
-#### What networking configuration is needed for the application?
-
-Our deployment only needs egress for a few things:
-
-- Fetching images (If mirroring your images, this may not be needed)
-- Talking to any LLMs
-- Talking to any external services you may have configured
-- Fetching OAuth information
-  Your VPC can set up rules to limit any other access. Note: We require the X-Tenant-Id to be allowed to be passed through to the backend service. This is used to determine which tenant the request is for.
-
-#### What resources should we allocate to the application?
-
-- We recommend at least 4 vCPUs and 16GB of memory for our application.
-- We have some default resources set in our `values.yaml` file. You can override these values to tune resource usage for your organization.
-- If the metrics server is enabled in your cluster, we also recommend enabling autoscaling on all deployments.
