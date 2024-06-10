@@ -5,8 +5,16 @@ RBAC (Role-Based Access Control) is a feature that is only available to Enterpri
 Other plans default to using the Admin role for all users. Read more about roles under [admin concepts](../../concepts/admin/admin.mdx)
 :::
 
-LangSmith relies on RBAC to manage user permissions. This allows you to control who can access your LangSmith workspace and what they can do within the account.
-Only users with the `workspace:manage` permission can can manage access control.
+:::tip Recommended Reading
+
+Before diving into this content, it might be helpful to read the following:
+
+- [Conceptual guide on organizations and workspaces](../../concepts/admin)
+
+:::
+
+LangSmith relies on RBAC to manage user permissions **within a workspace**. This allows you to control who can access your LangSmith workspace and what they can do within it.
+Only users with the `workspace:manage` permission can can manage access control settings for a workspace.
 
 ## Create a role
 
@@ -18,7 +26,7 @@ By default, LangSmith comes with a set of system roles:
 
 If these do not fit your access model, admins can create custom roles to suit your needs.
 
-To create a role, navigate to the `Roles` tab in the `Members` section of the [Settings page](https://smith.langchain.com/settings)
+To create a role, navigate to the `Roles` tab in the `Members and roles` section of the [Organization settings page](https://smith.langchain.com/settings). Note that new roles that you create will be usable across all workspaces within your organization.
 
 Click on the `Create Role` button to create a new role. You should see a form like the one below:
 
@@ -28,7 +36,7 @@ Assign permissions for the different LangSmith resources that you want to contro
 
 ## Assign a role to a user
 
-Once you have your roles set up, you can assign them to users. To assign a role to a user, navigate to the `Members` tab in the `Members` section of the [Settings page](https://smith.langchain.com/settings)
+Once you have your roles set up, you can assign them to users. To assign a role to a user, navigate to the `Workspace members` tab in the `Workspaces` section of the [Organization settings page](https://smith.langchain.com/settings)
 
 Each user will have a `Role` dropdown that you can use to assign a role to them.
 
