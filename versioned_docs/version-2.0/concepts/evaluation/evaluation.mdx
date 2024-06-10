@@ -296,7 +296,7 @@ However, there are several downsides to this type of evaluation. First, it usual
 
 :::tip
 
-See our in depth tutorial on [evaluating agents](https://docs.smith.langchain.com/tutorials/Developers/agents).
+See our tutorial on [evaluating agent response](https://docs.smith.langchain.com/tutorials/Developers/agents#response-evaluation).
 
 :::
 
@@ -314,7 +314,7 @@ There are several benefits to this type of evaluation. It allows you to evaluate
 
 :::tip
 
-See our in depth tutorial on [evaluating agents](https://docs.smith.langchain.com/tutorials/Developers/agents).
+See our tutorial on [evaluating a single step of an agent](https://docs.smith.langchain.com/tutorials/Developers/agents#single-step-evaluation).
 
 :::
 
@@ -324,17 +324,17 @@ Evaluating an agent's trajectory involves looking at all the steps an agent took
 
 The inputs are again the inputs to the overall agent (the user input, and optionally a list of tools).
 
-The outputs are a list of tool calls, which can be formulated as an "extact" trajectory (e.g., an expected sequence of tool calls) or simply a list of tool calls that are expected (in any order).
+The outputs are a list of tool calls, which can be formulated as an "exact" trajectory (e.g., an expected sequence of tool calls) or simply a list of tool calls that are expected (in any order).
 
 The evaluator here is some function over the steps taken. Assessing the "exact" trajectory can use a single binary score that confirms an exact match for each tool name in the sequence. This is simple, but has some flaws. Sometimes there can be multiple correct paths. This evaluation also does not capture the difference between a trajectory being off by a single step versus being completely wrong.
 
-To address these flaws, evaluation metrics can focused on the number of "incorrect" steps taken, which better accounts for trajectories that are close versus ones that deviate significatly. Evaluation metrics can also focus on whether all of the expected tools are called in any order.
+To address these flaws, evaluation metrics can focused on the number of "incorrect" steps taken, which better accounts for trajectories that are close versus ones that deviate significantly. Evaluation metrics can also focus on whether all of the expected tools are called in any order.
 
-However, none of these approaches evaluate the input to the tools; they only focus on the tools selected. In order to account for this, another evaluation technique is to pass the full agent's trajectory (along with a reference trajectory) as a set of messages (e.g., all LLM responses and tool calls) an LLM-as-judge. This can evaluate the complete behavior of agent, but it the most challenging reference to compile (luckily, using a framework like LangGraph can help with this!). Another downside is that evaluation metrics can be somewhat tricky to come up with.
+However, none of these approaches evaluate the input to the tools; they only focus on the tools selected. In order to account for this, another evaluation technique is to pass the full agent's trajectory (along with a reference trajectory) as a set of messages (e.g., all LLM responses and tool calls) an LLM-as-judge. This can evaluate the complete behavior of the agent, but it is the most challenging reference to compile (luckily, using a framework like LangGraph can help with this!). Another downside is that evaluation metrics can be somewhat tricky to come up with.
 
 :::tip
 
-See our in depth tutorial on [evaluating agents](https://docs.smith.langchain.com/tutorials/Developers/agents).
+See our tutorial on [evaluating agent trajectory](https://docs.smith.langchain.com/tutorials/Developers/agents#trajectory).
 
 :::
 

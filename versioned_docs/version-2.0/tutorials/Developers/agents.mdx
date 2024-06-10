@@ -242,16 +242,7 @@ builder.add_edge("tools", "assistant")
 # The checkpointer lets the graph persist its state
 memory = SqliteSaver.from_conn_string(":memory:")
 graph = builder.compile(checkpointer=memory)
-
-from IPython.display import Image, display
-
-try:
-    display(Image(graph.get_graph(xray=True).draw_mermaid_png()))
-except:
-    pass
 ```
-
-![](./static/agent_lg.png)
 
 ### Test
 
@@ -289,13 +280,27 @@ for event in events:
 
 ## Eval
 
-[Agent evaluation](https://docs.smith.langchain.com/concepts/evaluation#agents) can focus on 3 things:
+Agent evaluation can focus on at least 3 things:
 
-- `Response`: The inputs are a prompt and a list of tools. The output is the agent response.
-- `Single step`: As before, the inputs are a prompt and a list of tools. The output the tool call.
-- `Trajectory`: As before, the inputs are a prompt and a list of tools. The output is the list of tool calls
+- `Response`: The inputs are a prompt and an optional list of tools. The output is the final agent response.
+- `Single step`: As before, the inputs are a prompt and an optional list of tools. The output the tool call.
+- `Trajectory`: As before, the inputs are a prompt and an optional list of tools. The output is the list of tool calls
+
+:::tip
+
+See our [evaluation guide](https://docs.smith.langchain.com/concepts/evaluation#agents) for more details on Agent evaluation.
+
+:::
 
 ### Response evaluation
+
+We can evaluate how well an agent does overall on a task. This basically involves treating the agent as a black box and just evaluating whether it gets the job done or not.
+
+:::tip
+
+See the full overview of agent response evaluation in our [conceptual guide](https://docs.smith.langchain.com/concepts/evaluation#evaluating-an-agents-final-response).
+
+:::
 
 `Dataset`
 
@@ -384,9 +389,19 @@ experiment_results = evaluate(
 
 ### Single step evaluation
 
-We can check a specific tool call using [custom evaluators](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators):
+Agents generally make multiple actions. While it is useful to evaluate them end-to-end, it can also be useful to evaluate the individual actions. This generally involves evaluating a single step of the agent - the LLM call where it decides what to do.
 
-- We specify the expected tool call for the step that we are evaluating.
+:::tip
+
+See the full overview of single step evaluation in our [conceptual guide](https://docs.smith.langchain.com/concepts/evaluation#evaluating-a-single-step-of-an-agent).
+
+:::
+
+We can check a specific tool call using [a custom evaluator](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators):
+
+- Here, we just invoke the assistant, `assistant_runnable`, with a prompt and check if the resulting tool call is as expected.
+- Here, we are using a specialized agent where the tools are hard-coded (rather than passed with the dataset input).
+- We specify the `reference` tool call for the step that we are evaluating, `expected_tool_call`.
 
 ```python
 def predict_assistant(example: dict):
@@ -428,8 +443,18 @@ experiment_results = evaluate(
 
 We can check a trajectory of tool calls using [custom evaluators](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators):
 
+- Here, we just invoke the agent, `graph.invoke`, with a prompt.
+- Here, we are using a specialized agent where the tools are hard-coded (rather than passed with the dataset input).
+- We extract the list of tools called, using `find_tool_calls`.
+- Custom functions can process these tool calls in various user-defined ways.
 - We can check if all expected tools are called in any order: `contains_all_tool_calls_any_order`
-- We can check if all expected tools are called in exact order: `contains_all_tool_calls_in_order
+- We can check if all expected tools are called in exact order: `contains_all_tool_calls_in_order`
+
+:::tip
+
+See the full overview of single step evaluation in our [conceptual guide](https://docs.smith.langchain.com/concepts/evaluation#evaluating-an-agents-trajectory).
+
+:::
 
 ```python
 def predict_sql_agent_messages(example: dict):
