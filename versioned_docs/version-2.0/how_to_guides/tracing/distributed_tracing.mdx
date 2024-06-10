@@ -76,6 +76,10 @@ async def fake_route(request: Request):
 
 ## Distributed tracing in TypeScript
 
+:::note
+Distributed tracing in TypeScript requires `langsmith` version `>=0.1.31`
+:::
+
 First, we obtain the current run tree from the client and convert it to `langsmith-trace` and `baggage` header values, which we can pass to the server:
 
 ```typescript
