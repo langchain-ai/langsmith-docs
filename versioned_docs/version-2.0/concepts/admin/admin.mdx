@@ -6,11 +6,30 @@ This conceptual guide covers topics related to managing users, organizations, an
 
 An organization is a logical grouping of users within LangSmith with its own billing configuration. Typically, there is one organization per company. An organization can have multiple workspaces. For more details, see the [setup guide](../../how_to_guides/setup/set_up_organization.mdx).
 
-## Workspaces (coming soon) {#workspaces}
+## Workspaces {#workspaces}
 
 A workspace is a logical grouping of users and resources within an organization. Users may have permissions in a workspace that grant them access to the resources in that workspace, including tracing projects, datasets, annotation queues, and prompts. For more details, see the [setup guide](../../how_to_guides/setup/set_up_workspace.mdx).
 
+The following image shows a sample workspace settings page:
 ![Sample Workspace](../static/sample_workspace.png)
+
+The following diagram explains the relationship between organizations, workspaces, and the different resources scoped to and within a workspace:<br />
+
+```mermaid
+graph TD
+  Organization --> WorkspaceA[Workspace A]
+  Organization --> WorkspaceB[Workspace B]
+  WorkspaceA --> tg1(Trace Projects)
+  WorkspaceA --> tg2(Datasets and Experiments)
+  WorkspaceA --> tg3(Annotation Queues)
+  WorkspaceA --> tg4(Prompts)
+  WorkspaceB --> tg5(Trace Projects)
+  WorkspaceB --> tg6(Datasets and Experiments)
+  WorkspaceB --> tg7(Annotation Queues)
+  WorkspaceB --> tg8(Prompts)
+```
+
+<br />
 
 ## Users
 
@@ -24,7 +43,7 @@ And workspace members are managed in workspace settings:
 
 ![Sample Workspace Members](../static/sample_workspace_members.png)
 
-## API Keys
+## API keys
 
 :::danger Dropping support July 1st, 2024
 We will be dropping support for API keys on July 1st 2024 in favor of personal access tokens (PATs) and service keys. We recommend using PATs and service keys for all new integrations. API keys prefixed with `ls__` will NO LONGER work after July 1st, 2024.
@@ -40,7 +59,7 @@ Personal Access Tokens (PATs) are used to authenticate requests to the LangSmith
 
 PATs are prefixed with `lsv2_pt_`
 
-### Service Keys
+### Service keys
 
 Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account.
 
@@ -50,11 +69,21 @@ Service keys are prefixed with `lsv2_sk_`
 To see how to create a service key or Personal Access Token, see the [setup guide](../../how_to_guides/setup/create_account_api_key.mdx)
 :::
 
-## Organization Roles
+## Organization roles
 
 Organization roles are distinct from the Enterprise feature (RBAC) below and are used in the context of multiple [workspaces](#workspaces). Your organization role determines your workspace membership characteristics and your organization-level permissions. See the [organization setup guide](../../how_to_guides/setup/set_up_organization#organization-roles) for more information.
 
-## Workspace Roles
+The organization role selected also impacts workspace membership as described here:
+
+- `Organization Admin` grants full access to manage all organization configuration, users, billing, and workspaces. **An `Organization Admin` has `Admin` access to all workspaces in an organization**
+- `Organization User` may read organization information but cannot execute any write actions at the organization level. **An `Organization User` can be added to a subset of workspaces and assigned workspace roles as usual (if RBAC is enabled), which specify permissions at the workspace level.**
+
+:::info
+The `Organization User` role is only available in organizations on plans with multiple workspaces. In organizations limited to a single workspace, all users are `Organization Admins`.
+Custom organization-scoped roles are not available yet.
+:::
+
+## Workspace roles (RBAC) {#workspace-roles}
 
 :::note
 RBAC (Role-Based Access Control) is a feature that is only available to Enterprise customers. If you are interested in this feature, please contact our sales team at sales@langchain.dev
