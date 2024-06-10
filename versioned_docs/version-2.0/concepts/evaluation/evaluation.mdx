@@ -193,7 +193,7 @@ They are also commonly done when evaluating new or different models.
 
 :::
 
-LangSmith's comparison view has native support for regression testing, allowing your to quickly see examples that have changed relative to the baseline (with regressions on specific examples shown in red and improvements in green):
+LangSmith's comparison view has native support for regression testing, allowing you to quickly see examples that have changed relative to the baseline (with regressions on specific examples shown in red and improvements in green):
 
 ![Regression](../static/regression.png)
 
@@ -213,7 +213,7 @@ See our video on [`Back-testing`](https://youtu.be/3cDtDI2W-xA?feature=shared) t
 
 ### Pairwise-testing
 
-It [can be easier](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/) for a human (or an LLM grader) to determine `A is better than B` than to assign an individual score to either A or B. This helps to explain why some have observated that pairwise evaluations can be a more stable scoring approach than assigning individual scores to each experiment, particularly when working with LLM-as-judge evaluators.
+It [can be easier](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/) for a human (or an LLM grader) to determine `A is better than B` than to assign an individual score to either A or B. This helps to explain why some have observed that pairwise evaluations can be a more stable scoring approach than assigning individual scores to each experiment, particularly when working with LLM-as-judge evaluators.
 
 :::tip
 
@@ -248,7 +248,7 @@ See documentation on using `evaluate` [here](https://docs.smith.langchain.com/ho
 
 #### Repetitions
 
-One of the most common questions when evaluating AI applications is: how can I build confidence the result of an experiment? This is particularly relevant for LLM applications (e.g., agents), which can exhibit considerable run-to-run variability. Repetitions involve running the same evaluation multiple times and aggregating the results to smooth out run-to-run variability and examine the reproducibility of the AI application's performance. LangSmith `evaluate` function allows you to easily set the number of repetitions and aggregates (the mean) of replicate experiments for you in the UI.
+One of the most common questions when evaluating AI applications is: how can I build confidence in the result of an experiment? This is particularly relevant for LLM applications (e.g., agents), which can exhibit considerable run-to-run variability. Repetitions involve running the same evaluation multiple times and aggregating the results to smooth out run-to-run variability and examine the reproducibility of the AI application's performance. LangSmith `evaluate` function allows you to easily set the number of repetitions and aggregates (the mean) of replicate experiments for you in the UI.
 
 :::tip
 
@@ -269,7 +269,7 @@ Below, we will discuss evaluation of a few specific, popular LLM applications.
 
 ![Tool use](../static/tool_use.png)
 
-Below is a tool-calling agent in [LangGraph](https://langchain-ai.github.io/langgraph/tutorials/introduction/). The `assistant node` is an LLM that determines whether to invoke a tool based upon the input. The `tool condition` sees if a tool was selected by the `assistant node` and, if so, routes to the `tool node`. The `tool node` executes the tool and returns the output as a tool message to the `assistant node`. This loop continues until as long as the `assistant node` selects a tool. If no tool is selected, the the agent directly returns the LLM response.
+Below is a tool-calling agent in [LangGraph](https://langchain-ai.github.io/langgraph/tutorials/introduction/). The `assistant node` is an LLM that determines whether to invoke a tool based upon the input. The `tool condition` sees if a tool was selected by the `assistant node` and, if so, routes to the `tool node`. The `tool node` executes the tool and returns the output as a tool message to the `assistant node`. This loop continues until as long as the `assistant node` selects a tool. If no tool is selected, then the agent directly returns the LLM response.
 
 ![Agent](../static/langgraph_agent.png)
 
@@ -284,43 +284,39 @@ Note that you likely will want to do multiple (if not all!) of these types of ev
 
 ### Evaluating an agent's final response
 
-The most complete way to evaluate an agent is to evaluate how it does overall on a task.
-This basically involves treating the agent as a black box and just evaluating whether it gets the job done or not.
+One way to evaluate an agent is to assess its overall performance on a task. This basically involves treating the agent as a black box and simply evaluating whether or not it gets the job done.
 
-The inputs should be the user input and (optionally) a list of tools.
-Whether or not the list of tools is passed as input depends on whether the agent is a generic one or not.
-If the agent is generic, then that means it does not have a fixed set of tools, and that needs to be passed in at run time.
-If the agent is more specific, then those tools are likely hardcoded as part of the agent, and they don't need to be passed in.
+The inputs should be the user input and (optionally) a list of tools. In some cases, tool are hardcoded as part of the agent and they don't need to be passed in. In other cases, the agent is more generic, meaning it does not have a fixed set of tools and tools need to be passed in at run time.
 
 The output should be the agent's final response.
 
-The evaluators here vary depending on the task you are asking the agent to do.
-Most agents do relatively complex things, and so as a result the evaluator is often (but not always) an LLM-as-judge.
+The evaluator varies depending on the task you are asking the agent to do. Many agents perform a relatively complex set of steps and the output a final text response. Similar to RAG, LLM-as-judge evaluators are often effective for evaluation in these cases because they can assess whether the agent got a job done directly from the text response.
 
-This is good to do because this ultimately the thing that matters most - did it get the job done.
-There are several downsides to this type of evaluation. First, it usually takes a while to run. Second, you are not evaluating anything that
-happens inside the application, so it can make it tough to see where exactly it is failing. Third, it can sometimes be hard to define appropriate evaluation metrics.
+However, there are several downsides to this type of evaluation. First, it usually takes a while to run. Second, you are not evaluating anything that happens inside the agent, so it can be hard to debug when failures occur. Third, it can sometimes be hard to define appropriate evaluation metrics.
+
+:::tip
+
+See our in depth tutorial on [evaluating agents](https://docs.smith.langchain.com/tutorials/Developers/agents).
+
+:::
 
 ### Evaluating a single step of an agent
 
-Agents generally make multiple actions. While it is useful to evaluate them end-to-end,
-it can also be useful to evaluate the individual actions.
-This generally involves evaluating a single step of the agent - the LLM call where it decides what to do.
+Agents generally perform multiple actions. While it is useful to evaluate them end-to-end, it can also be useful to evaluate these individual actions. This generally involves evaluating a single step of the agent - the LLM call where it decides what to do.
 
-The inputs should be the input to a single step. Depending on what you are testing, this could just be the raw user input,
-or it could be user input as well as previously completed steps (if you want to evaluate a downstream step).
+The inputs should be the input to a single step. Depending on what you are testing, this could just be the raw user input (e.g., a prompt and / or a set of tools) or it can also include previously completed steps.
 
-The outputs are just the output of that step - usually the LLM response. This LLM response often contains tool calls,
-indicating what action the agent should take next.
+The outputs are just the output of that step, which is usually the LLM response. The LLM response often contains tool calls, indicating what action the agent should take next.
 
-The evaluator for this is usually some binary score for whether the correct tool was used or not, as well as some heuristic for whether the input to the tool was correct.
+The evaluator for this is usually some binary score for whether the correct tool call was selected, as well as some heuristic for whether the input to the tool was correct. The reference tool can be simply specified as a string.
 
-There are several benefits to this type of evaluation.
-It allows you to evaluate individual actions, which lets you hone in where your application may be failing.
-They are also relatively fast to run (because they only involve a single LLM call).
-One downside is that they don't capture the full agent - only one particular point.
-Another downside is that while it is pretty easy to generate a dataset for steps early on in an agent's trajectory,
-it can be difficult to generate a dataset for steps later on in the trajectory.
+There are several benefits to this type of evaluation. It allows you to evaluate individual actions, which lets you hone in where your application may be failing. They are also relatively fast to run (because they only involve a single LLM call) and evaluation often uses simple heuristc evaluation of the selected tool relative to the reference tool. One downside is that they don't capture the full agent - only one particular step. Another downside is that dataset creation can be challenging, particular if you want to include past history in the agent input. It is pretty easy to generate a dataset for steps early on in an agent's trajectory (e.g., this may only include the input prompt), but it can be difficult to generate a dataset for steps later on in the trajectory (e.g., including numerous prior agent actions and responses).
+
+:::tip
+
+See our in depth tutorial on [evaluating agents](https://docs.smith.langchain.com/tutorials/Developers/agents).
+
+:::
 
 ### Evaluating an agent's trajectory
 
@@ -328,18 +324,19 @@ Evaluating an agent's trajectory involves looking at all the steps an agent took
 
 The inputs are again the inputs to the overall agent (the user input, and optionally a list of tools).
 
-The outputs are a list of tool calls.
+The outputs are a list of tool calls, which can be formulated as an "extact" trajectory (e.g., an expected sequence of tool calls) or simply a list of tool calls that are expected (in any order).
 
-The evaluator here is some function over the steps taken. It could be a single binary score to indicate whether the "correct" trajectory was taken,
-where "correct" is determined by looking at an exact match for tool name. This is simple, but has some flaws.
-Sometimes there can be multiple correct paths. This evaluation also does not capture the difference between a trajectory being off by a single step versus being completely wrong.
-Another evaluation metric may be number of "incorrect" steps taken. This better accounts for trajectories that are close versus ones that are way off.
-Neither of these capture whether the input to the tools is correct.
-In order to account for that, another evaluation technique is to pass the agent's trajectory (along with a desired trajectory) to an LLM and ask if it is correct.
+The evaluator here is some function over the steps taken. Assessing the "exact" trajectory can use a single binary score that confirms an exact match for each tool name in the sequence. This is simple, but has some flaws. Sometimes there can be multiple correct paths. This evaluation also does not capture the difference between a trajectory being off by a single step versus being completely wrong.
 
-The benefits of this type of evaluation are that you can evaluate a full run of the agent while also evaluating what went on under the hood.
-One downside is that you have to have a good record of what those steps taken were (luckily, using a framework like LangGraph can help with that!).
-Another downside is that evaluation metrics can be somewhat tricky to come up with.
+To address these flaws, evaluation metrics can focused on the number of "incorrect" steps taken, which better accounts for trajectories that are close versus ones that deviate significatly. Evaluation metrics can also focus on whether all of the expected tools are called in any order.
+
+However, none of these approaches evaluate the input to the tools; they only focus on the tools selected. In order to account for this, another evaluation technique is to pass the full agent's trajectory (along with a reference trajectory) as a set of messages (e.g., all LLM responses and tool calls) an LLM-as-judge. This can evaluate the complete behavior of agent, but it the most challenging reference to compile (luckily, using a framework like LangGraph can help with this!). Another downside is that evaluation metrics can be somewhat tricky to come up with.
+
+:::tip
+
+See our in depth tutorial on [evaluating agents](https://docs.smith.langchain.com/tutorials/Developers/agents).
+
+:::
 
 ### Best practices
 
