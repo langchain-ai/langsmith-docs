@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Set up an organization
 
 :::tip Recommended Reading
@@ -15,34 +19,12 @@ Shared organizations require a credit card before they can be used. You will nee
 
 ![](../static/create_organization.png)
 
-## Manage workspaces
+## Manage and navigate workspaces
 
 Once you've subscribed, [set up workspaces](./set_up_workspace) to collaborate more effectively and isolate LangSmith resources between different groups of users.  
 To navigate between workspaces and access the resources within each workspace (trace projects, annotation queues, etc.), select desired workspace from the picker in the top left:
 
 ![](../static/select_workspace.png)
-
-See the table below for details on which features are available in which scope:
-
-| Resource/Setting                                                            | Scope        |
-| --------------------------------------------------------------------------- | ------------ |
-| Trace Projects                                                              | Workspace    |
-| Annotation Queues                                                           | Workspace    |
-| Deployments                                                                 | Workspace    |
-| Datasets &amp; Testing                                                      | Workspace    |
-| Prompts                                                                     | Workspace    |
-| API Keys                                                                    | Workspace    |
-| Settings including Secrets, Feedback config, Models, Rules, and Shared URLs | Workspace    |
-| User management: Invite User to Workspace                                   | Workspace    |
-| RBAC: Assigning Workspace Roles                                             | Workspace    |
-| Data Retention, Usage Limits                                                | Workspace\*  |
-| Plans and Billing, Credits, Invoices                                        | Organization |
-| User management: Invite User to Organization                                | Organization |
-| Adding Workspaces                                                           | Organization |
-| Assigning Organization Roles                                                | Organization |
-| RBAC: Creating/Editing/Deleting Custom Roles                                | Organization |
-
-\*&nbsp;Data retention settings and usage limits will be available soon for the organization level as well
 
 ## Manage users
 
@@ -55,7 +37,7 @@ Here you can
 
 ![](../static/organization_members_and_roles.png)
 
-Organizations on the Enterprise plan may set up custom roles in the `Roles` tab here. See the [access control setup guide](./set_up_access_control.mdx) for more details.
+Organizations on the Enterprise plan may set up custom workspace roles in the `Roles` tab here. See the [access control setup guide](./set_up_access_control.mdx) for more details.
 
 ### Organization roles
 
@@ -70,30 +52,3 @@ Custom organization-scoped roles are not available yet.
 :::
 
 See the table below for all organization permissions:
-
-|                                             | Organization User | Organization Admin |
-| ------------------------------------------- | ----------------- | ------------------ |
-| View organization configuration             | ✅                | ✅                 |
-| View organization roles                     | ✅                | ✅                 |
-| View organization members                   | ✅                | ✅                 |
-| View data retention settings                | ✅                | ✅                 |
-| View usage limits                           | ✅                | ✅                 |
-| Admin access to all workspaces              |                   | ✅                 |
-| Manage billing settings                     |                   | ✅                 |
-| Create workspaces                           |                   | ✅                 |
-| Create, edit, and delete organization roles |                   | ✅                 |
-| Invite new users to organization            |                   | ✅                 |
-| Delete user invites                         |                   | ✅                 |
-| Remove users from an organization           |                   | ✅                 |
-| Update data retention settings\*            |                   | ✅                 |
-| Update usage limits\*                       |                   | ✅                 |
-
-## Personal vs shared organizations
-
-There are a few important differences between your personal organization and shared organizations:
-
-| Feature             | Personal            | Shared                                         |
-| ------------------- | ------------------- | ---------------------------------------------- |
-| Maximum workspaces  | 1                   | Variable, depending on plan (see pricing page) |
-| Collaboration       | Cannot invite users | Can invite users                               |
-| Billing: paid plans | Developer plan only | All other plans available                      |
