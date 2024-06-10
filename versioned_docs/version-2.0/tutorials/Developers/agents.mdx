@@ -2,14 +2,14 @@
 sidebar_position: 6
 ---
 
-# Agent Evaluations
+# Evaluate an agent
 
-We will walk through the evaluation workflow for RAG (retrieval augmented generation).
+We will walk through the evaluation workflow for agents.
 
 First, we ensure that the necessary packages are installed.
 
 ```python
-%pip install --upgrade --quiet  langchain langchain-community langchain-experimental langchain_openai langgraph
+%pip install --upgrade --quiet  langchain langchain-community langchain_openai langgraph
 ```
 
 Then, we ensure that API keys for OpenAI as well as LangSmith are set.
@@ -408,7 +408,7 @@ def predict_assistant(example: dict):
     """Invoke assistant for single tool call evaluation"""
     msg = [ ("user", example["input"]) ]
     result = assistant_runnable.invoke({"messages":msg})
-    return {"response": messages}
+    return {"response": result}
 
 from langsmith.schemas import Example, Run
 def check_specific_tool_call(root_run: Run, example: Example) -> dict:
@@ -423,7 +423,7 @@ def check_specific_tool_call(root_run: Run, example: Example) -> dict:
 
     # Get tool call
     try:
-        tool_call = getattr(result, 'tool_calls', [])[0]['name']
+        tool_call = getattr(response, 'tool_calls', [])[0]['name']
     except (IndexError, KeyError):
         tool_call = None
 
@@ -500,7 +500,7 @@ def contains_all_tool_calls_in_order(root_run: Run, example: Example) -> dict:
 experiment_results = evaluate(
     predict_sql_agent_messages,
     data=dataset_name,
-    evaluators=[check_specific_tool_call,contains_all_tool_calls_any_order,contains_all_tool_calls_in_order],
+    evaluators=[contains_all_tool_calls_any_order,contains_all_tool_calls_in_order],
     experiment_prefix="sql-agent-response-tool-calling",
     metadata={"version": "Chinook, gpt-4o base-case agent"},
 )

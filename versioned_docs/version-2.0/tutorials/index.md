@@ -9,6 +9,7 @@ New to LangSmith? This is the place to start. Here, you'll find a hands-on intro
 - [Optimize a classifier](./tutorials/Developers/optimize_classifier)
 - [RAG Evalutations](./tutorials/Developers/rag)
 - [Backtesting](./tutorials/Developers/backtesting)
+- [Agent Evaluations](./tutorials/Developers/agents)
 
 ## Administrators
 
