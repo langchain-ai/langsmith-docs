@@ -8,9 +8,11 @@ Explanations, clarification and discussion of key topics in LangSmith.
 - [Workspaces](./concepts/admin#workspaces)
 - [Users](./concepts/admin#users)
 - [API keys](./concepts/admin#api-keys)
-- [Personal Access Tokens (PATs)](./concepts/admin#personal-access-tokens-pats)
-- [Service keys](./concepts/admin#service-keys)
+  - [Personal Access Tokens (PATs)](./concepts/admin#personal-access-tokens-pats)
+  - [Service keys](./concepts/admin#service-keys)
 - [Roles](./concepts/admin#roles)
+  - [Organization roles](./concepts/admin#organization-roles)
+  - [Workspace roles](./concepts/admin#workspace-roles)
 
 ## Tracing
 
