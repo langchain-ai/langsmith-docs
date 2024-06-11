@@ -179,7 +179,7 @@ assistant_runnable = query_gen_prompt | ChatOpenAI(model="gpt-4o", temperature=0
 
 ```python
 from langchain_core.messages import ToolMessage
-from langchain_core.runnables import RunnableLambda 
+from langchain_core.runnables import RunnableLambda
 
 def create_tool_node_with_fallback(tools: list) -> dict:
     return ToolNode(tools).with_fallbacks(
