@@ -178,6 +178,9 @@ assistant_runnable = query_gen_prompt | ChatOpenAI(model="gpt-4o", temperature=0
 ### Graph Utilities
 
 ```python
+from langchain_core.messages import ToolMessage
+from langchain_core.runnables import RunnableLambda 
+
 def create_tool_node_with_fallback(tools: list) -> dict:
     return ToolNode(tools).with_fallbacks(
         [RunnableLambda(handle_tool_error)], exception_key="error"
@@ -218,7 +221,6 @@ def handle_tool_error(state) -> dict:
 from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
-from langchain_core.runnables import RunnableLambda
 
 # Graph
 builder = StateGraph(State)
