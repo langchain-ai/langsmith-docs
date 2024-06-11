@@ -1,36 +1,40 @@
 ---
 sidebar_label: Frequently Asked Questions
 sidebar_position: 4
-table_of_contents: true
+description: "Frequently Asked Questions"
 ---
 
-### Frequently Asked Questions:
+# Frequently Asked Questions:
 
-#### What Stateful Resources are needed for the application?
+## What Stateful Resources are needed for the application?
 
--
+LangSmith uses the following stateful resources:
 
-#### How can we upgrade our application?
+- Postgres: Used for storing application data
+- Redis: Used for caching and storing session data
+- ClickHouse: Used for storing logs and metrics
+
+## How can we upgrade our application?
 
 - We plan to release new minor versions of the LangSmith application every 6 weeks. This will include release notes and all changes should be backwards compatible. To upgrade, you will need to follow the upgrade instructions in the [Helm README](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/README.md) and run a `helm upgrade langsmith --values <values file>`
 
-#### How can we back up our application?
+## How can we back up our application?
 
 - Currently, we rely on PVCs/PV to power storage for our application. We strongly encourage setting up `Persistent Volume` backups or moving to a managed service for `Postgres` to support disaster recovery
 
-#### How does load balancing work/ingress work?
+## How does load balancing work/ingress work?
 
 - Currently, our application spins up one load balancer using a k8s service of type `LoadBalancer` for our frontend. If you do not want to set up a load balancer you can simply port-forward the frontend and use that as your external ip for the application. We also have an option for the chart to provision an ingress resource for the application.
 
-#### How can we authenticate to the application?
+## How can we authenticate to the application?
 
 - Currently, our self-hosted solution supports oauth as an authn solution. Note, we do offer a no-auth solution but highly recommend setting up oauth before moving into production.
 
-#### How can I use External `Postgres` or `Redis`?
+## How can I use External `Postgres` or `Redis`?
 
 - You can configure external postgres or redis using the external sections in the `values.yaml` file. You will need to provide the connection url/params for the database/redis instance. Look at the configuration above example for more information.
 
-#### What networking configuration is needed for the application?
+## What networking configuration is needed for the application?
 
 Our deployment only needs egress for a few things:
 
@@ -40,8 +44,8 @@ Our deployment only needs egress for a few things:
 - Fetching OAuth information
   Your VPC can set up rules to limit any other access. Note: We require the X-Tenant-Id to be allowed to be passed through to the backend service. This is used to determine which tenant the request is for.
 
-#### What resources should we allocate to the application?
+## What resources should we allocate to the application?
 
 - We recommend at least 4 vCPUs and 16GB of memory for our application.
-- We have some default resources set in our `values.yaml` file. You can override these values to tune resource usage for your organization.
+- We have some default resources commented out in our `values.yaml` file. You can override these values to tune resource usage for your organization.
 - If the metrics server is enabled in your cluster, we also recommend enabling autoscaling on all deployments.
