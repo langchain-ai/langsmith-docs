@@ -12,9 +12,15 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 See the following guides to set up your LangSmith account.
 
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
-- [Create an organization](./how_to_guides/setup/create_organization)
-- [Set up billing](./how_to_guides/setup/set_up_billing)
+- [Set up an organization](./how_to_guides/setup/set_up_organization)
+  - [Create an organization](./how_to_guides/setup/set_up_organization#create-an-organization)
+  - [Manage and navigate workspaces](./how_to_guides/setup/set_up_organization#manage-and-navigate-workspaces)
+  - [Manage users](./how_to_guides/setup/set_up_organization#manage-users)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
+  - [Create a workspace](./how_to_guides/setup/set_up_workspace#create-a-workspace)
+  - [Manage users](./how_to_guides/setup/set_up_workspace#manage-users)
+  - [Configure workspace settings](./how_to_guides/setup/set_up_workspace#configure-workspace-settings)
+- [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
   - [Create a role](./how_to_guides/setup/set_up_access_control#create-a-role)
   - [Assign a role to a user](./how_to_guides/setup/set_up_access_control#assign-a-role-to-a-user)
