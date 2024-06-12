@@ -1,0 +1,33 @@
+## Week of January 29, 2024 - LangSmith v0.2
+
+LangSmith 0.2 improves performance and reliability, adds a updated interface for reviewing trace data, and adds support for batch processing of traces.
+
+### Requirements
+
+- This release requires `langsmith-sdk` version ≥ `0.0.71` (Python) and ≥ `0.0.56` (JS/TS) to support changes in pagination of API results. Older versions will only return the first 100 results when querying an endpoint.
+
+### Breaking changes
+
+- The search syntax for metadata in runs has changed and limits support for nested JSON to a single level. If you are supplying custom metadata in traces, you should flatten your metadata structure in order to allow it to be searchable, (e.g. `{"user_id": ..., "user_name":...,}`) and then search using `has(metadata, '{"user_name": ...}')`
+
+### Performance and Reliability Changes
+
+- Improved performance when ingesting traces, reducing the delay between ingest and display in the LangSmith UI.
+- Improved performance for updates and deletes on annotation labels.
+- Added pagination of API responses.
+- Fixed an issue impacting natural language searches.
+
+### Infrastructure Changes
+
+- Added the `clickhouse` database service. Run results will now be stored in ClickHouse instead of Postgres to improve performance and scalability and reduce delays in the time it takes for runs to appear in LangSmith.
+  - Note that if you wish to retain access to run data in the Langsmith UI after updating, a data migration will need to be performed. Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
+
+### Admin changes
+
+- Increased the maximum number of users per organization from 5 to 100 for new organizations.
+
+### Deprecation notices
+
+With the release of 0.2:
+
+- LangSmith 0.1.x is now in maintenance mode and may only receive critical security fixes.
