@@ -27,7 +27,7 @@ please reach out to your sales rep or support@langchain.dev.
 
 This tutorial walks through optimizing your spend on LangSmith. In it, we will learn how to optimize existing spend
 and prevent future overspend on a realistic real-world example. We will use an existing LangSmith organization with high usage.
-Concepts can be transferred to your own tenant.
+Concepts can be transferred to your own organization.
 
 ## Problem Setup
 
@@ -43,8 +43,8 @@ and Invoices.
 
 ### Usage Graph
 
-The usage graph lets us examine how much of each usage based pricing metric we have consumed lately. It does not give insight
-into spend.
+The usage graph lets us examine how much of each usage based pricing metric we have consumed lately. It does not directly show
+spend (which we will see later on our draft invoice).
 
 We can navigate to the Usage Graph under `Settings` -> `Usage and Billing` -> `Usage Graph`.
 
@@ -56,37 +56,39 @@ We see in the graph above that there are two usage metrics that LangSmith charge
 - LangSmith Traces (Extended Data Retention Upgrades).
 
 The first metric tracks all traces that you send to LangSmith. The second tracks all traces that also have our Extended 400 Day Data Retention.
-For more details, see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing).
+For more details, see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing). Notice that these graphs look 
+identical, which will come into play later in the tutorial.
 
-LangSmith Traces usage is measured per workspace. This is because workspaces often represent development environments (as in our example),
-or teams within an organization, and as a LangSmith administrator, we want to know which environment or team is responsible for
-the majority of our costs.
+LangSmith Traces usage is measured per workspace, because workspaces often represent development environments (as in our example),
+or teams within an organization. As a LangSmith administrator, we want to understand spend granularly per each of these units. In 
+this case where we just want to cut spend, we can focus on the environment responsible for the majority of costs first for the greatest savings.
 
 :::note
 LangSmith's Usage Graph and Invoice use the term `tenant_id` to refer to a workspace ID. They are interchangeable.
 :::
 
 In the above image, the vast majority of usage is in the workspace with ID `c27dd32c-7c80-4e8c-acde-bfcb67a90ab2`. We can
-go to `Settings` -> `Workspaces`, and hover our mouse over the `Workspace ID` button to find the one with a matching ID:
+go to `Settings` -> `Workspaces`, and hover our mouse over the `Workspace ID` button to find the one with a matching ID. In 
+this case, it's the Prod workspace:
 
 ![](./static/p1findworkspaceid_v2.png)
 
 ### Invoices
 
-We understand what usage looks like in terms of traces, but need to now translate that into spend. To do so,
+We understand what usage looks like in terms of traces, but we now need to translate that into spend. To do so,
 we head to the `Invoices` tab. The first invoice that will appear on screen is a draft of your current month's
 invoice, which shows your running spend thus far this month.
 
 ![](./static/invoice_investigation_v2.gif)
 
-In the above GIF, we see that the charges for LangSmith Traces are broken up by "tenant_id", meaning we can track tracing spend
+In the above GIF, we see that the charges for LangSmith Traces are broken up by "tenant_id" (i.e. Workspace ID), meaning we can track tracing spend
 on each of our workspaces. In the first few days of June, the vast majority of the total spend of ~$2,000 is in our production
 workspace. Further, the majority of spend in that workspace was on extended data retention trace upgrades.
 
 These upgrades occur for two reasons:
 
-1. you use extended data retention tracing
-2. you use base data retention tracing, and use a feature that automatically extends the data retention of a trace
+1. You use extended data retention tracing, meaning that, by default, your traces are retained for 400 days
+2. You use base data retention tracing, and use a feature that automatically extends the data retention of a trace ([see our Auto-Upgrade conceptual docs](../../../concepts/usage_and_billing/data_retention_billing#data-retention-auto-upgrades))
 
 Given that the number of total traces per day is equal to the number of extended retention traces per day, it's most likely the
 case that this org is using extended data retention tracing everywhere. As such, we start by optimizing our retention settings.
@@ -124,13 +126,19 @@ with the organization level setting, this will only affect retention (and pricin
 We may not want all our traces to expire after 14 days if we care about historical debugging. As such, we can take advantage
 of LangSmith's built in ability to do server side sampling for extended data retention.
 
-LangSmith automatically upgrades the data retention for any trace that matches a run rule in our automations product. On the
+LangSmith automatically upgrades the data retention for any trace that matches a run rule in our automations product (see our [run rules docs](../../../how_to_guides/monitoring/rules)). On the
 projects page, click `Add Rule`, and configure the rule as follows:
 
 ![](./static/P1SampleTraces.png)
 
-Run rules match on runs rather than traces, so we add a filter condition to only match the "root" run. This is distinct per trace,
-so our 10% sampling will upgrade 10% of traces, not 10% of runs, which could correspond to more than 10% of traces.
+Run rules match on runs rather than traces. Runs are single units of work within an LLM application's API handling. Traces 
+are end to end API calls (learn more about [tracing concepts in LangSmith](../../concepts/tracing)). This means a trace can 
+be thought of as a tree of runs making up an API call.  When a run rule matches any run within a trace, the trace's full run tree
+upgrades to be retained for 400 days. 
+
+Therefore, to make sure we have the proper sampling rate on traces, we can add a filter condition to only match the "root" run in 
+the run tree. This is distinct per trace, so our 10% sampling will upgrade 10% of traces, rather 10% of runs, which could correspond to 
+more than 10% of traces.
 
 :::note
 If you want to keep a subset of traces for longer than 400 days for data collection purposes, you can create another run
@@ -215,7 +223,7 @@ use this feature, please read more about its functionality [here](../../concepts
 
 ### Set dev/staging limits and view total spent limit across workspaces
 
-Let's say we follow the same logic for our dev and staging environments, which leads us to set limits at 10% of the production
+Following the same logic for our dev and staging environments, whe set limits at 10% of the production
 limit on usage for each workspace.
 
 While this works with our usage pattern, setting good dev and staging limits may vary depending on
