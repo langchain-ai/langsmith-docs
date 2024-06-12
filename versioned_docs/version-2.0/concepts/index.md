@@ -29,6 +29,11 @@ Explanations, clarification and discussion of key topics in LangSmith.
 - [Experiments](./concepts/evaluation#experiments)
 - [Evaluators](./concepts/evaluation#evaluators)
 
+## Prompts
+
+- [Prompt types](./concepts/prompts#prompt-types)
+- [Template formats](./concepts/prompts#template-formats)
+
 ## Usage and Billing
 
 - [Data Retention](./concepts/usage_and_billing/data_retention_billing)
