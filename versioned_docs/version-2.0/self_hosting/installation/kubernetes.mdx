@@ -27,6 +27,7 @@ To review all configuration options, look at the values.yaml for the [LangSmith 
 Ensure you have the following tools/items ready. Some items are marked optional:
 
 1. A working Kubernetes cluster that you can access via `kubectl`. Your cluster should have the following minimum requirements:
+
    1. Recommended: At least 4 vCPUs, 16GB Memory available
       - You may need to tune resource requests/limits for all of our different services based off of organization size/usage
    1. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
@@ -41,6 +42,7 @@ Ensure you have the following tools/items ready. Some items are marked optional:
      NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
      gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  161d
    ```
+
 1. Helm
    1. `brew install helm`
 1. LangSmith License Key
@@ -53,7 +55,6 @@ Ensure you have the following tools/items ready. Some items are marked optional:
    ```
 1. Configuration
    1. There are several configuration options that you can set in the `langsmith_config.yaml` file. You can find more information on the available configuration options in the [Configuration](/self_hosting/installation/configuration) section.
-
 
 ## Configure your Helm Charts:
 
