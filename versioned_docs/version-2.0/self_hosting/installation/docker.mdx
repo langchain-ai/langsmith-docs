@@ -28,7 +28,8 @@ This guide provides instructions for installing and setting up your environment 
    openssl rand -base64 32
    ```
 1. Configuration
-  1.
+  1. There are several configuration options that you can set in the `.env` file. You can find more information on the available configuration options in the [Configuration](/self_hosting/configuration) section.
+
 ## Running via Docker Compose
 
 The following explains how to run the LangSmith using Docker Compose. This is the most flexible way to run LangSmith without Kubernetes. In production, we highly recommend using Kubernetes.
@@ -43,30 +44,8 @@ Copy the `docker-compose.yml` file and all files in that directory from the Lang
 
 ### 2. Configure environment variables
 
-Copy the `.env.example` file from the LangSmith SDK to your project directory and rename it to `.env`. Then, set the following environment variables in the `.env` file:
-
-```bash
-# Don't change this file. Instead, copy it to .env and change the values there. The default values will work out of the box as long as you provide your license key.
-_LANGSMITH_IMAGE_VERSION=0.5.0
-LANGSMITH_LICENSE_KEY=your-license-key # Change to your Langsmith license key
-OPENAI_API_KEY=your-openai-api-key # Needed for Online Evals and Magic Query features
-AUTH_TYPE=none # Set to oauth if you want to use OAuth2.0
-OAUTH_CLIENT_ID=your-client-id # Required if AUTH_TYPE=oauth
-OAUTH_ISSUER_URL=https://your-issuer-url # Required if AUTH_TYPE=oauth
-API_KEY_SALT=super # Change to your desired API key salt. Can be any random value. Must be set if AUTH_TYPE=oauth
-POSTGRES_DATABASE_URI=postgres:postgres@langchain-db:5432/postgres # Change to your database URI if using external postgres. Otherwise, leave it as is
-REDIS_DATABASE_URI=redis://langchain-redis:6379 # Change to your Redis URI if using external Redis. Otherwise, leave it as is
-LOG_LEVEL=warning # Change to your desired log level
-MAX_ASYNC_JOBS_PER_WORKER=10 # Change to your desired maximum async jobs per worker. We recommend 10/suggest spinning up more replicas of the queue worker if you need more throughput
-ASYNCPG_POOL_MAX_SIZE=3 # Change the PG pool size based off your pg instance/requirements.
-CLICKHOUSE_HOST=langchain-clickhouse # Change to your Clickhouse host if using external Clickhouse. Otherwise, leave it as is
-CLICKHOUSE_USER=default # Change to your Clickhouse user if needed
-CLICKHOUSE_DB=default # Change to your Clickhouse database if needed
-CLICKHOUSE_PORT=8123 # Change to your Clickhouse port if needed
-CLICKHOUSE_TLS=false # Change to true if you are using TLS to connect to Clickhouse. Otherwise, leave it as is
-CLICKHOUSE_PASSWORD=password # Change to your Clickhouse password if needed
-CLICKHOUSE_NATIVE_PORT=9000 # Change to your Clickhouse native port if needed
-```
+1. Copy the `.env.example` file from the LangSmith SDK to your project directory and rename it to `.env`. Then, set the following environment variables in the `.env` file:
+1. Configure the appropriate values in the `.env` file. You can find the available configuration options in the [Configuration](/self_hosting/configuration) section.
 
 You can also set these environment variables in the `docker-compose.yml` file directly or export them in your terminal. We recommend setting them in the `.env` file.
 
@@ -96,6 +75,21 @@ The LangSmith UI should be visible/operational and look like this:
 docker-compose down
 ```
 
+### Validate your deployment:
+
+1. Curl the exposed port of the `cli-langchain-frontend-1` container:
+
+   ```bash
+   curl localhost:80/info
+   {"version":"0.5.7","license_expiration_time":"2033-05-20T20:08:06","batch_ingest_config":{"scale_up_qsize_trigger":1000,"scale_up_nthreads_limit":16,"scale_down_nempty_trigger":4,"size_limit":100,"size_limit_bytes":20971520}}
+   ```
+
+1. Visit the exposed port of the `cli-langchain-frontend-1` container on your browser
+
+   The Langsmith UI should be visible/operational
+
+   ![.langsmith_ui.png](../static/langsmith_ui.png)
+
 ### Checking the logs
 
 If, at any point, you want to check if the server is running and see the logs, run
@@ -103,52 +97,3 @@ If, at any point, you want to check if the server is running and see the logs, r
 ```bash
 docker-compose logs
 ```
-
-## Running via the LangSmith SDK
-
-The following explains how to run the LangSmith using the LangSmith SDK. This is a convenient wrapper around the `docker-compose` command.
-We recommend only using this in a local setting as it is not as flexible as using `docker-compose` directly.
-
-### 1. Install the LangSmith SDK
-
-The Python LangSmith SDKs exposes a `langsmith` command line tool.
-
-First, install a recent version of the `langsmith` package:
-
-- Python/Pip: `pip install -U langsmith`
-
-This will install the LangSmith Client and the bundled command line tool.
-
-### 2. Start server
-
-Start the LangSmith tracing server by executing the following command in your terminal:
-
-```bash
-langsmith start --langsmith-license-key=<YOUR_LANGSMITH_LICENSE_KEY> --version=<LANGSMITH_VERSION> --openai-api-key=<YOUR_OPENAI_API_KEY>
-```
-
-If the server starts correctly, it will open up the UI in your browser at [http://localhost](http://localhost).
-
-The LangSmith UI should be visible/operational and look like this:
-
-![./static/langsmith_ui.png](../static/langsmith_ui.png)
-
-### Stopping the server
-
-To stop the server, run the following command:
-
-```bash
-langsmith stop
-```
-
-### Checking the logs
-
-If, at any point, you want to check if the server is running and see the logs, run
-
-```bash
-langsmith logs
-```
-
-## Using LangSmith
-
-Now that LangSmith is running, you can start using it to trace your code. You can find more information on how to use self-hosted LangSmith in the [Self-Hosted Usage Guide](/self_hosting/usage).
