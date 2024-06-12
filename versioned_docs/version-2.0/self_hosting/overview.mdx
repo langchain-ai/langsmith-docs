@@ -35,11 +35,11 @@ The frontend uses Nginx to serve the LangSmith UI and route API requests to the 
 
 ### LangSmith Backend
 
-The backend is the primary entrypoint for API requests and handles the majority of the business logic for the application. This includes handling requests from the frontend and sdk, preparing runs for ingestion, and supporting the hub API.
+The backend is the primary entrypoint for API requests and handles the majority of the business logic for the application. This includes handling requests from the frontend and sdk, preparing traces for ingestion, and supporting the hub API.
 
 ### LangSmith Queue
 
-The queue handles incoming runs and feedback to ensure that they are ingested and persisted into the runs and feedback datastore asynchronously, handling checks for data integrity and ensuring successful insert into the datastore, handling retries in situations such as database errors or the temporary inability to connect to the database.
+The queue handles incoming traces and feedback to ensure that they are ingested and persisted into the traces and feedback datastore asynchronously, handling checks for data integrity and ensuring successful insert into the datastore, handling retries in situations such as database errors or the temporary inability to connect to the database.
 
 ### LangSmith Platform Backend
 
@@ -51,13 +51,13 @@ The playground is a service that handles forwarding requests to various LLM APIs
 
 ### ClickHouse
 
-ClickHouse is used as the primary data store for runs and feedback(high-volume data).
+ClickHouse is used as the primary data store for traces and feedback(high-volume data).
 
 We include an open-source, single node instance of ClickHouse that writes to a persistent volume that you supply as part of your configuration.
 
 ### Postgres
 
-Postgres is used as the primary data store for operational data (almost everything besides runs and feedback).
+Postgres is used as the primary data store for operational data (almost everything besides traces and feedback).
 
 By default, LangSmith Self-Hosted will use an internal Postgres database. However, you can configure LangSmith to use an external Postgres database (strongly recommended in a production setting). By configuring an external Postgres database, you can manage backups, scaling, and other operational tasks for your database.
 
