@@ -27,10 +27,9 @@ To review all configuration options, look at the values.yaml for the [LangSmith 
 Ensure you have the following tools/items ready. Some items are marked optional:
 
 1. A working Kubernetes cluster that you can access via `kubectl`. Your cluster should have the following minimum requirements:
-
    1. Recommended: At least 4 vCPUs, 16GB Memory available
       - You may need to tune resource requests/limits for all of our different services based off of organization size/usage
-   2. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
+   1. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
 
    ```bash
    kubectl get storageclass
@@ -42,53 +41,24 @@ Ensure you have the following tools/items ready. Some items are marked optional:
      NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
      gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  161d
    ```
-
-2. Helm
+1. Helm
    1. `brew install helm`
-3. LangSmith License Key
+1. LangSmith License Key
    1. You can get this from your Langchain representative. Contact us at sales@langchain.dev for more information.
-4. SSL(optional)
-   1. This should be attachable to a load balancer that will be provisioned by your cloud provider. This will be used for the frontend service.
-5. Api Key Salt
+1. Api Key Salt
    1. This is a secret key that you can generate. It should be a random string of characters.
-   2. You can generate this using the following command:
+   1. You can generate this using the following command:
    ```bash
    openssl rand -base64 32
    ```
-6. OpenAI API Key(optional).
-   1. Used for natural language search feature(beta). Can specify OpenAI key in browser as well for the playground feature.
-7. OAuth Configuration(optional).
-   1. You can configure oauth using the `values.yaml` file. You will need to provide a `client_id` and `client_issuer_url` for your OAuth provider.
-   2. Note, we do rely on the OIDC Authorization Code with PKCE flow. We currently support almost anything that is OIDC compliant however Google does not support this flow.
-   3. Without OAuth, you will not be able to create users or organizations.
-8. External Postgres(optional).
-   1. In production settings we recommend using an external Postgres instance. You can configure external Postgres using the `values.yaml` file. You will need to provide a connection url for your Postgres instance.
-9. External Redis(optional).
-   1. You can configure external redis using the `values.yaml` file. You will need to provide a connection url for your redis instance.
-   2. If using TLS, ensure that you use `rediss://` instead of `redis://. E.g "rediss://langsmith-redis:6380/0?password=foo"
-   3. We only official support Redis versions >= 6. We also do not support sharded/clustered Redis(though you can point to a single node in a cluster).
-10. External ClickHouse(optional).
-    1. You can configure external clickhouse using the `values.yaml` file. You will need to provide several connection parameters for your ClickHouse instance.
-    2. If using TLS, make sure to set `clickhouse.external.tls` to `true`.
-    3. We only officially support ClickHouse versions >= 23. We also only support standalone ClickHouse or ClickHouse Cloud(not clustered or replicated).
+1. Configuration
+   1. There are several configuration options that you can set in the `langsmith_config.yaml` file. You can find more information on the available configuration options in the [Configuration](/self_hosting/configuration) section.
+
 
 ## Configure your Helm Charts:
 
 1. Create a new file called `langsmith_config.yaml`. This should have a similar structure to the `values.yaml` file in the LangSmith Helm Chart repository. Only include the values you want to override to avoid having to update the file every time the chart is updated.
-2. Override any values in the file. Refer to the documentation for the [<u>LangSmith Helm Chart</u>](https://github.com/langchain-ai/helm/tree/main/charts/langsmith) to see all configurable values. Some values we recommend setting:
-   1. Resources
-   2. SSL(If on EKS or some other cloud provider)
-      1. Add an annotation to the `frontend.service` object to tell your cloud provider to provision a load balancer with said certificate attached
-   3. OpenAI Api Key
-   4. Images
-   5. Oauth
-
-An example bare minimum config file `langsmith_config.yaml`:
-
-```yaml
-config:
-  langsmithLicenseKey: ""
-```
+2. Set the appropriate values in the `langsmith_config.yaml` file. You can find the available configuration options in the [Configuration](/self_hosting/configuration) section.
 
 You can also see some example configurations in the examples directory of the Helm Chart repository here: [LangSmith Helm Chart Examples](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/examples).
 

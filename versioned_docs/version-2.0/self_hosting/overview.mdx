@@ -53,9 +53,7 @@ The playground is a service that handles forwarding requests to various LLM APIs
 
 ClickHouse is used as the primary data store for runs and feedback(high-volume data).
 
-We include an open-source, single node instance of ClickHouse that writes to a persistent volume that you supply as part of your configuration. If you have restrictions on running stateful services or accessing persistent volumes within your environment, we'd like to understand those requirements better but notably we do support ClickHouse Cloud as well.
-
-ClickHouse is a highly scalable, open-source column-oriented database management system that allows for high-throughput ingestion and real-time analytics. For more information about how and why we chose ClickHouse you can learn more [here](https://clickhouse.com/blog/langchain-why-we-choose-clickhouse-to-power-langchain)
+We include an open-source, single node instance of ClickHouse that writes to a persistent volume that you supply as part of your configuration.
 
 ### Postgres
 

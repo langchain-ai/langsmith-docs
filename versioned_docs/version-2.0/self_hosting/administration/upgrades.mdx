@@ -110,14 +110,14 @@ eecf75ca672b   postgres:14.7                          "docker-entrypoint.s…"  
 
 ### Validate your deployment:
 
-2. Curl the exposed port of the `cli-langchain-frontend-1` container:
+1. Curl the exposed port of the `cli-langchain-frontend-1` container:
 
    ```bash
    curl localhost:80/info
    {"version":"0.5.7","license_expiration_time":"2033-05-20T20:08:06","batch_ingest_config":{"scale_up_qsize_trigger":1000,"scale_up_nthreads_limit":16,"scale_down_nempty_trigger":4,"size_limit":100,"size_limit_bytes":20971520}}
    ```
 
-3. Visit the exposed port of the `cli-langchain-frontend-1` container on your browser
+1 . Visit the exposed port of the `cli-langchain-frontend-1` container on your browser
 
    The Langsmith UI should be visible/operational
 
