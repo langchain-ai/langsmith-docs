@@ -12,9 +12,15 @@ Step-by-step guides that cover key tasks and operations in LangSmith.
 See the following guides to set up your LangSmith account.
 
 - [Create an account and API key](./how_to_guides/setup/create_account_api_key)
-- [Create an organization](./how_to_guides/setup/create_organization)
-- [Set up billing](./how_to_guides/setup/set_up_billing)
+- [Set up an organization](./how_to_guides/setup/set_up_organization)
+  - [Create an organization](./how_to_guides/setup/set_up_organization#create-an-organization)
+  - [Manage and navigate workspaces](./how_to_guides/setup/set_up_organization#manage-and-navigate-workspaces)
+  - [Manage users](./how_to_guides/setup/set_up_organization#manage-users)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
+  - [Create a workspace](./how_to_guides/setup/set_up_workspace#create-a-workspace)
+  - [Manage users](./how_to_guides/setup/set_up_workspace#manage-users)
+  - [Configure workspace settings](./how_to_guides/setup/set_up_workspace#configure-workspace-settings)
+- [Set up billing](./how_to_guides/setup/set_up_billing)
 - [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
   - [Create a role](./how_to_guides/setup/set_up_access_control#create-a-role)
   - [Assign a role to a user](./how_to_guides/setup/set_up_access_control#assign-a-role-to-a-user)
@@ -35,6 +41,8 @@ Get started with LangSmith's tracing features to start adding observability to y
 - [Set a sampling rate for traces](./how_to_guides/tracing/sample_traces)
 - [Add metadata and tags to traces](./how_to_guides/tracing/add_metadata_tags)
 - [Implement distributed tracing](./how_to_guides/tracing/distributed_tracing)
+  - [Distributed tracing in Python](./how_to_guides/tracing/distributed_tracing#distributed-tracing-in-python)
+  - [Distributed tracing in TypeScript](./how_to_guides/tracing/distributed_tracing#distributed-tracing-in-typescript)
 - [Access the current span within a traced function](./how_to_guides/tracing/access_current_span)
 - [Log multimodal traces](./how_to_guides/tracing/log_multimodal_traces)
 - [Log retriever traces](./how_to_guides/tracing/log_retriever_trace)
@@ -99,7 +107,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [Evaluate on a dataset with repetitions](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-with-repetitions)
   - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
-- [Bind and evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
+- [Bind an evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [Use LangChain off-the-shelf evaluators (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
@@ -125,6 +133,10 @@ Evaluate your LLM applications to measure their performance over time.
   - [Configure inputs and outputs for pairwise evaluators](./how_to_guides/evaluation/evaluate_pairwise#configure-inputs-and-outputs-for-pairwise-evaluators)
   - [Compare two experiments with LLM-based pairwise evaluators](./how_to_guides/evaluation/evaluate_pairwise#compare-two-experiments-with-llm-based-pairwise-evaluators)
   - [View pairwise experiments](./how_to_guides/evaluation/evaluate_pairwise#view-pairwise-experiments)
+- [Audit evaluator scores](./how_to_guides/evaluation/audit_evaluator_scores)
+  - [In the comparison view](./how_to_guides/evaluation/audit_evaluator_scores#in-the-comparison-view)
+  - [In the runs table](./how_to_guides/evaluation/audit_evaluator_scores#in-the-runs-table)
+  - [In the SDK](./how_to_guides/evaluation/audit_evaluator_scores#in-the-sdk)
 
 ## Human feedback
 
@@ -172,11 +184,10 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
 - [Create a prompt](./how_to_guides/prompts/create_a_prompt)
-  - [Name your new prompt](./how_to_guides/prompts/create_a_prompt#name-your-new-prompt)
-  - [Pick a prompt type](./how_to_guides/prompts/create_a_prompt#pick-a-prompt-type)
   - [Compose your prompt](./how_to_guides/prompts/create_a_prompt#compose-your-prompt)
   - [Save your prompt](./how_to_guides/prompts/create_a_prompt#save-your-prompt)
   - [View your prompts](./how_to_guides/prompts/create_a_prompt#view-your-prompts)
+  - [Add metadata](./how_to_guides/prompts/create_a_prompt#add-metadata)
 - [Update a prompt](./how_to_guides/prompts/update_a_prompt)
   - [Update metadata](./how_to_guides/prompts/update_a_prompt#update-metadata)
   - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
@@ -187,3 +198,9 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
   - [Pull a prompt and use it](./how_to_guides/prompts/pull_push_a_prompt#pull_a_prompt_and_use_it)
   - [Push a prompt to your personal organization](./how_to_guides/prompts/pull_push_a_prompt#push_a_prompt_to_your_personal_organization)
 - [LangChain Hub](./how_to_guides/prompts/langchain_hub)
+
+## Playground
+
+Quickly iterate on prompts and models in the LangSmith Playground.
+
+- [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)
