@@ -19,36 +19,16 @@ This guide provides instructions for installing and setting up your environment 
    docker info
    ```
    If you don't see any server information in the output, make sure Docker is installed correctly and launch the Docker daemon.
-2. LangSmith License Key
+1. LangSmith License Key
    1. You can get this from your Langchain representative. Contact us at sales@langchain.dev for more information.
-3. SSL(optional)
-   1. This should be attachable to a load balancer that will be provisioned by your cloud provider. This will be used for the frontend service.
-4. Api Key Salt
+1. Api Key Salt
    1. This is a secret key that you can generate. It should be a random string of characters.
-   2. You can generate this using the following command:
+   1. You can generate this using the following command:
    ```bash
    openssl rand -base64 32
    ```
-5. OpenAI API Key(optional).
-   1. Used for natural language search feature(beta). Can specify OpenAI key in browser as well for the playground feature.
-6. OAuth Configuration(optional).
-   1. You can configure oauth using the `.env` file. You will need to provide a `client_id` and `client_issuer_url` for your OAuth provider.
-   2. Note, we do rely on the OIDC Authorization Code with PKCE flow. We currently support almost anything that is OIDC compliant however Google does not support this flow.
-   3. Without OAuth, you will not be able to create users or organizations.
-7. External Postgres(optional).
-   1. You can configure external postgres using the `.env` file. You will need to provide connection parameters for your postgres instance.
-   2. If using a schema other than public, ensure that you do not have any other schemas with the pgcrypto extension enabled, or you must include that in your search path.
-   3. If your password contains special characters, you may need to url encode your password in the connection string.
-   4. Note: We do only officially support Postgres versions >= 14.
-8. External Redis(optional).
-   1. You can configure external redis using the `values.yaml` file. You will need to provide a connection url for your redis instance.
-   2. If using TLS, ensure that you use `rediss://` instead of `redis://. E.g "rediss://langsmith-redis:6380/0?password=foo"
-   3. We only official support Redis versions >= 6. We also do not support sharded/clustered Redis(though you can point to a single node in a cluster).
-9. External ClickHouse(optional).
-   1. You can configure external clickhouse using the `.env` file. You will need to provide several connection parameters for your ClickHouse instance.
-   2. If using TLS, make sure to set `clickhouse.external.tls` to `true`.
-   3. We only officially support ClickHouse versions >= 23. We also only support standalone ClickHouse or ClickHouse Cloud(not clustered or replicated).
-
+1. Configuration
+  1.
 ## Running via Docker Compose
 
 The following explains how to run the LangSmith using Docker Compose. This is the most flexible way to run LangSmith without Kubernetes. In production, we highly recommend using Kubernetes.
