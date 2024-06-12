@@ -56,11 +56,11 @@ We see in the graph above that there are two usage metrics that LangSmith charge
 - LangSmith Traces (Extended Data Retention Upgrades).
 
 The first metric tracks all traces that you send to LangSmith. The second tracks all traces that also have our Extended 400 Day Data Retention.
-For more details, see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing). Notice that these graphs look 
+For more details, see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing). Notice that these graphs look
 identical, which will come into play later in the tutorial.
 
 LangSmith Traces usage is measured per workspace, because workspaces often represent development environments (as in our example),
-or teams within an organization. As a LangSmith administrator, we want to understand spend granularly per each of these units. In 
+or teams within an organization. As a LangSmith administrator, we want to understand spend granularly per each of these units. In
 this case where we just want to cut spend, we can focus on the environment responsible for the majority of costs first for the greatest savings.
 
 :::note
@@ -68,7 +68,7 @@ LangSmith's Usage Graph and Invoice use the term `tenant_id` to refer to a works
 :::
 
 In the above image, the vast majority of usage is in the workspace with ID `c27dd32c-7c80-4e8c-acde-bfcb67a90ab2`. We can
-go to `Settings` -> `Workspaces`, and hover our mouse over the `Workspace ID` button to find the one with a matching ID. In 
+go to `Settings` -> `Workspaces`, and hover our mouse over the `Workspace ID` button to find the one with a matching ID. In
 this case, it's the Prod workspace:
 
 ![](./static/p1findworkspaceid_v2.png)
@@ -121,23 +121,26 @@ with the organization level setting, this will only affect retention (and pricin
 
 ![](./static/p1projectretention.png)
 
-### [COMING SOON] Keep around 10% of traces for extended data retention
+### [COMING SOON] Keep around a percentage of traces for extended data retention
 
 We may not want all our traces to expire after 14 days if we care about historical debugging. As such, we can take advantage
 of LangSmith's built in ability to do server side sampling for extended data retention.
+
+Choosing the right percentage of runs to sample depends on your use case. We will arbitrarily pick 10% of runs here, but will
+leave it to the user to find the right value that balances collecting rare events and cost constraints.
 
 LangSmith automatically upgrades the data retention for any trace that matches a run rule in our automations product (see our [run rules docs](../../../how_to_guides/monitoring/rules)). On the
 projects page, click `Add Rule`, and configure the rule as follows:
 
 ![](./static/P1SampleTraces.png)
 
-Run rules match on runs rather than traces. Runs are single units of work within an LLM application's API handling. Traces 
-are end to end API calls (learn more about [tracing concepts in LangSmith](../../concepts/tracing)). This means a trace can 
-be thought of as a tree of runs making up an API call.  When a run rule matches any run within a trace, the trace's full run tree
-upgrades to be retained for 400 days. 
+Run rules match on runs rather than traces. Runs are single units of work within an LLM application's API handling. Traces
+are end to end API calls (learn more about [tracing concepts in LangSmith](../../concepts/tracing)). This means a trace can
+be thought of as a tree of runs making up an API call. When a run rule matches any run within a trace, the trace's full run tree
+upgrades to be retained for 400 days.
 
-Therefore, to make sure we have the proper sampling rate on traces, we can add a filter condition to only match the "root" run in 
-the run tree. This is distinct per trace, so our 10% sampling will upgrade 10% of traces, rather 10% of runs, which could correspond to 
+Therefore, to make sure we have the proper sampling rate on traces, we can add a filter condition to only match the "root" run in
+the run tree. This is distinct per trace, so our 10% sampling will upgrade 10% of traces, rather 10% of runs, which could correspond to
 more than 10% of traces.
 
 :::note
@@ -145,9 +148,6 @@ If you want to keep a subset of traces for longer than 400 days for data collect
 rule that sends some runs to a dataset of your choosing. A dataset allows you to store the trace inputs and outputs (e.g., as a key-value dataset),
 and will persist indefinitely, even after the trace gets deleted.
 :::
-
-Choosing the right percentage of runs to sample depends on your use case. We arbitrarily picked 10% of runs here, but will
-leave it to the user to find the right value that balances collecting rare events and cost constraints.
 
 ### See results after 7 days
 
