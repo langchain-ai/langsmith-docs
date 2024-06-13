@@ -31,20 +31,6 @@ You can also define a filter from the `Filter Shortcuts` on the sidebar. This co
 In order to filter for intermediate runs (spans), you first need to remove the default filter of `IsRoot` is `true`. After that, you can apply any filter you wish. A common way to do this is to filter by name for sub runs.
 This relies on good naming, or tagging for all parts of your pipeline. To learn more, you can check out [this guide](../tracing/add_metadata_tags)
 
-## Filter based on inputs and outputs
-
-You can filter runs based on the content in the inputs and outputs of the run.
-
-To filter either inputs or outputs, you can use `Full-Text Search` filter which will match keywords in either field. For more targeted search, you can use the `Input` or `Output` filters which will only match content based on the respective field.
-
-You can also specify multiple matches, either by including multiple terms separated by whitespace, or adding multiple filters - which will try to match all terms provided.
-
-Note that keyword search is done splitting the text and finding any partial matches on the search keywords, so it is not done in specific order. We exclude common stop words from the search (from the nltk stop word list along with a few other common json keywords).
-
-![Filtering](../static/filter_full_text.png)
-
-Based on the filters above, it will search for `python` and `tensorflow` in either inputs or outputs, and `embedding` in the inputs along with `fine` and `tune` in the outputs.
-
 ## Advanced: filter for intermediate runs (spans) on properties of the root
 
 A common concept is to filter for intermediate runs which are part of a trace whose root run has some attribute. An example is filtering for intermediate runs of a particular type whose root run has positive (or negative) feedback associated with it.
@@ -60,6 +46,20 @@ This is the opposite of the above. You may want to search for runs who have spec
 In order to do this, you can click on the `Advanced Filters` link all the way at the bottom of the filter. This will open up a new modal where you can add `Tree filters`. This will make the rule you specific apply to all child runs of the individual runs you've already filtered for.
 
 ![Filtering](../static/child_runs.png)
+
+## Filter based on inputs and outputs
+
+You can filter runs based on the content in the inputs and outputs of the run.
+
+To filter either inputs or outputs, you can use `Full-Text Search` filter which will match keywords in either field. For more targeted search, you can use the `Input` or `Output` filters which will only match content based on the respective field.
+
+You can also specify multiple matches, either by including multiple terms separated by whitespace, or adding multiple filters - which will try to match all terms provided.
+
+Note that keyword search is done splitting the text and finding any partial matches on the search keywords, so it is not done in specific order. We exclude common stop words from the search (from the nltk stop word list along with a few other common json keywords).
+
+![Filtering](../static/filter_full_text.png)
+
+Based on the filters above, it will search for `python` and `tensorflow` in either inputs or outputs, and `embedding` in the inputs along with `fine` and `tune` in the outputs.
 
 ## Copy the filter
 

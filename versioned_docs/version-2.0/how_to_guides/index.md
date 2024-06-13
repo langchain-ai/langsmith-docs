@@ -159,6 +159,7 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
   - [Filter for intermediate runs (spans)](./how_to_guides/monitoring/filter_traces_in_application#filter-for-intermediate-runs-spans)
   - [Advanced: filter for intermediate runs (spans) on properties of the root](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-intermediate-runs-spans-on-properties-of-the-root)
   - [Advanced: filter for runs (spans) whose child runs have some attribute](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-runs-spans-whose-child-runs-have-some-attribute)
+  - [Filter based on inputs and outputs](./how_to_guides/monitoring/filter_traces_in_application#filter-based-on-inputs-and-outputs)
   - [Copy the filter](./how_to_guides/monitoring/filter_traces_in_application#copy-the-filter)
   - [Manually specify a raw query in LangSmith query language](./how_to_guides/monitoring/filter_traces_in_application#manually-specify-a-raw-query-in-langsmith-query-language)
   - [Use an AI Query to auto-generate a query](./how_to_guides/monitoring/filter_traces_in_application#use-an-ai-query-to-auto-generate-a-query)
