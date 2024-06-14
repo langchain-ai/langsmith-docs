@@ -204,3 +204,4 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
 Quickly iterate on prompts and models in the LangSmith Playground.
 
 - [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)
+- [Use a custom model](./how_to_guides/playground/custom_endpoint)
