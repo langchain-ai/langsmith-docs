@@ -2,22 +2,31 @@
 sidebar_position: 1
 ---
 
-# Use custom model
+# Use a custom model
 
-:::important Deployed Model Server Required
-You will need to implement and deploy a model server to utilize this feature. The model server must be accessible from the LangSmith Playground service.
+:::note Self-hosted enterprise only (version 0.6 and later)
+
+This feature is only available for self-hosted enterprise customers, starting from version 0.6.
+
+This feature also requires spinning up a custom model server as a separate service.
+
+If you are interested in this plan, please contact sales@langchain.dev for more information.
+
 :::
 
-## Deploy a Custom Model Server
+The LangSmith playground allows you to use your own custom models. You can deploy a model server that exposes your model's API via [LangServe](https://github.com/langchain-ai/langserve), an open source library for serving LangChain applications.
+Behind the scenes, the playground will interact with your model server to generate responses.
 
-To use a custom model in the LangSmith playground, you need to deploy a model server that exposes the model's API via [LangServe](https://github.com/langchain-ai/langserve)
-
-Depending on your model, you will need to implement either `custom_model.py` or `custom_chat_model.py`(if your model takes a list of messages).
+## Deploy a custom model server
 
 For your convenience, we have provided a sample model server that you can use as a reference. You can find the sample model server [here](https://github.com/langchain-ai/langsmith-model-server)
 We highly recommend using the sample model server as a starting point.
 
+Depending on your model is an instruct-style or chat-style model, you will need to implement either `custom_model.py` or `custom_chat_model.py` respectively.
+
 ## Adding configurable fields
+
+It is often useful to configure your model with different parameters. These might include temperature, model_name, max_tokens, etc.
 
 To make your model configurable in the LangSmith playground, you need to add configurable fields to your model server. These fields can be used to change model parameters from the playground.
 
@@ -34,9 +43,9 @@ def with_configurable_fields(self) -> Runnable:
     ))
 ```
 
-## Use the Custom Model in the Playground
+## Use the model in the LangSmith Playground
 
-Once you have deployed a model server, you can use it in the LangSmith Playground. Enter the playground and select either the `ChatCustomModel` or the `CustomModel` provider for chat-style model or instruct-type models.
+Once you have deployed a model server, you can use it in the LangSmith Playground. Enter the playground and select either the `ChatCustomModel` or the `CustomModel` provider for chat-style model or instruct-style models.
 
 Enter the `URL`. The playground will automatically detect the available endpoints and configurable fields. You can then invoke the model with the desired parameters.
 
