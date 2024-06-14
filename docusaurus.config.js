@@ -24,20 +24,6 @@ const config = {
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
 
-  plugins: [
-    [
-      "@scalar/docusaurus",
-      {
-        label: "LangSmith API Docs",
-        route: "/api-docs",
-        configuration: {
-          spec: {
-            url: "https://api.smith.langchain.com/openapi.json",
-          },
-        },
-      },
-    ],
-  ],
   markdown: {
     mermaid: true,
   },
@@ -129,6 +115,11 @@ const config = {
             href: "https://smith.langchain.com/",
             label: "Go to App",
             position: "right",
+          },
+          {
+            href: "https://api.smith.langchain.com/redoc",
+            label: "Go to API Docs",
+            position: "left",
           },
         ],
       },
