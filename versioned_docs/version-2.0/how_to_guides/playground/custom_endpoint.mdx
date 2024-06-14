@@ -2,10 +2,10 @@
 sidebar_position: 1
 ---
 
-# Use a Custom Model
+# Use custom model
 
 :::important Deployed Model Server Required
-You will need to implement and deploy a model server to utilize this feature
+You will need to implement and deploy a model server to utilize this feature. The model server must be accessible from the LangSmith Playground service.
 :::
 
 ## Deploy a Custom Model Server
@@ -36,9 +36,10 @@ def with_configurable_fields(self) -> Runnable:
 
 ## Use the Custom Model in the Playground
 
-Once you have deployed a model server, you can use it in the LangSmith playground. Enter the playground and select the `Custom` model provider.
+Once you have deployed a model server, you can use it in the LangSmith Playground. Enter the playground and select either the `ChatCustomModel` or the `CustomModel` provider for chat-style model or instruct-type models.
 
-Enter the `Url`. The playground will automatically detect the available endpoints and configurable fields. You can then invoke the model with the desired parameters.
-(TODO: Add GIF here)
+Enter the `URL`. The playground will automatically detect the available endpoints and configurable fields. You can then invoke the model with the desired parameters.
 
-If everything is set up correctly, you should see the model's response in the playground.
+![ChatCustomModel in Playground](../static/playground_custom_model.png)
+
+If everything is set up correctly, you should see the model's response in the playground as well as the configurable fields specified in the `with_configurable_fields`.
