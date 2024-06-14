@@ -4,15 +4,21 @@ sidebar_position: 6
 
 # Evaluate an agent
 
-We will walk through the evaluation workflow for agents.
+In this tutorial, we will walk through 3 evaluation strategies LLM agents, building on the conceptual points shared in our [evaluation guide](https://docs.smith.langchain.com/concepts/evaluation#agents).
 
-First, we ensure that the necessary packages are installed.
+- `Final Response`: Evaluate the agent's final response.
+- `Single step`: Evaluate any agent step in isolation (e.g., whether it selects the appropriate tool).
+- `Trajectory`: Evaluate whether the agent took the expected path (e.g., of tool calls) to arrive at the final answer.
 
-```python
-%pip install --upgrade --quiet  langchain langchain-community langchain_openai langgraph
+First, we will build an agent using [LangGraph](https://github.com/langchain-ai/langgraph).
+
+## Set up environment
+
+We'll set up our environment variables for OpenAI and [LangSmith](https://smith.langchain.com) and install
+
+```bash
+%pip install --upgrade --quiet langchain langsmith langchain-community langchain-experimental langgraph
 ```
-
-Then, we ensure that API keys for OpenAI as well as LangSmith are set.
 
 ```python
 import getpass
@@ -28,24 +34,49 @@ os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 _set_env("LANGCHAIN_API_KEY")
 ```
 
-## Database setup
+## Configure the database
 
-Follow [these instructions](https://database.guide/2-sample-databases-sqlite/) to set up `Chinook.db`.
+We will be creating a SQLite database for this tutorial. SQLite is a lightweight database that is easy to set up and use. We will be loading the `chinook` database, which is a sample database that represents a digital media store.
+Find more information about the database [here](https://www.sqlitetutorial.net/sqlite-sample-database/).
+
+For convenience, we have hosted the database (`Chinook.db`) on a public GCS bucket.
+
+```python
+import requests
+url = "https://storage.googleapis.com/benchmarks-artifacts/chinook/Chinook.db"
+
+response = requests.get(url)
+
+if response.status_code == 200:
+    # Open a local file in binary write mode
+    with open("Chinook.db", "wb") as file:
+        # Write the content of the response (the file) to the local file
+        file.write(response.content)
+    print("File downloaded and saved as Chinook.db")
+else:
+    print(f"Failed to download the file. Status code: {response.status_code}")
+```
+
+We will use a handy SQL database wrapper available in the `langchain_community` package to interact with the database. The wrapper provides a simple interface to execute SQL queries and fetch results. We will also use the `langchain_openai` package to interact with the OpenAI API for language models later in the tutorial.
 
 ```python
 from langchain_community.utilities import SQLDatabase
+
 db = SQLDatabase.from_uri("sqlite:///Chinook.db")
+print(db.dialect)
+print(db.get_usable_table_names())
+db.run("SELECT * FROM Artist LIMIT 10;")
 ```
 
 ## SQL Agent
 
-We'll use a [LangGraph agent](https://www.langchain.com/agents) with access to a SQL toolkit:
+We'll use a [LangGraph agent](https://www.langchain.com/agents) with access to a set of tools for working with SQL:
 
 ![](./static/agent_lg_overview.png)
 
 ### Tools
 
-Use [SQL toolkit](https://python.langchain.com/v0.2/docs/tutorials/sql_qa/#agents) and some custom tools.
+We'll use [SQL toolkit](https://python.langchain.com/v0.2/docs/tutorials/sql_qa/#agents) as well as some custom tools to check the query before executing it and check the query result from the database to confirm it is not empty or irrelevant to the question.
 
 ```python
 import json
@@ -177,6 +208,8 @@ assistant_runnable = query_gen_prompt | ChatOpenAI(model="gpt-4o", temperature=0
 
 ### Graph Utilities
 
+We will define a few utility functions to help us with the agent implementation. Specifically, we will wrap a ToolNode with a fallback to handle errors and surface them to the agent.
+
 ```python
 from langchain_core.messages import ToolMessage
 from langchain_core.runnables import RunnableLambda
@@ -216,6 +249,8 @@ def handle_tool_error(state) -> dict:
 ```
 
 ### Graph
+
+We will then define the workflow for the agent.
 
 ```python
 from langgraph.checkpoint.sqlite import SqliteSaver
@@ -257,6 +292,17 @@ questions = ["Which country's customers spent the most? And how much did they sp
 
 ```python
 ## Invoke
+import uuid
+_printed = set()
+thread_id = str(uuid.uuid4())
+
+config = {
+    "configurable": {
+        # Checkpoints are accessed by thread_id
+        "thread_id": thread_id,
+    }
+}
+
 msg = {"messages": ("user", questions[0])}
 messages = graph.invoke(msg,config)
 messages['messages'][-1].content
@@ -287,6 +333,8 @@ Agent evaluation can focus on at least 3 things:
 - `Response`: The inputs are a prompt and an optional list of tools. The output is the final agent response.
 - `Single step`: As before, the inputs are a prompt and an optional list of tools. The output the tool call.
 - `Trajectory`: As before, the inputs are a prompt and an optional list of tools. The output is the list of tool calls
+
+![](./static/agent_eval.png)
 
 :::tip
 
@@ -450,7 +498,8 @@ We can check a trajectory of tool calls using [custom evaluators](https://docs.s
 - We extract the list of tools called, using `find_tool_calls`.
 - Custom functions can process these tool calls in various user-defined ways.
 - We can check if all expected tools are called in any order: `contains_all_tool_calls_any_order`
-- We can check if all expected tools are called in exact order: `contains_all_tool_calls_in_order`
+- We can check if all expected tools are called in order, allowing for insertion of tool calls: `contains_all_tool_calls_in_order`
+- We can check if all expected tools are called in the exact order: `contains_all_tool_calls_in_order_exact_match`
 
 :::tip
 
@@ -479,6 +528,7 @@ def contains_all_tool_calls_any_order(root_run: Run, example: Example) -> dict:
     expected = ['sql_db_list_tables', 'sql_db_schema', 'sql_db_query_checker', 'sql_db_query', 'check_result']
     messages = root_run.outputs["response"]
     tool_calls = find_tool_calls(messages)
+    print("Here are my tool calls:")
     if set(expected) <= set(tool_calls):
         score = 1
     else:
@@ -491,6 +541,8 @@ def contains_all_tool_calls_in_order(root_run: Run, example: Example) -> dict:
     """
     messages = root_run.outputs["response"]
     tool_calls = find_tool_calls(messages)
+    print("Here are my tool calls:")
+    print(tool_calls)
     it = iter(tool_calls)
     expected = ['sql_db_list_tables', 'sql_db_schema', 'sql_db_query_checker', 'sql_db_query', 'check_result']
     if all(elem in it for elem in expected):
@@ -499,10 +551,30 @@ def contains_all_tool_calls_in_order(root_run: Run, example: Example) -> dict:
         score = 0
     return {"score": int(score), "key": "multi_tool_call_in_order"}
 
+def contains_all_tool_calls_in_order_exact_match(root_run: Run, example: Example) -> dict:
+    """
+    Check if all expected tools are called in exact order and without any additional tool calls.
+    """
+    expected = ['sql_db_list_tables', 'sql_db_schema', 'sql_db_query_checker', 'sql_db_query', 'check_result']
+    messages = root_run.outputs["response"]
+    tool_calls = find_tool_calls(messages)
+
+    # Print the tool calls for debugging
+    print("Here are my tool calls:")
+    print(tool_calls)
+
+    # Check if the tool calls match the expected trajectory exactly
+    if tool_calls == expected:
+        score = 1
+    else:
+        score = 0
+
+    return {"score": int(score), "key": "multi_tool_call_in_exact_order"}
+
 experiment_results = evaluate(
     predict_sql_agent_messages,
     data=dataset_name,
-    evaluators=[contains_all_tool_calls_any_order,contains_all_tool_calls_in_order],
+    evaluators=[contains_all_tool_calls_any_order,contains_all_tool_calls_in_order,contains_all_tool_calls_in_order_exact_match],
     experiment_prefix="sql-agent-response-tool-calling",
     metadata={"version": "Chinook, gpt-4o base-case agent"},
 )
