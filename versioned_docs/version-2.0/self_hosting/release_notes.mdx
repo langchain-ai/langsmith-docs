@@ -5,14 +5,17 @@ sidebar_position: 4
 
 # LangSmith Release Notes
 
+:::note
+**Reminder: API keys prefixed with `ls__` will be disabled in favor of `lsv2...` style keys as of LangSmith Helm release v0.7 to be released on or after July 1, 2024.** For more information see [the Admin concepts guide.](https://docs.smith.langchain.com/concepts/admin#api-keys)
+:::
+
 ## Week of June 17, 2024 - LangSmith v0.6
 
 LangSmith v0.6 improves run rules performance and reliability, adds support for multiple Workspaces within an Organization, custom models in Playground, and significant enhancements to Evaluations.
 
 ### Breaking changes[](https://docs.smith.langchain.com/self_hosting/release_notes#breaking-changes)
 
-- Reminder: **API keys prefixed with `ls__` will NO LONGER work as of LangSmith Helm release v0.7 to be released on or after July 1, 2024.**
-- v0.1.20 or later of the `langchainhub` sdk package is required when iteracting with the LangSmith Hub prompt repository.
+- v0.1.20 or greater of the `langchainhub` sdk package is required when interacting with the LangSmith Hub prompt repository.
 
 ### New Features
 
@@ -28,7 +31,7 @@ LangSmith v0.6 improves run rules performance and reliability, adds support for 
 ### Performance and Reliability Changes
 
 - Improved performance of run rules especially in cases where rule execution may exceed the interval of rule execution.
-- Reduced run rule interval from 5 minutes to 1 minute
+- Reduced run rule interval from 5 minutes to 1 minute resulting in more frequent application of rules
 - Improved performance when querying Hub via the SDK. NOTE: Accessing these improvements requires v0.1.20 or greater of the [Hub SDK](https://github.com/langchain-ai/hub-sdk)
 
 ### Infrastructure changes
