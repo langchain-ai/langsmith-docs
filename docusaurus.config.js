@@ -34,6 +34,12 @@ const config = {
           spec: {
             url: "https://api.smith.langchain.com/openapi.json",
           },
+          servers: [
+            {
+              url: "https://api.smith.langchain.com",
+              description: "Production server",
+            },
+          ],
         },
       },
     ],
