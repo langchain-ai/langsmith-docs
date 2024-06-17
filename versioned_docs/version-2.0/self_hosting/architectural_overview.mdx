@@ -27,24 +27,30 @@ The LangSmith application consists of several components including 5 LangSmith s
 
 To access the LangSmith UI and send API requests, you will need to expose the LangSmith Frontend service. Depending on your installation method, this can be a load balancer or a port exposed on the host machine.
 
-## Datastores
+## Storage Services
 
 :::note
-LangSmith Self-Hosted will bundle these datastores by default, but you can configure LangSmith to use external datastores.
-In a production setting, we _strongly recommend using external datastores_.
+LangSmith Self-Hosted will bundle all storage services by default. LangSmith can be configured to use external versions of all storage services.
+In a production setting, we **strongly recommend using external Storage Services**.
 :::
 
 ### ClickHouse
 
-ClickHouse is used as the primary data store for traces and feedback (high-volume data).
+[ClickHouse](https://clickhouse.com/docs/en/intro) is a high-performance, column-oriented SQL database management system (DBMS) for online analytical processing (OLAP)
 
-### Postgres
+LangSmith uses ClickHouse as the primary data store for traces and feedback (high-volume data).
 
-Postgres is used as the primary data store for transactional workloads and operational data (almost everything besides traces and feedback).
+### PostgreSQL
+
+[PostgreSQL](https://www.postgresql.org/about/) is a powerful, open source object-relational database system that uses and extends the SQL language combined with many features that safely store and scale the most complicated data workloads
+
+LangSmith uses Postgres as the primary data store for transactional workloads and operational data (almost everything besides traces and feedback).
 
 ### Redis
 
-Redis is used to back our queuing/caching operations.
+[Redis](https://github.com/redis/redis) is a powerful in-memory key-value database that persists on disk. By holding data in memory, Redis offers high performance for operations like caching.
+
+LangSmith uses Redis to back queuing/caching operations.
 
 ## Services
 
