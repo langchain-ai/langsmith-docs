@@ -8,6 +8,7 @@ sidebar_position: 0
 Step-by-step guides that cover the installation, configuration, and scaling of your Self-Hosted LangSmith instance.
 
 ## Overview
+
 - [Architectural Overview](./self_hosting/architectural_overview): A high-level overview of the LangSmith architecture.
   - [Datastores](./self_hosting/architectural_overview#datastores): The datastores used by LangSmith.
   - [Services](./self_hosting/architectural_overview#services): The services that make up LangSmith.
