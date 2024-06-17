@@ -1,17 +1,41 @@
 ---
 sidebar_label: Frequently Asked Questions
-sidebar_position: 4
+sidebar_position: 8
 description: "Frequently Asked Questions"
 ---
 
 # Frequently Asked Questions:
 
-## What Stateful Resources are needed for the application?
+#### What Stateful Resources are needed for the application?
 
 LangSmith uses the following stateful resources:
 
-- Postgres: Used for storing application data
-- Redis: Used for caching and storing session data
-- ClickHouse: Used for storing traces and metrics
+- `Postgres`: Used for storing application data
+- `Redis`: Used for caching and storing session data
+- `ClickHouse`: Used for storing traces and metrics
 
-TODO: Update FAQ
+* All of these resources can be configured to be externally.
+
+#### How does load balancing work/ingress work?
+
+- You will need to expose the frontend container/service to your applications/users. This will handle routing to all downstream services.
+
+#### How can we authenticate to the application?
+
+- Currently, our self-hosted solution supports oauth as an authn solution. Note, we do offer a no-auth solution but highly recommend setting up oauth before moving into production.
+
+You can find more information on setting up OAuth in the [configuration section](./self_hosting/configuration/sso) guide.
+
+#### Can I use external datastores?
+
+- You can configure LangSmith to use external versions of all datastores. In a production setting, we strongly recommend using external datastores. Check out the [configuration section](./self_hosting/configuration) guide for more information.
+
+#### What networking configuration is needed for the application?
+
+Our deployment only needs egress for a few things:
+
+- Fetching images (If mirroring your images, this may not be needed)
+- Talking to any LLMs
+- Talking to any external services you may have configured
+- Fetching OAuth information
+  Your VPC can set up rules to limit any other access. Note: We require the X-Tenant-Id to be allowed to be passed through to the backend service. This is used to determine which tenant the request is for.

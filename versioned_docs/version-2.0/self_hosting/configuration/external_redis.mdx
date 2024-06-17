@@ -2,12 +2,12 @@ import {
   CodeTabs,
   DockerBlock,
   HelmBlock,
-} from "../../../../../src/components/InstructionsWithCode";
+} from "../../../../src/components/InstructionsWithCode";
 
-# Connect to an External Postgres Database
+# Connect to an External Redis Database
 
 LangSmith uses Redis to back our queuing/caching operations. By default, LangSmith Self-Hosted will use an internal Redis instance.
-However, you can configure LangSmith to use an external Redis instance(strongly recommended in a production setting). By configuring an external Redis instance, you can manage backups, scaling, and other operational tasks for your Redis instance.
+However, you can configure LangSmith to use an external Redis instance(strongly recommended in a production setting). By configuring an external Redis instance, you can more easily manage backups, scaling, and other operational tasks for your Redis instance.
 
 ## Requirements
 

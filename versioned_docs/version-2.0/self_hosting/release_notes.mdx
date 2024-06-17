@@ -1,0 +1,135 @@
+---
+sidebar_label: Release Notes (Self-Hosted)
+sidebar_position: 7
+---
+
+# LangSmith Release Notes
+
+:::note
+If you are updating directly from LangSmith v0.1.x and you wish to retain access to run data in the Langsmith UI after updating, you must first update to v0.2.x and perform a data migration. **Updating directly from v0.1.x to v0.3.x or later will result in data loss as the `runs` table in postgres will be dropped when deploying LangSmith v0.3.x or higher.** Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
+:::
+
+## Week of May 13, 2024 - LangSmith v0.5
+
+LangSmith v0.5 improves performance and reliability, adds features to improve regression testing, production monitoring and automation, and implements Role-Based Access Controls (RBAC).
+
+### Breaking changes[](https://docs.smith.langchain.com/self_hosting/release_notes#breaking-changes)
+
+- We will be dropping support for API keys on July 1st 2024 in favor of personal access tokens (PATs) and Service Keys. We recommend using PATs and Service Keys for all new integrations. **API keys prefixed with `ls__` will NO LONGER work as of LangSmith Helm release v0.7 to be released on or after July 1, 2024.**
+
+### New Features
+
+- Role-Based Access Controls. See: [https://blog.langchain.dev/access-control-updates-for-langsmith/](https://blog.langchain.dev/access-control-updates-for-langsmith/)
+- Improved regression testing experience. See: [https://blog.langchain.dev/regression-testing/](https://blog.langchain.dev/regression-testing/)
+- Improved production monitoring and automation: See: [https://blog.langchain.dev/langsmith-production-logging-automations/](https://blog.langchain.dev/langsmith-production-logging-automations/)
+
+### Performance and Reliability Changes
+
+- Split ingest, session deletion, and automation jobs to execute within separate resource pools.
+
+### Infrastructure changes
+
+- As of LangSmith v0.4, Clickhouse persistence now uses `50Gi` of storage by default. You can adjust this by changing the `clickhouse.statefulSet.persistence.size` value in your `values.yaml` file.
+  - If your existing configuration cannot support 50Gi, you may need to resize your existing storage class or set `clickhouse.statefulSet.persistence.size` to the previous default value of `8Gi`.
+  - It is **strongly** recommend that you monitor the consumption of storage on your Clickhouse volume to ensure the volume does not near full capacity, which may cause run ingest to behave erratically.
+- New Platform-Backend service used internally. This service also uses it’s own image. You may need to adjust your helm `values` files accordingly.
+
+### Admin changes
+
+- Added new Role-Based Access Controls. For more details see the [Admin](../concepts/admin) and [Set Up Access Control](../how_to_guides/setup/set_up_access_control) sections of the docs.
+- Introduction of PATs and Service Keys. Old API keys have been migrated to service keys.
+
+### Deprecation notices
+
+With the release of v0.5:
+
+- LangSmith v0.4.x and earlier are now in maintenance mode and may only receive critical security fixes.
+
+## Week of March 25, 2024 - LangSmith v0.4
+
+LangSmith 0.4 improves performance and reliability, implements a new asynchronous queue worker to optimize run ingests, and an API key salt parameter.
+
+### Breaking changes
+
+- This release adds an API key salt parameter. This previously defaulted to your LangSmith License Key. **For updates from earlier versions you should set this parameter to your license key to ensure backwards compatibility.** Using a new api key salt will invalidate all existing api keys.
+- This release makes Clickhouse persistence use 50Gi of storage by default. You can adjust this by changing the `clickhouse.statefulSet.persistence.size` value in your `values.yaml` file.
+  - If your existing configuration does not configure persistence already, you will need to resize your existing pvc or set `clickhouse.statefulSet.persistence.size` to the previous default value of `8Gi`.
+
+### Performance and Reliability Changes
+
+- Implemented a new asynchronous queue worker and cached token encodings to improve performance when ingesting traces, reducing the delay between ingest and display in the LangSmith UI.
+
+### Infrastructure changes
+
+- Some our image repositories have been updated. You can see the root repositories in our `values.yaml` file and may need to update mirrors to pick up the new images.
+- Clickhouse persistence now uses 50Gi of storage by default. You can adjust this by changing the `clickhouse.statefulSet.persistence.size` value in your `values.yaml` file.
+  - If your existing configuration cannot support 50Gi, you may need to resize your existing storage class or set `clickhouse.statefulSet.persistence.size` to the previous default value of `8Gi`.
+- Consolidation of hubBackend and backend services. We now use one service to serve both of these endpoints. This should not impact your application.
+
+### Admin changes
+
+- Added an API key salt parameter in `values.yml`. This can be set to a custom value and changing it will invalidate all existing api keys.
+- Changed the OAuth flow to leverage Access Tokens instead of OIDC ID tokens. This change should not impact the end user experience.
+- Added scripts to enable feature flags in self-hosted environments for use in previewing pre-release features. Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/ADD-FEATURE-FLAG.md
+
+### Deprecation notices
+
+With the release of 0.4:
+
+- LangSmith 0.3.x and earlier are now in maintenance mode and may only receive critical security fixes.
+
+## Week of Februrary 21, 2024 - LangSmith v0.3
+
+LangSmith 0.3 improves performance and reliability, adds improved monitoring charts group by metadata and tag, and adds cost tracking.
+
+### Breaking changes
+
+- This release will drop the postgres run tables - if you are making a migration from LangSmith v0.1 and wish to retain run data, you must first update to v0.2 and perform a data migration. See https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md for additional details
+
+### Performance and Reliability Changes
+
+- Continued performance when ingesting traces, reducing the delay between ingest and display in the LangSmith UI.
+
+### Admin changes
+
+- None
+
+### Deprecation notices
+
+With the release of 0.3:
+
+- LangSmith 0.2.x and earlier are now in maintenance mode and may only receive critical security fixes.
+
+## Week of January 29, 2024 - LangSmith v0.2
+
+LangSmith 0.2 improves performance and reliability, adds a updated interface for reviewing trace data, and adds support for batch processing of traces.
+
+### Requirements
+
+- This release requires `langsmith-sdk` version ≥ `0.0.71` (Python) and ≥ `0.0.56` (JS/TS) to support changes in pagination of API results. Older versions will only return the first 100 results when querying an endpoint.
+
+### Breaking changes
+
+- The search syntax for metadata in runs has changed and limits support for nested JSON to a single level. If you are supplying custom metadata in traces, you should flatten your metadata structure in order to allow it to be searchable, (e.g. `{"user_id": ..., "user_name":...,}`) and then search using `has(metadata, '{"user_name": ...}')`
+
+### Performance and Reliability Changes
+
+- Improved performance when ingesting traces, reducing the delay between ingest and display in the LangSmith UI.
+- Improved performance for updates and deletes on annotation labels.
+- Added pagination of API responses.
+- Fixed an issue impacting natural language searches.
+
+### Infrastructure Changes
+
+- Added the `clickhouse` database service. Run results will now be stored in ClickHouse instead of Postgres to improve performance and scalability and reduce delays in the time it takes for runs to appear in LangSmith.
+  - Note that if you wish to retain access to run data in the Langsmith UI after updating, a data migration will need to be performed. Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
+
+### Admin changes
+
+- Increased the maximum number of users per organization from 5 to 100 for new organizations.
+
+### Deprecation notices
+
+With the release of 0.2:
+
+- LangSmith 0.1.x is now in maintenance mode and may only receive critical security fixes.
