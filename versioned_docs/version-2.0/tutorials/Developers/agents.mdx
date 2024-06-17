@@ -74,6 +74,16 @@ We'll use a [LangGraph agent](https://www.langchain.com/agents) with access to a
 
 ![](./static/agent_lg_overview.png)
 
+### LLM
+
+```python
+from langchain_openai import ChatOpenAI
+
+llm=ChatOpenAI(model="gpt-4o",temperature=0)
+experiment_prefix="sql-agent-gpt4o"
+metadata = "Chinook, gpt-4o base-case-agent"
+```
+
 ### Tools
 
 We'll use [SQL toolkit](https://python.langchain.com/v0.2/docs/tutorials/sql_qa/#agents) as well as some custom tools to check the query before executing it and check the query result from the database to confirm it is not empty or irrelevant to the question.
@@ -81,7 +91,6 @@ We'll use [SQL toolkit](https://python.langchain.com/v0.2/docs/tutorials/sql_qa/
 ```python
 import json
 
-from langchain_openai import ChatOpenAI
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 
 from langgraph.checkpoint.sqlite import SqliteSaver
@@ -92,7 +101,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.agents import tool
 
 # SQL toolkit
-toolkit = SQLDatabaseToolkit(db=db, llm=ChatOpenAI(model="gpt-4o"))
+toolkit = SQLDatabaseToolkit(db=db, llm=llm)
 tools = toolkit.get_tools()
 
 # Query checking
@@ -111,7 +120,7 @@ If there are any of the above mistakes, rewrite the query. If there are no mista
 
 Execute the correct query with the appropriate tool."""
 query_check_prompt = ChatPromptTemplate.from_messages([("system", query_check_system),("user", "{query}")])
-query_check = query_check_prompt | ChatOpenAI(model="gpt-4o", temperature=0)
+query_check = query_check_prompt | llm
 
 @tool
 def check_query_tool(query: str) -> str:
@@ -125,7 +134,7 @@ query_result_check_system = """You are grading the result of a SQL query from a 
 - Check that the result is not empty.
 - If it is empty, instruct the system to re-try!"""
 query_result_check_prompt = ChatPromptTemplate.from_messages([("system", query_result_check_system),("user", "{query_result}")])
-query_result_check = query_result_check_prompt | ChatOpenAI(model="gpt-4o", temperature=0)
+query_result_check = query_result_check_prompt | llm
 
 @tool
 def check_result(query_result: str) -> str:
@@ -198,12 +207,12 @@ INSTRUCTIONS:
 - You can order the results by a relevant column to return the most interesting examples in the database.
 - Never query for all the columns from a specific table, only ask for the relevant columns given the question.
 - If you get an error while executing a query, rewrite the query and try again.
-- If the query returns a result, first check the query result.
+- If the query returns a result, use check_result tool to check the query result.
 - If the query result result is empty, think about the table schema, rewrite the query, and try again.
 - DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database."""
 
 query_gen_prompt = ChatPromptTemplate.from_messages([("system", query_gen_system),("placeholder", "{messages}")])
-assistant_runnable = query_gen_prompt | ChatOpenAI(model="gpt-4o", temperature=0).bind_tools(tools)
+assistant_runnable = query_gen_prompt | llm.bind_tools(tools)
 ```
 
 ### Graph Utilities
@@ -432,8 +441,9 @@ experiment_results = evaluate(
     predict_sql_agent_answer,
     data=dataset_name,
     evaluators=[answer_evaluator],
-    experiment_prefix="sql-agent-response-v-reference",
-    metadata={"version": "Chinook, gpt-4o base-case agent"},
+    experiment_prefix=experiment_prefix + "-response-v-reference",
+    num_repetitions=3,
+    metadata={"version": metadata},
 )
 ```
 
@@ -484,8 +494,9 @@ experiment_results = evaluate(
     predict_assistant,
     data=dataset_name,
     evaluators=[check_specific_tool_call],
-    experiment_prefix="sql-agent-single-tool-calling",
-    metadata={"version": "Chinook, gpt-4o base-case agent"},
+    experiment_prefix=experiment_prefix + "-single-tool",
+    num_repetitions=3,
+    metadata={"version": metadata},
 )
 ```
 
@@ -528,7 +539,9 @@ def contains_all_tool_calls_any_order(root_run: Run, example: Example) -> dict:
     expected = ['sql_db_list_tables', 'sql_db_schema', 'sql_db_query_checker', 'sql_db_query', 'check_result']
     messages = root_run.outputs["response"]
     tool_calls = find_tool_calls(messages)
-    print("Here are my tool calls:")
+    # Optionally, log the tool calls -
+    #print("Here are my tool calls:")
+    #print(tool_calls)
     if set(expected) <= set(tool_calls):
         score = 1
     else:
@@ -541,8 +554,9 @@ def contains_all_tool_calls_in_order(root_run: Run, example: Example) -> dict:
     """
     messages = root_run.outputs["response"]
     tool_calls = find_tool_calls(messages)
-    print("Here are my tool calls:")
-    print(tool_calls)
+    # Optionally, log the tool calls -
+    #print("Here are my tool calls:")
+    #print(tool_calls)
     it = iter(tool_calls)
     expected = ['sql_db_list_tables', 'sql_db_schema', 'sql_db_query_checker', 'sql_db_query', 'check_result']
     if all(elem in it for elem in expected):
@@ -558,12 +572,9 @@ def contains_all_tool_calls_in_order_exact_match(root_run: Run, example: Example
     expected = ['sql_db_list_tables', 'sql_db_schema', 'sql_db_query_checker', 'sql_db_query', 'check_result']
     messages = root_run.outputs["response"]
     tool_calls = find_tool_calls(messages)
-
-    # Print the tool calls for debugging
-    print("Here are my tool calls:")
-    print(tool_calls)
-
-    # Check if the tool calls match the expected trajectory exactly
+    # Optionally, log the tool calls -
+    #print("Here are my tool calls:")
+    #print(tool_calls)
     if tool_calls == expected:
         score = 1
     else:
@@ -575,7 +586,12 @@ experiment_results = evaluate(
     predict_sql_agent_messages,
     data=dataset_name,
     evaluators=[contains_all_tool_calls_any_order,contains_all_tool_calls_in_order,contains_all_tool_calls_in_order_exact_match],
-    experiment_prefix="sql-agent-response-tool-calling",
-    metadata={"version": "Chinook, gpt-4o base-case agent"},
+    experiment_prefix=experiment_prefix + "-trajectory",
+    num_repetitions=3,
+    metadata={"version": metadata},
 )
 ```
+
+You can see the results from the evaluations logged to the dataset!
+
+https://smith.langchain.com/public/20808486-67c3-4e30-920b-6d49d6f2b6b8/d
