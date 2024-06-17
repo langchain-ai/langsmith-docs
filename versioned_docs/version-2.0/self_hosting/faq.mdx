@@ -33,3 +33,6 @@ Our deployment only needs egress for a few things:
 #### Resource requirements for the application?
 
 - In k8s, we recommend a minimum helm configuration which can be found in [here](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/examples/medium_size.yaml). For docker, we recommend a minimum of 16GB of RAM and 4 CPUs.
+- For Postgres, we recommend a minimum of 8GB of RAM and 2 CPUs.
+- For Redis, we recommend 4GB of RAM and 2 CPUs.
+- For Clickhouse, we recommend 32GB of RAM and 8 CPUs.
