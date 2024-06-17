@@ -8,7 +8,7 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 
 ## API reference
 
-- [LangSmith API Reference](https://docs.smith.langchain.com/api-docs)
+- [LangSmith API Reference](https://api.smith.langchain.com/redoc)
 
 ## SDK reference
 
