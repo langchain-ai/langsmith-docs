@@ -47,6 +47,20 @@ In order to do this, you can click on the `Advanced Filters` link all the way at
 
 ![Filtering](../static/child_runs.png)
 
+## Filter based on inputs and outputs
+
+You can filter runs based on the content in the inputs and outputs of the run.
+
+To filter either inputs or outputs, you can use `Full-Text Search` filter which will match keywords in either field. For more targeted search, you can use the `Input` or `Output` filters which will only match content based on the respective field.
+
+You can also specify multiple matches, either by including multiple terms separated by whitespace, or adding multiple filters - which will try to match all terms provided.
+
+Note that keyword search is done splitting the text and finding any partial matches on the search keywords, so it is not done in specific order. We exclude common stop words from the search (from the nltk stop word list along with a few other common json keywords).
+
+![Filtering](../static/filter_full_text.png)
+
+Based on the filters above, the system will search for `python` and `tensorflow` in either inputs or outputs, and `embedding` in the inputs along with `fine` and `tune` in the outputs.
+
 ## Copy the filter
 
 Sometimes you may want to copy a filter that you have constructed. You may way to do this to share it with a co-worker, reuse it in the future, or use it in the SDK.
