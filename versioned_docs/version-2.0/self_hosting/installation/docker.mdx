@@ -19,6 +19,9 @@ This guide provides instructions for installing and setting up your environment 
    docker info
    ```
    If you don't see any server information in the output, make sure Docker is installed correctly and launch the Docker daemon.
+   1. Recommended: At least 4 vCPUs, 16GB Memory available on your machine.
+      - You may need to tune resource requests/limits for all of our different services based off of organization size/usage
+   1. Disk Space: LangSmith can potentially require a lot of disk space. Ensure you have enough disk space available.
 1. LangSmith License Key
    1. You can get this from your Langchain representative. Contact us at sales@langchain.dev for more information.
 1. Api Key Salt
@@ -76,7 +79,7 @@ docker-compose up -d
 
    The Langsmith UI should be visible/operational
 
-   ![.langsmith_ui.png](./static/langsmith_ui.png)
+   ![.langsmith_ui.png](../static/langsmith_ui.png)
 
 ### Checking the logs
 

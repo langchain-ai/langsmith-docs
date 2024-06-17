@@ -40,9 +40,13 @@ Ensure you have the following tools/items ready. Some items are marked optional:
 
    ```bash
      NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-     gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  161d
+     gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   true                   161d
    ```
+   :::note
+   We highly recommend using a storage class that supports volume expansion. This is because traces can potentially require a lot of disk space and your volumes may need to be resized over time.
+   :::
 
+   Refer to the [Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/storage-classes/) for more information on storage classes.
 1. Helm
    1. `brew install helm`
 1. LangSmith License Key
@@ -134,7 +138,7 @@ You can also see some example configurations in the examples directory of the He
 
    The LangSmith UI should be visible/operational
 
-   ![./static/langsmith_ui.png](./static/langsmith_ui.png)
+   ![./static/langsmith_ui.png](../static/langsmith_ui.png)
 
 ## Using LangSmith
 
