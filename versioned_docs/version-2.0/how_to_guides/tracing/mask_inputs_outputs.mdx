@@ -88,7 +88,7 @@ await openaiClient.chat.completions.create({
 
 ## Rule-based masking of inputs and outputs
 
-:::note
+:::info
 This feature is available in the following LangSmith SDK versions:
 
 - Python: 0.1.78 and above
@@ -98,9 +98,9 @@ This feature is available in the following LangSmith SDK versions:
 
 To mask specific data in inputs and outputs, you can use the `create_anonymizer` / `createAnonymizer` function and pass the newly created anonymizer when instantiating the client. The anonymizer can be either constructed from a list of regex patterns and the replacement values or from a function that accepts and returns a string value.
 
-The anonymizer will be skipped for inputs if `LANGCHAIN_HIDE_INPUTS = true`, same applies for outputs if `LANGCHAIN_HIDE_OUTPUTS = true`. However, if inputs or outputs are to be sent to client, the `anonymizer` method will take precedence over functions found in `hide_inputs` and `hide_outputs`. By default, the `create_anonymizer` will only look at maximum of 10 nesting levels deep, which can be configured via the `max_depth` parameter.
+The anonymizer will be skipped for inputs if `LANGCHAIN_HIDE_INPUTS = true`. Same applies for outputs if `LANGCHAIN_HIDE_OUTPUTS = true`.
 
-Please note, that using the anonymizer might incur a performance hit with complex regular expressions or large payloads, as the anonymizer serializes the payload to JSON before processing. To customize the behavior, you can use the `hide_inputs` and `hide_outputs` parameters on the `Client` object instead.
+However, if inputs or outputs are to be sent to client, the `anonymizer` method will take precedence over functions found in `hide_inputs` and `hide_outputs`. By default, the `create_anonymizer` will only look at maximum of 10 nesting levels deep, which can be configured via the `max_depth` parameter.
 
 <CodeTabs
   tabs={[
@@ -147,9 +147,19 @@ Please note, that using the anonymizer might incur a performance hit with comple
   groupId="client-language"
 />
 
+
+
+Please note, that using the anonymizer might incur a performance hit with complex regular expressions or large payloads, as the anonymizer serializes the payload to JSON before processing.
+
+:::note
+
+Improving the performance of `anonymizer` API is on our roadmap! If you are encountering performance issues, please contact us at support@langchain.dev.
+
+:::
+
 ![](../static/hide_inputs_outputs.png)
 
-Older versions of LangSmith SDKs can use the `hide_inputs` and `hide_outputs` parameters to achieve the same effect.
+Older versions of LangSmith SDKs can use the `hide_inputs` and `hide_outputs` parameters to achieve the same effect. You can also use these parameters to process the inputs and outputs more efficiently as well.
 
 <CodeTabs
   tabs={[
