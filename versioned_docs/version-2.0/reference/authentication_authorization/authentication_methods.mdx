@@ -18,10 +18,11 @@ Self-hosted customers have more control over how their users can login to LangSm
 For more in-depth coverage of configuration options, see [the self-hosting docs](./self_hosting)
 and [Helm chart](https://github.com/langchain-ai/helm/tree/main/charts/langsmith).
 
-### OIDC
+### SSO with OAuth 2.0 and OIDC
 
-Production installations should configure OIDC in order to use an external identity provider.
-This enables users to login through an identity platform like Auth0/Okta or a social provider like Google.
+Production installations should configure SSO in order to use an external identity provider.
+This enables users to login through an identity platform like Auth0/Okta. LangSmith supports almost any OIDC-compliant provider.
+Learn more about configuring SSO in the [SSO configuration guide](./self_hosting/configuration/sso)
 
 ### Email/Password a.k.a. Basic Auth (coming soon)
 
