@@ -98,7 +98,9 @@ This feature is available in the following LangSmith SDK versions:
 
 To mask specific data in inputs and outputs, you can use the `create_anonymizer` / `createAnonymizer` function and pass the newly created anonymizer when instantiating the client. The anonymizer can be either constructed from a list of regex patterns and the replacement values or from a function that accepts and returns a string value.
 
-The `anonymizer` parameter of the `Client` will be skipped when `hide_inputs` and `hide_outputs` respectively are set to `True`. However, if inputs or outputs are to be sent to client, the `anonymizer` method will take precedence over functions found in `hide_inputs` and `hide_outputs`. By default, the `create_anonymizer` will only look at maximum of 10 nesting levels deep, which can be configured via the `max_depth` parameter.
+The anonymizer will be skipped for inputs if `LANGCHAIN_HIDE_INPUTS = true`, same applies for outputs if `LANGCHAIN_HIDE_OUTPUTS = true`. However, if inputs or outputs are to be sent to client, the `anonymizer` method will take precedence over functions found in `hide_inputs` and `hide_outputs`. By default, the `create_anonymizer` will only look at maximum of 10 nesting levels deep, which can be configured via the `max_depth` parameter.
+
+Please note, that using the anonymizer might incur a performance hit with complex regular expressions or large payloads, as the anonymizer serializes the payload to JSON before processing. To customize the behavior, you can use the `hide_inputs` and `hide_outputs` parameters on the `Client` object instead.
 
 <CodeTabs
   tabs={[
