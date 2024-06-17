@@ -1,10 +1,10 @@
 ---
-sidebar_label: Overview
+sidebar_label: Architectural Overview
 sidebar_position: 1
 table_of_contents: true
 ---
 
-# Self-Hosted LangSmith
+# Architectural Overview
 
 :::important Enterprise License Required
 Self-Hosted LangSmith is an add-on to the Enterprise Plan designed for our largest, most security-conscious customers. See our [pricing page](https://www.langchain.com/pricing) for more detail, and contact us at sales@langchain.dev if you want to get a license key to trial LangSmith in your environment.
@@ -27,7 +27,26 @@ The LangSmith application consists of several components including 5 LangSmith s
 
 To access the LangSmith UI and send API requests, you will need to expose the LangSmith Frontend service. Depending on your installation method, this can be a load balancer or a port exposed on the host machine.
 
-## Architectural overview
+## Datastores
+
+:::note
+LangSmith Self-Hosted will bundle these datastores by default, but you can configure LangSmith to use external datastores.
+In a production setting, we *strongly recommend using external datastores*.
+:::
+
+### ClickHouse
+
+ClickHouse is used as the primary data store for traces and feedback (high-volume data).
+
+### Postgres
+
+Postgres is used as the primary data store for transactional workloads and operational data (almost everything besides traces and feedback).
+
+### Redis
+
+Redis is used to back our queuing/caching operations.
+
+## Services
 
 ### LangSmith Frontend
 
@@ -48,29 +67,3 @@ The platform backend is an internal service that primarily handles authenticatio
 ### LangSmith Playground
 
 The playground is a service that handles forwarding requests to various LLM APIs to support the LangSmith Playground feature. This can also be used to connect to your own custom model servers.
-
-### ClickHouse
-
-ClickHouse is used as the primary data store for traces and feedback (high-volume data).
-
-We include an open-source, single node instance of ClickHouse that writes to a persistent volume that you supply as part of your configuration.
-
-### Postgres
-
-Postgres is used as the primary data store for operational data (almost everything besides traces and feedback).
-
-By default, LangSmith Self-Hosted will use an internal Postgres database. However, you can configure LangSmith to use an external Postgres database (strongly recommended in a production setting). By configuring an external Postgres database, you can manage backups, scaling, and other operational tasks for your database.
-
-### Redis
-
-Redis is used to back our queuing/caching operations.
-
-By default, LangSmith Self-Hosted will use an internal Redis instance. However, you can configure LangSmith to use an external Redis instance (strongly recommended in a production setting). By configuring an external Redis instance, you can manage backups, scaling, and other operational tasks for your Redis instance.
-
-## Installation
-
-To install, take a look at our [Kubernetes deployment guide](/self_hosting/installation/kubernetes) or our [Docker deployment guide](/self_hosting/installation/docker).
-
-## FAQ
-
-If you have any questions, please refer to our [FAQ](/self_hosting/faq). You can also reach out to us at sales@langchain.dev for more information.

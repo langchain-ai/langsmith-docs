@@ -2,11 +2,11 @@ import {
   CodeTabs,
   DockerBlock,
   HelmBlock,
-} from "../../../../../src/components/InstructionsWithCode";
+} from "../../../../src/components/InstructionsWithCode";
 
 # Connect to an External ClickHouse Database
 
-LangSmith uses ClickHouse as the primary data store for run data. By default, LangSmith Self-Hosted will use an internal ClickHouse database that is bundled with the LangSmith instance.
+LangSmith uses ClickHouse as the primary data store for traces and feedback. By default, LangSmith Self-Hosted will use an internal ClickHouse database that is bundled with the LangSmith instance.
 
 However, you can configure LangSmith to use an external ClickHouse database. By configuring an external ClickHouse database, you can manage backups, scaling, and other operational tasks for your database.
 Unfortunately, many cloud providers do not offer managed ClickHouse services at this time. Instead, you can run ClickHouse in a few ways:

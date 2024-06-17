@@ -2,12 +2,12 @@ import {
   CodeTabs,
   DockerBlock,
   HelmBlock,
-} from "../../../../../src/components/InstructionsWithCode";
+} from "../../../../src/components/InstructionsWithCode";
 
 # Connect to an External Postgres Database
 
-LangSmith uses a Postgres database as the primary data store for operational data(almost everything besides runs). By default, LangSmith Self-Hosted will use an internal Postgres database.
-However, you can configure LangSmith to use an external Postgres database(strongly recommended in a production setting). By configuring an external Postgres database, you can manage backups, scaling, and other operational tasks for your database.
+LangSmith uses a Postgres database as the primary data store for transactional workloads and operational data (almost everything besides runs). By default, LangSmith Self-Hosted will use an internal Postgres database.
+However, you can configure LangSmith to use an external Postgres database (*strongly recommended in a production setting*). By configuring an external Postgres database, you can more easily manage backups, scaling, and other operational tasks for your database.
 
 ## Requirements
 

@@ -57,10 +57,7 @@
           "dirName": "self_hosting"
         }
       ],
-      "link": {
-        "type": "generated-index",
-        "description": "Self-hosting LangSmith requires an enterprise license. Check out the guides below for more information."
-      }
+      "link": {"type": "doc", "id": "self_hosting/index"}
     }
   ]
 }
