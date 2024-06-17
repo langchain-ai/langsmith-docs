@@ -65,6 +65,24 @@ export function ShellBlock(content, value = "shell", label = "Shell") {
   };
 }
 
+export function HelmBlock(content, value = "yaml", label = "Helm") {
+  return {
+    value,
+    label,
+    content,
+    language: "yaml",
+  };
+}
+
+export function DockerBlock(content, value = ".env", label = "Docker") {
+  return {
+    value,
+    label,
+    content,
+    language: "dockerfile",
+  };
+}
+
 /**
  * @param {string} code
  * @param {"typescript" | "python"} language
