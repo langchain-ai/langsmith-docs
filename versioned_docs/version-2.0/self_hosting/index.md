@@ -17,8 +17,8 @@ Step-by-step guides that cover the installation, configuration, and scaling of y
 
 ## Installation
 
-- [Kubernetes](./self_hosting/installation/kubernetes): Deploy LangSmith on Kubernetes.
-- [Docker](./self_hosting/installation/docker): Deploy LangSmith using Docker.
+- [Kubernetes](./self_hosting/kubernetes): Deploy LangSmith on Kubernetes.
+- [Docker](./self_hosting/docker): Deploy LangSmith using Docker.
 
 ## Configuration
 
