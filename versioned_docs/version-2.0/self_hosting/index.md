@@ -21,8 +21,8 @@ Step-by-step guides that cover the installation, configuration, and scaling of y
 - [Usage](./self_hosting/usage): How to use your self-hosted instance of LangSmith.
 - [Upgrades](./self_hosting/upgrades): How to upgrade your self-hosted instance of LangSmith.
 - [Release Notes](./self_hosting/release_notes): The latest release notes for LangSmith.
-  - [v0.5](./self_hosting/release_notes#week-of-may-13-2024---langsmith-v05): Release notes for version 0.5 of LangSmith.
-  - [v0.4](./self_hosting/release_notes#week-of-march-25-2024---langsmith-v04): Release notes for version 0.4 of LangSmith.
-  - [v0.3](./self_hosting/release_notes#week-of-february-21-2024---langsmith-v03): Release notes for version 0.3 of LangSmith.
-  - [v0.2](./self_hosting/release_notes#week-of-january-29-2024---langsmith-v02): Release notes for version 0.2 of LangSmith.
+  - [Week of May 13, 2024 - LangSmith v0.5](./self_hosting/release_notes#week-of-may-13-2024---langsmith-v05): Release notes for version 0.5 of LangSmith.
+  - [Week of March 25, 2024 - LangSmith v0.4](./self_hosting/release_notes#week-of-march-25-2024---langsmith-v04): Release notes for version 0.4 of LangSmith.
+  - [Week of Februrary 21, 2024 - LangSmith v0.3](./self_hosting/release_notes#week-of-february-21-2024---langsmith-v03): Release notes for version 0.3 of LangSmith.
+  - [Week of January 29, 2024 - LangSmith v0.2](./self_hosting/release_notes#week-of-january-29-2024---langsmith-v02): Release notes for version 0.2 of LangSmith.
 - [FAQ](./self_hosting/faq): Frequently asked questions about LangSmith.

@@ -42,11 +42,13 @@ Ensure you have the following tools/items ready. Some items are marked optional:
      NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
      gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   true                   161d
    ```
+
    :::note
    We highly recommend using a storage class that supports volume expansion. This is because traces can potentially require a lot of disk space and your volumes may need to be resized over time.
    :::
 
    Refer to the [Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/storage-classes/) for more information on storage classes.
+
 1. Helm
    1. `brew install helm`
 1. LangSmith License Key
