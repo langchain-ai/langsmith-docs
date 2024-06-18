@@ -608,17 +608,23 @@ def multiple_scores(root_run: Run, example: Example) -> dict:
       ]
   }
     `),
-    TypeScriptBlock(`import type { Run, Example } from "langsmith/schemas";\n
-function multipleScores(rootRun: Run, example: Example) {
-  // Your evaluation logic here
-  return {
-      results: [
-          { key: "precision", score: 0.8 },
-          { key: "recall", score: 0.9 },
-          { key: "f1", score: 0.85 },
-      ],
-  };
-}`),
+    typescript({
+      caption:
+        "Support for multiple scores is available in `langsmith@0.1.32` and higher",
+    })`
+      import type { Run, Example } from "langsmith/schemas";
+      
+      function multipleScores(rootRun: Run, example: Example) {
+        // Your evaluation logic here
+        return {
+            results: [
+                { key: "precision", score: 0.8 },
+                { key: "recall", score: 0.9 },
+                { key: "f1", score: 0.85 },
+            ],
+        };
+      }
+    `,
   ]}
 />
 
