@@ -30,7 +30,7 @@ Our deployment only needs egress for a few things:
 - Talking to any external storage services you may have configured
 - Fetching OAuth information
 
-Your VPC can set up rules to limit any other access. Note: We require the `X-Tenant-Id` header to be allowed to be passed through to the backend service. This is used to determine which tenant the request is for.
+Your VPC can set up rules to limit any other access. Note: We require the `X-Tenant-Id` and `X-Organization-Id` headers to be allowed to be passed through to the backend service. These are used to determine which organization and workspace (previously called "tenant") the request is for.
 
 #### _Resource requirements for the application?_
 
