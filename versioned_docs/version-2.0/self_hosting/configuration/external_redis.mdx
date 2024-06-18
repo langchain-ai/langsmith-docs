@@ -16,7 +16,12 @@ However, you can configure LangSmith to use an external Redis instance (**strong
   - [Google Cloud Memorystore](https://cloud.google.com/memorystore)
   - [Azure Cache for Redis](https://azure.microsoft.com/en-us/services/cache/)
 - Note: We do only officially support Redis versions >= 5.
-- We only officially support Redis in a non-clustered configuration. We do not support Redis Cluster(certain tiers of managed Redis services may use Redis Cluster under the hood, but you can point to a single node in the cluster).
+- We do not support Redis Cluster.
+
+:::important Redis Cluster Not Supported
+Certain tiers of managed Redis services may use Redis Cluster under the hood, but you can point to a single node in the cluster.
+For example on Azure Cache for Redis, the `Premium` tier and above use Redis Cluster, so you will need to use a lower tier.
+:::
 
 ## Connection String
 
