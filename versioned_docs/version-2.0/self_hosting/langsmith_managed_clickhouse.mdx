@@ -1,0 +1,30 @@
+---
+sidebar_label: LangSmith Managed ClickHouse(Beta)
+sidebar_position: 9
+---
+
+# LangSmith Managed ClickHouse(Beta)
+
+While we recommend using an external ClickHouse instance for production deployments, we know that many customers may not be able to easily procure or deploy
+a ClickHouse instance. To make it easier to get started with LangSmith, we offer a managed ClickHouse service as part of our Self-Hosted offering.
+By using our managed ClickHouse service,
+
+## Architecture Overview
+
+Using LangSmith Managed Clickhouse with your Self-Hosted LangSmith instance is fairly simple. The overall architecture is similar to using a fully self-hosted ClickHouse instance, with a few key differences:
+
+- You will need to set up a private network connection between your LangSmith instance and the LangSmith Managed ClickHouse instance
+- Inputs and Outputs of your traces will be stored in blob storage(instead of Clickhouse) to ensure that you have full control over your data. This will also mean that you cannot take advantage of the full-text search feature (we are currently working on enabling this for blob storage as well).
+- The LangSmith team will monitor your ClickHouse instance and ensure that it is running smoothly. This allows us to track metrics like run-ingestion delay and query performance to ensure that your instance is running smoothly.
+
+The overall architecture looks like this:
+
+![LangSmith Managed ClickHouse Architecture](../static/langsmith_managed_clickhouse_architecture.png)
+
+## Requirements
+
+- You must be on AWS or GCP. We do not support Azure at this time as we require S3 or GCS for blob storage.
+- You must have a VPC that can connect to the LangSmith Managed ClickHouse Instance. You will need to work with our team to set up the necessary networking.
+- You must have a LangSmith Self-Hosted instance running. You can use our managed ClickHouse service with both Docker and Helm installations.
+
+Please reach out to our team at sales@langchain.dev if you are interested in using our managed ClickHouse service. We will work with you to set up the necessary networking and get you started with our managed ClickHouse service.
