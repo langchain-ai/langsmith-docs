@@ -20,7 +20,7 @@ We've successfully tested LangSmith on the following Kubernetes distributions:
 - OpenShift
 - Minikube and Kind (for development purposes)
 
-To review all configuration options, look at the values.yaml for the [LangSmith Helm Chart](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/README.md).
+To review all configuration options, look at the values.yaml for the [LangSmith helm chart](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/README.md).
 
 ## Prerequisites
 
@@ -65,9 +65,9 @@ Ensure you have the following tools/items ready. Some items are marked optional:
 ## Configure your Helm Charts:
 
 1. Create a new file called `langsmith_config.yaml`. This should have a similar structure to the `values.yaml` file in the LangSmith Helm Chart repository. Only include the values you want to override to avoid having to update the file every time the chart is updated.
-2. Set the appropriate values in the `langsmith_config.yaml` file. You can find the available configuration options in the [Configuration](/self_hosting/configuration) section.
+2. Set the appropriate values in the `langsmith_config.yaml` file. You can find the available configuration options in the [configuration](/self_hosting/configuration) section.
 
-You can also see some example configurations in the examples directory of the Helm Chart repository here: [LangSmith Helm Chart Examples](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/examples).
+You can also see some example configurations in the examples directory of the Helm Chart repository here: [LangSmith helm chart examples](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/examples).
 
 ## Deploying to Kubernetes:
 
@@ -144,4 +144,4 @@ You can also see some example configurations in the examples directory of the He
 
 ## Using LangSmith
 
-Now that LangSmith is running, you can start using it to trace your code. You can find more information on how to use self-hosted LangSmith in the [Self-Hosted Usage Guide](/self_hosting/usage).
+Now that LangSmith is running, you can start using it to trace your code. You can find more information on how to use self-hosted LangSmith in the [self-hosted usage guide](/self_hosting/usage).

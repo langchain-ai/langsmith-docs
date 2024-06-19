@@ -7,8 +7,8 @@ sidebar_position: 0
 
 Step-by-step guides that cover the installation, configuration, and scaling of your Self-Hosted LangSmith instance.
 
-- [Architectural Overview](./self_hosting/architectural_overview): A high-level overview of the LangSmith architecture.
-  - [Storage Services](./self_hosting/architectural_overview#datastores): The storage services used by LangSmith.
+- [Architectural overview](./self_hosting/architectural_overview): A high-level overview of the LangSmith architecture.
+  - [Storage services](./self_hosting/architectural_overview#datastores): The storage services used by LangSmith.
   - [Services](./self_hosting/architectural_overview#services): The services that make up LangSmith.
 - [Installation](./self_hosting/installation): How to install LangSmith on your own infrastructure.
   - [Kubernetes](./self_hosting/installation/kubernetes): Deploy LangSmith on Kubernetes.
@@ -20,7 +20,7 @@ Step-by-step guides that cover the installation, configuration, and scaling of y
   - [Connect to an external Redis instance](./self_hosting/configuration/external_redis): Configure LangSmith to use an external Redis instance.
 - [Usage](./self_hosting/usage): How to use your self-hosted instance of LangSmith.
 - [Upgrades](./self_hosting/upgrades): How to upgrade your self-hosted instance of LangSmith.
-- [Release Notes](./self_hosting/release_notes): The latest release notes for LangSmith.
+- [Release notes](./self_hosting/release_notes): The latest release notes for LangSmith.
   - [Week of June 17, 2024 - LangSmith v0.6](./self_hosting/release_notes#week-of-june-17-2024---langsmith-v05): Release notes for version 0.6 of LangSmith.
   - [Week of May 13, 2024 - LangSmith v0.5](./self_hosting/release_notes#week-of-may-13-2024---langsmith-v05): Release notes for version 0.5 of LangSmith.
   - [Week of March 25, 2024 - LangSmith v0.4](./self_hosting/release_notes#week-of-march-25-2024---langsmith-v04): Release notes for version 0.4 of LangSmith.
