@@ -53,7 +53,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Manually provide token counts](./how_to_guides/tracing/log_llm_trace#manually-provide-token-counts)
   - [Instruct-style models](./how_to_guides/tracing/log_llm_trace#instruct-style-models)
 - [Prevent logging of sensitive data in traces](./how_to_guides/tracing/mask_inputs_outputs)
-  - [Example masking UUIDs and emails in inputs and outputs](./how_to_guides/tracing/mask_inputs_outputs#example-masking-uuids-and-emails-in-inputs-and-outputs)
+  - [Rule-based masking of inputs and outputs](./how_to_guides/tracing/mask_inputs_outputs#rule-based-masking-of-inputs-and-outputs)
 - [Export traces](./how_to_guides/tracing/export_traces)
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
