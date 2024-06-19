@@ -23,7 +23,7 @@ const config = {
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
-  
+
   plugins: [
     [
       "@scalar/docusaurus",
@@ -137,7 +137,7 @@ const config = {
             href: "https://smith.langchain.com/",
             label: "Go to App",
             position: "right",
-          }
+          },
         ],
       },
       footer: {
