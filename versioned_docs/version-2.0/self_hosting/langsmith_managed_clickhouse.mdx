@@ -44,5 +44,6 @@ The overall architecture looks like this:
 ## Requirements
 
 - **You must be on AWS or GCP.** We do not support Azure at this time as we require S3 or GCS for blob storage.
+- To use private endpoints, ensure that your VPC is in a ClickHouse Cloud supported [region](https://clickhouse.com/docs/en/cloud/reference/supported-regions). Otherwise, you will need to use a public endpoint we will secure with firewall rules.
 - You must have a VPC that can connect to the LangSmith-managed Clickhouse service. You will need to work with our team to set up the necessary networking.
 - You must have a LangSmith self-hosted instance running. You can use our managed ClickHouse service with both [Kubernetes](./installation/kubernetes) and [Docker](./installation/docker) installations.
