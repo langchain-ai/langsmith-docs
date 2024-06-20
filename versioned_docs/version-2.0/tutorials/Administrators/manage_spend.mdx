@@ -121,7 +121,7 @@ with the organization level setting, this will only affect retention (and pricin
 
 ![](./static/p1projectretention.png)
 
-### [COMING SOON] Keep around a percentage of traces for extended data retention
+### Keep around a percentage of traces for extended data retention
 
 We may not want all our traces to expire after 14 days if we care about historical debugging. As such, we can take advantage
 of LangSmith's built in ability to do server side sampling for extended data retention.
@@ -130,18 +130,23 @@ Choosing the right percentage of runs to sample depends on your use case. We wil
 leave it to the user to find the right value that balances collecting rare events and cost constraints.
 
 LangSmith automatically upgrades the data retention for any trace that matches a run rule in our automations product (see our [run rules docs](../../../how_to_guides/monitoring/rules)). On the
-projects page, click `Add Rule`, and configure the rule as follows:
+projects page, click `Rules -> Add Rule`, and configure the rule as follows:
 
-![](./static/P1SampleTraces.png)
+![](./static/P2SampleTraces.png)
 
 Run rules match on runs rather than traces. Runs are single units of work within an LLM application's API handling. Traces
 are end to end API calls (learn more about [tracing concepts in LangSmith](../../concepts/tracing)). This means a trace can
 be thought of as a tree of runs making up an API call. When a run rule matches any run within a trace, the trace's full run tree
 upgrades to be retained for 400 days.
 
-Therefore, to make sure we have the proper sampling rate on traces, we can add a filter condition to only match the "root" run in
-the run tree. This is distinct per trace, so our 10% sampling will upgrade 10% of traces, rather 10% of runs, which could correspond to
-more than 10% of traces.
+Therefore, to make sure we have the proper sampling rate on traces, we take advantage of the 
+[filtering](../../how_to_guides/monitoring/rules#step-2-define-the-filter) functionality of run rules. 
+
+We add add a filter condition to only match the "root" run in the run tree. This is distinct per trace, so our 10% sampling 
+will upgrade 10% of traces, rather 10% of runs, which could correspond to more than 10% of traces. If desired, we can optionally add 
+any other filtering conditions required (e.g. specific tags/metadata attached to our traces) for more pointed data retention
+extension. For the sake of this tutorial, we will stick with the simplest condition, and leave more advanced filtering as an
+exercise to the user.
 
 :::note
 If you want to keep a subset of traces for longer than 400 days for data collection purposes, you can create another run
