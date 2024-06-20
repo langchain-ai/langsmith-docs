@@ -34,6 +34,8 @@ LangSmith v0.6 improves run rules performance and reliability, adds support for 
 
 - [Docker Compose only] The default port has changed from 80 to 1980.
 - [Helm] The playground image start command has changed. If you are using a custom Helm chart, you may need to review the configuration for Playground and adjust your Helm config accordingly.
+- [Helm] Added the ability to configure your probes in the `values.yaml` file. This allows you to adjust the readiness and liveness probes for the LangSmith services. You may need to adjust these if you had changed container ports.
+- [Helm] Added ArgoCD `PostSync` annotations to hook jobs to ensure that the jobs are run properly in ArgoCD. You may need to remove this annotation if you were previously setting it manually.
 - Updated Clickhouse from v23.9 to v24.2 NOTE: Applies only to environments using the LangSmith-provided Clickhouse.
 
 ### Admin changes
