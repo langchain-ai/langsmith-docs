@@ -372,11 +372,9 @@ const chain = prompt.pipe(model).pipe(outputParser);
 
 const main = traceable(
   async (input: { question: string; context: string }) => {
-    // this is done automatically in `langchain` >0.2.x
-    // only do this if you are using an older version of `langchain`
     // highlight-start
     const callbacks = await getLangchainCallbacks();
-    const response = await chain.invoke({ callbacks });
+    const response = await chain.invoke(input, { callbacks });
     // highlight-end
     return response;
   },
