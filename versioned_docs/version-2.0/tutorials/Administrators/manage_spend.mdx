@@ -139,11 +139,11 @@ are end to end API calls (learn more about [tracing concepts in LangSmith](../..
 be thought of as a tree of runs making up an API call. When a run rule matches any run within a trace, the trace's full run tree
 upgrades to be retained for 400 days.
 
-Therefore, to make sure we have the proper sampling rate on traces, we take advantage of the 
-[filtering](../../how_to_guides/monitoring/rules#step-2-define-the-filter) functionality of run rules. 
+Therefore, to make sure we have the proper sampling rate on traces, we take advantage of the
+[filtering](../../how_to_guides/monitoring/rules#step-2-define-the-filter) functionality of run rules.
 
-We add add a filter condition to only match the "root" run in the run tree. This is distinct per trace, so our 10% sampling 
-will upgrade 10% of traces, rather 10% of runs, which could correspond to more than 10% of traces. If desired, we can optionally add 
+We add add a filter condition to only match the "root" run in the run tree. This is distinct per trace, so our 10% sampling
+will upgrade 10% of traces, rather 10% of runs, which could correspond to more than 10% of traces. If desired, we can optionally add
 any other filtering conditions required (e.g. specific tags/metadata attached to our traces) for more pointed data retention
 extension. For the sake of this tutorial, we will stick with the simplest condition, and leave more advanced filtering as an
 exercise to the user.
