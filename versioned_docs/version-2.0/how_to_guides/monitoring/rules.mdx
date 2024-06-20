@@ -55,8 +55,10 @@ There are four actions you can take with an automation rule:
 - **Add to annotation queue**: Add the trace to an annotation queue.
 - **Run online evaluation**: Run an online evaluation on the trace. For more information on online evaluations, you can refer to [this guide](./online_evaluations).
 - **Trigger webhook**: Trigger a webhook with the trace data. For more information on webhooks, you can refer to [this guide](./webhooks).
-- **Extend data retention**: If you are using base [data retention](../../concepts/usage_and_billing/data_retention_billing), allows you
-  to extend the data retention period for a subset of traces without taking any other action.
+- **Extend data retention**: Extends the data retention period on matching traces that use [base retention](../../concepts/usage_and_billing/data_retention_billing).
+  Note that all other rules will also extend data retention on matching traces through the
+  [auto-upgrade](../../concepts/usage_and_billing/data_retention_billing#data-retention-auto-upgrades) mechanism,
+  but this rule takes no additional action.
 
 ## View logs for your automations
 
