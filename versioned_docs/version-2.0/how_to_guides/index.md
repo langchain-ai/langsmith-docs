@@ -139,6 +139,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [In the comparison view](./how_to_guides/evaluation/audit_evaluator_scores#in-the-comparison-view)
   - [In the runs table](./how_to_guides/evaluation/audit_evaluator_scores#in-the-runs-table)
   - [In the SDK](./how_to_guides/evaluation/audit_evaluator_scores#in-the-sdk)
+- [Fetch performance metrics for an experiment](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
 
 ## Human feedback
 
