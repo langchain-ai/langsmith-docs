@@ -71,6 +71,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Trace withouth setting environment variables](./how_to_guides/tracing/trace_with_langchain#trace-without-setting-environment-variables)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
 - [Trace without setting environment variables](./how_to_guides/tracing/trace_without_env_vars)
+- [Trace using the LangSmith REST API](./how_to_guides/tracing/trace_with_api)
 
 ## Datasets
 
@@ -138,6 +139,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [In the comparison view](./how_to_guides/evaluation/audit_evaluator_scores#in-the-comparison-view)
   - [In the runs table](./how_to_guides/evaluation/audit_evaluator_scores#in-the-runs-table)
   - [In the SDK](./how_to_guides/evaluation/audit_evaluator_scores#in-the-sdk)
+- [Fetch performance metrics for an experiment](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
 
 ## Human feedback
 
