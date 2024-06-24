@@ -20,24 +20,24 @@ The US-based LangSmith service is deployed in the `us-central1` region of GCP.
 
 LangSmith is composed of the following services, all deployed on Google Kubernetes Engine (GKE):
 
-- LangSmith Frontend
-- LangSmith Backend
-- LangSmith Platform Backend
-- LangSmith Playground
-- LangSmith Queue
+- LangSmith Frontend: serves the LangSmith UI.
+- LangSmith Backend: serves the LangSmith API.
+- LangSmith Platform Backend: handles authentication and other high-volume tasks. (Internal service)
+- LangSmith Playground: handles forwarding requests to various LLM providers for the Playground feature.
+- LangSmith Queue: handles processing of asynchronous tasks. (Internal service)
 
 LangSmith uses the following GCP storage services:
 
-- Google Cloud Storage (GCS) for runs inputs and outputs
-- Google Cloud SQL PostgreSQL for transactional workloads
-- Google Cloud Memorystore for Redis for queuing and caching
+- Google Cloud Storage (GCS) for runs inputs and outputs.
+- Google Cloud SQL PostgreSQL for transactional workloads.
+- Google Cloud Memorystore for Redis for queuing and caching.
 - Clickhouse Cloud on GCP for trace ingestion and analytics. Our services connect to Clickhouse Cloud, which is hosted in the same GCP region, via a private endpoint.
 
 Some additional GCP services we use include:
 
-- Google Cloud Load Balancer for routing traffic to the LangSmith services
-- Google Cloud CDN for caching static assets
-- Google Cloud Armor for security
+- Google Cloud Load Balancer for routing traffic to the LangSmith services.
+- Google Cloud CDN for caching static assets.
+- Google Cloud Armor for security and rate limits. For more information on rate limits we enforce, please refer to [this guide](../concepts/usage_and_billing/rate_limits).
 
 ![](./cloud-arch.png)
 
@@ -47,5 +47,3 @@ LangSmith is designed to be scalable and performant.
 
 As of load testing done in February 2024, LangSmith can comfortably process 500K+ runs (spans) per minute.
 We anticipate that LangSmith can process 750K+ runs per minute with the optimizations we've made since then.
-
-![](./scalability.png)
