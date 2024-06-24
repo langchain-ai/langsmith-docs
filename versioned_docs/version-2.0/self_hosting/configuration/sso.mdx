@@ -16,7 +16,7 @@ There are a couple of requirements for using OAuth SSO with LangSmith:
 
 - Your IdP must support the `Authorization Code with PKCE` flow(Google does not support this flow). This often displayed in your Oauth Provider as configuring a "Single Page Application(SPA)
 - Your IdP must support using an external discovery/issuer URL. We will use this to fetch the necessary routes and keys for your IdP.
-- You must provide the OIDC and email scopes to LangSmith. We use these to fetch the necessary user information and email for your users.
+- You must provide the `OIDC`, `email`, and `profile` scopes to LangSmith. We use these to fetch the necessary user information and email for your users.
 - You will need to set the callback URL in your IdP to `http://<host>/oauth-callback`, where host is the domain or ip you have provisioned for your LangSmith instance. This is where your IdP will redirect the user after they have authenticated.
 - You will need to provide the `oauthClientId` and `oauthIssuerUrl` in your `values.yaml` file. This is where you will configure your LangSmith instance.
 
