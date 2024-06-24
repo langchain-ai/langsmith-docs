@@ -14,9 +14,9 @@ Traces can also be configured for auto-upgrade of retention levels based on cert
 You can configure retention through helm or environment variable settings. There are a few options that are
 configurable:
 
-- *Enabled:* Whether data retention is enabled or disabled. If enabled, via the UI you can your default organization and project TTL tiers to apply to traces (see [data retention guide](/concepts/usage_and_billing/data_retention_billing) for details). 
-- *Upgrades Enabled:* With upgrades enabled, each trace will be upgraded from shortlived to longlived based on actions including feedback, run rules applied, and annotation queue addition.
-- *Retention Periods:* You can configure system-wide retention period for shortlived and longlived traces.  
+- _Enabled:_ Whether data retention is enabled or disabled. If enabled, via the UI you can your default organization and project TTL tiers to apply to traces (see [data retention guide](/concepts/usage_and_billing/data_retention_billing) for details).
+- _Upgrades Enabled:_ With upgrades enabled, each trace will be upgraded from shortlived to longlived based on actions including feedback, run rules applied, and annotation queue addition.
+- _Retention Periods:_ You can configure system-wide retention period for shortlived and longlived traces.
 
 <CodeTabs
   tabs={[
@@ -31,7 +31,7 @@ configurable:
       shortlived: "1209600"
     `),
     DockerBlock(
-`# In your .env file
+      `# In your .env file
 FF_TRACE_TIERS_ENABLED=true
 FF_UPGRADE_TRACE_TIER_ENABLED=true
 TRACE_TIER_TTL_DURATION_SEC_MAP='{"longlived": 34560000, "shortlived": 1209600}'
