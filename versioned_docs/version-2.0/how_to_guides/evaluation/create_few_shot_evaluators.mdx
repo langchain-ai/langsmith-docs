@@ -19,6 +19,11 @@ Before learning how to create few-shot evaluators, it might be helpful to learn 
 
 ## Create your evaluator
 
+:::tip
+The default maximum few-shot examples to use in the prompt is 5. Examples are pulled randomly from your dataset (if you have more than the maximum).
+
+:::
+
 When creating an [online](../monitoring/online_evaluations) or [offline](./bind_evaluator_to_dataset) evaluator - from a tracing project or a dataset, respectively - you will see the option to use corrections as few-shot examples. Note that these types of evaluators
 are only supported when using mustache prompts - you will not be able to click this option if your prompt uses f-string formatting. When you select this,
 we will auto-create a few-shot prompt for you. Each individual few-shot example will be formatted according to this prompt, and inserted into your main prompt in place of the `{{Few-shot examples}}`
@@ -35,21 +40,7 @@ Note that few-shot examples are not currently supported in evaluators that use H
 
 Once you create your evaluator, we will automatically create a dataset for you, which will be auto-populated with few-shot examples once you start making corrections.
 
-## View your corrections dataset
-
-In order to view your corrections dataset, go to your rule and click "Edit Rule" (or "Edit Evaluator" from a dataset):
-
-![Edit Evaluator](./static/edit_evaluator.png)
-
-If this is an online evaluator (in a tracing project), you will need to click to edit your prompt:
-
-![Edit Prompt](./static/click_to_edit_prompt.png)
-
-From this screen, you will see a button that says "View few-shot dataset". Clicking this will bring you to your dataset of corrections, where you can view and update your few-shot examples:
-
-![View few-shot dataset](./static/view_few_shot_ds.png)
-
-## Making corrections
+## Make corrections
 
 :::note Main Article
 [Audit evaluator scores](./audit_evaluator_scores)
@@ -63,3 +54,17 @@ The outputs will be the corrected evaluator score and the explanations that you 
 ![Few-shot example](./static/few_shot_example.png)
 
 Note that the corrections may take a minute or two to be populated into your few-shot dataset. Once they are there, future runs of your evaluator will include them in the prompt!
+
+## View your corrections dataset
+
+In order to view your corrections dataset, go to your rule and click "Edit Rule" (or "Edit Evaluator" from a dataset):
+
+![Edit Evaluator](./static/edit_evaluator.png)
+
+If this is an online evaluator (in a tracing project), you will need to click to edit your prompt:
+
+![Edit Prompt](./static/click_to_edit_prompt.png)
+
+From this screen, you will see a button that says "View few-shot dataset". Clicking this will bring you to your dataset of corrections, where you can view and update your few-shot examples:
+
+![View few-shot dataset](./static/view_few_shot_ds.png)
