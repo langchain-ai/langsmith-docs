@@ -58,6 +58,7 @@
         }
       ],
       "link": {"type": "doc", "id": "self_hosting/index"}
-    }
+    },
+    "langgraph_cloud"
   ]
 }
