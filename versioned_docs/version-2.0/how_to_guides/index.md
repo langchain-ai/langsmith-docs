@@ -142,7 +142,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [In the SDK](./how_to_guides/evaluation/audit_evaluator_scores#in-the-sdk)
 - [Create few-shot evaluators](./how_to_guides/evaluation/create_few_shot_evaluators)
   - [Create your evaluator](./how_to_guides/evaluation/create_few_shot_evaluators#create-your-evaluator)
-  - [Make corrections](./how_to_guides/evaluation/create_few_shot_evaluators#making-corrections)
+  - [Make corrections](./how_to_guides/evaluation/create_few_shot_evaluators#make-corrections)
   - [View your corrections dataset](./how_to_guides/evaluation/create_few_shot_evaluators#view-your-corrections-dataset)
 - [Fetch performance metrics for an experiment](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
 
