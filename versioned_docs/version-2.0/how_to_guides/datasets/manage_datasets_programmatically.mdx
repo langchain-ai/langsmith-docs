@@ -344,3 +344,33 @@ For example, if you have an example with metadata `{"foo": "bar", "baz": "qux"}`
   ]}
   groupId="client-language"
 />
+
+### List examples by structured filter
+
+Similar to how you can use the structured filter query language to [fetch runs](../tracing/export_traces#use-filter-query-language), you can use it to fetch examples.
+
+:::note
+
+This is currently only available in v0.1.83 and later of the Python SDK and v0.1.35 and later of the TypeScript SDK.
+
+Additionally, the structured filter query language is only supported for `metadata` fields.
+
+:::
+
+You can use the `has` operator to fetch examples with metadata fields that contain specific key/value pairs and the `exists` operator to fetch examples with metadata fields that contain a specific key.
+Additionally, you can also chain multiple filters together using the `and` operator and negate a filter using the `not` operator.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `examples = client.list_examples(
+                dataset_name=dataset_name,
+                filter='and(not(has(metadata, \\'{"foo": "bar"}\\')), exists(metadata, "tenant_id"))'
+            )`
+    ),
+    TypeScriptBlock(
+      `const examples = await client.listExamples({datasetName: datasetName, filter: 'and(not(has(metadata, \\'{"foo": "bar"}\\')), exists(metadata, "tenant_id"))'});`
+    ),
+  ]}
+  groupId="client-language"
+/>
