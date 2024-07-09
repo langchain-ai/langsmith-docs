@@ -43,11 +43,22 @@ You can create a filter as you normally would to filter traces in the project. F
 
 ![](../static/rules_filter.png)
 
-### Step 3: Define the sampling rate
+### (Optional) Step 3: Apply Rule to Past Runs
+
+When creating a new rule, you can apply the rule to past runs as well. To do this, select **Apply to Past Runs** checkbox and enter **Backfill From** date as the
+start date to apply the rule.
+
+This will start from the **Backfill From** date and apply the run rules until it is caught up with the latest runs.
+
+![](../static/rules_past_runs.png)
+
+Note that you will have to expand the date range for logs if you wanted to look at the progress of the backfill, see [View logs for your automations](./rules#view-logs-for-your-automations) for details.
+
+### Step 4: Define the sampling rate
 
 You can specify a sampling rate (between 0 and 1) for automations. This will control the percent of the filtered runs that are sent to an automation action. For example, if you set the sampling rate to 0.5, then 50% of the traces that pass the filter will be sent to the action.
 
-### Step 4: Define the action
+### Step 5: Define the action
 
 There are four actions you can take with an automation rule:
 
@@ -72,3 +83,8 @@ If a particular rule execution has triggered an error, you can view the error me
 ![Logs_Gif](../static/rules_logs.gif)
 
 ![Logs](../static/rules_logs.png)
+
+By default, rule logs only show results for runs that occurred in the last day. To see results for older runs, you can select **Last 1 day** and enter the desired date range.
+When applying a rule to past runs, the processing will start from the start date and go forward, so this would be needed to view logs while the backfill is proceeding.
+
+![](../static/rules_past_runs_logs.png)
