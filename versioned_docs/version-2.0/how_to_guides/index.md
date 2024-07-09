@@ -178,6 +178,7 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
 - [Set up automation rules](./how_to_guides/monitoring/rules)
   - [Create a rule](./how_to_guides/monitoring/rules#create-a-rule)
   - [View logs for your automations](./how_to_guides/monitoring/rules#view-logs-for-your-automations)
+  - [Apply Rule to Past runs](./how_to_guides/monitoring/rules#apply-rule-to-past-runs)
 - [Set up online evaluations](./how_to_guides/monitoring/online_evaluations)
   - [Configure online evaluations](./how_to_guides/monitoring/online_evaluations#configure-online-evaluations)
   - [Set API keys](./how_to_guides/monitoring/online_evaluations#set-api-keys)
