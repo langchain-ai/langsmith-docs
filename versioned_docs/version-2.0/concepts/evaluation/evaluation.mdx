@@ -149,7 +149,7 @@ See documentation on our workflow to audit and manually correct evaluator scores
 ### Pairwise
 
 Pairwise evaluators pick the better of two task outputs based upon some criteria.
-This can use either a heuristic ("which response is longer"), an LLM (with a specific pairwise prompt), or human (asking them to manually annotate examples.
+This can use either a heuristic ("which response is longer"), an LLM (with a specific pairwise prompt), or human (asking them to manually annotate examples).
 
 **When should you use pairwise evaluation?** Pairwise evaluation is helpful when it is difficult to directly score an LLM output, but easier to compare two outputs.
 This can be the case for tasks like summarization - it may be hard to give a summary a perfect score on a scale of 1-10, but easier to tell if it's better than a baseline.
