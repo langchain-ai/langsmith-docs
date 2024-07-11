@@ -26,15 +26,11 @@ export default function RegionSelector() {
       <div aria-haspopup="true" className="navbar__link">
         Region
       </div>
-      <ul className="dropdown__menu" width="50px">
+      <ul className="dropdown__menu regions-dropdown">
         <li
           onClick={() => handleRegionChange("US")}
           style={{
-            width: "100%",
             color: selectedRegion === "US" ? "rgb(67, 147, 228)" : "white",
-            cursor: "pointer",
-            padding: "5px",
-            textAlign: "center",
           }}
         >
           US
@@ -42,11 +38,7 @@ export default function RegionSelector() {
         <li
           onClick={() => handleRegionChange("EU")}
           style={{
-            width: "100%",
             color: selectedRegion === "EU" ? "rgb(67, 147, 228)" : "white",
-            cursor: "pointer",
-            padding: "5px",
-            textAlign: "center",
           }}
         >
           EU
