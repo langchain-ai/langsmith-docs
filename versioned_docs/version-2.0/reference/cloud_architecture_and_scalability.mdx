@@ -5,7 +5,7 @@ sidebar_position: 4
 # Cloud architecture and scalability
 
 :::note Cloud-managed solution
-This section is only relevant for the cloud-managed LangSmith service available at https://smith.langchain.com/.
+This section is only relevant for the cloud-managed LangSmith services available at https://smith.langchain.com and https://eu.smith.langchain.com.
 
 For information on the self-hosted LangSmith solution, please refer to the [self-hosted documentation](../self_hosting/).
 :::
@@ -14,9 +14,37 @@ LangSmith is deployed on Google Cloud Platform (GCP) and is designed to be highl
 
 ## Architecture
 
-The US-based LangSmith service is deployed in the `us-central1` region of GCP.
+The US-based LangSmith service is deployed in the `us-central1` (Iowa) region of GCP.
 
-**NOTE:** We will be adding an EU instance deployed in `europe-west4` (Netherlands) soon. If you are interested in this, please contact us at sales@langchain.dev.
+**NOTE:** The [EU-based LangSmith service](https://eu.smith.langchain.com) is now available (as of mid-July 2024) and is deployed in the `europe-west4` (Netherlands) region of GCP. If you are interested in this, please contact us at sales@langchain.dev.
+
+### Regional services
+
+Cloud-managed LangSmith uses [Supabase](https://supabase.com) for authentication/authorization and [ClickHouse Cloud](https://clickhouse.com/cloud) for data warehouse.
+
+|                                       	| US                          	| EU                             	|
+|---------------------------------------	|-----------------------------	|--------------------------------	|
+| URL                                   	| https://smith.langchain.com 	| https://eu.smith.langchain.com 	|
+| GCP                                   	| us-central1 (Iowa)          	| europe-west4 (Netherlands)     	|
+| Supabase                              	| AWS us-east-1 (N. Virginia) 	| AWS eu-central-1 (Germany)     	|
+| ClickHouse Cloud                      	| us-central1 (Iowa)          	| europe-west4 (Netherlands)     	|
+| [LangGraph Cloud](../langgraph_cloud) 	| us-central1 (Iowa)          	| europe-west4 (Netherlands)     	|
+
+
+#### Regions FAQ
+
+#### _Are there any functional differences between US and EU cloud-managed LangSmith_?
+There may be a small delay between launches to each region depending on the feature.
+Besides that, they are functionally equivalent - all features supported in the US are supported in the EU.
+
+#### _Can an organization have workspaces in different regions_?
+LangSmith does not support this at the moment, but if you are interested, please contact support@langchain.dev and share your use case.
+
+#### _Can I connect an EU organization to a US organization and share billing_?
+LangSmith does not support this at the moment, but if you are interested, please contact support@langchain.dev and share your use case.
+
+
+### GCP services
 
 LangSmith is composed of the following services, all deployed on Google Kubernetes Engine (GKE):
 
