@@ -26,32 +26,30 @@ export default function RegionSelector() {
       <div aria-haspopup="true" className="navbar__link">
         Region
       </div>
-      <ul className="dropdown__menu" style={{ width: "100%" }}>
-        <li>
-          <a
-            onClick={() => handleRegionChange("US")}
-            style={{
-              className:
-                selectedRegion === "US"
-                  ? "dropdown__link--active dropdown__link"
-                  : "dropdown__link",
-            }}
-          >
-            US
-          </a>
+      <ul className="dropdown__menu" width="50px">
+        <li
+          onClick={() => handleRegionChange("US")}
+          style={{
+            width: "100%",
+            color: selectedRegion === "US" ? "rgb(67, 147, 228)" : "white",
+            cursor: "pointer",
+            padding: "5px",
+            textAlign: "center",
+          }}
+        >
+          US
         </li>
-        <li>
-          <a
-            onClick={() => handleRegionChange("EU")}
-            style={{
-              className:
-                selectedRegion === "EU"
-                  ? "dropdown__link dropdown__link--active"
-                  : "dropdown__link",
-            }}
-          >
-            EU
-          </a>
+        <li
+          onClick={() => handleRegionChange("EU")}
+          style={{
+            width: "100%",
+            color: selectedRegion === "EU" ? "rgb(67, 147, 228)" : "white",
+            cursor: "pointer",
+            padding: "5px",
+            textAlign: "center",
+          }}
+        >
+          EU
         </li>
       </ul>
     </div>
