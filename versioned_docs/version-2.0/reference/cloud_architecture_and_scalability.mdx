@@ -22,27 +22,28 @@ The US-based LangSmith service is deployed in the `us-central1` (Iowa) region of
 
 Cloud-managed LangSmith uses [Supabase](https://supabase.com) for authentication/authorization and [ClickHouse Cloud](https://clickhouse.com/cloud) for data warehouse.
 
-|                                       	| US                          	| EU                             	|
-|---------------------------------------	|-----------------------------	|--------------------------------	|
-| URL                                   	| https://smith.langchain.com 	| https://eu.smith.langchain.com 	|
-| GCP                                   	| us-central1 (Iowa)          	| europe-west4 (Netherlands)     	|
-| Supabase                              	| AWS us-east-1 (N. Virginia) 	| AWS eu-central-1 (Germany)     	|
-| ClickHouse Cloud                      	| us-central1 (Iowa)          	| europe-west4 (Netherlands)     	|
-| [LangGraph Cloud](../langgraph_cloud) 	| us-central1 (Iowa)          	| europe-west4 (Netherlands)     	|
-
+|                                       | US                          | EU                             |
+| ------------------------------------- | --------------------------- | ------------------------------ |
+| URL                                   | https://smith.langchain.com | https://eu.smith.langchain.com |
+| GCP                                   | us-central1 (Iowa)          | europe-west4 (Netherlands)     |
+| Supabase                              | AWS us-east-1 (N. Virginia) | AWS eu-central-1 (Germany)     |
+| ClickHouse Cloud                      | us-central1 (Iowa)          | europe-west4 (Netherlands)     |
+| [LangGraph Cloud](../langgraph_cloud) | us-central1 (Iowa)          | europe-west4 (Netherlands)     |
 
 #### Regions FAQ
 
 #### _Are there any functional differences between US and EU cloud-managed LangSmith_?
+
 There may be a small delay between launches to each region depending on the feature.
 Besides that, they are functionally equivalent - all features supported in the US are supported in the EU.
 
 #### _Can an organization have workspaces in different regions_?
+
 LangSmith does not support this at the moment, but if you are interested, please contact support@langchain.dev and share your use case.
 
 #### _Can I connect an EU organization to a US organization and share billing_?
-LangSmith does not support this at the moment, but if you are interested, please contact support@langchain.dev and share your use case.
 
+LangSmith does not support this at the moment, but if you are interested, please contact support@langchain.dev and share your use case.
 
 ### GCP services
 
