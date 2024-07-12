@@ -1,0 +1,43 @@
+import {
+  CodeTabs,
+  DockerBlock,
+  HelmBlock,
+} from "../../../../src/components/InstructionsWithCode";
+
+# User management
+
+:::note
+This guide assumes you have read the [admin guide](../../concepts/admin/admin) and [organization setup guide](../../how_to_guides/setup/set_up_organization).
+:::
+
+LangSmith offers additional customization features for user management using feature flags.
+
+## Features
+
+### Workspace level invites to an organization
+
+The default behavior in LangSmith requires a user to be an Organization Admin in order to invite new users to an organization, as this operation can increase cost by adding seats.
+For self-hosted customers that would like to delegate this responsibility to workspace Admins, a feature flag may be set that enables workspace Admins to invite new users to
+the organization as well as their specific workspace **at the workspace level**.
+
+Once this feature is enabled via the configuration option below, workspace Admins may add new users in the `Workspace members` tab under `Settings` > `Workspaces`.
+Both of the following cases are supported when inviting at the workspace level, while the organization level invite functions the same as before.
+
+1. Invite users who are NOT already active in the organization: this will add the users as pending to the organization and specific workspace
+2. Invite users who ARE already active in the organization: adds the users directly to the workspace as an active member (no pending state).
+
+Admins may invite users for both cases at the same time.
+
+#### Configuration
+
+<CodeTabs
+  tabs={[
+    HelmBlock(`config:
+    workspaceScopeOrgInvitesEnabled: true`),
+    DockerBlock(
+      `# In your .env file
+FF_WORKSPACE_SCOPE_ORG_INVITES_ENABLED="true"
+    `
+    ),
+  ]}
+/>
