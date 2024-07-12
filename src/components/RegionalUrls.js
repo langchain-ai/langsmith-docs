@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
+import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 
 export const RegionalUrl = () => {
-  const [url, setUrl] = useState(
-    localStorage.getItem("ls:docs:langsmithUrl") ||
-      "https://smith.langchain.com"
-  );
+  var url;
+  var setUrl;
+  if (ExecutionEnvironment.canUseDOM) {
+    [url, setUrl] = useState(
+      localStorage.getItem("ls:docs:langsmithUrl") ||
+        "https://smith.langchain.com"
+    );
+  } else {
+    [url, setUrl] = useState("https://smith.langchain.com");
+  }
 
   useEffect(() => {
     const handleStorageChange = () => {

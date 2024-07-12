@@ -30,7 +30,8 @@ export default function RegionSelector() {
         <li
           onClick={() => handleRegionChange("US")}
           style={{
-            color: selectedRegion === "US" ? "var(--ifm-color-primary)" : "gray",
+            color:
+              selectedRegion === "US" ? "var(--ifm-color-primary)" : "gray",
           }}
         >
           US
@@ -38,7 +39,8 @@ export default function RegionSelector() {
         <li
           onClick={() => handleRegionChange("EU")}
           style={{
-            color: selectedRegion === "EU" ? "var(--ifm-color-primary)" : "gray",
+            color:
+              selectedRegion === "EU" ? "var(--ifm-color-primary)" : "gray",
           }}
         >
           EU
