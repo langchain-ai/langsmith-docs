@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-export const RegionalUrl = () => {
+export const RegionalUrl = ({ text, suffix }) => {
   const [url, setUrl] = useState("https://smith.langchain.com");
 
   useEffect(() => {
-    const storedUrl = localStorage.getItem('ls:docs:langsmithUrl') || 'https://smith.langchain.com';
+    const storedUrl =
+      localStorage.getItem("ls:docs:langsmithUrl") ||
+      "https://smith.langchain.com";
     setUrl(storedUrl);
     const handleStorageChange = () => {
       setUrl(
@@ -20,5 +22,5 @@ export const RegionalUrl = () => {
     };
   }, []);
 
-  return <a href={url}>{url}</a>;
+  return <a href={`${url}${suffix}`}>{text || url}</a>;
 };
