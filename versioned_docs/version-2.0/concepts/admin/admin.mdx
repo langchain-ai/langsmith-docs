@@ -46,25 +46,27 @@ graph TD
 
 See the table below for details on which features are available in which scope (organization or workspace):
 
-| Resource/Setting                                                            | Scope        |
-| --------------------------------------------------------------------------- | ------------ |
-| Trace Projects                                                              | Workspace    |
-| Annotation Queues                                                           | Workspace    |
-| Deployments                                                                 | Workspace    |
-| Datasets &amp; Testing                                                      | Workspace    |
-| Prompts                                                                     | Workspace    |
-| API Keys                                                                    | Workspace    |
-| Settings including Secrets, Feedback config, Models, Rules, and Shared URLs | Workspace    |
-| User management: Invite User to Workspace                                   | Workspace    |
-| RBAC: Assigning Workspace Roles                                             | Workspace    |
-| Data Retention, Usage Limits                                                | Workspace\*  |
-| Plans and Billing, Credits, Invoices                                        | Organization |
-| User management: Invite User to Organization                                | Organization |
-| Adding Workspaces                                                           | Organization |
-| Assigning Organization Roles                                                | Organization |
-| RBAC: Creating/Editing/Deleting Custom Roles                                | Organization |
+| Resource/Setting                                                            | Scope            |
+| --------------------------------------------------------------------------- | ---------------- |
+| Trace Projects                                                              | Workspace        |
+| Annotation Queues                                                           | Workspace        |
+| Deployments                                                                 | Workspace        |
+| Datasets &amp; Testing                                                      | Workspace        |
+| Prompts                                                                     | Workspace        |
+| API Keys                                                                    | Workspace        |
+| Settings including Secrets, Feedback config, Models, Rules, and Shared URLs | Workspace        |
+| User management: Invite User to Workspace                                   | Workspace        |
+| RBAC: Assigning Workspace Roles                                             | Workspace        |
+| Data Retention, Usage Limits                                                | Workspace\*      |
+| Plans and Billing, Credits, Invoices                                        | Organization     |
+| User management: Invite User to Organization                                | Organization\*\* |
+| Adding Workspaces                                                           | Organization     |
+| Assigning Organization Roles                                                | Organization     |
+| RBAC: Creating/Editing/Deleting Custom Roles                                | Organization     |
 
 \*&nbsp;Data retention settings and usage limits will be available soon for the organization level as well
+\*\*&nbsp;Self-hosted installations may enable workspace-level invites of users to the organization via a feature flag.
+See the [self-hosted user management docs](../../self_hosting/configuration/user_management) for details.
 
 ## Users
 
