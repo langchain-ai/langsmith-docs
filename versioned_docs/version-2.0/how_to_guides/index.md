@@ -73,6 +73,7 @@ Get started with LangSmith's tracing features to start adding observability to y
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
 - [Trace without setting environment variables](./how_to_guides/tracing/trace_without_env_vars)
 - [Trace using the LangSmith REST API](./how_to_guides/tracing/trace_with_api)
+- [Calculate token-based costs for traces](./how_to_guides/tracing/calculate_token_based_costs)
 
 ## Datasets
 
