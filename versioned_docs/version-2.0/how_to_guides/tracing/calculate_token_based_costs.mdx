@@ -7,6 +7,7 @@ import {
   PythonBlock,
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Calculate token-based costs for traces
 
@@ -26,7 +27,7 @@ For LangSmith to accurately calculate token-based costs, you need to provide the
 - If you are using LangChain Python or TS/JS, _`ls_provider` and `ls_model_name` along with token counts are automatically sent up to LangSmith_.
 
 Once you are sending up the correct information to LangSmith, you must set up the model pricing map in LangSmith settings.
-In order to do this, navigate to the [model pricing map](https://smith.langchain.com/settings/workspaces/models).
+In order to do this, navigate to the <RegionalUrl text='model pricing map' suffix='/settings/workspaces/models' />.
 Here, you can set the cost per token for each model and provider combination. This information is scoped to a workspace.
 
 Several default entries for OpenAI models are already present in the model pricing map, which you can clone and modify as needed.
