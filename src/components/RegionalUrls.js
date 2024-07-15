@@ -11,7 +11,7 @@ const DOMAINS = {
   },
 };
 
-export const RegionalUrl = ({ text, type = "langsmith", suffix = "" }) => {
+export function RegionalUrl({ text, type = "langsmith", suffix = "" }) {
   const [domains, setDomains] = useState(DOMAINS.US);
 
   useEffect(() => {
@@ -34,4 +34,4 @@ export const RegionalUrl = ({ text, type = "langsmith", suffix = "" }) => {
   const domain = domains[type];
   const resolvedUrl = `https://${domain}${suffix}`;
   return <a href={resolvedUrl}>{text || resolvedUrl}</a>;
-};
+}

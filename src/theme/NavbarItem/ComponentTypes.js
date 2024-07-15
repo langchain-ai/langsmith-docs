@@ -1,5 +1,5 @@
 import ComponentTypes from "@theme-original/NavbarItem/ComponentTypes";
-import RegionSelector from "@site/src/components/Region";
+import RegionSelector from "../../components/Region";
 
 export default {
   ...ComponentTypes,

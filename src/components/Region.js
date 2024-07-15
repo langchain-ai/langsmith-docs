@@ -21,7 +21,7 @@ export default function RegionSelector() {
       <ul className="dropdown__menu regions-dropdown">
         <li
           onClick={() => handleRegionChange("US")}
-          // onKeyDown={() => {}}
+          onKeyDown={() => {}}
           role="menuitem"
           style={{
             color:
@@ -32,7 +32,7 @@ export default function RegionSelector() {
         </li>
         <li
           onClick={() => handleRegionChange("EU")}
-          // onKeyDown={() => {}}
+          onKeyDown={() => {}}
           role="menuitem"
           style={{
             color:
