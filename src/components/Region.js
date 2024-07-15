@@ -27,28 +27,28 @@ export default function RegionSelector() {
         Region
       </div>
       <ul className="dropdown__menu regions-dropdown">
-        <button
+        <li
           onClick={() => handleRegionChange("US")}
           onKeyDown={() => {}}
-          type="button"
+          role="menuitem"
           style={{
             color:
               selectedRegion === "US" ? "var(--ifm-color-primary)" : "gray",
           }}
         >
           US
-        </button>
-        <button
+        </li>
+        <li
           onClick={() => handleRegionChange("EU")}
           onKeyDown={() => {}}
-          type="button"
+          role="menuitem"
           style={{
             color:
               selectedRegion === "EU" ? "var(--ifm-color-primary)" : "gray",
           }}
         >
           EU
-        </button>
+        </li>
       </ul>
     </div>
   );
