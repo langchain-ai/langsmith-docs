@@ -18,8 +18,9 @@ The US-based LangSmith service is deployed in the `us-central1` (Iowa) region of
 
 **NOTE:** The [EU-based LangSmith service](https://eu.smith.langchain.com) is now available (as of mid-July 2024) and is deployed in the `europe-west4` (Netherlands) region of GCP. If you are interested in this, please contact us at sales@langchain.dev.
 
-### Regional services
+### Regional storage
 
+The resources and services in this table are stored in the location corresponding to the URL where sign-up occurred (either the US or EU).
 Cloud-managed LangSmith uses [Supabase](https://supabase.com) for authentication/authorization and [ClickHouse Cloud](https://clickhouse.com/cloud) for data warehouse.
 
 |                                       | US                              | EU                                 |
@@ -32,6 +33,12 @@ Cloud-managed LangSmith uses [Supabase](https://supabase.com) for authentication
 | [LangGraph Cloud](../langgraph_cloud) | us-central1 (Iowa)              | europe-west4 (Netherlands)         |
 
 See the [Regions FAQ](./regions_faq) for more information.
+
+### Region-independent storage
+
+Data listed here is stored exclusively in the US:
+
+- Payment and billing information with Stripe and Metronome
 
 ### GCP services
 
