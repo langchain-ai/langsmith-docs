@@ -16,6 +16,11 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 
 - [LangChain off-the-shelf evaluators (Python only)](./reference/sdk_reference/langchain_evaluators)
 
+## Architecture reference
+
+- [Cloud architecture and scalability](./reference/cloud_architecture_and_scalability)
+- [Regions FAQ](./reference/regions_faq)
+
 ## Data formats
 
 - [Run (span) data format](./reference/data_formats/run_data_format)
