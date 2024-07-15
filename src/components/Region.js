@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from "react";
 
-const URLS = {
-  US: "https://smith.langchain.com",
-  EU: "https://eu.smith.langchain.com",
-};
-
 export default function RegionSelector() {
   const [selectedRegion, setSelectedRegion] = useState("US");
 
   useEffect(() => {
-    const storedUrl = localStorage.getItem("ls:docs:langsmithUrl");
-    const region =
-      Object.keys(URLS).find((key) => URLS[key] === storedUrl) || "US";
-    setSelectedRegion(region);
+    setSelectedRegion(localStorage.getItem("ls:docs:langsmithRegion") || "US");
   }, []);
 
   const handleRegionChange = (region) => {
     setSelectedRegion(region);
-    localStorage.setItem("ls:docs:langsmithUrl", URLS[region]);
+    localStorage.setItem("ls:docs:langsmithRegion", region);
     window.dispatchEvent(new Event("storage"));
   };
 
@@ -29,7 +21,7 @@ export default function RegionSelector() {
       <ul className="dropdown__menu regions-dropdown">
         <li
           onClick={() => handleRegionChange("US")}
-          onKeyDown={() => {}}
+          // onKeyDown={() => {}}
           role="menuitem"
           style={{
             color:
@@ -40,7 +32,7 @@ export default function RegionSelector() {
         </li>
         <li
           onClick={() => handleRegionChange("EU")}
-          onKeyDown={() => {}}
+          // onKeyDown={() => {}}
           role="menuitem"
           style={{
             color:

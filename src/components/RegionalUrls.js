@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
 
-export const RegionalUrl = ({ text, suffix }) => {
-  const [url, setUrl] = useState("https://smith.langchain.com");
+const DOMAINS = {
+  US: {
+    langsmith: "smith.langchain.com",
+    api: "api.smith.langchain.com",
+  },
+  EU: {
+    langsmith: "eu.smith.langchain.com",
+    api: "eu.api.smith.langchain.com",
+  },
+};
+
+export const RegionalUrl = ({ text, type = "langsmith", suffix = "" }) => {
+  const [domains, setDomains] = useState(DOMAINS.US);
 
   useEffect(() => {
-    const storedUrl =
-      localStorage.getItem("ls:docs:langsmithUrl") ||
-      "https://smith.langchain.com";
-    setUrl(storedUrl);
+    const storedRegion =
+      localStorage.getItem("ls:docs:langsmithRegion") || "US";
+    setDomains(DOMAINS[storedRegion]);
     const handleStorageChange = () => {
-      setUrl(
-        localStorage.getItem("ls:docs:langsmithUrl") ||
-          "https://smith.langchain.com"
+      setDomains(
+        DOMAINS[localStorage.getItem("ls:docs:langsmithRegion") || "US"]
       );
     };
 
@@ -22,5 +31,7 @@ export const RegionalUrl = ({ text, suffix }) => {
     };
   }, []);
 
-  return <a href={`${url}${suffix}`}>{text || url}</a>;
+  const domain = domains[type];
+  const resolvedUrl = `https://${domain}${suffix}`;
+  return <a href={resolvedUrl}>{text || resolvedUrl}</a>;
 };

@@ -2,8 +2,6 @@
 sidebar_position: 6
 ---
 
-import { RegionalUrl } from "@site/src/components/RegionalUrls";
-
 # Evaluate an agent
 
 In this tutorial, we will walk through 3 evaluation strategies LLM agents, building on the conceptual points shared in our [evaluation guide](https://docs.smith.langchain.com/concepts/evaluation#agents).
@@ -16,7 +14,7 @@ First, we will build an agent using [LangGraph](https://github.com/langchain-ai/
 
 ## Set up environment
 
-We'll set up our environment variables for OpenAI and <RegionalUrl text='LangSmith' suffix=''/> and install
+We'll set up our environment variables for OpenAI and <RegionalUrl text='LangSmith'/> and install
 
 ```bash
 %pip install --upgrade --quiet langchain langsmith langchain-community langchain-experimental langgraph
@@ -32,7 +30,7 @@ def _set_env(var: str):
 
 _set_env("OPENAI_API_KEY")
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com" # Update appropriately for self-hosted installations or the EU region
 _set_env("LANGCHAIN_API_KEY")
 ```
 

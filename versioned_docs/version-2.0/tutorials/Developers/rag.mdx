@@ -32,7 +32,7 @@ def _set_env(var: str):
 
 _set_env("OPENAI_API_KEY")
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com" # Update appropriately for self-hosted installations or the EU region
 _set_env("LANGCHAIN_API_KEY")
 ```
 

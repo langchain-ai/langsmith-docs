@@ -2,12 +2,14 @@
 sidebar_position: 17
 ---
 
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
+
 # Trace using the LangSmith REST API
 
 It is HIGHLY recommended to use our Python or TypeScript SDKs to send traces to LangSmith.
 We have designed these SDKs with several optimizations, including batching and backgrounding, to ensure that your application's performance is not impacted by sending traces to LangSmith.
 However, if you are unable to use our SDKs, you can use the LangSmith REST API to send traces. Performance may be impacted if you send traces synchronously in your application.
-This guide will show you how to trace a request using the LangSmith REST API. Please view our API documentation [here](https://api.smith.langchain.com/redoc) for a full list of endpoints and request/response schemas.
+This guide will show you how to trace a request using the LangSmith REST API. Please view our API documentation <RegionalUrl type='api' suffix='/redoc' text='here' /> for a full list of endpoints and request/response schemas.
 
 :::note
 When using the LangSmith REST API, you will need to provide your API key in the request headers as `"x-api-key"`.
@@ -36,7 +38,7 @@ def post_run(run_id, name, run_type, inputs, parent_id=None):
     if parent_id:
         data["parent_run_id"] = parent_id.hex
     requests.post(
-        "https://api.smith.langchain.com/runs",
+        "https://api.smith.langchain.com/runs", # Update appropriately for self-hosted installations or the EU region
         json=data,
         headers=headers
     )
