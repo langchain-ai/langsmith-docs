@@ -7,6 +7,7 @@ import {
   typescript,
   python,
 } from "@site/src/components/InstructionsWithCode";
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Trace without setting environment variables
 
@@ -32,7 +33,7 @@ In some environments, it is not possible to set environment variables. In these 
         
         langsmith_client = Client(
             api_key="YOUR_API_KEY",  # This can be retrieved from a secrets manager
-            api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations
+            api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations or the EU region
         )
         
         client = wrap_openai(openai.Client())
@@ -70,7 +71,7 @@ In some environments, it is not possible to set environment variables. In these 
         
         const client = new Client({
             apiKey: "YOUR_API_KEY",  // This can be retrieved from a secrets manager
-            apiUrl: "https://api.smith.langchain.com",  // Update appropriately for self-hosted installations
+            apiUrl: "https://api.smith.langchain.com",  // Update appropriately for self-hosted installations or the EU region
         });
         
         const openai = wrapOpenAI(new OpenAI());

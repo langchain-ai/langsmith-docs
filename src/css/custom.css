@@ -265,6 +265,18 @@ html[data-theme="dark"] {
   border-top-right-radius: var(--ifm-code-border-radius);
 }
 
+.regions-dropdown {
+  min-width: 50px;
+  width: 100px;
+}
+
+.regions-dropdown > li {
+  width: "100%";
+  cursor: pointer;
+  padding: 5px;
+  text-align: center;
+}
+
 /* media dark mode */
 @media (prefers-color-scheme: dark) {
   .tabs-container > .code-tabs {
