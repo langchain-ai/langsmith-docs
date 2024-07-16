@@ -4,7 +4,7 @@ import {
   HelmBlock,
 } from "../../../../src/components/InstructionsWithCode";
 
-# Connect to an External Redis Database
+# Connect to an external Redis database
 
 LangSmith uses Redis to back our queuing/caching operations. By default, LangSmith Self-Hosted will use an internal Redis instance.
 However, you can configure LangSmith to use an external Redis instance (**strongly recommended in a production setting**). By configuring an external Redis instance, you can more easily manage backups, scaling, and other operational tasks for your Redis instance.
@@ -16,7 +16,12 @@ However, you can configure LangSmith to use an external Redis instance (**strong
   - [Google Cloud Memorystore](https://cloud.google.com/memorystore)
   - [Azure Cache for Redis](https://azure.microsoft.com/en-us/services/cache/)
 - Note: We do only officially support Redis versions >= 5.
-- We only officially support Redis in a non-clustered configuration. We do not support Redis Cluster(certain tiers of managed Redis services may use Redis Cluster under the hood, but you can point to a single node in the cluster).
+- We do not support Redis Cluster.
+
+:::important Redis Cluster Not Supported
+Certain tiers of managed Redis services may use Redis Cluster under the hood, but you can point to a single node in the cluster.
+For example on Azure Cache for Redis, the `Premium` tier and above use Redis Cluster, so you will need to use a lower tier.
+:::
 
 ## Connection String
 
@@ -32,7 +37,7 @@ You will need to assemble the connection string for your Redis instance. This co
 This will take the form of:
 
 ```
-"redis://host/db:port?<url_params>"
+"redis://host:port/db?<url_params>"
 ```
 
 An example connection string might look like:

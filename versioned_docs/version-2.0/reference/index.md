@@ -2,17 +2,24 @@
 sidebar_position: 1
 ---
 
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
+
 # Reference
 
 Technical reference that covers components, APIs, and other aspects of LangSmith.
 
 ## API reference
 
-- [LangSmith API Reference](https://api.smith.langchain.com/redoc)
+- <RegionalUrl type='api' suffix='/redoc' text='LangSmith API Reference' />
 
 ## SDK reference
 
 - [LangChain off-the-shelf evaluators (Python only)](./reference/sdk_reference/langchain_evaluators)
+
+## Architecture reference
+
+- [Cloud architecture and scalability](./reference/cloud_architecture_and_scalability)
+- [Regions FAQ](./reference/regions_faq)
 
 ## Data formats
 

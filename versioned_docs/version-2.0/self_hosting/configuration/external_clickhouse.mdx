@@ -4,37 +4,48 @@ import {
   HelmBlock,
 } from "../../../../src/components/InstructionsWithCode";
 
-# Connect to an External ClickHouse Database
+# Connect to an external ClickHouse database
 
-LangSmith uses ClickHouse as the primary data store for traces and feedback. By default, LangSmith Self-Hosted will use an internal ClickHouse database that is bundled with the LangSmith instance.
+ClickHouse is a high-performance, column-oriented database system. It allows for fast ingestion of data and is optimized for analytical queries.
 
-However, you can configure LangSmith to use an external ClickHouse database. By configuring an external ClickHouse database, you can manage backups, scaling, and other operational tasks for your database.
-Unfortunately, many cloud providers do not offer managed ClickHouse services at this time. Instead, you can run ClickHouse in a few ways:
+LangSmith uses ClickHouse as the primary data store for traces and feedback. By default, self-hosted LangSmith will use an internal ClickHouse database that is bundled with the LangSmith instance. This is run as a stateful set in the same Kubernetes cluster as the LangSmith application or as a Docker container on the same host as the LangSmith application.
 
-- LangSmith Managed ClickHouse Cloud(Reach out to us at sales@langchain.dev for more information)
-- Provision an instance in [ClickHouse Cloud](https://clickhouse.cloud/)
-- Provision a ClickHouse Cloud instance via Marketplace
+However, you can configure LangSmith to use an external ClickHouse database for easier management and scaling.
+By configuring an external ClickHouse database, you can manage backups, scaling, and other operational tasks for your database.
+While Clickhouse is not yet a native service in Azure, AWS, or Google Cloud, you can run LangSmith with an external ClickHouse database in the following ways:
+
+- [LangSmith-managed ClickHouse (beta)](/self_hosting/langsmith_managed_clickhouse)
+- Provision a [ClickHouse Cloud](https://clickhouse.cloud/) either directly or through a cloud provider marketplace:
   - [Azure Marketplace](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/clickhouse.clickhouse_cloud?tab=Overview)
   - [Google Cloud Marketplace](https://console.cloud.google.com/marketplace/product/clickhouse-public/clickhouse-cloud)
   - [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-jettukeanwrfc)
 - On a VM in your cloud provider
 
+:::note
+
+Using the first two options (LangSmith-managed ClickHouse or ClickHouse Cloud) will provision a Clickhouse service OUTSIDE of your VPC.
+However, both options support private endpoints, meaning that you can direct traffic to the ClickHouse service without exposing it to the public internet (eg via AWS PrivateLink, or GCP Private Service Connect).
+
+Additionally, sensitive information can be configured to be not stored in Clickhouse. Please reach out to support@langchain.dev for more information.
+:::
+
 ## Requirements
 
-- A provisioned ClickHouse Instance that your LangSmith instance will have network access to.
-- A user with admin access to the ClickHouse database. This user will be used to create the necessary tables, indexes, and views
-- Note: We only officially support ClickHouse versions >= 23. We also only support standalone ClickHouse (not clustered or replicated) or ClickHouse Cloud.
+- A provisioned ClickHouse instance that your LangSmith application will have network access to (see above for options).
+- A user with admin access to the ClickHouse database. This user will be used to create the necessary tables, indexes, and views.
+- We only support standalone ClickHouse (not clustered or replicated) or ClickHouse Cloud.
+- We only support ClickHouse versions >= 23.9. Use of ClickHouse versions >= 24.2 requires LangSmith v0.6 or later. See the [LangSmith release notes](../release_notes) for more information.
 
 ## Parameters
 
 You will need to provide several parameters to your LangSmith installation to configure an external ClickHouse database. These parameters include:
 
-- Host
-- HTTP Port
-- Native Port
-- Database
-- Username
-- Password
+- Host: The hostname or IP address of the ClickHouse database
+- HTTP Port: The port that the ClickHouse database listens on for HTTP connections
+- Native Port: The port that the ClickHouse database listens on for [native connections](https://clickhouse.com/docs/en/interfaces/tcp)
+- Database: The name of the ClickHouse database that LangSmith should use
+- Username: The username to use to connect to the ClickHouse database
+- Password: The password to use to connect to the ClickHouse database
 
 ## Configuration
 
