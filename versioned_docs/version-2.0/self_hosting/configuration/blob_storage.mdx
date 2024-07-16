@@ -1,0 +1,94 @@
+import {
+  CodeTabs,
+  HelmBlock,
+} from "../../../../src/components/InstructionsWithCode";
+
+# Enable blob storage
+
+By default, LangSmith stores run inputs, outputs, and errors in ClickHouse. In addition, LangSmith will store run manifests in Postgres. In high trace environments, this may balloon the size of your databases.
+To alleviate this, LangSmith supports storing run manifests, inputs, outputs, and errors in an external blob storage system.
+
+## Requirements
+
+- Access to a valid blob storage service
+  - [Amazon S3](https://aws.amazon.com/s3/)
+  - [Google Cloud Storage](https://cloud.google.com/storage?hl=en)
+  - Currently, Azure Blob Storage is not supported (coming soon)
+- A bucket/directory in your blob storage to store the data. We highly recommend creating a separate bucket/directory for LangSmith data.
+  - If you are using TTLs, you will need to setup a lifecycle policy to delete old data. You can find more information on configuring TTLs [here](/docs/version-2.0/self_hosting/configuration/ttls).
+- Credentials to permit LangSmith Services to access the bucket/directory
+  - You will need to provide your LangSmith instance with the necessary credentials to access the bucket/directory. Read the authentication [section](#authentication) below for more information.
+- An API url for your blob storage service
+  - This will be the URL that LangSmith uses to access your blob storage system
+  - In the case of Amazon S3, this will be the URL of the S3 endpoint. Something like: `https://s3.amazonaws.com` or `https://s3.us-west-1.amazonaws.com` if using a regional endpoint.
+  - In the case of Google Cloud Storage, this will be the URL of the GCS endpoint. Something like: `https://storage.googleapis.com`
+
+## Authentication
+
+### Amazon S3
+
+To authenticate with Amazon S3, you will need to create an s3 policy granting admin permissions on your bucket.
+This will look something like the following:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::your-bucket-name",
+        "arn:aws:s3:::your-bucket-name/*"
+      ]
+    }
+  ]
+}
+```
+
+Once you have the correct policy, there are two ways to authenticate with Amazon S3:
+
+1. **IAM Role for Service Account**: You can create an IAM role for your LangSmith instance and attach the policy to that role. You can then provide the role to LangSmith. This is the recommended way to authenticate with Amazon S3 in production.
+   1. You will need to create an IAM role with the policy attached.
+   1. You will need to allow LangSmith service accounts to assume the role. The `langsmith-queue` and `langsmith-backend` services will need to be able to assume the role.
+   ::note:: The service account names will be different if you are using a custom release name::
+   1. You will need to provide the role ARN to LangSmith. You can do this by adding the `eks.amazonaws.com/role-arn: "<role_arn>"` annotation to the `langsmith-queue` and `langsmith-backend` services in your Helm Chart installation.
+1. **Access Key and Secret Key**: You can provide LangSmith with an access key and secret key. This is the simplest way to authenticate with Amazon S3. However, it is not recommended for production use as it is less secure.
+   1. You will need to create a user with the policy attached. Then you can provision an access key and secret key for that user.
+
+
+### Google Cloud Storage
+
+To authenticate with Google Cloud Storage, you will need to create a service account with the necessary permissions to access your bucket.
+
+Your service account will need the `Storage Admin` role or a custom role with equivalent permissions. This can be scoped to the bucket that LangSmith will be using.
+
+Once you have a provisioned service account, you will need to provide LangSmith with the service account
+
+## Configuration
+
+After creating your bucket and obtaining the necessary credentials, you can configure LangSmith to use your blob storage system.
+
+<CodeTabs
+  tabs={[
+    HelmBlock(`
+  config:
+    blobStorage:
+      enabled: true
+      bucketName: "your-bucket-name"
+      apiUrl: "Your connection url"
+      accessKey: "Your access key" # Optional. Only required if using access key and secret key
+      accessKeySecret: "Your access key secret" # Optional. Only required if using access key and secret key
+   backend: # Optional, only required if using IAM role for service account
+     serviceAccount:
+       annotations:
+         eks.amazonaws.com/role-arn: "<role_arn>"
+   queue: # Optional, only required if using IAM role for service account
+      serviceAccount:
+        annotations:
+          eks.amazonaws.com/role-arn: "<role_arn>"
+      `),
+  ]}
+/>
+
+Note that if using an access key and secret, you can also provide an existing secret that contains the access key and secret key. This is recommended over providing the access key and secret key directly in your config.
