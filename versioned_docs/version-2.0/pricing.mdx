@@ -3,6 +3,8 @@ sidebar_label: Pricing
 sidebar_position: 4
 ---
 
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
+
 # Pricing
 
 ## Plans
@@ -124,7 +126,7 @@ charges you could incur in any given month.
 ### Can I limit how much I spend on tracing?
 
 You can set limits on the number of traces that can be sent to LangSmith per month on
-the [Plans and Billing](https://smith.langchain.com/settings/payments) settings page.
+the <RegionalUrl text='Plans and Billing' suffix='/settings/payments' /> settings page.
 
 :::note
 While we do show you the dollar value of your usage limit for convenience, this limit evaluated
@@ -155,7 +157,7 @@ On the Enterprise plan, you’ll get white-glove support with a Slack channel, a
 
 ### Where is my data stored?
 
-When using LangSmith hosted at smith.langchain.com, data is stored in GCP region `us-central-1`. If you’re on the Enterprise plan, we can deliver LangSmith to run on your kubernetes cluster in AWS, GCP, or Azure so that data never leaves your environment.
+You may choose to sign up in either the US or EU region. See the [cloud architecture reference](./reference/cloud_architecture_and_scalability) for more details. If you’re on the Enterprise plan, we can deliver LangSmith to run on your kubernetes cluster in AWS, GCP, or Azure so that data never leaves your environment.
 
 ### Which security frameworks is LangSmith compliant with?
 

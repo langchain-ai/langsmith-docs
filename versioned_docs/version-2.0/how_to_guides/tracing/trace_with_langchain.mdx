@@ -309,7 +309,7 @@ from langsmith import Client\n
 # You can create a client instance with an api key and api url
 client = Client(
     api_key="YOUR_API_KEY",  # This can be retrieved from a secrets manager
-    api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations
+    api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations or the EU region
 )\n
 # You can pass the client and project_name to the LangChainTracer instance
 # highlight-next-line
@@ -342,6 +342,41 @@ await chain.invoke(
   ]}
   groupId="client-language"
 />
+
+## Interoperability between LangChain (Python) and LangSmith SDK
+
+If you are using LangChain for part of your application and the LangSmith SDK (see [this guide](./annotate_code)) for other parts, you can still trace the entire application seamlessly.
+
+LangChain objects will be traced when invoked within a `traceable` function and be bound as a child run of the `traceable` function.
+
+```python
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
+    ("user", "Question: {question}\nContext: {context}")
+])
+model = ChatOpenAI(model="gpt-3.5-turbo")
+output_parser = StrOutputParser()
+
+chain = prompt | model | output_parser
+
+# The above chain will be traced as a child run of the traceable function
+@traceable(
+    tags=["openai", "chat"],
+    metadata={"foo": "bar"}
+)
+def invoke_runnnable(question, context):
+    result = chain.invoke({"question": question, "context": context})
+    return "The response is: " + result
+
+invoke_runnnable("Can you summarize this morning's meetings?", "During this morning's meeting, we solved all world conflict.")
+```
+
+This will produce the following trace tree:
+![](../static/trace_tree_python_interop.png)
 
 ## Interoperability between LangChain.JS and LangSmith SDK
 
