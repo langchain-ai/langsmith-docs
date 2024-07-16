@@ -51,11 +51,10 @@ Once you have the correct policy, there are two ways to authenticate with Amazon
 1. **IAM Role for Service Account**: You can create an IAM role for your LangSmith instance and attach the policy to that role. You can then provide the role to LangSmith. This is the recommended way to authenticate with Amazon S3 in production.
    1. You will need to create an IAM role with the policy attached.
    1. You will need to allow LangSmith service accounts to assume the role. The `langsmith-queue` and `langsmith-backend` services will need to be able to assume the role.
-   ::note:: The service account names will be different if you are using a custom release name::
+      ::note:: The service account names will be different if you are using a custom release name::
    1. You will need to provide the role ARN to LangSmith. You can do this by adding the `eks.amazonaws.com/role-arn: "<role_arn>"` annotation to the `langsmith-queue` and `langsmith-backend` services in your Helm Chart installation.
 1. **Access Key and Secret Key**: You can provide LangSmith with an access key and secret key. This is the simplest way to authenticate with Amazon S3. However, it is not recommended for production use as it is less secure.
    1. You will need to create a user with the policy attached. Then you can provision an access key and secret key for that user.
-
 
 ### Google Cloud Storage
 
@@ -78,11 +77,11 @@ After creating your bucket and obtaining the necessary credentials, you can conf
       bucketName: "your-bucket-name"
       apiUrl: "Your connection url"
       accessKey: "Your access key" # Optional. Only required if using access key and secret key
-      accessKeySecret: "Your access key secret" # Optional. Only required if using access key and secret key
+      accessKeySecret: "Your access key secret" # Optional. Only required if using access key and secret key \n
    backend: # Optional, only required if using IAM role for service account
      serviceAccount:
        annotations:
-         eks.amazonaws.com/role-arn: "<role_arn>"
+         eks.amazonaws.com/role-arn: "<role_arn>" \n
    queue: # Optional, only required if using IAM role for service account
       serviceAccount:
         annotations:
@@ -91,4 +90,9 @@ After creating your bucket and obtaining the necessary credentials, you can conf
   ]}
 />
 
-Note that if using an access key and secret, you can also provide an existing secret that contains the access key and secret key. This is recommended over providing the access key and secret key directly in your config.
+:::note Using an existing secret
+
+If using an access key and secret, you can also provide an existing kubernetes secret that contains the access key and secret key.
+This is recommended over providing the access key and secret key directly in your config.
+
+:::
