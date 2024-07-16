@@ -317,7 +317,6 @@ messages = graph.invoke(msg,config)
 messages['messages'][-1].content
 
 ## Stream
-import uuid
 _printed = set()
 thread_id = str(uuid.uuid4())
 
@@ -367,7 +366,9 @@ First, create a dataset that evaluates end-to-end performance of the agent. We c
 
 ```python
 from langsmith import Client
+
 client = Client()
+
 # Create a dataset
 examples = [
     ("Which country's customers spent the most? And how much did they spend?", "The country whose customers spent the most is the USA, with a total expenditure of $523.06"),
@@ -464,13 +465,15 @@ We can check a specific tool call using [a custom evaluator](https://docs.smith.
 - We specify the `reference` tool call for the step that we are evaluating, `expected_tool_call`.
 
 ```python
+from langsmith.schemas import Example, Run
+
 def predict_assistant(example: dict):
     """Invoke assistant for single tool call evaluation"""
     msg = [ ("user", example["input"]) ]
     result = assistant_runnable.invoke({"messages":msg})
     return {"response": result}
 
-from langsmith.schemas import Example, Run
+
 def check_specific_tool_call(root_run: Run, example: Example) -> dict:
     """
     Check if the first tool call in the response matches the expected tool call.
@@ -594,4 +597,4 @@ experiment_results = evaluate(
 
 You can see the results from the evaluations logged to the dataset!
 
-https://smith.langchain.com/public/20808486-67c3-4e30-920b-6d49d6f2b6b8/d
+[https://smith.langchain.com/public/20808486-67c3-4e30-920b-6d49d6f2b6b8/d](https://smith.langchain.com/public/20808486-67c3-4e30-920b-6d49d6f2b6b8/d)
