@@ -18,7 +18,7 @@ Here is a dataset of [LCEL (LangChain Expression Language)](https://python.langc
 
 This dataset was created using csv upload in the LangSmith UI:
 
-https://smith.langchain.com/public/65830565-81b2-4581-859f-c4aabaadf1cc/d
+https://smith.langchain.com/public/730d833b-74da-43e2-a614-4e2ca2502606/d
 
 Here, we ensure that API keys for OpenAI as well as LangSmith are set.
 
@@ -32,7 +32,7 @@ def _set_env(var: str):
 
 _set_env("OPENAI_API_KEY")
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com" # Update appropriately for self-hosted installations or the EU region
 _set_env("LANGCHAIN_API_KEY")
 ```
 

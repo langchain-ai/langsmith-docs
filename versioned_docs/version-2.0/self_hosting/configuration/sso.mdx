@@ -1,0 +1,42 @@
+import {
+  CodeTabs,
+  DockerBlock,
+  HelmBlock,
+} from "../../../../src/components/InstructionsWithCode";
+
+# SSO with OAuth2.0 and OIDC
+
+LangSmith Self-Hosted provides SSO via OAuth2.0 and OIDC. Once configured, this will delegate authentication to your Identity Provider(IdP) to manage access to LangSmith.
+
+Our implementation supports almost anything that is OIDC compliant, with a few exceptions.
+
+## Requirements
+
+There are a couple of requirements for using OAuth SSO with LangSmith:
+
+- Your IdP must support the `Authorization Code with PKCE` flow(Google does not support this flow). This often displayed in your Oauth Provider as configuring a "Single Page Application(SPA)
+- Your IdP must support using an external discovery/issuer URL. We will use this to fetch the necessary routes and keys for your IdP.
+- You must provide the `OIDC`, `email`, and `profile` scopes to LangSmith. We use these to fetch the necessary user information and email for your users.
+- You will need to set the callback URL in your IdP to `http://<host>/oauth-callback`, where host is the domain or ip you have provisioned for your LangSmith instance. This is where your IdP will redirect the user after they have authenticated.
+- You will need to provide the `oauthClientId` and `oauthIssuerUrl` in your `values.yaml` file. This is where you will configure your LangSmith instance.
+
+<CodeTabs
+  tabs={[
+    HelmBlock(`config:
+  oauth:
+    enabled: true
+    oauthClientId: \<YOUR CLIENT ID\>
+    oauthIssuerUrl: \<YOUR DISCOVERY URL\>`),
+    DockerBlock(
+      `# In your .env file
+      AUTH_TYPE=oauth
+      OAUTH_CLIENT_ID=your-client-id
+      OAUTH_ISSUER_URL=https://your-issuer-url
+    `
+    ),
+  ]}
+/>
+
+Once configured, you will see a login screen like this:
+
+![LangSmith UI with OAuth SSO](../static/langsmith_ui_sso.png)

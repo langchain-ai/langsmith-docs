@@ -21,6 +21,7 @@ See the following guides to set up your LangSmith account.
   - [Manage users](./how_to_guides/setup/set_up_workspace#manage-users)
   - [Configure workspace settings](./how_to_guides/setup/set_up_workspace#configure-workspace-settings)
 - [Set up billing](./how_to_guides/setup/set_up_billing)
+- [Update invoice email, tax id and, business information](./how_to_guides/setup/update_business_info)
 - [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
   - [Create a role](./how_to_guides/setup/set_up_access_control#create-a-role)
   - [Assign a role to a user](./how_to_guides/setup/set_up_access_control#assign-a-role-to-a-user)
@@ -53,7 +54,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Manually provide token counts](./how_to_guides/tracing/log_llm_trace#manually-provide-token-counts)
   - [Instruct-style models](./how_to_guides/tracing/log_llm_trace#instruct-style-models)
 - [Prevent logging of sensitive data in traces](./how_to_guides/tracing/mask_inputs_outputs)
-  - [Example masking UUIDs and emails in inputs and outputs](./how_to_guides/tracing/mask_inputs_outputs#example-masking-uuids-and-emails-in-inputs-and-outputs)
+  - [Rule-based masking of inputs and outputs](./how_to_guides/tracing/mask_inputs_outputs#rule-based-masking-of-inputs-and-outputs)
 - [Export traces](./how_to_guides/tracing/export_traces)
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
@@ -69,8 +70,12 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Access run (span) ID for LangChain invocations](./how_to_guides/tracing/trace_with_langchain#access-run-span-id-for-langchain-invocations)
   - [Ensure all traces are submitted before exiting](./how_to_guides/tracing/trace_with_langchain#ensure-all-traces-are-submitted-before-exiting)
   - [Trace withouth setting environment variables](./how_to_guides/tracing/trace_with_langchain#trace-without-setting-environment-variables)
+  - [Interoperability between LangChain (Python) and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchain-python-and-langsmith-sdk)
+  - [Interoperability between LangChain.JS and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchainjs-and-langsmith-sdk)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
 - [Trace without setting environment variables](./how_to_guides/tracing/trace_without_env_vars)
+- [Trace using the LangSmith REST API](./how_to_guides/tracing/trace_with_api)
+- [Calculate token-based costs for traces](./how_to_guides/tracing/calculate_token_based_costs)
 
 ## Datasets
 
@@ -107,6 +112,7 @@ Evaluate your LLM applications to measure their performance over time.
   - [Evaluate on a dataset with repetitions](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-with-repetitions)
   - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
   - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
+  - [Return multiple scores](./how_to_guides/evaluation/evaluate_llm_application#return-multiple-scores)
 - [Bind an evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
@@ -137,6 +143,11 @@ Evaluate your LLM applications to measure their performance over time.
   - [In the comparison view](./how_to_guides/evaluation/audit_evaluator_scores#in-the-comparison-view)
   - [In the runs table](./how_to_guides/evaluation/audit_evaluator_scores#in-the-runs-table)
   - [In the SDK](./how_to_guides/evaluation/audit_evaluator_scores#in-the-sdk)
+- [Create few-shot evaluators](./how_to_guides/evaluation/create_few_shot_evaluators)
+  - [Create your evaluator](./how_to_guides/evaluation/create_few_shot_evaluators#create-your-evaluator)
+  - [Make corrections](./how_to_guides/evaluation/create_few_shot_evaluators#make-corrections)
+  - [View your corrections dataset](./how_to_guides/evaluation/create_few_shot_evaluators#view-your-corrections-dataset)
+- [Fetch performance metrics for an experiment](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
 
 ## Human feedback
 

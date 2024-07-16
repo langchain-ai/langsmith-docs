@@ -7,6 +7,7 @@ import {
   PythonBlock,
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Log custom LLM traces
 
@@ -21,7 +22,7 @@ In order to make the most of this feature, you must log your LLM traces in a spe
 
 :::note
 
-The examples below uses the `traceable` decorator/wrapper to log the model run (which is the recommended approach for Python and JS/TS). However, the same idea applies if you are using the [RunTree](./annotate_code#use-the-runtree-api) or [API](https://api.smith.langchain.com/redoc) directly.
+The examples below uses the `traceable` decorator/wrapper to log the model run (which is the recommended approach for Python and JS/TS). However, the same idea applies if you are using the [RunTree](./annotate_code#use-the-runtree-api) or <RegionalUrl type='api' suffix='/redoc' text='API' /> directly.
 
 :::
 
@@ -164,7 +165,16 @@ list(
 
 ## Manually provide token counts
 
-By default, LangSmith uses TikToken to count tokens, utilizing a best guess at the model's tokenizer based on the `ls_model_name` provided. Many models already include token counts as part of the response. To send them to LangSmith, you can add a `usage_metadata` key to the function's response, containing a dictionary with the keys `input_tokens`, `output_tokens` and `total_tokens`.
+:::tip Token-based cost tracking
+
+To learn how to set up token-based cost tracking based on the token usage information, see [this guide](./calculate_token_based_costs).
+:::
+
+By default, LangSmith uses [TikToken](https://github.com/openai/tiktoken) to count tokens, utilizing a best guess at the model's tokenizer based on the `ls_model_name` provided.
+Many models already include token counts as part of the response. You can send these token counts to LangSmith by providing the `usage_metadata` field in the response.
+If token information is passed to LangSmith, the system will use this information _instead of_ using TikToken.
+
+You can add a `usage_metadata` key to the function's response, containing a dictionary with the keys `input_tokens`, `output_tokens` and `total_tokens`.
 If using LangChain or [OpenAI wrapper](./annotate_code#wrap-the-openai-client), these fields will be automatically populated correctly.
 
 <CodeTabs

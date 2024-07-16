@@ -1,13 +1,54 @@
 ---
-sidebar_label: Release Notes (Self-Hosted)
-sidebar_position: 4
+sidebar_label: Release notes (self-hosted)
+sidebar_position: 7
 ---
 
 # LangSmith Release Notes
 
 :::note
-If you are updating directly from LangSmith v0.1.x and you wish to retain access to run data in the Langsmith UI after updating, you must first update to v0.2.x and perform a data migration. **Updating directly from v0.1.x to v0.3.x or later will result in data loss as the `runs` table in postgres will be dropped when deploying LangSmith v0.3.x or higher.** Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
+**Reminder: API keys prefixed with `ls__` will be disabled in favor of `lsv2...` style keys as of LangSmith Helm release v0.7 to be released on or after July 1, 2024.** For more information see [the Admin concepts guide.](https://docs.smith.langchain.com/concepts/admin#api-keys)
 :::
+
+## Week of June 17, 2024 - LangSmith v0.6
+
+LangSmith v0.6 improves run rules performance and reliability, adds support for multiple Workspaces within an Organization, custom models in Playground, and significant enhancements to Evaluations.
+
+### New Features
+
+- Dataset splits for evaluation and filtering/editing dataset examples. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#datasetsplits)
+- You can now run multiple repetitions of your experiment in LangSmith. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#repetitions)
+- Off-the-shelf online evaluator prompts to catch bad retrieval and hallucinations for RAG. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#onlineevaluatorprompts)
+- Manage private prompts without a handle. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#privateprompts)
+- Workspaces in LangSmith for improved collaboration & organization. [Learn More...](https://blog.langchain.dev/week-of-6-10-langchain-release-notes/#workspaces)
+- Enter the playground from scratch instead of from a trace or a prompt. [Learn More...](https://blog.langchain.dev/week-of-6-10-langchain-release-notes/#playground-from-scratch)
+- Variable mapping for online evaluator prompts. [Learn More...](https://blog.langchain.dev/week-of-6-10-langchain-release-notes/#variable-mapping)
+- Custom Model support in Playground. [Learn More...](https://docs.smith.langchain.com/how_to_guides/playground/custom_endpoint)
+
+### Performance and Reliability Changes
+
+- Improved performance of run rules especially in cases where rule execution may exceed the interval of rule execution.
+- Reduced run rule interval from 5 minutes to 1 minute resulting in more frequent application of rules
+- Improved performance when querying Hub via the SDK. NOTE: Accessing these improvements requires v0.1.20 or greater of the [Hub SDK](https://github.com/langchain-ai/hub-sdk)
+
+### Infrastructure changes
+
+- [Docker Compose only] The default port has changed from 80 to 1980.
+- [Helm] The playground image start command has changed. If you are using a custom Helm chart, you may need to review the configuration for Playground and adjust your Helm config accordingly.
+- [Helm] Added the ability to configure your probes in the `values.yaml` file. This allows you to adjust the readiness and liveness probes for the LangSmith services. You may need to adjust these if you had changed container ports.
+- [Helm] Added ArgoCD `PostSync` annotations to hook jobs to ensure that the jobs are run properly in ArgoCD. You may need to remove this annotation if you were previously setting it manually.
+- Updated Clickhouse from v23.9 to v24.2 NOTE: Applies only to environments using the LangSmith-provided Clickhouse.
+
+### Admin changes
+
+- Added support for Workspaces. See the [Admin concepts guide](/concepts/admin#workspaces) for more details.
+- Added global setting `orgCreationDisabled` to `values.yaml` to disable creation of new Organizations.
+- Added support for custom TLS certificates for the for the Azure OpenAI model provider. See the [how-to guide](/how_to_guides/playground/custom_tls_certificates) for more details.
+
+### Deprecation notices
+
+With the release of v0.6:
+
+- LangSmith v0.5.x and earlier are now in maintenance mode and may only receive critical security fixes.
 
 ## Week of May 13, 2024 - LangSmith v0.5
 

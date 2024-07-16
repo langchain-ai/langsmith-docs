@@ -134,6 +134,10 @@ const config = {
             position: "right",
           },
           {
+            type: "custom-RegionSelector",
+            position: "right",
+          },
+          {
             href: "https://smith.langchain.com/",
             label: "Go to App",
             position: "right",
