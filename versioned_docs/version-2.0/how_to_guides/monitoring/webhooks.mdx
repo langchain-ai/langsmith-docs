@@ -9,7 +9,7 @@ When you add a webhook URL on an automation action, we will make a POST request 
 The payload we send to your webhook endpoint contains
 
 - `"rule_id"` this is the ID of the automation that sent this payload
-- `"start_time"` and "end_time" these are the time boundaries where we found matching runs
+- `"start_time"` and `"end_time"` these are the time boundaries where we found matching runs
 - `"runs"` this is an array of runs, where each run is a dictionary. If you need more information about each run we suggest using our SDK in your endpoint to fetch it from our API.
 
 This is an example webhook payload
@@ -69,6 +69,16 @@ An example would be
 ```
 https://api.example.com/langsmith_webhook?secret=38ee77617c3a489ab6e871fbeb2ec87d
 ```
+
+### Webhook custom HTTP headers
+
+If you'd like to send any specific headers with your webhook, this can be configured per URL. To set this up, click on the `Headers` option next to the URL field and add your headers.
+
+:::note
+Headers are stored in encrypted format.
+:::
+
+![](../static/webhook_headers.png)
 
 ### Webhook Delivery
 
