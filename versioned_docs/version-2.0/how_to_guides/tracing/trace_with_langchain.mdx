@@ -423,14 +423,13 @@ const main = traceable(
 
 We're working on improving the interoperability between `traceable` and LangChain. The following limitations are present when using combining LangChain with `traceable`:
 
-1. `LANGCHAIN_CALLBACKS_BACKGROUND` must be set to `false`, otherwise some child runs may end up as root runs instead.
-2. Mutating RunTree obtained from `getCurrentRunTree()` of the RunnableLambda context will result in a no-op.
-3. It's discouraged to traverse the RunTree obtained from RunnableLambda via `getCurrentRunTree()` as it may not contain all the RunTree nodes.
-4. Different child runs may have the same `execution_order` and `child_execution_order` value. Thus in extreme circumstances, some runs may end up in a different order, depending on the `start_time`.
+1. Mutating RunTree obtained from `getCurrentRunTree()` of the RunnableLambda context will result in a no-op.
+2. It's discouraged to traverse the RunTree obtained from RunnableLambda via `getCurrentRunTree()` as it may not contain all the RunTree nodes.
+3. Different child runs may have the same `execution_order` and `child_execution_order` value. Thus in extreme circumstances, some runs may end up in a different order, depending on the `start_time`.
 
 :::
 
-In some uses cases, you might want to run `traceable` functions as part of the RunnableSequence or trace child runs of LangChain run imperatively via the `RunTree` API. Starting with LangSmith 0.1.38 and @langchain/core 0.2.17, you can directly invoke `traceable`-wrapped functions within RunnableLambda.
+In some uses cases, you might want to run `traceable` functions as part of the RunnableSequence or trace child runs of LangChain run imperatively via the `RunTree` API. Starting with LangSmith 0.1.38 and @langchain/core 0.2.18, you can directly invoke `traceable`-wrapped functions within RunnableLambda.
 
 ```typescript
 import { traceable } from "langsmith/traceable";
