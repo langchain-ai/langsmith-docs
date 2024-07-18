@@ -94,6 +94,8 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
   - [Create a dataset from a pandas DataFrame](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-pandas-dataframe)
   - [Fetch datasets](./how_to_guides/datasets/manage_datasets_programmatically#fetch-datasets)
   - [Fetch examples](./how_to_guides/datasets/manage_datasets_programmatically#fetch-examples)
+  - [Update examples](./how_to_guides/datasets/manage_datasets_programmatically#update-examples)
+  - [Bulk update examples](./how_to_guides/datasets/manage_datasets_programmatically#bulk-update-examples)
 - [Version datasets](./how_to_guides/datasets/version_datasets)
   - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
   - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
