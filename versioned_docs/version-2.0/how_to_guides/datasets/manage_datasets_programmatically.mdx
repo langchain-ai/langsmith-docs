@@ -374,3 +374,70 @@ Additionally, you can also chain multiple filters together using the `and` opera
   ]}
   groupId="client-language"
 />
+
+## Update examples
+
+You can programmatically update examples from LangSmith using the `update_example`/`updateExample` method in the Python and TypeScript SDKs. Below is an example.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `client.update_example(
+    example_id=example.id,
+    inputs={"input": "updated input"},
+    outputs={"output": "updated output"},
+    metadata={"foo": "bar"},
+    split="train"
+)`
+    ),
+    TypeScriptBlock(
+      `await client.updateExample(example.id, {
+  inputs: { input: "updated input" },
+  outputs: { output: "updated output" },
+  metadata: { "foo": "bar" },
+  split: "train",
+})`
+    ),
+  ]}
+  groupId="client-language"
+/>
+
+## Bulk update examples
+
+You can also programmatically update multiple examples in a single request with the `update_examples`/`updateExamples` method in the Python and TypeScript SDKs. Below is an example.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(
+      `client.update_examples(
+    example_ids=[example.id, example_2.id],
+    inputs=[{"input": "updated input 1"}, {"input": "updated input 2"}],
+    outputs=[
+        {"output": "updated output 1"},
+        {"output": "updated output 2"},
+    ],
+    metadata=[{"foo": "baz"}, {"foo": "qux"}],
+    splits=[["training", "foo"], "training"] # Splits can be arrays or standalone strings
+)`
+    ),
+    TypeScriptBlock(
+      `await client.updateExamples([
+  {
+    id: example.id,
+    inputs: { input: "updated input 1" },
+    outputs: { output: "updated output 1" },
+    metadata: { foo: "baz" },
+    split: ["training", "foo"] // Splits can be arrays or standalone strings
+  },
+  {
+    id: example2.id,
+    inputs: { input: "updated input 2" },
+    outputs: { output: "updated output 2" },
+    metadata: { foo: "qux" },
+    split: "training"
+  },
+])`
+    ),
+  ]}
+  groupId="client-language"
+/>
