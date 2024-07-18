@@ -26,14 +26,29 @@ For LangSmith to accurately calculate token-based costs, you need to provide the
 - If you are using the LangSmith Python or TS/JS SDK, you should carefully read through the [this guide](./log_llm_trace).
 - If you are using LangChain Python or TS/JS, _`ls_provider` and `ls_model_name` along with token counts are automatically sent up to LangSmith_.
 
+:::note
+
+If `ls_model_name` is not present in `extra.metadata`, other fields might be used from the `extra.invocation_metadata` for estimating token counts and calculating cost. The following fields are used in the order of precedence:
+
+1. `metadata.ls_model_name`
+2. `invocation_params.model`
+3. `invocation_params.model_name`
+4. `invocation_params.model_id` (for costs only)
+5. `invocation_params.model_path` (for costs only)
+6. `invocation_params.endpoint_name` (for costs only)
+
+:::
+
 Once you are sending up the correct information to LangSmith, you must set up the model pricing map in LangSmith settings.
 In order to do this, navigate to the <RegionalUrl text='model pricing map' suffix='/settings/workspaces/models' />.
 Here, you can set the cost per token for each model and provider combination. This information is scoped to a workspace.
 
 Several default entries for OpenAI models are already present in the model pricing map, which you can clone and modify as needed.
+
 ![](../static/model_price_map.png)
 
 To create a _new entry_ in the model pricing map, click on the `Add new model` button in the top right corner.
+
 ![](../static/new_price_map_entry.png)
 
 Here, you can specify the following fields:
@@ -118,4 +133,5 @@ In the above code snippet, we are sending up the `ls_provider` and `ls_model_nam
 This information matches the model pricing map entry we set up earlier.
 
 The trace produced will contain the token-based costs based on the token counts provided in the LLM invocation and the model pricing map entry.
+
 ![](../static/model_costs.png)
