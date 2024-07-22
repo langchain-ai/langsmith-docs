@@ -4,7 +4,7 @@ sidebar_position: 2
 description: "Administration scripts for LangSmith"
 ---
 
-# Installation
+# Scripts for administering LangSmith
 
 This section contains guides for performing common administrative tasks that are not currently available via the LangSmith UI.
 
