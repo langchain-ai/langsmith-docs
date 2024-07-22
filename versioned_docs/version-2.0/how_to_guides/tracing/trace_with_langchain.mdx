@@ -417,13 +417,41 @@ const main = traceable(
 );
 ```
 
-### Manually tracing LangChain child runs via `traceable` / RunTree API (JS only)
+### Tracing LangChain child runs via `traceable` / RunTree API (JS only)
 
-In some uses cases, you might want to run `traceable` functions as part of the RunnableSequence or trace child runs of LangChain run imperatively via the `RunTree` API.
+:::note
 
-You can convert the existing LangChain `RunnableConfig` to a equivalent RunTree object by using `RunTree.fromRunnableConfig` or you can pass the `RunnableConfig` as the first argument of the wrapped function, which will result in the following trace tree:
+We're working on improving the interoperability between `traceable` and LangChain. The following limitations are present when using combining LangChain with `traceable`:
 
-![Trace Tree of manual tracing](./static/trace_tree_manual_tracing.png)
+1. Mutating RunTree obtained from `getCurrentRunTree()` of the RunnableLambda context will result in a no-op.
+2. It's discouraged to traverse the RunTree obtained from RunnableLambda via `getCurrentRunTree()` as it may not contain all the RunTree nodes.
+3. Different child runs may have the same `execution_order` and `child_execution_order` value. Thus in extreme circumstances, some runs may end up in a different order, depending on the `start_time`.
+
+:::
+
+In some uses cases, you might want to run `traceable` functions as part of the RunnableSequence or trace child runs of LangChain run imperatively via the `RunTree` API. Starting with LangSmith 0.1.39 and @langchain/core 0.2.18, you can directly invoke `traceable`-wrapped functions within RunnableLambda.
+
+```typescript
+import { traceable } from "langsmith/traceable";
+import { RunnableLambda } from "@langchain/core/runnables";
+import { RunnableConfig } from "@langchain/core/runnables";
+
+const tracedChild = traceable((input: string) => `Child Run: ${input}`, {
+  name: "Child Run",
+});
+
+const parrot = new RunnableLambda({
+  func: async (input: { text: string }, config?: RunnableConfig) => {
+    // highlight-start
+    return await tracedChild(input.text);
+    // highlight-end
+  },
+});
+```
+
+![Trace Tree](./static/trace_tree_manual_tracing.png)
+
+Alternatively, you can convert LangChain's `RunnableConfig` to a equivalent RunTree object by using `RunTree.fromRunnableConfig` or pass the `RunnableConfig` as the first argument of `traceable`-wrapped function.
 
 <CodeTabs
   tabs={[
