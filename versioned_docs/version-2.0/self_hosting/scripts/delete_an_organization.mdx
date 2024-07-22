@@ -1,14 +1,14 @@
 ---
-sidebar_label: Delete a Workspace
+sidebar_label: Delete an Organization
 sidebar_position: 3
 table_of_contents: true
 ---
 
-# Deleting Workspaces
+# Deleting Organizations
 
-The LangSmith UI does not currently support the deletion of an individual workspace from an organization. This, however, can be accomplished by directly removing all traces from all materialized views in ClickHouse (except the runs_history views) and the runs and feedbacks tables and then removing the Workspace from the Postgres tenants table.
+The LangSmith UI does not currently support the deletion of an individual organization from a self-hosted instance of LangSmith. This, however, can be accomplished by directly removing all traces from all materialized views in ClickHouse (except the runs_history views) and the runs and feedbacks tables and then removing the Organization from the Postgres tenants table.
 
-This command using the Workspace ID as an argument.
+This command using the Organization ID as an argument.
 
 ### Prerequisites
 
@@ -54,18 +54,18 @@ Ensure you have the following tools/items ready.
      - Run `kubectl port-forward svc/langsmith-clickhouse 8123:8123` to port forward the clickhouse service to your local machine.
    - If you are using Clickhouse Cloud you will want to specify the --ssl flag and use port `8443`
 
-### Running the deletion script for a single workspace
+### Running the deletion script for a single organization
 
-Run the following command to run the workspace removal script:
+Run the following command to run the organization removal script:
 
 ```bash
-sh delete_workspace.sh <postgres_url> <clickhouse_url> --workspace_id <workspace_id>
+sh delete_organization.sh <postgres_url> <clickhouse_url> --organization_id <organization_id>
 ```
 
 For example, if you are using the bundled version with port-forwarding, the command would look like:
 
 ```bash
-sh delete_workspace.sh "postgres://postgres:postgres@localhost:5432/postgres" "clickhouse://default:password@localhost:8123/default" --workspace_id 4ec70ec7-0808-416a-b836-7100aeec934b
+sh delete_organization.sh "postgres://postgres:postgres@localhost:5432/postgres" "clickhouse://default:password@localhost:8123/default" --organization_id 4ec70ec7-0808-416a-b836-7100aeec934b
 ```
 
-If you visit the Langsmith UI, you should now see workspace is deleted.
+If you visit the Langsmith UI, you should now see organization is no longer present.
