@@ -186,7 +186,7 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
 - [Set up online evaluations](./how_to_guides/monitoring/online_evaluations)
   - [Configure online evaluations](./how_to_guides/monitoring/online_evaluations#configure-online-evaluations)
   - [Set API keys](./how_to_guides/monitoring/online_evaluations#set-api-keys)
-- [Set up webhook notifications for rules (beta)](./how_to_guides/monitoring/webhooks)
+- [Set up webhook notifications for rules](./how_to_guides/monitoring/webhooks)
   - [Webhook payload](./how_to_guides/monitoring/webhooks#webhook-payload)
   - [Example with Modal](./how_to_guides/monitoring/webhooks#example-with-modal)
 - [Set up threads](./how_to_guides/monitoring/threads)
