@@ -58,11 +58,17 @@ Install the LangGraph library and the OpenAI SDK for Python and JS (we use the O
 
 <LangGraphWithoutLangChainInstallationCodeTabs />
 
-:::caution Compatibility
+### 1. Configure your environment
 
-This requires `langsmith>=0.1.29` to use the beta utilities.
+```shell
+export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_API_KEY=<your-api-key>
 
-:::
+# The below examples use the OpenAI API, so you will need
+export OPENAI_API_KEY=<your-openai-api-key>
+```
+
+### 2. Log a trace
 
 <LangGraphWithoutLangChainCodeTabs />
 
