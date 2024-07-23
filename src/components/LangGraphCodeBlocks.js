@@ -38,7 +38,7 @@ export function LangGraphInstallationCodeTabs() {
   );
 }
 
-export function LangGraphQuickStartCodeTabs({}) {
+export function LangGraphQuickStartCodeTabs() {
   const tsBlock = `import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
@@ -215,7 +215,7 @@ export function LangGraphWithoutLangChainInstallationCodeTabs() {
   );
 }
 
-export function LangGraphWithoutLangChainCodeTabs({}) {
+export function LangGraphWithoutLangChainCodeTabs() {
   const pythonBlock = `import json
 import openai
 import operator
@@ -443,6 +443,6 @@ await graph.invoke({
             "**Note:** The below example requires `langsmith>=0.1.39` and `@langchain/langgraph>=0.0.31`",
         },
       ]}
-    ></CodeTabs>
+    />
   );
 }
