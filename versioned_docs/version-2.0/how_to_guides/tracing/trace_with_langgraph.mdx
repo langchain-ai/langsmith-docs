@@ -40,13 +40,16 @@ export OPENAI_API_KEY=<your-openai-api-key>
 
 ### 2. Log a trace
 
+Once you've set up your environment, you can call LangChain runnables as normal.
+LangSmith will infer the proper tracing config:
+
 <LangGraphQuickStartCodeTabs />
 
 An example trace from running the above code [looks like this](https://smith.langchain.com/public/10863294-ee79-484a-927f-0558230f1547/r).
 
 ## Without LangChain
 
-If you are using other SDKs or custom functions within LangGraph, you will need to wrap them appropriately
+If you are using other SDKs or custom functions within LangGraph, you will need to [wrap or decorate them appropriately](./annotate_code#use-traceable--traceable)
 (with the `@traceable` decorator in Python or the `traceable` function in JS, or something like e.g. `wrap_openai` for SDKs).
 If you do so, LangSmith will automatically nest traces from those wrapped methods.
 
@@ -69,6 +72,9 @@ export OPENAI_API_KEY=<your-openai-api-key>
 ```
 
 ### 2. Log a trace
+
+Once you've set up your environment, [wrap or decorate the custom functions/SDKs](./annotate_code#use-traceable--traceable) you want to trace.
+LangSmith will then infer the proper tracing config:
 
 <LangGraphWithoutLangChainCodeTabs />
 
