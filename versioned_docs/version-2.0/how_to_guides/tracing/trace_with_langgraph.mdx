@@ -1,0 +1,75 @@
+---
+sidebar_position: 15
+---
+
+import { ConfigureLangChainEnvironmentCodeTabs } from "@site/src/components/QuickStart";
+
+import {
+  LangGraphInstallationCodeTabs,
+  LangGraphQuickStartCodeTabs,
+  LangGraphWithoutLangChainInstallationCodeTabs,
+  LangGraphWithoutLangChainCodeTabs,
+} from "@site/src/components/LangGraphCodeBlocks";
+
+# Trace with `LangGraph` (Python and JS/TS)
+
+LangSmith smoothly integrates with LangGraph ([Python](https://langchain-ai.github.io/langgraph/) and [JS](https://langchain-ai.github.io/langgraphjs/))
+to help you trace agentic workflows, whether you're using [LangChain modules](./trace_with_langchain) or [other SDKs](./annotate_code#use-traceable--traceable).
+
+## With LangChain
+
+If you are using LangChain modules within LangGraph, you only need to set a few environment variables to enable tracing.
+
+This guide will walk through a basic example. For more detailed information on configuration, see the [Trace With LangChain](./trace_with_langchain) guide.
+
+### 0. Installation
+
+Install the LangGraph library and the OpenAI integration for Python and JS (we use the OpenAI integration for the code snippets below).
+
+For a full list of packages available, see the [LangChain Python docs](https://python.langchain.com/docs/integrations/platforms/) and [LangChain JS docs](https://js.langchain.com/docs/integrations/platforms/).
+
+<LangGraphInstallationCodeTabs />
+
+### 1. Configure your environment
+
+<ConfigureLangChainEnvironmentCodeTabs />
+
+### 2. Log a trace
+
+Once you've set up your environment, you can call LangChain runnables as normal.
+LangSmith will infer the proper tracing config:
+
+<LangGraphQuickStartCodeTabs />
+
+An example trace from running the above code [looks like this](https://smith.langchain.com/public/10863294-ee79-484a-927f-0558230f1547/r):
+
+![Trace tree for a LangGraph run with LangChain](./static/langgraph_with_langchain_trace.png)
+
+## Without LangChain
+
+If you are using other SDKs or custom functions within LangGraph, you will need to [wrap or decorate them appropriately](./annotate_code#use-traceable--traceable)
+(with the `@traceable` decorator in Python or the `traceable` function in JS, or something like e.g. `wrap_openai` for SDKs).
+If you do so, LangSmith will automatically nest traces from those wrapped methods.
+
+Here's an example. You can also see this page for more information.
+
+### 0. Installation
+
+Install the LangGraph library and the OpenAI SDK for Python and JS (we use the OpenAI integration for the code snippets below).
+
+<LangGraphWithoutLangChainInstallationCodeTabs />
+
+### 1. Configure your environment
+
+<ConfigureLangChainEnvironmentCodeTabs />
+
+### 2. Log a trace
+
+Once you've set up your environment, [wrap or decorate the custom functions/SDKs](./annotate_code#use-traceable--traceable) you want to trace.
+LangSmith will then infer the proper tracing config:
+
+<LangGraphWithoutLangChainCodeTabs />
+
+An example trace from running the above code [looks like this](https://smith.langchain.com/public/353f27da-c221-4b67-b9ec-ede3777f3271/r):
+
+![Trace tree for a LangGraph run without LangChain](./static/langgraph_without_langchain_trace.png)
