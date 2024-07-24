@@ -156,37 +156,13 @@ export function LangChainInstallationCodeTabs() {
 }
 
 export function ConfigureSDKEnvironmentCodeTabs({}) {
-  const pythonBlockContent = `export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-
-# Required for OpenAI usage in the below examples
-export OPENAI_API_KEY=<your-openai-api-key>`;
-
-  const typescriptBlockContent = `export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-
-# Required for OpenAI usage in the below examples
-export OPENAI_API_KEY=<your-openai-api-key>`;
-
-  const typescriptFootnote = `If you are using LangChain with LangSmith and are not in a serverless environment, we also suggest setting the following to reduce latency:
-
-\`export LANGCHAIN_CALLBACKS_BACKGROUND=true\``;
   return (
     <CodeTabs
       tabs={[
-        {
-          value: "python",
-          label: "Python",
-          language: "bash",
-          content: pythonBlockContent,
-        },
-        {
-          value: "typescript",
-          label: "TypeScript",
-          language: "bash",
-          content: typescriptBlockContent,
-          footnote: typescriptFootnote,
-        },
+        ShellBlock(`export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_API_KEY=<your-api-key>
+# The below examples use the OpenAI API, though it's not necessary in general
+export OPENAI_API_KEY=<your-openai-api-key>`),
       ]}
       groupId="client-language"
     />
@@ -273,6 +249,36 @@ chain.invoke({"question": question, "context": context})`}
         </CodeBlock>
       </TabItem>
     </Tabs>
+  );
+}
+
+export function ConfigureLangChainEnvironmentCodeTabs() {
+  const envVars = `export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_API_KEY=<your-api-key>
+# The below examples use the OpenAI API, though it's not necessary in general
+export OPENAI_API_KEY=<your-openai-api-key>`;
+  const typescriptFootnote = `If you are using LangChain with LangSmith and are not in a serverless environment, we also suggest setting the following to reduce latency:
+
+\`export LANGCHAIN_CALLBACKS_BACKGROUND=true\``;
+  return (
+    <CodeTabs
+      tabs={[
+        {
+          value: "python",
+          label: "Python",
+          language: "bash",
+          content: envVars,
+        },
+        {
+          value: "typescript",
+          label: "TypeScript",
+          language: "bash",
+          content: envVars,
+          footnote: typescriptFootnote,
+        },
+      ]}
+      groupId="client-language"
+    />
   );
 }
 
