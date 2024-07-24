@@ -2,6 +2,7 @@ import React from "react";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
+import Admonition from "@theme/Admonition";
 import { marked } from "marked";
 import DOMPurify from "isomorphic-dompurify";
 import prettier from "prettier";
@@ -132,6 +133,17 @@ export function CodeTabs({ tabs, groupId }) {
             >
               {formatCode(tab.content, tab.language ?? tab.value)}
             </CodeBlock>
+            {tab.footnote && (
+              <Admonition type="info">
+                <div
+                  className="code-footnote"
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(marked.parse(tab.footnote)),
+                  }}
+                />
+              </Admonition>
+            )}
           </TabItem>
         );
       })}
