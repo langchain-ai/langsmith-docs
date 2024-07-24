@@ -5,6 +5,7 @@ sidebar_position: 14
 import {
   LangChainInstallationCodeTabs,
   LangChainQuickStartCodeTabs,
+  ConfigureSDKEnvironmentCodeTabs,
 } from "@site/src/components/QuickStart";
 
 import {
@@ -31,13 +32,7 @@ For a full list of packages available, see the [LangChain Python docs](https://p
 
 ### 1. Configure your environment
 
-```shell
-export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-
-# The below examples use the OpenAI API, so you will need
-export OPENAI_API_KEY=<your-openai-api-key>
-```
+<ConfigureSDKEnvironmentCodeTabs />
 
 ### 2. Log a trace
 
