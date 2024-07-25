@@ -19,19 +19,17 @@ df = pd.read_parquet("hf://datasets/princeton-nlp/SWE-bench/" + splits["dev"])
 
 ### Editing the 'version' column
 
-<div class="alert alert-block alert-danger">
-  This is a very important step! If you skip, the rest of the code WILL NOT
-  WORK!
-</div>
+:::note
+This is a very important step! If you skip, the rest of the code WILL NOT WORK!
+:::
 
 The `version` column contains all string values but all are in float format so they get converted to floats when you upload the CSV to create a LangSmith dataset. Although you can convert the values to strings during your experiments, the issue arises with values like `"0.10"`. When getting converted to a float, you get the value `0.1`, which would become `"0.1"` if you converted it to a string - causing a key error during execution of your proposed patch.
 
 In order to fix this, we need LangSmith to stop trying to convert the `version` column to floats. In order to do this, we can just append a string prefix to each of them that is not float compatible. We then need to split on this prefix when doing evaluation to get the actual `version` value. The prefix we choose here is the string `"version:"`.
 
-<div class="alert alert-block alert-info">
-  The ability to select column types when uploading a CSV to LangSmith will be
-  added in the future to avoid having to use this workaround.
-</div>
+:::note
+The ability to select column types when uploading a CSV to LangSmith will be added in the future to avoid having to use this workaround.
+:::
 
 ```python
 df['version'] = df['version'].apply(lambda x: f"version:{x}")
@@ -47,7 +45,7 @@ To upload the data to LangSmith, we first need to save it to a CSV, which we can
 df.to_csv("./../swe-benchmark.csv",index=False)
 ```
 
-### Upload CSV to LangSmith
+### Upload CSV to LangSmith Manually
 
 We are now ready to upload the CSV to LangSmith. Once you are on the LangSmith website (smith.langchain.com), go to the `Datasets & Testing` tab on the left side navigation bar, and then click the `+ New Dataset` button in the top right corner.
 
@@ -57,9 +55,24 @@ Next, select `Key-Value` as the dataset type. Lastly head to the `Create Schema`
 
 Once you have populated the `Input fields` (and left the `Output fields` empty!) you can click the blue `Create` button in the top right corner, and your dataset will be created!
 
+### Upload CSV to LangSmith Programatically
+
+Alternatively you can upload your csv to LangSmith using the sdk as shown in the code block below:
+
+```python
+dataset = client.upload_csv(
+    csv_file="./../swe-benchmark-dev.csv",
+    input_keys=list(df.columns),
+    output_keys=[],
+    name="swe-bench-programatic-upload",
+    description="SWE-benchmark dataset",
+    data_type="kv"
+)
+```
+
 ### Create dataset split for quicker testing
 
-Since running the SWE-benchmark evaluator takes a long time when run on all examples, you can create a "test" split for quickly testing the evaluator and your code. This video shows you how to do so (to get to the starting page of the video, just click on your dataset created above and go to the `Examples` tab):
+Since running the SWE-benchmark evaluator takes a long time when run on all examples, you can create a "test" split for quickly testing the evaluator and your code. Read [this guide](https://docs.smith.langchain.com/how_to_guides/datasets/manage_datasets_in_application#create-and-manage-dataset-splits) to learn more about managing dataset splits, or watch this short video that shows how to do it (to get to the starting page of the video, just click on your dataset created above and go to the `Examples` tab):
 
 <video width="640" height="480" controls>
   <source src="static/creating-split.mp4" type="video/mp4">
