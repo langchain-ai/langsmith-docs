@@ -305,7 +305,8 @@ html[data-theme="dark"] {
   padding: 1rem;
 }
 
-.tabs-container > .code-tabs + div .code-caption p:last-child {
+.tabs-container > .code-tabs + div .code-caption p:last-child,
+.tabs-container > .code-tabs + div .code-footnote p:last-child {
   margin-bottom: 0;
 }
 

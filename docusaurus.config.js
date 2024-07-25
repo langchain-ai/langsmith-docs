@@ -24,28 +24,6 @@ const config = {
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
 
-  plugins: [
-    [
-      "@scalar/docusaurus",
-      {
-        label: "LangSmith API Docs",
-        route: "/api-docs",
-        configuration: {
-          spec: {
-            url: "https://api.smith.langchain.com/openapi.json",
-          },
-          darkMode: true,
-          servers: [
-            {
-              url: "https://api.smith.langchain.com",
-              description: "Production server",
-            },
-          ],
-        },
-      },
-    ],
-  ],
-
   markdown: {
     mermaid: true,
   },
@@ -141,6 +119,11 @@ const config = {
             href: "https://smith.langchain.com/",
             label: "Go to App",
             position: "right",
+          },
+          {
+            href: "https://api.smith.langchain.com/redoc",
+            label: "Go to API Docs",
+            position: "left",
           },
         ],
       },
