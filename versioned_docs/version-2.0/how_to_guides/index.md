@@ -70,6 +70,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Access run (span) ID for LangChain invocations](./how_to_guides/tracing/trace_with_langchain#access-run-span-id-for-langchain-invocations)
   - [Ensure all traces are submitted before exiting](./how_to_guides/tracing/trace_with_langchain#ensure-all-traces-are-submitted-before-exiting)
   - [Trace withouth setting environment variables](./how_to_guides/tracing/trace_with_langchain#trace-without-setting-environment-variables)
+  - [Distributed tracing with LangChain (Python)](./how_to_guides/tracing/trace_with_langchain#distributed-tracing-with-langchain-python)
   - [Interoperability between LangChain (Python) and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchain-python-and-langsmith-sdk)
   - [Interoperability between LangChain.JS and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchainjs-and-langsmith-sdk)
 - [Trace with `LangGraph`](./how_to_guides/tracing/trace_with_langgraph)
@@ -153,6 +154,10 @@ Evaluate your LLM applications to measure their performance over time.
   - [Make corrections](./how_to_guides/evaluation/create_few_shot_evaluators#make-corrections)
   - [View your corrections dataset](./how_to_guides/evaluation/create_few_shot_evaluators#view-your-corrections-dataset)
 - [Fetch performance metrics for an experiment](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
+- [Run evals using the API only](./how_to_guides/evaluation/run_evals_api_only)
+  - [Create a dataset](./how_to_guides/evaluation/run_evals_api_only#create-a-dataset)
+  - [Run a single experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-single-experiment)
+  - [Run a pairwise experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-pairwise-experiment)
 
 ## Human feedback
 

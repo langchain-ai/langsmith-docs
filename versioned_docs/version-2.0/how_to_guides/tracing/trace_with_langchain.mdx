@@ -338,6 +338,37 @@ await chain.invoke(
   groupId="client-language"
 />
 
+## Distributed tracing with LangChain (Python)
+
+LangSmith supports distributed tracing with LangChain Python. This allows you to link runs (spans) across different services and applications.
+The principles are similar to the [distributed tracing guide](./distributed_tracing) for the LangSmith SDK.
+
+```python
+import langsmith
+from langchain_core.runnables import chain
+from langsmith.run_helpers import get_current_run_tree
+
+# -- This code should be in a separate file or service --
+@chain
+def child_chain(inputs):
+    return inputs["test"] + 1
+
+def child_wrapper(x, headers):
+    with langsmith.tracing_context(parent=headers):
+        child_chain.invoke({"test": x})
+
+# -- This code should be in a separate file or service --
+@chain
+def parent_chain(inputs):
+
+    rt = get_current_run_tree()
+    headers = rt.to_headers()
+    # ... make a request to another service with the headers
+    # The headers should be passed to the other service, eventually to the child_wrapper function
+
+parent_chain.invoke({"test": 1})
+```
+
 ## Interoperability between LangChain (Python) and LangSmith SDK
 
 If you are using LangChain for part of your application and the LangSmith SDK (see [this guide](./annotate_code)) for other parts, you can still trace the entire application seamlessly.
