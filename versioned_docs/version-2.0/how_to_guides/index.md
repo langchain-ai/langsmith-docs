@@ -153,6 +153,10 @@ Evaluate your LLM applications to measure their performance over time.
   - [Make corrections](./how_to_guides/evaluation/create_few_shot_evaluators#make-corrections)
   - [View your corrections dataset](./how_to_guides/evaluation/create_few_shot_evaluators#view-your-corrections-dataset)
 - [Fetch performance metrics for an experiment](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
+- [Run evals using the API only](./how_to_guides/evaluation/run_evals_api_only)
+  - [Create a dataset](./how_to_guides/evaluation/run_evals_api_only#create-a-dataset)
+  - [Run a single experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-single-experiment)
+  - [Run a pairwise experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-pairwise-experiment)
 
 ## Human feedback
 
