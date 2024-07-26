@@ -61,6 +61,46 @@ Note that keyword search is done splitting the text and finding any partial matc
 
 Based on the filters above, the system will search for `python` and `tensorflow` in either inputs or outputs, and `embedding` in the inputs along with `fine` and `tune` in the outputs.
 
+## Filter based on input / output key-value pairs
+
+In addition to full-text search, you can filter runs based on specific key-value pairs in the inputs and outputs. This allows for more precise filtering, especially when dealing with structured data.
+
+To filter based on key-value pairs, select the `Input KV` or `Output KV` filter from the Filters dropdown.
+
+For example, to match the following input:
+
+```json
+{
+  "input": "What is the capital of France?"
+}
+```
+
+Select `Filters`, `Add Filter` to bring up the filtering options. Then select `Input KV`, enter `input` as the key and enter `What is the capital of France?` as the value.
+
+![Filtering](../static/search_kv_input.png)
+
+You can also match nested keys by using dot notation to selected the nested key name. For example, to match nested keys in the output:
+
+```json
+{
+  "documents": [
+    {
+      "page_content": "The capital of France is Paris",
+      "metadata": {},
+      "type": "Document"
+    }
+  ]
+}
+```
+
+Select `Output KV`, enter `documents.page_content` as the key and enter `The capital of France is Paris` as the value. This will match the nested key `documents.page_content` with the specified value.
+
+![Filtering](../static/search_kv_output.png)
+
+You can add multiple key-value filters to create more complex queries. You can also use the `Filter Shortcuts` on the right side to quickly filter based on common key values pairs as shown below:
+
+![Filtering](../static/search_kv_filter_shortcut.png)
+
 ## Copy the filter
 
 Sometimes you may want to copy a filter that you have constructed. You may way to do this to share it with a co-worker, reuse it in the future, or use it in the SDK.
