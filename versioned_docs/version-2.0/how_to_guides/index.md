@@ -70,6 +70,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Access run (span) ID for LangChain invocations](./how_to_guides/tracing/trace_with_langchain#access-run-span-id-for-langchain-invocations)
   - [Ensure all traces are submitted before exiting](./how_to_guides/tracing/trace_with_langchain#ensure-all-traces-are-submitted-before-exiting)
   - [Trace withouth setting environment variables](./how_to_guides/tracing/trace_with_langchain#trace-without-setting-environment-variables)
+  - [Distributed tracing with LangChain (Python)](./how_to_guides/tracing/trace_with_langchain#distributed-tracing-with-langchain-python)
   - [Interoperability between LangChain (Python) and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchain-python-and-langsmith-sdk)
   - [Interoperability between LangChain.JS and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchainjs-and-langsmith-sdk)
 - [Trace with `LangGraph`](./how_to_guides/tracing/trace_with_langgraph)
@@ -153,6 +154,10 @@ Evaluate your LLM applications to measure their performance over time.
   - [Make corrections](./how_to_guides/evaluation/create_few_shot_evaluators#make-corrections)
   - [View your corrections dataset](./how_to_guides/evaluation/create_few_shot_evaluators#view-your-corrections-dataset)
 - [Fetch performance metrics for an experiment](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
+- [Run evals using the API only](./how_to_guides/evaluation/run_evals_api_only)
+  - [Create a dataset](./how_to_guides/evaluation/run_evals_api_only#create-a-dataset)
+  - [Run a single experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-single-experiment)
+  - [Run a pairwise experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-pairwise-experiment)
 
 ## Human feedback
 
@@ -176,6 +181,7 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
   - [Advanced: filter for intermediate runs (spans) on properties of the root](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-intermediate-runs-spans-on-properties-of-the-root)
   - [Advanced: filter for runs (spans) whose child runs have some attribute](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-runs-spans-whose-child-runs-have-some-attribute)
   - [Filter based on inputs and outputs](./how_to_guides/monitoring/filter_traces_in_application#filter-based-on-inputs-and-outputs)
+  - [Filter based on input / output key-value pairs](./how_to_guides/monitoring/filter_traces_in_application#filter-based-on-input--output-key-value-pairs)
   - [Copy the filter](./how_to_guides/monitoring/filter_traces_in_application#copy-the-filter)
   - [Manually specify a raw query in LangSmith query language](./how_to_guides/monitoring/filter_traces_in_application#manually-specify-a-raw-query-in-langsmith-query-language)
   - [Use an AI Query to auto-generate a query](./how_to_guides/monitoring/filter_traces_in_application#use-an-ai-query-to-auto-generate-a-query)

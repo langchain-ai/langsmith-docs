@@ -61,6 +61,72 @@ Note that keyword search is done splitting the text and finding any partial matc
 
 Based on the filters above, the system will search for `python` and `tensorflow` in either inputs or outputs, and `embedding` in the inputs along with `fine` and `tune` in the outputs.
 
+## Filter based on input / output key-value pairs
+
+In addition to full-text search, you can filter runs based on specific key-value pairs in the inputs and outputs. This allows for more precise filtering, especially when dealing with structured data.
+
+To filter based on key-value pairs, select the `Input KV` or `Output KV` filter from the Filters dropdown.
+
+For example, to match the following input:
+
+```json
+{
+  "input": "What is the capital of France?"
+}
+```
+
+Select `Filters`, `Add Filter` to bring up the filtering options. Then select `Input KV`, enter `input` as the key and enter `What is the capital of France?` as the value.
+
+![Filtering](../static/search_kv_input.png)
+
+You can also match nested keys by using dot notation to selected the nested key name. For example, to match nested keys in the output:
+
+```json
+{
+  "documents": [
+    {
+      "page_content": "The capital of France is Paris",
+      "metadata": {},
+      "type": "Document"
+    }
+  ]
+}
+```
+
+Select `Output KV`, enter `documents.page_content` as the key and enter `The capital of France is Paris` as the value. This will match the nested key `documents.page_content` with the specified value.
+
+![Filtering](../static/search_kv_output.png)
+
+You can add multiple key-value filters to create more complex queries. You can also use the `Filter Shortcuts` on the right side to quickly filter based on common key values pairs as shown below:
+
+![Filtering](../static/search_kv_filter_shortcut.png)
+
+## Saved filters
+
+You can save filters to be reused in the future. Saved filters are associated with a trace project not across all trace projects. They can help you organize your traces and find relevant traces more easily.
+
+### Save a filter
+
+In the filter box, click the `Save` button after you have constructed your filter. This will bring up a dialog to specify the name and a description of the filter.
+
+![Filtering](../static/save_a_filter.png)
+
+### Use a saved filter
+
+After saving a filter, it is available in the filter bar as a quick filter for you to use. If you have more than 3 filters saved, only 2 will be displayed while the rest are in the more menu in the same bar.
+
+![Filtering](../static/selecting_a_filter.png)
+
+### Update a saved filter
+
+With the filter selected, make any changes to filter parameters. Then click `Save ▼` → `Save` to update the filter.
+
+In the same menu, you can also create a new saved filter by clicking `Save ▼` → `Save as`.
+
+### Delete a saved filter
+
+With the filter selected, click on the trash button to delete the saved filter.
+
 ## Copy the filter
 
 Sometimes you may want to copy a filter that you have constructed. You may way to do this to share it with a co-worker, reuse it in the future, or use it in the SDK.
@@ -70,6 +136,14 @@ In order to copy the filter, you can first create it in the UI. From there, you 
 This will give you a string in our query language, like `and(eq(is_root, true), and(eq(feedback_key, "user_score"), eq(feedback_score, 1)))` Please see [this reference](../../reference/data_formats/trace_query_syntax#filter-query-language) for more information on the query language.
 
 ![Copy Filter](../static/copy_filter.png)
+
+## Filtering runs within the trace view
+
+You can also filter runs in the trace view. This will allow you to easily sift through traces with large amount of runs. The same filters available in the main runs table view can be applied here.
+
+By default, only the runs that match the filters will be shown. To see the matched runs within the context of the trace tree, switch the view option from "Filtered Only" to "Show All" or "Most relevant".
+
+![Filtering within trace view](../static/filter_runs_in_trace_view.png)
 
 ## Manually specify a raw query in LangSmith query language
 
