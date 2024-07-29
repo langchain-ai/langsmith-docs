@@ -89,7 +89,7 @@ for input_prompt, output_answer in example_inputs:
     TypeScriptBlock(`import { Client } from "langsmith";\n
 const client = new Client({
   // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
-  // apiKey: "my_api_key", // Defaults to the LANGCHAIN_API_KEY env var
+  // apiKey: "my_api_key", // Defaults to the LANGSMITH_API_KEY env var
   /* callerOptions: {
          maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
          maxRetries?: 6; // Maximum number of retries to make
@@ -129,7 +129,7 @@ To create datasets from existing runs, you can use the same approach. Below is a
   tabs={[
     PythonBlock(`from langsmith import Client\n
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
-os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
+os.environ["LANGSMITH_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
 client = Client()
 dataset_name = "Example Dataset"\n
 # Filter runs to add to the dataset
@@ -148,7 +148,7 @@ for run in runs:
     TypeScriptBlock(`import { Client, Run } from "langsmith";
 const client = new Client({
   // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
-  // apiKey: "my_api_key", // Defaults to the LANGCHAIN_API_KEY env var
+  // apiKey: "my_api_key", // Defaults to the LANGSMITH_API_KEY env var
   /* callerOptions: {
          maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
          maxRetries?: 6; // Maximum number of retries to make
@@ -189,7 +189,7 @@ First, ensure your CSV file is properly formatted with columns that represent yo
     PythonBlock(`from langsmith import Client
 import os\n
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
-os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"\n
+os.environ["LANGSMITH_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"\n
 client = Client()\n
 csv_file = 'path/to/your/csvfile.csv'
 input_keys = ['column1', 'column2'] # replace with your input column names
@@ -229,7 +229,7 @@ import os
 import pandas as pd
 
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
-os.environ["LANGCHAIN_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
+os.environ["LANGSMITH_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
 client = Client()
 
 df = pd.read_parquet('path/to/your/myfile.parquet')

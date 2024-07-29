@@ -241,7 +241,7 @@ Requests made to the LangSmith proxy can also be traced.
 You can do this by running the docker image with the `LANGSMITH_API_KEY` environment variable set to your LangSmith API Key.
 
 ```bash
-docker run -p 8080:8080 -e LANGCHAIN_API_KEY=<your_langsmith_api_key> -e  docker.io/langchain/langsmith-proxy:latest -p 8080:8080
+docker run -p 8080:8080 -e LANGSMITH_API_KEY=<your_langsmith_api_key> -e  docker.io/langchain/langsmith-proxy:latest -p 8080:8080
 ```
 
 Run the script again, and you should see a trace in your LangSmith dashboard.

@@ -55,7 +55,7 @@ def patch_run(run_id, outputs):
     )
 
 # Send your API Key in the request headers
-headers = {"x-api-key": os.environ["LANGCHAIN_API_KEY"]}
+headers = {"x-api-key": os.environ["LANGSMITH_API_KEY"]}
 
 # This can be a user input to your app
 question = "Can you summarize this morning's meetings?"

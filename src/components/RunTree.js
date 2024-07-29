@@ -11,9 +11,9 @@ parent_run = RunTree(
     run_type="chain",
     inputs={"text": "Summarize this morning's meetings."},
     serialized={},  # Serialized representation of this chain
-    # project_name= "Defaults to the LANGCHAIN_PROJECT env var"
+    # project_name= "Defaults to the LANGSMITH_PROJECT env var"
     # api_url= "Defaults to the LANGCHAIN_ENDPOINT env var"
-    # api_key= "Defaults to the LANGCHAIN_API_KEY env var"
+    # api_key= "Defaults to the LANGSMITH_API_KEY env var"
 )
 # .. My Chat Bot calls an LLM
 child_llm_run = parent_run.create_child(
@@ -68,9 +68,9 @@ const parentRunConfig: RunTreeConfig = {
     text: "Summarize this morning's meetings.",
   },
   serialized: {}, // Serialized representation of this chain
-  // session_name: "Defaults to the LANGCHAIN_PROJECT env var"
+  // session_name: "Defaults to the LANGSMITH_PROJECT env var"
   // apiUrl: "Defaults to the LANGCHAIN_ENDPOINT env var"
-  // apiKey: "Defaults to the LANGCHAIN_API_KEY env var"
+  // apiKey: "Defaults to the LANGSMITH_API_KEY env var"
 };\n
 const parentRun = new RunTree(parentRunConfig);\n
 const childLlmRun = await parentRun.createChild({

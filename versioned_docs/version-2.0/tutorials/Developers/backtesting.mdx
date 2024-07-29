@@ -34,10 +34,10 @@ import os
 
 # Set the project name to whichever project you'd like to be testing against
 project_name = "Tweet Critic"
-os.environ["LANGCHAIN_API_KEY"] = "YOUR API KEY"
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGSMITH_API_KEY"] = "YOUR API KEY"
+os.environ["LANGSMITH_TRACING"] = "true"
 os.environ["ANTHROPIC_API_KEY"] = "YOUR ANTHROPIC API KEY"
-os.environ["LANGCHAIN_PROJECT"] = project_name
+os.environ["LANGSMITH_PROJECT"] = project_name
 ```
 
 #### (Preliminary) Production Deployment

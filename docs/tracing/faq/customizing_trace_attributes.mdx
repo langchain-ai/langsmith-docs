@@ -18,10 +18,10 @@ Oftentimes, you will want to customize various attributes of the traces you log 
 
 ### Logging to a specific project
 
-As mentioned in the Concepts section, LangSmith uses the concept of a `Project` to group traces. If left unspecified, the tracer project is set to `default`. You can set the `LANGCHAIN_PROJECT` environment variable to configure a custom project name for an entire application run. This should be done before executing your program.
+As mentioned in the Concepts section, LangSmith uses the concept of a `Project` to group traces. If left unspecified, the tracer project is set to `default`. You can set the `LANGSMITH_PROJECT` environment variable to configure a custom project name for an entire application run. This should be done before executing your program.
 
 ```bash
-export LANGCHAIN_PROJECT="My Project"
+export LANGSMITH_PROJECT="My Project"
 ```
 
 ### Changing the destination project at runtime
@@ -39,7 +39,7 @@ messages = [
     {"role": "user", "content": "Hello!"}
 ]\n
 # Use the @traceable decorator with the 'project_name' parameter to log traces to LangSmith
-# Ensure that the LANGCHAIN_TRACING_V2 environment variables are set for @traceable to work
+# Ensure that the LANGSMITH_TRACING environment variables are set for @traceable to work
 @traceable(
     run_type="llm",
     name="OpenAI Call Decorator",
@@ -147,7 +147,7 @@ messages = [
     {"role": "user", "content": "Hello!"}
 ]\n
 # Use the @traceable decorator with tags and metadata
-# Ensure that the LANGCHAIN_TRACING_V2 environment variables are set for @traceable to work
+# Ensure that the LANGSMITH_TRACING environment variables are set for @traceable to work
 @traceable(
     run_type="llm",
     name="OpenAI Call Decorator",
@@ -256,7 +256,7 @@ messages = [
     {"role": "user", "content": "Hello!"}
 ]\n
 # Use the @traceable decorator with the name parameter
-# Ensure that the LANGCHAIN_TRACING_V2 environment variables are set for @traceable to work
+# Ensure that the LANGSMITH_TRACING environment variables are set for @traceable to work
 @traceable(
     run_type="llm",
     # highlight-next-line
