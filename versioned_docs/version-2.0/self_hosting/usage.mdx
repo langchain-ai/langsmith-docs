@@ -14,7 +14,7 @@ This guide assumes you have already deployed a self-hosted LangSmith instance. I
 
 ### Configuring the application you want to use with LangSmith
 
-LangSmith has two APIs: One for interacting with the LangChain Hub/prompts and one for interacting with the backend of the LangSmith application. Each exists at its own URL and in a self-hosted environment are set via the `LANGCHAIN_HUB_API_URL` and `LANGCHAIN_ENDPOINT` environment variables, respectively, and have their own separate SDKs.
+LangSmith has two APIs: One for interacting with the LangChain Hub/prompts and one for interacting with the backend of the LangSmith application. Each exists at its own URL and in a self-hosted environment are set via the `LANGCHAIN_HUB_API_URL` and `LANGSMITH_ENDPOINT` environment variables, respectively, and have their own separate SDKs.
 
 1. Once you have deployed your instance, you can access the LangSmith UI at `http://<host>`.
 2. The backend API will be available at `http://<host>/api`
@@ -23,7 +23,7 @@ LangSmith has two APIs: One for interacting with the LangChain Hub/prompts and o
 To use the LangSmith API, you will need to set the following environment variables in your application:
 
 ```bash
-LANGCHAIN_ENDPOINT=http://<host>/api
+LANGSMITH_ENDPOINT=http://<host>/api
 LANGCHAIN_HUB_API_URL=http://<host>/api-hub
 LANGSMITH_API_KEY=foo # Set to a legitimate API key if using OAuth
 ```

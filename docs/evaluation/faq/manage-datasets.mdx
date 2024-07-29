@@ -88,7 +88,7 @@ for input_prompt, output_answer in example_inputs:
     )`),
     TypeScriptBlock(`import { Client } from "langsmith";\n
 const client = new Client({
-  // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
+  // apiUrl: "https://api.langchain.com", // Defaults to the LANGSMITH_ENDPOINT env var
   // apiKey: "my_api_key", // Defaults to the LANGSMITH_API_KEY env var
   /* callerOptions: {
          maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
@@ -128,7 +128,7 @@ To create datasets from existing runs, you can use the same approach. Below is a
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client\n
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGSMITH_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
 client = Client()
 dataset_name = "Example Dataset"\n
@@ -147,7 +147,7 @@ for run in runs:
     )`),
     TypeScriptBlock(`import { Client, Run } from "langsmith";
 const client = new Client({
-  // apiUrl: "https://api.langchain.com", // Defaults to the LANGCHAIN_ENDPOINT env var
+  // apiUrl: "https://api.langchain.com", // Defaults to the LANGSMITH_ENDPOINT env var
   // apiKey: "my_api_key", // Defaults to the LANGSMITH_API_KEY env var
   /* callerOptions: {
          maxConcurrency?: Infinity; // Maximum number of concurrent requests to make
@@ -188,7 +188,7 @@ First, ensure your CSV file is properly formatted with columns that represent yo
   tabs={[
     PythonBlock(`from langsmith import Client
 import os\n
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGSMITH_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"\n
 client = Client()\n
 csv_file = 'path/to/your/csvfile.csv'
@@ -228,7 +228,7 @@ from langsmith import Client
 import os
 import pandas as pd
 
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGSMITH_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGSMITH_API_KEY"] = "<YOUR-LANGSMITH-API-KEY>"
 client = Client()
 
