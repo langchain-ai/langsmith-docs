@@ -27,6 +27,20 @@ You can then add examples to the dataset by clicking on "Add Example". Here, you
 
 ![](../static/add_manual_example.png)
 
+## Dataset schema validation
+
+If you are creating a key-value dataset, you may optionally define a schema for your dataset. All examples you create will be validated against this schema.
+
+![Defining dataset schema](../static/dataset_schema_definition.png)
+
+Dataset schemas are defined with standard [JSON schemas](https://json-schema.org/). If you would rather manually enter raw JSON, click "Editor" at the bottom of the JSON editor and then select "JSON".
+
+![Custom JSON schema input](../static/custom_json_schema.png)
+
+If you have defined a schema for your dataset, you will get easy validation when creating new examples:
+
+![Schema validation on example creation](../static/schema_validation.png)
+
 ## Add inputs and outputs from traces to datasets
 
 We typically construct datasets over time by collecting representative examples from debugging or other runs. To do this, we first filter the traces to find the ones we want to add to the dataset. Then we add the inputs and outputs from these traces to the dataset.
