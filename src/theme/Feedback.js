@@ -98,7 +98,7 @@ function SvgThumbsDown() {
 
 const FEEDBACK_COOKIE_PREFIX = "feedbackSent";
 /** @type {Database["public"]["Enums"]["project_type"]} */
-const LANGCHAIN_PROJECT_NAME = "langsmith_docs";
+const LANGSMITH_PROJECT_NAME = "langsmith_docs";
 
 /**
  * @returns {Promise<string>}
@@ -142,7 +142,7 @@ export default function Feedback() {
         is_good: feedback === "good",
         url: window.location.pathname,
         user_ip: ipAddress,
-        project: LANGCHAIN_PROJECT_NAME,
+        project: LANGSMITH_PROJECT_NAME,
       };
 
       const { error } = await supabase.from("feedback").insert(data);

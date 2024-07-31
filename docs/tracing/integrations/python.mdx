@@ -12,8 +12,8 @@ LangSmith allows you to log traces in various ways.
 To log traces with [LangChain](https://python.langchain.com/), all you need to do is set an environment variable.
 
 ```shell
-export LANGCHAIN_API_KEY=<your-api-key>
-export LANGCHAIN_TRACING_V2=true
+export LANGSMITH_API_KEY=<your-api-key>
+export LANGSMITH_TRACING=true
 ```
 
 After that, you can use LangChain as you normally would and all traces will get logged to LangSmith!
@@ -25,7 +25,7 @@ We provide a convenient wrapper for the [OpenAI SDK](https://platform.openai.com
 In order to use, you first need to set your LangSmith API key.
 
 ```shell
-export LANGCHAIN_API_KEY=<your-api-key>
+export LANGSMITH_API_KEY=<your-api-key>
 ```
 
 Next, you will need to install the LangSmith SDK:
@@ -76,7 +76,7 @@ We provide a convenient integration with [Instructor](https://jxnl.github.io/ins
 In order to use, you first need to set your LangSmith API key.
 
 ```shell
-export LANGCHAIN_API_KEY=<your-api-key>
+export LANGSMITH_API_KEY=<your-api-key>
 ```
 
 Next, you will need to install the LangSmith SDK:
