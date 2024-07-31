@@ -7,6 +7,10 @@ import { CodeTabs } from "@site/src/components/InstructionsWithCode";
 
 # Trace with the Vercel AI SDK (JS/TS only)
 
+:::note beta
+This feature is currently in beta while Vercel rolls out official telemetry support.
+:::
+
 You can use LangSmith to trace runs from the [Vercel AI SDK](https://sdk.vercel.ai/docs/introduction) using
 the special `wrapAISDKModel` method. The important detail is that you must wrap the Vercel model wrapper
 rather than of the top-level `generateText` or `generateStream` calls.
