@@ -14,7 +14,7 @@ LangSmith supports login via username/password with a few limitations during the
 ## Requirements and features
 
 - Your initial password must be least 12 characters long and have at least one lowercase, uppercase, and symbol
-- There are no strict requirements for the secret used for signing JWTs, but we recommend using a password generator for a mix of uppercase, lowercase, and numbers of length 32+
+- There are no strict requirements for the secret used for signing JWTs, but we recommend securely generating a string of at least 32 characters. For example: `openssl rand -base64 32`
 
 :::note
 Changing the JWT secret will log out your users
