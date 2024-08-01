@@ -5,6 +5,7 @@ sidebar_position: 3
 import {
   CodeTabs,
   PythonBlock,
+  LangChainPyBlock,
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
@@ -30,7 +31,7 @@ export LANGCHAIN_API_KEY="lsv2_..."
 ```
 
 :::note Terminology
-"Prompt" used to be called "repo", so any references to "repo" in the code are referring to a prompt.
+What we refer to as "prompts" used to be called "repos", so any references to "repo" in the code are referring to a prompt.
 :::
 
 ## Push a prompt
@@ -41,32 +42,62 @@ To create a new prompt or update an existing prompt, you can use the `push promp
   tabs={[
     PythonBlock(`from langsmith import client
 from langchain_core.prompts import ChatPromptTemplate\n
-client = Client()
+client = Client()\n
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
-url = client.push_prompt("topic-joke-generator", object=prompt)
+url = client.push_prompt("joke-generator", object=prompt)
 # url is a link to the prompt in the UI
 print(url)
 `),
-    TypeScriptBlock(`// Coming soon...`),
+    LangChainPyBlock(`from langchain import hub
+from langchain.core.prompts import ChatPromptTemplate\n
+prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
+url = hub.push("joke-generator", prompt)
+# url is a link to the prompt in the UI
+print(url)
+`),
+    TypeScriptBlock(`import * as prompts from "langchain/hub";
+import { ChatPromptTemplate } from "@langchain/core/prompts";\n
+const prompt = ChatPromptTemplate.fromTemplate("tell me a joke about {topic}");
+url = prompts.push("joke-generator", chain);
+// url is a link to the prompt in the UI
+console.log(url);
+`),
   ]}
   groupId="client-language"
 />
 
-You can also push a prompt as a RunnableSequence or a prompt and a model.
+You can also push a prompt as a RunnableSequence of a prompt and a model.
 This is useful for storing the model configuration you want to use with this prompt.
-The provider must be supported by the LangSmith playground. (see settings: [Supported Providers](https://langsmith.com/playground))
+The provider must be supported by the LangSmith playground. (see settings here: [Supported Providers](https://langsmith.com/playground))
 
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import client
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI\n
-client = Client()\n
-model = ChatOpenAI("gpt-3.5-turbo")
-prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")\n
-chain = prompt | model
-client.push_prompt("topic-joke-generator", chain)`),
-    TypeScriptBlock(`// Coming soon...`),
+client = Client()
+model = ChatOpenAI("gpt-4o-mini")\n
+prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
+chain = prompt | model\n
+client.push_prompt("joke-generator-with-model", chain)
+`),
+    LangChainPyBlock(`from langchain import hub as prompts
+from langchain.core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI\n
+model = ChatOpenAI("gpt-4o-mini")\n
+prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
+chain = prompt | model\n
+url = prompts.push("joke-generator-with-model", chain)
+# url is a link to the prompt in the UI
+print(url)
+`),
+    TypeScriptBlock(`import * as prompts from "langchain/hub";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI } from "langchain-openai";\n
+const model = new ChatOpenAI("gpt-4o-mini");\n
+const prompt = ChatPromptTemplate.fromTemplate("tell me a joke about {topic}");
+const chain = prompt.pipe(model);\n
+prompts.push("joke-generator-with-model", chain);`),
   ]}
   groupId="client-language"
 />
@@ -84,16 +115,27 @@ To pull a **public prompt** from the LangChain Hub, you need to specify the hand
     PythonBlock(`from langsmith import client
 from langchain_openai import ChatOpenAI\n
 client = Client()\n
-prompt = client.pull_prompt("topic-joke-generator")
-model = ChatOpenAI("gpt-3.5-turbo")\n
+prompt = client.pull_prompt("joke-generator")
+model = ChatOpenAI("gpt-4o-mini")\n
 chain = prompt | model
 chain.invoke({"topic": "cats"})`),
-    TypeScriptBlock(`// Coming soon...`),
+    LangChainPyBlock(`from langchain import hub as prompts
+from langchain_openai import ChatOpenAI\n
+prompt = prompts.pull("joke-generator")
+model = ChatOpenAI("gpt-4o-mini")\n
+chain = prompt | model
+chain.invoke({"topic": "cats"})`),
+    TypeScriptBlock(`import * as prompts from "langchain/hub";
+import { ChatOpenAI } from "langchain-openai";\n
+const prompt = prompts.pull("joke-generator");
+const model = new ChatOpenAI("gpt-4o-mini");\n
+const chain = prompt.pipe(model);
+chain.invoke({"topic": "cats"});`),
   ]}
   groupId="client-language"
 />
 
-Similar to pushing a prompt, you can also pull a prompt as a RunnableSequence including a prompt and a model.
+Similar to pushing a prompt, you can also pull a prompt as a RunnableSequence of a prompt and a model.
 Just specify include_model when pulling the prompt.
 If the stored prompt includes a model, it will be returned as a RunnableSequence.
 Make sure you have the proper environment variables set for the model you are using.
@@ -102,9 +144,17 @@ Make sure you have the proper environment variables set for the model you are us
   tabs={[
     PythonBlock(`from langsmith import client\n
 client = Client()
-chain = client.pull_prompt("topic-joke-generator", include_model=True)
+chain = client.pull_prompt("joke-generator-with-model", include_model=True)
 chain.invoke({"topic": "cats"})`),
-    TypeScriptBlock(`// Coming soon...`),
+    LangChainPyBlock(`from langchain import hub as prompts
+chain = prompts.pull("joke-generator", prompt)
+# url is a link to the prompt in the UI
+print(url)
+`),
+    TypeScriptBlock(`import * as prompts from "langchain/hub";
+import { Runnable } from "@langchain/core/runnables";\n
+const chain = prompts.pull<Runnable>("joke-generator-with-model", { includeModel: true });
+chain.invoke({"topic": "cats"});`),
   ]}
   groupId="client-language"
 />
@@ -113,19 +163,20 @@ When pulling a prompt, you can also specify a specific commit hash to pull a spe
 
 <CodeTabs
   tabs={[
-    PythonBlock(`prompt = client.pull_prompt("topic-joke-generator:12344e88")`),
-    TypeScriptBlock(`// Coming soon...`),
+    PythonBlock(`prompt = client.pull_prompt("joke-generator:12344e88")`),
+    LangChainPyBlock(`prompt = prompts.pull("joke-generator:12344e88")`),
+    TypeScriptBlock(`prompt = prompts.pull("joke-generator:12344e88")`),
   ]}
   groupId="client-language"
 />
 
-To pull a public prompt from the LangSmith Hub, you need to specify the handle of the prompt's author.
-You can also pull a specific commit of a prompt by specifying the commit hash.
+To pull a public prompt from the LangChain Hub, you need to specify the handle of the prompt's author.
 
 <CodeTabs
   tabs={[
     PythonBlock(`prompt = client.pull_prompt("efriis/my-first-prompt")`),
-    TypeScriptBlock(`// Coming soon...`),
+    LangChainPyBlock(`prompt = prompts.pull("efriis/my-first-prompt")`),
+    TypeScriptBlock(`prompt = prompts.pull("efriis/my-first-prompt")`),
   ]}
   groupId="client-language"
 />
@@ -144,7 +195,7 @@ client = Client()\n
 # openai client
 oai_client = OpenAI()\n
 # pull prompt and invoke to populate the variables
-prompt = client.pull_prompt("topic-joke-generator")
+prompt = client.pull_prompt("joke-generator")
 prompt_value = prompt.invoke({"topic": "cats"})\n
 openai_payload = convert_prompt_to_openai(prompt_value)
 openai_response = oai_client.chat.completions.create(**openai_payload)`),
@@ -153,24 +204,42 @@ openai_response = oai_client.chat.completions.create(**openai_payload)`),
   groupId="client-language"
 />
 
-## List, Delete, and Like prompts
+## List, delete, and like prompts
 
 You can also list, delete, and like/unline prompts using the `list prompts`, `delete prompt`, `like prompt` and `unlike prompt` methods.
 See the [LangSmith SDK client](https://github.com/langchain-ai/langsmith-sdk) for extensive documentation on these methods.
 
 <CodeTabs
   tabs={[
-    PythonBlock(`# list all prompts in my workspace
+    PythonBlock(`# List all prompts in my workspace
 prompts = client.list_prompts()
-# list my private prompts that include "topic" and are sorted by updated_at in descending order
-prompts = client.list_prompts(query="topic", is_public= False, sorted_by="updated_at", sort_order="desc")
-# delete a prompt
-client.delete_prompt("topic-joke-generator")
-# like a prompt
+# List my private prompts that include "joke"
+prompts = client.list_prompts(query="joke", is_public=False)
+# Delete a prompt
+client.delete_prompt("joke-generator")
+# Like a prompt
 client.like_prompt("efriis/my-first-prompt")
-# unlike a prompt
+# Unlike a prompt
 client.unlike_prompt("efriis/my-first-prompt")`),
-    TypeScriptBlock(`// Coming soon...`),
+    TypeScriptBlock(`// List all prompts in my workspace
+import Client from "langsmith";
+const client = new Client();
+const prompts = client.listPrompts();
+// List my private prompts that include "joke"
+const prompts = client.listPrompts({ query: "joke", isPublic: false});
+// Delete a prompt
+client.deletePrompt("joke-generator");
+// Like a prompt
+client.likePrompt("efriis/my-first-prompt");
+// Unlike a prompt
+client.unlikePrompt("efriis/my-first-prompt");`),
   ]}
   groupId="client-language"
 />
+
+:::note Important Note for JavaScript Users
+For pulling prompts, we recommend using the `langchain/hub` package, as it handles prompt deserialization automatically.
+However, you can also choose to use the `_pullPrompt` method of the `langsmith` package directly but, you will need to manually deserialize the prompt using LangChain's `load` method.
+
+All other methods in the LangSmith SDK can be used directly.
+:::
