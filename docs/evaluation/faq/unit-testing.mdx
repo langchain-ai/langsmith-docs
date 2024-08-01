@@ -135,12 +135,12 @@ def test_embedding_similarity(query, expectation):
     prediction = my_chatbot(query)
     expect.embedding_distance(
         # This step logs the distance as feedback for this run
-        prediction=prediction, expectation=expectation
+        prediction=prediction, reference=expectation
     # Adding a matcher (in this case, 'to_be_*"), logs 'expectation' feedback
     ).to_be_less_than(0.5) # Optional predicate to assert against
     expect.edit_distance(
         # This computes the normalized Damerau-Levenshtein distance between the two strings
-        prediction=prediction, expectation=expectation
+        prediction=prediction, reference=expectation
     # If no predicate is provided below, 'assert' isn't called, but the score is still logged
     )
 ```
@@ -195,8 +195,8 @@ The following metrics are available off-the-shelf:
 | -------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `pass`               | Binary pass/fail score, 1 for pass, 0 for fail              | `assert False` # Fails                                                                                                |
 | `expectation`        | Binary expectation score, 1 if expectation is met, 0 if not | `expect(prediction).against(lambda x: re.search(r"\b[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}\b", x)` ) |
-| `embedding_distance` | Cosine distance between two embeddings                      | expect.embedding_distance(prediction=prediction, expectation=expectation)                                             |
-| `edit_distance`      | Edit distance between two strings                           | expect.edit_distance(prediction=prediction, expectation=expectation)                                                  |
+| `embedding_distance` | Cosine distance between two embeddings                      | expect.embedding_distance(prediction=prediction, reference=expectation)                                               |
+| `edit_distance`      | Edit distance between two strings                           | expect.edit_distance(prediction=prediction, reference=expectation)                                                    |
 
 You can also log any arbitrary feeback within a unit test manually using the `client`.
 

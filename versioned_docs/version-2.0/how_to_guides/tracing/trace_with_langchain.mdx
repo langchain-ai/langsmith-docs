@@ -5,6 +5,7 @@ sidebar_position: 14
 import {
   LangChainInstallationCodeTabs,
   LangChainQuickStartCodeTabs,
+  ConfigureLangChainEnvironmentCodeTabs,
 } from "@site/src/components/QuickStart";
 
 import {
@@ -31,13 +32,7 @@ For a full list of packages available, see the [LangChain Python docs](https://p
 
 ### 1. Configure your environment
 
-```shell
-export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-
-# The below examples use the OpenAI API, so you will need
-export OPENAI_API_KEY=<your-openai-api-key>
-```
+<ConfigureLangChainEnvironmentCodeTabs />
 
 ### 2. Log a trace
 
@@ -309,7 +304,7 @@ from langsmith import Client\n
 # You can create a client instance with an api key and api url
 client = Client(
     api_key="YOUR_API_KEY",  # This can be retrieved from a secrets manager
-    api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations
+    api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations or the EU region
 )\n
 # You can pass the client and project_name to the LangChainTracer instance
 # highlight-next-line
@@ -342,6 +337,72 @@ await chain.invoke(
   ]}
   groupId="client-language"
 />
+
+## Distributed tracing with LangChain (Python)
+
+LangSmith supports distributed tracing with LangChain Python. This allows you to link runs (spans) across different services and applications.
+The principles are similar to the [distributed tracing guide](./distributed_tracing) for the LangSmith SDK.
+
+```python
+import langsmith
+from langchain_core.runnables import chain
+from langsmith.run_helpers import get_current_run_tree
+
+# -- This code should be in a separate file or service --
+@chain
+def child_chain(inputs):
+    return inputs["test"] + 1
+
+def child_wrapper(x, headers):
+    with langsmith.tracing_context(parent=headers):
+        child_chain.invoke({"test": x})
+
+# -- This code should be in a separate file or service --
+@chain
+def parent_chain(inputs):
+
+    rt = get_current_run_tree()
+    headers = rt.to_headers()
+    # ... make a request to another service with the headers
+    # The headers should be passed to the other service, eventually to the child_wrapper function
+
+parent_chain.invoke({"test": 1})
+```
+
+## Interoperability between LangChain (Python) and LangSmith SDK
+
+If you are using LangChain for part of your application and the LangSmith SDK (see [this guide](./annotate_code)) for other parts, you can still trace the entire application seamlessly.
+
+LangChain objects will be traced when invoked within a `traceable` function and be bound as a child run of the `traceable` function.
+
+```python
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
+    ("user", "Question: {question}\nContext: {context}")
+])
+model = ChatOpenAI(model="gpt-3.5-turbo")
+output_parser = StrOutputParser()
+
+chain = prompt | model | output_parser
+
+# The above chain will be traced as a child run of the traceable function
+@traceable(
+    tags=["openai", "chat"],
+    metadata={"foo": "bar"}
+)
+def invoke_runnnable(question, context):
+    result = chain.invoke({"question": question, "context": context})
+    return "The response is: " + result
+
+invoke_runnnable("Can you summarize this morning's meetings?", "During this morning's meeting, we solved all world conflict.")
+```
+
+This will produce the following trace tree:
+![](../static/trace_tree_python_interop.png)
 
 ## Interoperability between LangChain.JS and LangSmith SDK
 
@@ -382,13 +443,41 @@ const main = traceable(
 );
 ```
 
-### Manually tracing LangChain child runs via `traceable` / RunTree API (JS only)
+### Tracing LangChain child runs via `traceable` / RunTree API (JS only)
 
-In some uses cases, you might want to run `traceable` functions as part of the RunnableSequence or trace child runs of LangChain run imperatively via the `RunTree` API.
+:::note
 
-You can convert the existing LangChain `RunnableConfig` to a equivalent RunTree object by using `RunTree.fromRunnableConfig` or you can pass the `RunnableConfig` as the first argument of the wrapped function, which will result in the following trace tree:
+We're working on improving the interoperability between `traceable` and LangChain. The following limitations are present when using combining LangChain with `traceable`:
 
-![Trace Tree of manual tracing](./static/trace_tree_manual_tracing.png)
+1. Mutating RunTree obtained from `getCurrentRunTree()` of the RunnableLambda context will result in a no-op.
+2. It's discouraged to traverse the RunTree obtained from RunnableLambda via `getCurrentRunTree()` as it may not contain all the RunTree nodes.
+3. Different child runs may have the same `execution_order` and `child_execution_order` value. Thus in extreme circumstances, some runs may end up in a different order, depending on the `start_time`.
+
+:::
+
+In some uses cases, you might want to run `traceable` functions as part of the RunnableSequence or trace child runs of LangChain run imperatively via the `RunTree` API. Starting with LangSmith 0.1.39 and @langchain/core 0.2.18, you can directly invoke `traceable`-wrapped functions within RunnableLambda.
+
+```typescript
+import { traceable } from "langsmith/traceable";
+import { RunnableLambda } from "@langchain/core/runnables";
+import { RunnableConfig } from "@langchain/core/runnables";
+
+const tracedChild = traceable((input: string) => `Child Run: ${input}`, {
+  name: "Child Run",
+});
+
+const parrot = new RunnableLambda({
+  func: async (input: { text: string }, config?: RunnableConfig) => {
+    // highlight-start
+    return await tracedChild(input.text);
+    // highlight-end
+  },
+});
+```
+
+![Trace Tree](./static/trace_tree_manual_tracing.png)
+
+Alternatively, you can convert LangChain's `RunnableConfig` to a equivalent RunTree object by using `RunTree.fromRunnableConfig` or pass the `RunnableConfig` as the first argument of `traceable`-wrapped function.
 
 <CodeTabs
   tabs={[

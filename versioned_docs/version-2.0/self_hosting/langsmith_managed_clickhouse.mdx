@@ -29,9 +29,9 @@ Using LangSmith Managed Clickhouse with your Self-Hosted LangSmith instance is f
 
 This [reference doc](../reference/data_formats/run_data_format) explains the format we use to store runs (spans), which are the building blocks of traces.
 
-Our definition of sensitive information as it relates to application data are `inputs` and `outputs` of a run, since these fields can contain prompts and completions from LLMs.
+Our definition of sensitive information as it relates to application data are `inputs`, `outputs`, and `errors` of a run, since these fields can contain prompts and completions from LLMs.
 
-With LangSmith-managed ClickHouse, we store the `inputs` and `outputs` in cloud object storage (S3 or GCS) within your cloud and store the rest of the run data in ClickHouse. This ensures that sensitive information doesn't leave your VPC.
+With LangSmith-managed ClickHouse, we store `inputs`, `outputs`, and `errors` in cloud object storage (S3 or GCS) within your cloud and store the rest of the run data in ClickHouse. This ensures that sensitive information doesn't leave your VPC.
 
 :::
 
@@ -43,7 +43,7 @@ The overall architecture looks like this:
 
 ## Requirements
 
-- **You must be on AWS or GCP.** We do not support Azure at this time as we require S3 or GCS for blob storage.
-- To use private endpoints, ensure that your VPC is in a ClickHouse Cloud supported [region](https://clickhouse.com/docs/en/cloud/reference/supported-regions). Otherwise, you will need to use a public endpoint we will secure with firewall rules.
+- **You must be on AWS or GCP.** We do not support Azure at this time as we require S3 or GCS for blob storage. Read the [blob storage guide](/self_hosting/configuration/blob_storage) for more information.
+- To use private endpoints, ensure that your VPC is in a ClickHouse Cloud supported [region](https://clickhouse.com/docs/en/cloud/reference/supported-regions). Otherwise, you will need to use a public endpoint we will secure with firewall rules. Your VPC will need to have a NAT gateway to allow us to whitelist your traffic.
 - You must have a VPC that can connect to the LangSmith-managed Clickhouse service. You will need to work with our team to set up the necessary networking.
 - You must have a LangSmith self-hosted instance running. You can use our managed ClickHouse service with both [Kubernetes](./installation/kubernetes) and [Docker](./installation/docker) installations.

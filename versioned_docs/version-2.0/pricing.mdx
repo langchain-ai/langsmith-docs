@@ -3,6 +3,8 @@ sidebar_label: Pricing
 sidebar_position: 4
 ---
 
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
+
 # Pricing
 
 ## Plans
@@ -27,8 +29,7 @@ sidebar_position: 4
 | Monitoring                                  |                                                                                                             ✅                                                                                                             |                                                                                                             ✅                                                                                                              |                                      ✅                                       |
 | Role-Based Access Controls (RBAC)           |                                                                                                             --                                                                                                             |                                                                                                             --                                                                                                              |                                      ✅                                       |
 | <b>Team</b>                                 |                                                                                                                                                                                                                            |                                                                                                                                                                                                                             |                                                                               |
-| Developer Seats                             |                                                                                                        1 Free Seat                                                                                                         |                                                                                    Maximum 10 seats<br />$39 per seat/month<sup>1</sup>                                                                                     |                      Unlimited seats<br />Custom pricing                      |
-| Collaborator Seats                          |                                                                                                             --                                                                                                             |                                                                                                             --                                                                                                              |                                 Coming Soon!                                  |
+| Developer Seats                             |                                                                                                        1 Free Seat                                                                                                         |                                                                                    Maximum 10 seats<br />$39 per seat/month<sup>1</sup>                                                                                     |                                Custom pricing                                 |
 | <b>Usage</b>                                |                                                                                                                                                                                                                            |                                                                                                                                                                                                                             |                                                                               |
 | Traces<sup>2</sup>                          | First 5k base traces and extended upgrades per month for free<br /><br />Pay as you go thereafter:<br /><br />$0.50 per 1k base traces (14-day retention)<br />Additional $4.50 per 1k extended traces (400-day retention) | First 10k base traces and extended upgrades per month for free<br /><br />Pay as you go thereafter:<br /><br />$0.50 per 1k base traces (14-day retention)<br />Additional $4.50 per 1k extended traces (400-day retention) |                                    Custom                                     |
 | Max ingested events / hour<sup>3</sup>      |                                                                                                50,000<sup>3</sup> / 250,000                                                                                                |                                                                                                           500,000                                                                                                           |                                    Custom                                     |
@@ -124,7 +125,7 @@ charges you could incur in any given month.
 ### Can I limit how much I spend on tracing?
 
 You can set limits on the number of traces that can be sent to LangSmith per month on
-the [Plans and Billing](https://smith.langchain.com/settings/payments) settings page.
+the <RegionalUrl text='Plans and Billing' suffix='/settings/payments' /> settings page.
 
 :::note
 While we do show you the dollar value of your usage limit for convenience, this limit evaluated
@@ -155,11 +156,11 @@ On the Enterprise plan, you’ll get white-glove support with a Slack channel, a
 
 ### Where is my data stored?
 
-When using LangSmith hosted at smith.langchain.com, data is stored in GCP region `us-central-1`. If you’re on the Enterprise plan, we can deliver LangSmith to run on your kubernetes cluster in AWS, GCP, or Azure so that data never leaves your environment.
+You may choose to sign up in either the US or EU region. See the [cloud architecture reference](./reference/cloud_architecture_and_scalability) for more details. If you’re on the Enterprise plan, we can deliver LangSmith to run on your kubernetes cluster in AWS, GCP, or Azure so that data never leaves your environment.
 
 ### Which security frameworks is LangSmith compliant with?
 
-We have our SOC 2 Type I certification and are GDPR and HIPAA compliant. We are in our SOC 2 Type II observation period and expect to receive our certification in July. We will update this page accordingly.
+We are SOC 2 Type II, GDPR, and HIPAA compliant.
 
 You can request more information about our security policies and posture at [trust.langchain.com](https://trust.langchain.com). Please note we only enter into BAAs with customers on our Enterprise plan.
 

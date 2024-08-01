@@ -59,6 +59,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
 - [Share or unshare a trace publicly](./how_to_guides/tracing/share_trace)
+- [Compare traces](./how_to_guides/tracing/compare_traces)
 - [Trace generator functions](./how_to_guides/tracing/trace_generator_functions)
 - [Trace with `LangChain`](./how_to_guides/tracing/trace_with_langchain)
   - [Installation](./how_to_guides/tracing/trace_with_langchain#installation)
@@ -70,9 +71,17 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Access run (span) ID for LangChain invocations](./how_to_guides/tracing/trace_with_langchain#access-run-span-id-for-langchain-invocations)
   - [Ensure all traces are submitted before exiting](./how_to_guides/tracing/trace_with_langchain#ensure-all-traces-are-submitted-before-exiting)
   - [Trace withouth setting environment variables](./how_to_guides/tracing/trace_with_langchain#trace-without-setting-environment-variables)
+  - [Distributed tracing with LangChain (Python)](./how_to_guides/tracing/trace_with_langchain#distributed-tracing-with-langchain-python)
+  - [Interoperability between LangChain (Python) and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchain-python-and-langsmith-sdk)
+  - [Interoperability between LangChain.JS and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchainjs-and-langsmith-sdk)
+- [Trace with `LangGraph`](./how_to_guides/tracing/trace_with_langgraph)
+  - [Interoperability between LangChain and LangGraph](./how_to_guides/tracing/trace_with_langgraph#with-langchain)
+  - [Interoperability between `@traceable`/`traceable` and LangGraph](./how_to_guides/tracing/trace_with_langgraph#without-langchain)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
+- [Trace with the Vercel `AI SDK` (JS only)](./how_to_guides/tracing/trace_with_vercel_ai_sdk)
 - [Trace without setting environment variables](./how_to_guides/tracing/trace_without_env_vars)
 - [Trace using the LangSmith REST API](./how_to_guides/tracing/trace_with_api)
+- [Calculate token-based costs for traces](./how_to_guides/tracing/calculate_token_based_costs)
 
 ## Datasets
 
@@ -80,6 +89,7 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
 
 - [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
   - [Create a new dataset and add examples manually](./how_to_guides/datasets/manage_datasets_in_application#create-a-new-dataset-and-add-examples-manually)
+  - [Dataset schema validation](./how_to_guides/datasets/manage_datasets_in_application#dataset-schema-validation)
   - [Add inputs and outputs from traces to datasets](./how_to_guides/datasets/manage_datasets_in_application#add-inputs-and-outputs-from-traces-to-datasets)
   - [Upload a CSV file to create a dataset](./how_to_guides/datasets/manage_datasets_in_application#upload-a-csv-file-to-create-a-dataset)
   - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
@@ -91,6 +101,8 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
   - [Create a dataset from a pandas DataFrame](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-pandas-dataframe)
   - [Fetch datasets](./how_to_guides/datasets/manage_datasets_programmatically#fetch-datasets)
   - [Fetch examples](./how_to_guides/datasets/manage_datasets_programmatically#fetch-examples)
+  - [Update examples](./how_to_guides/datasets/manage_datasets_programmatically#update-examples)
+  - [Bulk update examples](./how_to_guides/datasets/manage_datasets_programmatically#bulk-update-examples)
 - [Version datasets](./how_to_guides/datasets/version_datasets)
   - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
   - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
@@ -145,6 +157,10 @@ Evaluate your LLM applications to measure their performance over time.
   - [Make corrections](./how_to_guides/evaluation/create_few_shot_evaluators#make-corrections)
   - [View your corrections dataset](./how_to_guides/evaluation/create_few_shot_evaluators#view-your-corrections-dataset)
 - [Fetch performance metrics for an experiment](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
+- [Run evals using the API only](./how_to_guides/evaluation/run_evals_api_only)
+  - [Create a dataset](./how_to_guides/evaluation/run_evals_api_only#create-a-dataset)
+  - [Run a single experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-single-experiment)
+  - [Run a pairwise experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-pairwise-experiment)
 
 ## Human feedback
 
@@ -168,6 +184,7 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
   - [Advanced: filter for intermediate runs (spans) on properties of the root](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-intermediate-runs-spans-on-properties-of-the-root)
   - [Advanced: filter for runs (spans) whose child runs have some attribute](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-runs-spans-whose-child-runs-have-some-attribute)
   - [Filter based on inputs and outputs](./how_to_guides/monitoring/filter_traces_in_application#filter-based-on-inputs-and-outputs)
+  - [Filter based on input / output key-value pairs](./how_to_guides/monitoring/filter_traces_in_application#filter-based-on-input--output-key-value-pairs)
   - [Copy the filter](./how_to_guides/monitoring/filter_traces_in_application#copy-the-filter)
   - [Manually specify a raw query in LangSmith query language](./how_to_guides/monitoring/filter_traces_in_application#manually-specify-a-raw-query-in-langsmith-query-language)
   - [Use an AI Query to auto-generate a query](./how_to_guides/monitoring/filter_traces_in_application#use-an-ai-query-to-auto-generate-a-query)
@@ -181,7 +198,7 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
 - [Set up online evaluations](./how_to_guides/monitoring/online_evaluations)
   - [Configure online evaluations](./how_to_guides/monitoring/online_evaluations#configure-online-evaluations)
   - [Set API keys](./how_to_guides/monitoring/online_evaluations#set-api-keys)
-- [Set up webhook notifications for rules (beta)](./how_to_guides/monitoring/webhooks)
+- [Set up webhook notifications for rules](./how_to_guides/monitoring/webhooks)
   - [Webhook payload](./how_to_guides/monitoring/webhooks#webhook-payload)
   - [Example with Modal](./how_to_guides/monitoring/webhooks#example-with-modal)
 - [Set up threads](./how_to_guides/monitoring/threads)
@@ -218,3 +235,4 @@ Quickly iterate on prompts and models in the LangSmith Playground.
 
 - [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)
 - [Use a custom model](./how_to_guides/playground/custom_endpoint)
+- [Save settings configuration](./how_to_guides/playground/save_model_configuration)
