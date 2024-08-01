@@ -231,3 +231,4 @@ Quickly iterate on prompts and models in the LangSmith Playground.
 
 - [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)
 - [Use a custom model](./how_to_guides/playground/custom_endpoint)
+- [Save settings configuration](./how_to_guides/playground/save_model_configuration)
