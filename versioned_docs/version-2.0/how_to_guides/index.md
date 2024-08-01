@@ -59,6 +59,7 @@ Get started with LangSmith's tracing features to start adding observability to y
   - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
   - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
 - [Share or unshare a trace publicly](./how_to_guides/tracing/share_trace)
+- [Compare traces](./how_to_guides/tracing/compare_traces)
 - [Trace generator functions](./how_to_guides/tracing/trace_generator_functions)
 - [Trace with `LangChain`](./how_to_guides/tracing/trace_with_langchain)
   - [Installation](./how_to_guides/tracing/trace_with_langchain#installation)
