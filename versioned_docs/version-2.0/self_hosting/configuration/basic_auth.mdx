@@ -8,12 +8,13 @@ import {
 
 LangSmith supports login via username/password with a few limitations during the beta period:
 
-- You cannot change an existing installation from basic auth mode to OIDC mode or vice versa - installations must be either one or the other
+- You cannot change an existing installation from basic auth mode other auth modes (OIDC or no auth) or vice versa - installations must be either one or the other. **A basic auth installation requires a completely fresh installation including a separate PostgreSQL database/schema.**
 - Users must be given their initial auto-generated password once they are invited. This password may be changed later by any Organization Admin.
 
 ## Requirements and features
 
-- Your initial password must be least 12 characters long and have at least one lowercase, uppercase, and symbol
+- There is a single `Default` organization that is provisioned during initial installation, and creating additional organizations is not supported
+- Your initial password (configured below) must be least 12 characters long and have at least one lowercase, uppercase, and symbol
 - There are no strict requirements for the secret used for signing JWTs, but we recommend securely generating a string of at least 32 characters. For example: `openssl rand -base64 32`
 
 :::note
@@ -35,12 +36,10 @@ AUTH_TYPE=mixed
 BASIC_AUTH_ENABLED=true
 INITIAL_ORG_ADMIN_EMAIL=\<YOUR EMAIL ADDRESS\>
 INITIAL_ORG_ADMIN_PASSWORD=\<PASSWORD\>
-BASIC_AUTH_JWT_SECRET=\<SECRET\>
-    `
-    ),
+BASIC_AUTH_JWT_SECRET=\<SECRET\>`),
   ]}
 />
 
-Once configured, you will see a login screen like this:
+Once configured, you will see a login screen like the one below. You should be able to login with the `initialOrgAdminEmail` and `initialOrgAdminPassword` values, and your user will be auto-provisioned with role `Organization Admin`. See the [admin guide](../../concepts/admin#organization-roles) for more details on organization roles.
 
 ![LangSmith UI with basic auth](../static/langsmith_ui_basic_auth.png)
