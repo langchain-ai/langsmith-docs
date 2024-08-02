@@ -147,10 +147,8 @@ client = Client()
 chain = client.pull_prompt("joke-generator-with-model", include_model=True)
 chain.invoke({"topic": "cats"})`),
     LangChainPyBlock(`from langchain import hub as prompts
-chain = prompts.pull("joke-generator", prompt)
-# url is a link to the prompt in the UI
-print(url)
-`),
+chain = prompts.pull("joke-generator-with-model", include_model=True)
+chain.invoke({"topic": "cats"})`),
     TypeScriptBlock(`import * as prompts from "langchain/hub";
 import { Runnable } from "@langchain/core/runnables";\n
 const chain = prompts.pull<Runnable>("joke-generator-with-model", { includeModel: true });
