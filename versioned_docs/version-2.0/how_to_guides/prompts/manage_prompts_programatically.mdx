@@ -49,7 +49,7 @@ url = client.push_prompt("joke-generator", object=prompt)
 print(url)
 `),
     LangChainPyBlock(`from langchain import hub
-from langchain.core.prompts import ChatPromptTemplate\n
+from langchain_core.prompts import ChatPromptTemplate\n
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
 url = hub.push("joke-generator", prompt)
 # url is a link to the prompt in the UI
@@ -76,15 +76,15 @@ The provider must be supported by the LangSmith playground. (see settings here: 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI\n
 client = Client()
-model = ChatOpenAI("gpt-4o-mini")\n
+model = ChatOpenAI(model="gpt-4o-mini")\n
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
 chain = prompt | model\n
 client.push_prompt("joke-generator-with-model", chain)
 `),
     LangChainPyBlock(`from langchain import hub as prompts
-from langchain.core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI\n
-model = ChatOpenAI("gpt-4o-mini")\n
+model = ChatOpenAI(model="gpt-4o-mini")\n
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
 chain = prompt | model\n
 url = prompts.push("joke-generator-with-model", chain)
@@ -94,7 +94,7 @@ print(url)
     TypeScriptBlock(`import * as prompts from "langchain/hub";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "langchain-openai";\n
-const model = new ChatOpenAI("gpt-4o-mini");\n
+const model = new ChatOpenAI({ model: "gpt-4o-mini" });\n
 const prompt = ChatPromptTemplate.fromTemplate("tell me a joke about {topic}");
 const chain = prompt.pipe(model);\n
 prompts.push("joke-generator-with-model", chain);`),
@@ -116,19 +116,19 @@ To pull a **public prompt** from the LangChain Hub, you need to specify the hand
 from langchain_openai import ChatOpenAI\n
 client = Client()\n
 prompt = client.pull_prompt("joke-generator")
-model = ChatOpenAI("gpt-4o-mini")\n
+model = ChatOpenAI(model="gpt-4o-mini")\n
 chain = prompt | model
 chain.invoke({"topic": "cats"})`),
     LangChainPyBlock(`from langchain import hub as prompts
 from langchain_openai import ChatOpenAI\n
 prompt = prompts.pull("joke-generator")
-model = ChatOpenAI("gpt-4o-mini")\n
+model = ChatOpenAI(model="gpt-4o-mini")\n
 chain = prompt | model
 chain.invoke({"topic": "cats"})`),
     TypeScriptBlock(`import * as prompts from "langchain/hub";
 import { ChatOpenAI } from "langchain-openai";\n
 const prompt = prompts.pull("joke-generator");
-const model = new ChatOpenAI("gpt-4o-mini");\n
+const model = new ChatOpenAI({ model: "gpt-4o-mini" });\n
 const chain = prompt.pipe(model);
 chain.invoke({"topic": "cats"});`),
   ]}
