@@ -219,14 +219,11 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
   - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
   - [Version a prompt](./how_to_guides/prompts/update_a_prompt#versioning)
 - [Manage prompts programmatically](./how_to_guides/prompts/manage_prompts_programatically)
-- [Manage prompts programmatically](./how_to_guides/prompts/pull_push_a_prompt)
-  - [Configure environment variables](./how_to_guides/prompts/manage_prompts_programatically#configure_environment_variables)
-  - [Install packages](./how_to_guides/prompts/pull_push_a_prompt#install_packages)
   - [Configure environment variables](./how_to_guides/prompts/manage_prompts_programatically#configure_environment_variables)
   - [Push a prompt](./how_to_guides/prompts/manage_prompts_programatically#push_a_prompt)
   - [Pull a prompt](./how_to_guides/prompts/manage_prompts_programatically#pull_a_prompt)
   - [Use a prompt without LangChain](./how_to_guides/prompts/manage_prompts_programatically/use_a_prompt_without_langchain)
-  - [List, Delete, and Like prompts](./how_to_guides/prompts/manage_prompts_programatically/list_delete_and_like_prompts)
+  - [List, delete, and like prompts](./how_to_guides/prompts/manage_prompts_programatically/list_delete_and_like_prompts)
 - [LangChain Hub](./how_to_guides/prompts/langchain_hub)
 
 ## Playground
