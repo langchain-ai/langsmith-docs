@@ -48,10 +48,10 @@ url = client.push_prompt("joke-generator", object=prompt)
 # url is a link to the prompt in the UI
 print(url)
 `),
-    LangChainPyBlock(`from langchain import hub
+    LangChainPyBlock(`from langchain import hub as prompts
 from langchain_core.prompts import ChatPromptTemplate\n
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
-url = hub.push("joke-generator", prompt)
+url = prompts.push("joke-generator", prompt)
 # url is a link to the prompt in the UI
 print(url)
 `),
@@ -79,7 +79,7 @@ client = Client()
 model = ChatOpenAI(model="gpt-4o-mini")\n
 prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
 chain = prompt | model\n
-client.push_prompt("joke-generator-with-model", chain)
+client.push_prompt("joke-generator-with-model", object=chain)
 `),
     LangChainPyBlock(`from langchain import hub as prompts
 from langchain_core.prompts import ChatPromptTemplate
