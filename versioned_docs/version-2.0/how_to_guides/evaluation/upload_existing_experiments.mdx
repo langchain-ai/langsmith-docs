@@ -18,8 +18,11 @@ This guide will show you how to upload evals using the REST API, using the `requ
 ## Request body schema
 
 Uploading an experiment requires specifying the relevant high-level information for your experiment and dataset, along with the individual data for your examples and runs within
-the experiment. Each object in the `results` represents a "row" in the experiment - a single dataset example, along with an associated run. You may use the
-following schema to upload experiments to the `/datasets/upload-experiment` endpoint:
+the experiment. Each object in the `results` represents a "row" in the experiment - a single dataset example, along with an associated run. Note that `dataset_id` and `dataset_name`
+refer to your dataset identifier in your external system and will be used to group external experiments together in a single dataset. They should not refer to an existing dataset
+in LangSmith (unless that dataset was created via this endpoint).
+
+You may use the following schema to upload experiments to the `/datasets/upload-experiment` endpoint:
 
 ```json
 {
@@ -27,7 +30,7 @@ following schema to upload experiments to the `/datasets/upload-experiment` endp
   "experiment_description": "string (optional)",
   "experiment_start_time": "datetime (required)",
   "experiment_end_time": "datetime (required)",
-  "dataset_id": "uuid (optional - must provide either dataset_id or dataset_name)",
+  "dataset_id": "uuid (optional - an external dataset id, used to group experiments together)",
   "dataset_name": "string (optional - must provide either dataset_id or dataset_name)",
   "dataset_description": "string (optional)",
   "experiment_metadata": { // Object (any shape - optional)
