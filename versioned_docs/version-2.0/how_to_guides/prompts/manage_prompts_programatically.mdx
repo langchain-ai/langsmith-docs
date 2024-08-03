@@ -221,10 +221,13 @@ client.like_prompt("efriis/my-first-prompt")
 client.unlike_prompt("efriis/my-first-prompt")`),
     TypeScriptBlock(`// List all prompts in my workspace
 import Client from "langsmith";
-const client = new Client();
+const client = new Client({ apiKey: "lsv2_..." });
 const prompts = client.listPrompts();
+for await (const prompt of prompts) {
+  console.log(prompt);
+}
 // List my private prompts that include "joke"
-const prompts = client.listPrompts({ query: "joke", isPublic: false});
+const private_joke_prompts = client.listPrompts({ query: "joke", isPublic: false});
 // Delete a prompt
 client.deletePrompt("joke-generator");
 // Like a prompt
