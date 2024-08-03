@@ -161,6 +161,11 @@ Evaluate your LLM applications to measure their performance over time.
   - [Create a dataset](./how_to_guides/evaluation/run_evals_api_only#create-a-dataset)
   - [Run a single experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-single-experiment)
   - [Run a pairwise experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-pairwise-experiment)
+- [Upload experiments run outside of LangSmith with the REST API](./how_to_guides/evaluation/upload_existing_experiments)
+  - [Request body schema](./how_to_guides/evaluation/upload_existing_experiments#request-body-schema)
+  - [Considerations](./how_to_guides/evaluation/upload_existing_experiments#considerations)
+  - [Example request](./how_to_guides/evaluation/upload_existing_experiments#example-request)
+  - [View the experiment in the UI](./how_to_guides/evaluation/upload_existing_experiments#view-the-experiment-in-the-ui)
 
 ## Human feedback
 
