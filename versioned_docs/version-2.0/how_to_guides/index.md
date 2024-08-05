@@ -222,8 +222,8 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
   - [Configure environment variables](./how_to_guides/prompts/manage_prompts_programatically#configure_environment_variables)
   - [Push a prompt](./how_to_guides/prompts/manage_prompts_programatically#push_a_prompt)
   - [Pull a prompt](./how_to_guides/prompts/manage_prompts_programatically#pull_a_prompt)
-  - [Use a prompt without LangChain](./how_to_guides/prompts/manage_prompts_programatically/use_a_prompt_without_langchain)
-  - [List, delete, and like prompts](./how_to_guides/prompts/manage_prompts_programatically/list_delete_and_like_prompts)
+  - [Use a prompt without LangChain](./how_to_guides/prompts/manage_prompts_programatically#use_a_prompt_without_langchain)
+  - [List, delete, and like prompts](./how_to_guides/prompts/manage_prompts_programatically#list_delete_and_like_prompts)
 - [LangChain Hub](./how_to_guides/prompts/langchain_hub)
 
 ## Playground
