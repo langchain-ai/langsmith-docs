@@ -223,11 +223,12 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
   - [Update metadata](./how_to_guides/prompts/update_a_prompt#update-metadata)
   - [Update the prompt content](./how_to_guides/prompts/update_a_prompt#update-the-prompt-content)
   - [Version a prompt](./how_to_guides/prompts/update_a_prompt#versioning)
-- [Pull/push a prompt](./how_to_guides/prompts/pull_push_a_prompt)
-  - [Install packages](./how_to_guides/prompts/pull_push_a_prompt#install_packages)
-  - [Configure environment variables](./how_to_guides/prompts/pull_push_a_prompt#configure_environment_variables)
-  - [Pull a prompt and use it](./how_to_guides/prompts/pull_push_a_prompt#pull_a_prompt_and_use_it)
-  - [Push a prompt to your personal organization](./how_to_guides/prompts/pull_push_a_prompt#push_a_prompt_to_your_personal_organization)
+- [Manage prompts programmatically](./how_to_guides/prompts/manage_prompts_programatically)
+  - [Configure environment variables](./how_to_guides/prompts/manage_prompts_programatically#configure_environment_variables)
+  - [Push a prompt](./how_to_guides/prompts/manage_prompts_programatically#push_a_prompt)
+  - [Pull a prompt](./how_to_guides/prompts/manage_prompts_programatically#pull_a_prompt)
+  - [Use a prompt without LangChain](./how_to_guides/prompts/manage_prompts_programatically#use_a_prompt_without_langchain)
+  - [List, delete, and like prompts](./how_to_guides/prompts/manage_prompts_programatically#list_delete_and_like_prompts)
 - [LangChain Hub](./how_to_guides/prompts/langchain_hub)
 
 ## Playground
