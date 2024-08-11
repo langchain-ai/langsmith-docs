@@ -18,6 +18,16 @@ Previously this functionality lived in the `langchainhub` package which is now d
 All functionality going forward will live in the `langsmith` package.
 :::
 
+## Install packages
+<CodeTabs
+  tabs={[
+    PythonBlock(`pip install -U langsmith`),
+    LangChainPyBlock(`pip install -U langchain langsmith`),
+    TypeScriptBlock(`yarn add langsmith`)
+  ]}
+  groupId="client-language"
+/>
+
 ## Configure environment variables
 
 If you already have `LANGCHAIN_API_KEY` set to your current workspace's api key from LangSmith, you can skip this step.
