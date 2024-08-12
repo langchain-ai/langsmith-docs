@@ -18,6 +18,11 @@ The most flexible way to make a dataset using the client is by creating examples
 
 Note that you can add arbitrary metadata to each example, such as a note or a source. The metadata is stored as a dictionary.
 
+:::tip Bulk example creation
+If you have many examples to create, consider using the `create_examples`/`createExamples` method to create multiple examples in a single request.
+If creating a single example, you can use the `create_example`/`createExample` method.
+:::
+
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client\n
@@ -33,21 +38,27 @@ dataset_name = "Elementary Animal Questions"\n
 # run chains and LLMs over a shared set of examples.
 dataset = client.create_dataset(
     dataset_name=dataset_name, description="Questions and answers about animal phylogenetics.",
-)
-for input_prompt, output_answer in example_inputs:
-    client.create_example(
-        inputs={"question": input_prompt},
-        outputs={"answer": output_answer},
-        metadata={"source": "Wikipedia"},
-        dataset_id=dataset.id,
-    )`),
+)\n
+# Prepare inputs, outputs, and metadata for bulk creation
+inputs = [{"question": input_prompt} for input_prompt, _ in example_inputs]
+outputs = [{"answer": output_answer} for _, output_answer in example_inputs]
+metadata = [{"source": "Wikipedia"} for _ in example_inputs]\n
+client.create_examples(
+    inputs=inputs,
+    outputs=outputs,
+    metadata=metadata,
+    dataset_id=dataset.id,
+)`),
     TypeScriptBlock(`import { Client } from "langsmith";\n
 const client = new Client();\n
 const exampleInputs: [string, string][] = [
   ["What is the largest mammal?", "The blue whale"],
   ["What do mammals and birds have in common?", "They are both warm-blooded"],
   ["What are reptiles known for?", "Having scales"],
-  ["What's the main characteristic of amphibians?", "They live both in water and on land"],
+  [
+    "What's the main characteristic of amphibians?",
+    "They live both in water and on land",
+  ],
 ];\n
 const datasetName = "Elementary Animal Questions";\n
 // Storing inputs in a dataset lets us
@@ -55,16 +66,17 @@ const datasetName = "Elementary Animal Questions";\n
 const dataset = await client.createDataset(datasetName, {
   description: "Questions and answers about animal phylogenetics",
 });\n
-for (const [inputPrompt, outputAnswer] of exampleInputs) {
-  await client.createExample(
-    { question: inputPrompt },
-    { answer: outputAnswer },
-    {
-      datasetId: dataset.id,
-      metadata: { source: "Wikipedia" },
-    }
-  );
-}`),
+// Prepare inputs, outputs, and metadata for bulk creation
+const inputs = exampleInputs.map(([inputPrompt]) => ({ question: inputPrompt }));
+const outputs = exampleInputs.map(([, outputAnswer]) => ({ answer: outputAnswer }));
+const metadata = exampleInputs.map(() => ({ source: "Wikipedia" }));\n
+// Use the bulk createExamples method
+await client.createExamples({
+  inputs,
+  outputs,
+  metadata,
+  datasetId: dataset.id,
+});`),
   ]}
   groupId="client-language"
 />
@@ -86,13 +98,16 @@ runs = client.list_runs(
     is_root=True,
     error=False,
 )\n
-dataset = client.create_dataset(dataset_name, description="An example dataset")
-for run in runs:
-    client.create_example(
-        inputs=run.inputs,
-        outputs=run.outputs,
-        dataset_id=dataset.id,
-    )`),
+dataset = client.create_dataset(dataset_name, description="An example dataset")\n
+# Prepare inputs and outputs for bulk creation
+inputs = [run.inputs for run in runs]
+outputs = [run.outputs for run in runs]\n
+# Use the bulk create_examples method
+client.create_examples(
+    inputs=inputs,
+    outputs=outputs,
+    dataset_id=dataset.id,
+)`),
     TypeScriptBlock(`import { Client, Run } from "langsmith";
 const client = new Client();\n
 const datasetName = "Example Dataset";
@@ -109,12 +124,15 @@ const dataset = await client.createDataset(datasetName, {
   description: "An example dataset",
   dataType: "kv",
 });\n
-for (const run of runs) {
-  await client.createExample(run.inputs, run.outputs ?? {}, {
-    datasetId: dataset.id,
-  });
-}
-`),
+// Prepare inputs and outputs for bulk creation
+const inputs = runs.map(run => run.inputs);
+const outputs = runs.map(run => run.outputs ?? {});\n
+// Use the bulk createExamples method
+await client.createExamples({
+  inputs,
+  outputs,
+  datasetId: dataset.id,
+});`),
   ]}
   groupId="client-language"
 />
