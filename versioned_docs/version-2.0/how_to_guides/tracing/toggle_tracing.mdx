@@ -9,9 +9,10 @@ This section is only relevant for users who are
 
 - [Using `@traceable`/`traceable`](./annotate_code#use-traceable--traceable)
 - [Wrapping the OpenAI client](./annotate_code#wrap-the-openai-client)
+- [Using the `trace` environment variable](./annotate_code#use-the-trace-context-manager-python-only)
 - Using LangChain
 
 :::
 
 If you've decided you no longer want to trace your runs, you can unset the `LANGCHAIN_TRACING_V2` environment variable. Traces will no longer be logged to LangSmith.
-Note that this currently does not affect the `RunTree` objects or API users.
+Note that this currently does not affect the `RunTree` objects or API users, as these are meant to be low-level and not affected by the tracing toggle.
