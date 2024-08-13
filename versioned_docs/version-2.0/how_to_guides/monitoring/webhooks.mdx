@@ -11,8 +11,46 @@ The payload we send to your webhook endpoint contains
 - `"rule_id"` this is the ID of the automation that sent this payload
 - `"start_time"` and `"end_time"` these are the time boundaries where we found matching runs
 - `"runs"` this is an array of runs, where each run is a dictionary. If you need more information about each run we suggest using our SDK in your endpoint to fetch it from our API.
+- `"feedback_stats"` this is a dictionary with the feedback statistics for the runs. An example payload for this field is shown below.
 
-This is an example webhook payload
+```json
+"feedback_stats": {
+    "about_langchain": {
+        "n": 1,
+        "avg": 0.0,
+        "show_feedback_arrow": true,
+        "values": {}
+    },
+    "category": {
+        "n": 0,
+        "avg": null,
+        "show_feedback_arrow": true,
+        "values": {
+            "CONCEPTUAL": 1
+        }
+    },
+    "user_score": {
+        "n": 2,
+        "avg": 0.0,
+        "show_feedback_arrow": false,
+        "values": {}
+    },
+    "vagueness": {
+        "n": 1,
+        "avg": 0.0,
+        "show_feedback_arrow": true,
+        "values": {}
+    }
+},
+```
+
+:::note fetching from S3 URLs
+Depending on how recent your runs are, the `inputs_s3_urls` and `outputs_s3_urls` fields may contain S3 URLs to the actual data instead of the data itself.
+
+The `inputs` and `outputs` can be fetched by the `ROOT.presigned_url` provided in `inputs_s3_urls` and `outputs_s3_urls` respectively.
+:::
+
+This is an example of the entire payload we send to your webhook endpoint:
 
 ```json
 {
