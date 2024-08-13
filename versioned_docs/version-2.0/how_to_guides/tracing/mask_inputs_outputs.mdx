@@ -238,3 +238,57 @@ await parent(inputs)
   ]}
   groupId="client-language"
 />
+
+## Processing Inputs & Outputs for a Single Function
+
+:::info
+The `process_outputs` parameter is available in LangSmith SDK version 0.1.98 and above for Python.
+:::
+
+In addition to client-level input and output processing, LangSmith provides function-level processing through the `process_inputs` and `process_outputs` parameters of the `@traceable` decorator.
+
+These parameters accept functions that allow you to transform the inputs and outputs of a specific function before they are logged to LangSmith. This is useful for reducing payload size, removing sensitive information, or customizing how an object should be serialized and represented in LangSmith for a particular function.
+
+Here's an example of how to use `process_inputs` and `process_outputs`:
+
+```python
+from langsmith import traceable
+
+def process_inputs(inputs: dict) -> dict:
+    # inputs is a dictionary where keys are argument names and values are the provided arguments
+    # Return a new dictionary with processed inputs
+    return {
+        "processed_key": inputs.get("my_cool_key", "default"),
+        "length": len(inputs.get("my_cool_key", ""))
+    }
+
+def process_outputs(output: Any) -> dict:
+    # output is the direct return value of the function
+    # Transform the output into a dictionary
+    # In this case, "output" will be an integer
+    return {"processed_output": str(output)}
+
+@traceable(process_inputs=process_inputs, process_outputs=process_outputs)
+def my_function(my_cool_key: str) -> int:
+    # Function implementation
+    return len(my_cool_key)
+
+result = my_function("example")
+```
+
+In this example, `process_inputs` creates a new dictionary with processed input data, and `process_outputs` transforms the output into a specific format before logging to LangSmith.
+
+:::caution
+It's recommended to avoid mutating the source objects in the processor functions. Instead, create and return new objects with the processed data.
+:::
+
+For asynchronous functions, the usage is similar:
+
+```python
+@traceable(process_inputs=process_inputs, process_outputs=process_outputs)
+async def async_function(key: str) -> int:
+    # Async implementation
+    return len(key)
+```
+
+These function-level processors take precedence over client-level processors (`hide_inputs` and `hide_outputs`) when both are defined.
