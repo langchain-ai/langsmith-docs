@@ -6,6 +6,11 @@ description: "Frequently Asked Questions"
 
 # Frequently Asked Questions:
 
+### _I can't create API keys or manage users in the UI, what's wrong?_
+
+- You have likely deployed LangSmith without setting up SSO. LangSmith requires SSO to manage users and API keys. You can find more information on setting up SSO in the [configuration section.](./self_hosting/configuration/sso)
+-
+
 #### _How does load balancing/ingress work_?
 
 - You will need to expose the frontend container/service to your applications/users. This will handle routing to all downstream services.

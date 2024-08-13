@@ -53,8 +53,10 @@ Once you have the correct policy, there are two ways to authenticate with Amazon
 
 1. [**IAM Role for Service Account**](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html): You can create an IAM role for your LangSmith instance and attach the policy to that role. You can then provide the role to LangSmith. This is the recommended way to authenticate with Amazon S3 in production.
    1. You will need to create an IAM role with the policy attached.
-   1. You will need to allow LangSmith service accounts to assume the role. The `langsmith-queue` and `langsmith-backend` services will need to be able to assume the role.
-      ::note:: The service account names will be different if you are using a custom release name::
+   1. You will need to allow LangSmith service accounts to assume the role. The `langsmith-queue` and `langsmith-backend` service accounts will need to be able to assume the role.
+      :::warning Service Account Names
+      The service account names will be different if you are using a custom release name. You can find the service account names by running `kubectl get serviceaccounts` in your cluster.
+      :::
    1. You will need to provide the role ARN to LangSmith. You can do this by adding the `eks.amazonaws.com/role-arn: "<role_arn>"` annotation to the `langsmith-queue` and `langsmith-backend` services in your Helm Chart installation.
 1. [**Access Key and Secret Key**](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html): You can provide LangSmith with an access key and secret key. This is the simplest way to authenticate with Amazon S3. However, it is not recommended for production use as it is less secure.
    1. You will need to create a user with the policy attached. Then you can provision an access key and secret key for that user.
