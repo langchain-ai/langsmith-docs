@@ -76,13 +76,14 @@ Select a name and description for the dataset, and then confirm that the inferre
 
 ## Generate synthetic examples
 
-For a dataset with a specified schema, you can generate synthetic examples to enhance your dataset using the "Generate Synthetic Examples" button.
+For a dataset with a specified schema, you can generate synthetic examples to enhance your dataset.
 
-Start by selecting examples to use as few-shot examples, or choose the option for automatic selection.
-Then, specify how many examples you want to generate. Ensure your OpenAI API key is entered at the "API Key" link.
-![Generate Synthetic Examples](../static/generate_synthetic_examples_create.png)
+1. **Select few-shot examples**: Choose a set of examples to guide the LLM's generation. You can manually select these examples from your dataset or use the automatic selection option.
+2. **Specify the number of examples**: Enter the number of synthetic examples you want to generate.
+3. **Configure API Key**: Ensure your OpenAI API key is entered at the "API Key" link.
+   ![Generate Synthetic Examples](../static/generate_synthetic_examples_create.png)
 
-After clicking "Generate," the examples will stream back to the page. You can choose which examples to add to your dataset, with the option to edit them before finalizing.
+After clicking "Generate," the examples will appear on the page. You can choose which examples to add to your dataset, with the option to edit them before finalizing.
 Each example will be validated against your specified dataset schema and tagged as "synthetic" in the source metadata.
 ![Generate Synthetic Examples](../static/generate_synthetic_examples_pane.png)
 

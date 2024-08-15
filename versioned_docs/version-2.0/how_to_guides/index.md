@@ -92,6 +92,7 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
   - [Dataset schema validation](./how_to_guides/datasets/manage_datasets_in_application#dataset-schema-validation)
   - [Add inputs and outputs from traces to datasets](./how_to_guides/datasets/manage_datasets_in_application#add-inputs-and-outputs-from-traces-to-datasets)
   - [Upload a CSV file to create a dataset](./how_to_guides/datasets/manage_datasets_in_application#upload-a-csv-file-to-create-a-dataset)
+  - [Generate synthetic examples](./how_to_guides/datasets/manage_datasets_in_application#generate-synthetic-examples)
   - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
   - [Create and manage dataset splits](./how_to_guides/datasets/manage_datasets_in_application#create-and-manage-dataset-splits)
 - [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
