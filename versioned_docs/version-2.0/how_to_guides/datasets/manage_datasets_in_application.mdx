@@ -74,6 +74,18 @@ Select a name and description for the dataset, and then confirm that the inferre
 
 ![Confirm Columns](../static/select_columns.png)
 
+## Generate synthetic examples
+
+For a dataset with a specified schema, you can generate synthetic examples to enhance your dataset using the "Generate Synthetic Examples" button.
+
+Start by selecting examples to use as few-shot examples, or choose the option for automatic selection.
+Then, specify how many examples you want to generate. Ensure your OpenAI API key is entered at the "API Key" link.
+![Generate Synthetic Examples](../static/generate_synthetic_examples_create.png)
+
+After clicking "Generate," the examples will stream back to the page. You can choose which examples to add to your dataset, with the option to edit them before finalizing.
+Each example will be validated against your specified dataset schema and tagged as "synthetic" in the source metadata.
+![Generate Synthetic Examples](../static/generate_synthetic_examples_pane.png)
+
 ## Export a dataset
 
 You can export your LangSmith dataset to CSV or OpenAI evals format directly from the web application.
