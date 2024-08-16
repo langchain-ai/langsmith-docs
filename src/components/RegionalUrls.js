@@ -18,7 +18,7 @@ export function RegionalUrl({
   text,
   type = "langsmith",
   suffix = "",
-  link = "true",
+  link = true,
 }) {
   const [domains, setDomains] = useState(DOMAINS.US);
 
@@ -41,7 +41,7 @@ export function RegionalUrl({
 
   const domain = domains[type];
   const resolvedUrl = `https://${domain}${suffix}`;
-  if (link === "true") {
+  if (link) {
     return <a href={resolvedUrl}>{text || resolvedUrl}</a>;
   }
 
