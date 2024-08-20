@@ -9,13 +9,11 @@ import {
 
 # Log schema-based tool call traces
 
-If you want to log tool calls but your tools are function names in a schema dictionary or JSON, then manually trace it with `langsmith.trace` at the point where your tool is executed or chosen.
+If you want to log tool calls but your tools are not real functions but tool names in a schema dictionary or JSON, then trace it with `langsmith.trace` at the point where your tool is executed or chosen.
 
 Wrap the tool call result (or tool execution part) with `async with langsmith.trace(name=chosen_tool, inputs=chosen_tool["args"], run_type="tool"):`.
 
-The following code snippets show how to log a schema-based tool call in Python. You'd add `langsmith.trace` right when the tool is chosen / executed.
-
-Here's an example of a schema-based tool definition, and logging the tool trace when the tool is executed.
+The following code snippets show how to log a schema-based tool call in Python.
 
 <CodeTabs
   tools = [
