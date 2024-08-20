@@ -1,0 +1,48 @@
+---
+sidebar_position: 9
+---
+
+import {
+  CodeTabs,
+  PythonBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# Log schema-based tool call traces
+
+If you want to log tool calls but your tools are function names in a schema dictionary or JSON, then manually trace it with `langsmith.trace` at the point where your tool is executed or chosen.
+
+Wrap the tool call result (or tool execution part) with `async with langsmith.trace(name=chosen_tool, inputs=chosen_tool["args"], run_type="tool"):`.
+
+The following code snippets show how to log a schema-based tool call in Python. You'd add `langsmith.trace` right when the tool is chosen / executed.
+
+Here's an example of a schema-based tool definition, and logging the tool trace when the tool is executed.
+
+<CodeTabs
+  tools = [
+    {
+        "icon": "tool",
+        "type": "function",
+        "function": {
+            "name": "get_weather_in_ottawa",
+            "description": "Get the weather in Ottawa, Canada in Celsius.",
+        },
+        "is_frontend": False,
+    },
+    {
+        "icon": "replace",
+        "type": "function",
+        "function": {
+            "name": "get_stock_price",
+            "description": "Get the stock price of Nortel Networks.",
+        },
+    }
+    ],
+/>
+
+Because these are just schemas for tools and not real functions, we log the result of a tool call after the tool is chosen / executed.
+
+<CodeTabs
+  async with langsmith.trace(name=msg.tool_calls[0]["get_weather_in_ottawa"], inputs=msg.tool_calls[0]["args"}):
+    # run get_weather_in_ottawa()
+/>
+
