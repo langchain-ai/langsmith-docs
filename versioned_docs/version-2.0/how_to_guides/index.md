@@ -25,6 +25,11 @@ See the following guides to set up your LangSmith account.
 - [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
   - [Create a role](./how_to_guides/setup/set_up_access_control#create-a-role)
   - [Assign a role to a user](./how_to_guides/setup/set_up_access_control#assign-a-role-to-a-user)
+- [Set up resource tags](./how_to_guides/setup/set_up_resource_tags)
+  - [Create a tag](./how_to_guides/setup/set_up_resource_tags#create-a-tag)
+  - [Assign a tag to a resource](./how_to_guides/setup/set_up_resource_tags#assign-a-tag-to-a-resource)
+  - [Delete a tag](./how_to_guides/setup/set_up_resource_tags#delete-a-tag)
+  - [Filter resources by tags](./how_to_guides/setup/set_up_resource_tags#filter-resources-by-tags)
 
 ## Tracing
 
