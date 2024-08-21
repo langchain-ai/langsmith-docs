@@ -108,6 +108,7 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
   - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
   - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
 - [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
+- [Index a dataset for few shot example selection](./how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection)
 
 ## Evaluation
 
