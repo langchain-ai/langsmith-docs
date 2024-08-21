@@ -29,7 +29,7 @@ See the following guides to set up your LangSmith account.
   - [Create a tag](./how_to_guides/setup/set_up_resource_tags#create-a-tag)
   - [Assign a tag to a resource](./how_to_guides/setup/set_up_resource_tags#assign-a-tag-to-a-resource)
   - [Delete a tag](./how_to_guides/setup/set_up_resource_tags#delete-a-tag)
-  - [Filter resources by tag](./how_to_guides/setup/set_up_resource_tags#filter-resources-by-tag)
+  - [Filter resources by tags](./how_to_guides/setup/set_up_resource_tags#filter-resources-by-tags)
 
 ## Tracing
 
