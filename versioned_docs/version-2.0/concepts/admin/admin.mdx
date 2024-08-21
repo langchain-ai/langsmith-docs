@@ -21,7 +21,10 @@ There are a few important differences between your personal organization and sha
 Workspaces were formerly called Tenants. Some code and APIs may still reference the old name for a period of time during the transition.
 :::
 
-A workspace is a logical grouping of users and resources within an organization. Users may have permissions in a workspace that grant them access to the resources in that workspace, including tracing projects, datasets, annotation queues, and prompts. For more details, see the [setup guide](../../how_to_guides/setup/set_up_workspace.mdx).
+A workspace is a logical grouping of users and resources within an organization. A workspace separates trust boundaries for resources and access control.
+Users may have permissions in a workspace that grant them access to the resources in that workspace, including tracing projects, datasets, annotation queues, and prompts. For more details, see the [setup guide](../../how_to_guides/setup/set_up_workspace.mdx).
+
+It is recommended to create a separate workspace for each team within your organization. To organize resources even further, you can use [Resource Tags](#resource-tags) to group resources within a workspace.
 
 The following image shows a sample workspace settings page:
 ![Sample Workspace](../static/sample_workspace.png)
@@ -51,8 +54,9 @@ See the table below for details on which features are available in which scope (
 | Trace Projects                                                              | Workspace        |
 | Annotation Queues                                                           | Workspace        |
 | Deployments                                                                 | Workspace        |
-| Datasets &amp; Testing                                                      | Workspace        |
+| Datasets &amp; Experiments                                                  | Workspace        |
 | Prompts                                                                     | Workspace        |
+| Resource Tags                                                               | Workspace        |
 | API Keys                                                                    | Workspace        |
 | Settings including Secrets, Feedback config, Models, Rules, and Shared URLs | Workspace        |
 | User management: Invite User to Workspace                                   | Workspace        |
@@ -67,6 +71,18 @@ See the table below for details on which features are available in which scope (
 \*&nbsp;Data retention settings and usage limits will be available soon for the organization level as well
 \*\*&nbsp;Self-hosted installations may enable workspace-level invites of users to the organization via a feature flag.
 See the [self-hosted user management docs](../../self_hosting/configuration/user_management) for details.
+
+## Resource tags
+
+Resource tags allow you to organize resources within a workspaces. Each tag is a key-value pair that can be assigned to a resource.
+Tags can be used to filter workspace-scoped resources in the UI and API: Projects, Datasets, Annotation Queues, Deployments, and Experiments.
+
+Each new workspace comes with two default tag keys: `Application` and `Environment`; as the names suggest, these tags can be used to categorize resources based on the application and environment they belong to.
+More tags can be added as needed.
+
+LangSmith resource tags are very similar to tags in cloud services like [AWS](https://docs.aws.amazon.com/tag-editor/latest/userguide/tagging.html).
+
+![Sample Resource Tags](../static/resource_tags.png)
 
 ## Users
 
