@@ -3,6 +3,7 @@ sidebar_position: 5
 ---
 
 import {
+  AsyncPythonBlock,
   CodeTabs,
   PythonBlock,
   TypeScriptBlock,
@@ -65,3 +66,48 @@ code snippets from our LangSmith SDK in different languages.
 
 For code samples on using few shot search in LangChain applications, please see our how-to guide
 in the LangChain docs here: TODO LINK
+
+### Code snippets
+
+:::note
+Please ensure you are using the python SDK with version >= 1.100 or the typescript SDK with version >= TODO
+:::
+
+For copy and paste convenience, you can find the same code snippets described in the screenshot above
+here:
+
+<CodeTabs
+  tabs={[
+    AsyncPythonBlock(`import langsmith as ls\n
+# Copy this value from LangSmith UI
+dataset_id = "1c5e9c95-dfd4-4dc5-a4b8-df7ea921c913"
+async with ls.AsyncClient() as client:
+    examples = await client.similar_examples(
+        {"question": "knock knock"}, dataset_id=dataset_id, limit=1
+    )
+    print(examples[0].outputs)
+    # {"output": "Few shots'll do the trick."}
+`),
+    PythonBlock(`from langsmith import Client\n
+client = Client()\n
+# Copy this value from LangSmith UI
+dataset_id = "1c5e9c95-dfd4-4dc5-a4b8-df7ea921c913"
+examples = client.similar_examples(
+    {"question": "knock knock"}, dataset_id=dataset_id, limit=1
+)
+print(examples[0].outputs)
+# {"output": "Few shots'll do the trick."}
+`),
+    TypeScriptBlock(`import { Client } from "langsmith";\n
+const client = new Client();\n
+// Copy this value from LangSmith UI
+const dataset_id = "1c5e9c95-dfd4-4dc5-a4b8-df7ea921c913";
+const examples = await client.similarExamples(
+  {"question": "knock knock", dataset.id, 1}
+);
+console.log(examples[0].outputs);
+// {"output": "Few shots'll do the trick."}
+`),
+  ]}
+  groupId="client-language"
+/>
