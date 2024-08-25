@@ -6,14 +6,68 @@ sidebar_position: 7
 # LangSmith Release Notes
 
 :::note
-**Reminder: API keys prefixed with `ls__` will be disabled in favor of `lsv2...` style keys as of LangSmith Helm release v0.7 to be released in August 2024.** For more information see [the Admin concepts guide.](https://docs.smith.langchain.com/concepts/admin#api-keys)
+**Reminder: API keys prefixed with `ls__` will be disabled in favor of `lsv2...` style keys as of LangSmith Helm release v0.8 to be released in October 2024.** For more information see [the Admin concepts guide.](https://docs.smith.langchain.com/concepts/admin#api-keys)
 :::
+
+## Week of August 26, 2024 - LangSmith v0.7
+
+This release adds a number of new features, improves the performance of the Threads view, and adds password authentication support and adds support for setting a default Time To Live (TTL) on LangSmith traces.
+
+### New Features since v0.6.0
+
+- [Generate synthetic examples to enhance a LangSmith dataset](https://changelog.langchain.com/announcements/generate-synthetic-examples-to-enhance-a-langsmith-dataset)
+- [Enhanced trace comparison view and savable custom trace filters](https://changelog.langchain.com/announcements/trace-comparison-view-saving-custom-trace-filters)
+- [Defining, validating and updating dataset schemas](https://changelog.langchain.com/announcements/define-validate-and-update-dataset-schemas-in-langsmith)
+- [Multiple annotators can review a run in LangSmith](https://changelog.langchain.com/announcements/multiple-annotators-can-review-a-run-in-langsmith)
+- [Support for filtering runs within the trace view](https://changelog.langchain.com/announcements/filtering-runs-within-the-trace-view)
+- [Enhanced key-value search](https://changelog.langchain.com/announcements/enhanced-key-value-search-matching-inputs-and-outputs)
+- [Webhook notifications for run rules](https://changelog.langchain.com/announcements/set-up-webhook-notifications-for-run-rules)
+- [Support for comparing multiple prompts and model configurations side-by-side in the LangSmith Playground](https://changelog.langchain.com/announcements/build-prompts-faster-and-compare-in-langsmith-playground)
+- Support for saving playground configs
+- Resource Tags
+
+### Performance and Reliability Changes
+
+- Improved performance of Threads view for very large projects
+- Improved error handling in cases where the Clickhouse database is temporarily unavailable
+
+### Infrastructure Changes
+
+- Added a Helm configuration option for Time To Live for traces. When set, this setting will apply only to net-new ingested traces and by changing this setting, *traces will be automatically and irrevocably deleted from Clickhouse after expiration of the TTL.* For more details see (link to TTL config docs). You may also need to change/audit your project default TTL settings.
+- Added configuration option to enable `blobStorage`. This will move run inputs, outputs, and errors to blob storage to lower load on ClickHouse/reduce disk usage. Currently only S3 and GCP are supported. For more details see: (link to Blob Storage Docs)
+- Default Resource/Limits for all resources. Note that you may need to tweak your cluster settings. 
+    - By default we will use:
+      - 16 CPU
+      - 64 GB RAM
+      - You will need a node that can fit 4 CPU/16 GB RAM
+    - To override these settings you can manually configure resources requests/limits yourself
+- Turned bundled `Redis` persistence on by default. If you are using the bundled version of `redis` you may need to recreate your `Redis` StatefulSet if you had not previously turned on persistence.
+- Updated `clickhouseMigration` command to wait for clickhouse initialization prior to running migrations.
+- Deprecation of `<domain>/api-hub url`. You can now use the `<domain>/api` url for all api interactions. This will be fully removed in the v0.8 release so make sure to migrate any apps using the previous url.
+- Health checks added to `queue` pods.
+- Updates to the `nginx` config.
+
+### Admin Changes
+
+- Added support for simple password authentication (link to Simple auth config docs).
+    - **Note that at this time there is no migration path from simple to OIDC authentication** — we are working on this migration path for a subsequent release.
+- Added support to disable personal orgs.
+- Added support to disable org creation.
+- Added config option to allow workspace admins to add workspace users.
+- We have delayed deprecation of the v1 API Keys prefixed with `ls__` until the v0.8 release of LangSmith which should happen on or around October 1. Please update your API keys to Service Keys prefixed with `lsv2__sk` at your earliest convenience.
+
+### Deprecation notices
+
+With the release of v0.7:
+
+- The LangChain Hub SDK is now deprecated and its functionality folded into the [LangSmith SDK](https://github.com/langchain-ai/langsmith-sdk).
+- LangSmith v0.6.x and earlier are now in maintenance mode and may only receive critical security fixes.
 
 ## Week of June 17, 2024 - LangSmith v0.6
 
 LangSmith v0.6 improves run rules performance and reliability, adds support for multiple Workspaces within an Organization, custom models in Playground, and significant enhancements to Evaluations.
 
-### New Features
+### New Features since v0.5
 
 - Dataset splits for evaluation and filtering/editing dataset examples. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#datasetsplits)
 - You can now run multiple repetitions of your experiment in LangSmith. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#repetitions)
@@ -58,7 +112,7 @@ LangSmith v0.5 improves performance and reliability, adds features to improve re
 
 - We will be dropping support for API keys in favor of personal access tokens (PATs) and Service Keys. We recommend using PATs and Service Keys for all new integrations. **API keys prefixed with `ls__` will NO LONGER work as of LangSmith Helm release v0.7 to be released in August 2024.**
 
-### New Features
+### New Features since v0.4
 
 - Role-Based Access Controls. See: [https://blog.langchain.dev/access-control-updates-for-langsmith/](https://blog.langchain.dev/access-control-updates-for-langsmith/)
 - Improved regression testing experience. See: [https://blog.langchain.dev/regression-testing/](https://blog.langchain.dev/regression-testing/)
