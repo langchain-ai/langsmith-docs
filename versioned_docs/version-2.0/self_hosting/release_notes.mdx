@@ -33,14 +33,14 @@ This release adds a number of new features, improves the performance of the Thre
 
 ### Infrastructure Changes
 
-- Added a Helm configuration option for Time To Live for traces. When set, this setting will apply only to net-new ingested traces and by changing this setting, *traces will be automatically and irrevocably deleted from Clickhouse after expiration of the TTL.* For more details see (link to TTL config docs). You may also need to change/audit your project default TTL settings.
+- Added a Helm configuration option for Time To Live for traces. When set, this setting will apply only to net-new ingested traces and by changing this setting, _traces will be automatically and irrevocably deleted from Clickhouse after expiration of the TTL._ For more details see (link to TTL config docs). You may also need to change/audit your project default TTL settings.
 - Added configuration option to enable `blobStorage`. This will move run inputs, outputs, and errors to blob storage to lower load on ClickHouse/reduce disk usage. Currently only S3 and GCP are supported. For more details see: (link to Blob Storage Docs)
-- Default Resource/Limits for all resources. Note that you may need to tweak your cluster settings. 
-    - By default we will use:
-      - 16 CPU
-      - 64 GB RAM
-      - You will need a node that can fit 4 CPU/16 GB RAM
-    - To override these settings you can manually configure resources requests/limits yourself
+- Default Resource/Limits for all resources. Note that you may need to tweak your cluster settings.
+  - By default we will use:
+    - 16 CPU
+    - 64 GB RAM
+    - You will need a node that can fit 4 CPU/16 GB RAM
+  - To override these settings you can manually configure resources requests/limits yourself
 - Turned bundled `Redis` persistence on by default. If you are using the bundled version of `redis` you may need to recreate your `Redis` StatefulSet if you had not previously turned on persistence.
 - Updated `clickhouseMigration` command to wait for clickhouse initialization prior to running migrations.
 - Deprecation of `<domain>/api-hub url`. You can now use the `<domain>/api` url for all api interactions. This will be fully removed in the v0.8 release so make sure to migrate any apps using the previous url.
@@ -50,7 +50,7 @@ This release adds a number of new features, improves the performance of the Thre
 ### Admin Changes
 
 - Added support for simple password authentication (link to Simple auth config docs).
-    - **Note that at this time there is no migration path from simple to OIDC authentication** — we are working on this migration path for a subsequent release.
+  - **Note that at this time there is no migration path from simple to OIDC authentication** — we are working on this migration path for a subsequent release.
 - Added support to disable personal orgs.
 - Added support to disable org creation.
 - Added config option to allow workspace admins to add workspace users.
