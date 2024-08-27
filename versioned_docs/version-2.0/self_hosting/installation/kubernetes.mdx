@@ -20,15 +20,13 @@ We've successfully tested LangSmith on the following Kubernetes distributions:
 - OpenShift
 - Minikube and Kind (for development purposes)
 
-To review all configuration options, look at the values.yaml for the [LangSmith helm chart](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/README.md).
-
 ## Prerequisites
 
 Ensure you have the following tools/items ready. Some items are marked optional:
 
 1. A working Kubernetes cluster that you can access via `kubectl`. Your cluster should have the following minimum requirements:
 
-   1. Recommended: At least 4 vCPUs, 16GB Memory available
+   1. Recommended: At least 16 vCPUs, 64GB Memory available
       - You may need to tune resource requests/limits for all of our different services based off of organization size/usage
    1. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
 
@@ -50,7 +48,7 @@ Ensure you have the following tools/items ready. Some items are marked optional:
    Refer to the [Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/storage-classes/) for more information on storage classes.
 
 1. Helm
-   1. `brew install helm`
+   1. To install helm refer to the [Helm documentation](https://helm.sh/docs/intro/install/)
 1. LangSmith License Key
    1. You can get this from your Langchain representative. Contact us at sales@langchain.dev for more information.
 1. Api Key Salt
@@ -60,14 +58,20 @@ Ensure you have the following tools/items ready. Some items are marked optional:
    openssl rand -base64 32
    ```
 1. Configuration
-   1. There are several configuration options that you can set in the `langsmith_config.yaml` file. You can find more information on the available configuration options in the [Configuration](/self_hosting/configuration) section.
+   1. There are several configuration options that you can set in the `langsmith_config.yaml` file. You can find more information on specific configuration options in the [Configuration](/self_hosting/configuration) section.
+   1. If you are new to Kubernetes or Helm, we’d recommend starting with one of the example configurations in the examples directory of the Helm Chart repository here: [LangSmith helm chart examples](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/examples).
+   1. You can see a full list of configuration options in the `values.yaml` file in the Helm Chart repository here: [LangSmith Helm Chart](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/values.yaml)
 
 ## Configure your Helm Charts:
 
-1. Create a new file called `langsmith_config.yaml`. This should have a similar structure to the `values.yaml` file in the LangSmith Helm Chart repository. Only include the values you want to override to avoid having to update the file every time the chart is updated.
-2. Set the appropriate values in the `langsmith_config.yaml` file. You can find the available configuration options in the [configuration](/self_hosting/configuration) section.
+1. Create a new file called `langsmith_config.yaml` with the configuration options from the previous step.
+1. At a minimum, you will need to set the following configuration options:
 
-You can also see some example configurations in the examples directory of the Helm Chart repository here: [LangSmith helm chart examples](https://github.com/langchain-ai/helm/tree/main/charts/langsmith/examples).
+   ```yaml
+   config:
+     licenseKey: "<your license key>"
+     apiKeySalt: "<your api key salt>"
+   ```
 
 ## Deploying to Kubernetes:
 
@@ -87,7 +91,7 @@ You can also see some example configurations in the examples directory of the He
         helm repo add langchain https://langchain-ai.github.io/helm/
         "langchain" has been added to your repositories
 
-3.  Run `helm install langsmith langchain/langsmith --values langsmith_config.yaml --namespace <your-namespace> --version <version>`
+3.  Run `helm install langsmith langchain/langsmith --values langsmith_config.yaml --namespace <your-namespace> --version <version> --debug`
 
     Output should look something like:
 
