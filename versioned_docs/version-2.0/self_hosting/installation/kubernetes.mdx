@@ -93,6 +93,8 @@ Ensure you have the following tools/items ready. Some items are marked optional:
 
 3.  Run `helm install langsmith langchain/langsmith --values langsmith_config.yaml --namespace <your-namespace> --version <version> --debug`
 
+    - Replace `<your-namespace>` with the namespace you want to deploy LangSmith to.
+    - Replace `<version>` with the version of LangSmith you want to deploy. You can find the available versions in the [Helm Chart repository](https://github.com/langchain-ai/helm/releases). We generally recommend using the latest version.
     Output should look something like:
 
     ```bash
