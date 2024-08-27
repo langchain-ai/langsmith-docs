@@ -47,7 +47,7 @@ Copy the `docker-compose.yml` file and all files in that directory from the Lang
 
 ### 2. Configure environment variables
 
-1. Copy the `.env.example` file from the LangSmith SDK to your project directory and rename it to `.env`. Then, set the following environment variables in the `.env` file:
+1. Copy the `.env.example` file from the LangSmith SDK to your project directory and rename it to `.env`.
 1. Configure the appropriate values in the `.env` file. You can find the available configuration options in the [Configuration](/self_hosting/configuration) section.
 
 You can also set these environment variables in the `docker-compose.yml` file directly or export them in your terminal. We recommend setting them in the `.env` file.
@@ -94,3 +94,18 @@ docker-compose logs
 ```bash
 docker-compose down
 ```
+
+## Using LangSmith
+
+Now that LangSmith is running, you can start using it to trace your code. You can find more information on how to use self-hosted LangSmith in the [self-hosted usage guide](/self_hosting/usage).
+
+Your LangSmith instance is now running but may not be fully setup yet.
+
+If you used one of the basic configs, you may have deployed a no-auth configuration.
+In this state, there is no authentication or concept of user accounts nor API keys and traces can be submitted directly without an API key so long as the hostname is passed to the LangChain tracer/LangSmith SDK.
+
+As a next step, it is strongly recommended you work with your infrastructure administrators to:
+
+- Setup DNS for your LangSmith instance to enable easier access.
+- Configure SSL to ensure in-transit encryption of traces submitted to LangSmith
+- Configure LangSmith for [oauth authentication](/self_hosting/configuration/sso) or [basic authentication](/self_hosting/configuration/basic_auth) to secure your LangSmith instance
