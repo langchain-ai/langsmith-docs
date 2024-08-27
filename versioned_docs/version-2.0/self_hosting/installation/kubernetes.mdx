@@ -149,3 +149,14 @@ Ensure you have the following tools/items ready. Some items are marked optional:
 ## Using LangSmith
 
 Now that LangSmith is running, you can start using it to trace your code. You can find more information on how to use self-hosted LangSmith in the [self-hosted usage guide](/self_hosting/usage).
+
+Your LangSmith instance is now running but may not be fully setup yet.
+
+If you used one of the basic configs, you may have deployed a no-auth configuration.
+In this state, there is no authentication or concept of user accounts nor API keys and traces can be submitted directly without an API key so long as the hostname is passed to the LangChain tracer/LangSmith SDK.
+
+As a next step, it is strongly recommended you work with your infrastructure administrators to:
+
+- Setup DNS for your LangSmith instance to enable easier access.
+- Configure SSL to ensure in-transit encryption of traces submitted to LangSmith
+- Configure LangSmith for [oauth authentication](/self_hosting/configuration/sso) or [basic authentication](/self_hosting/configuration/basic_auth) to secure your LangSmith instance
