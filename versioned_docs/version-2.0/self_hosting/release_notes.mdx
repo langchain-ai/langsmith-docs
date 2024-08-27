@@ -33,8 +33,8 @@ This release adds a number of new features, improves the performance of the Thre
 
 ### Infrastructure Changes
 
-- Added a Helm configuration option for Time To Live for traces. When set, this setting will apply only to net-new ingested traces and by changing this setting, _traces will be automatically and irrevocably deleted from Clickhouse after expiration of the TTL._ For more details see (link to TTL config docs). You may also need to change/audit your project default TTL settings.
-- Added configuration option to enable `blobStorage`. This will move run inputs, outputs, and errors to blob storage to lower load on ClickHouse/reduce disk usage. Currently only S3 and GCP are supported. For more details see: (link to Blob Storage Docs)
+- Added a Helm configuration option for Time To Live for traces. When set, this setting will apply only to net-new ingested traces and by changing this setting, _traces will be automatically and irrevocably deleted from Clickhouse after expiration of the TTL._ For more details see [TTL and Data Retention](./configuration/ttl). You may also need to change/audit your project default TTL settings.
+- Added configuration option to enable `blobStorage`. This will move run inputs, outputs, and errors to blob storage to lower load on ClickHouse/reduce disk usage. Currently only S3 and GCP are supported. For more details see [Enable Blob Storage](./configuration/blob_storage).
 - Default Resource/Limits for all resources. Note that you may need to tweak your cluster settings.
   - By default we will use:
     - 16 CPU
@@ -49,7 +49,7 @@ This release adds a number of new features, improves the performance of the Thre
 
 ### Admin Changes
 
-- Added support for simple password authentication (link to Simple auth config docs).
+- Added support for simple password authentication.  For more details see [Email/password a.k.a. basic auth](./configuration/basic_auth)
   - **Note that at this time there is no migration path from simple to OIDC authentication** — we are working on this migration path for a subsequent release.
 - Added support to disable personal orgs.
 - Added support to disable org creation.
