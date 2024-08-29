@@ -204,7 +204,7 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
   - [Change the time period](./how_to_guides/monitoring/use_monitoring_charts#change-the-time-period)
   - [Slice data by metadata or tag](./how_to_guides/monitoring/use_monitoring_charts#slice-data-by-metadata-or-tag)
   - [Drill down into specific subsets](./how_to_guides/monitoring/use_monitoring_charts#drill-down-into-specific-subsets)
-- [Create custom dashboards](./how_to_guides/monitoring/custom_dashboards)
+- [Create dashboards](./how_to_guides/monitoring/custom_dashboards)
   - [Creating a new dashboard](./how_to_guides/monitoring/custom_dashboards#creating-a-new-dashboard)
   - [Adding charts to your dashboard](./how_to_guides/monitoring/custom_dashboards#adding-charts-to-your-dashboard)
   - [Filtering traces in your chart](./how_to_guides/monitoring/custom_dashboards#filtering-traces-in-your-chart)
