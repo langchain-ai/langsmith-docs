@@ -206,6 +206,7 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
   - [Chart display options](./how_to_guides/monitoring/custom_dashboards#chart-display-options)
   - [Saving and managing charts](./how_to_guides/monitoring/custom_dashboards#saving-and-managing-charts)
   - [View a chart in full screen](./how_to_guides/monitoring/custom_dashboards#view-a-chart-in-full-screen)
+  - [User journeys](./how_to_guides/monitoring/custom_dashboards#user-journeys)
 - [Set up automation rules](./how_to_guides/monitoring/rules)
   - [Create a rule](./how_to_guides/monitoring/rules#create-a-rule)
   - [View logs for your automations](./how_to_guides/monitoring/rules#view-logs-for-your-automations)
