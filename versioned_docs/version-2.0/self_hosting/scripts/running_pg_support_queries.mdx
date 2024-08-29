@@ -1,5 +1,5 @@
 ---
-sidebar_label: Running Support Queries
+sidebar_label: Running Postgres Queries
 sidebar_position: 7
 table_of_contents: true
 ---
@@ -8,7 +8,7 @@ table_of_contents: true
 
 This Helm repository contains queries to produce output that the LangSmith UI does not currently support directly (e.g. obtaining trace counts for multiple organizations in a single query).
 
-This command takes a postgres connection string that contains an embedded name and password (which can be passed in from a call to a secrets manager) and executes a query from an input file. In the example below, we are using the `pg_get_trace_counts_daily.sql` input file in the `support_queries` directory.
+This command takes a postgres connection string that contains an embedded name and password (which can be passed in from a call to a secrets manager) and executes a query from an input file. In the example below, we are using the `pg_get_trace_counts_daily.sql` input file in the `support_queries/postgres` directory.
 
 ### Prerequisites
 
