@@ -3,7 +3,7 @@ sidebar_label: Create custom dashboards
 sidebar_position: 3
 ---
 
-# Create custom dashboards
+# Create dashboards
 
 With custom dashboards you can create tailored dashboards for tracking metrics that matter most to your application monitoring needs.
 
@@ -16,6 +16,9 @@ With custom dashboards you can create tailored dashboards for tracking metrics t
 
 You'll see all of your dashboards displayed in a table view.
 
+![Add dashboard](../static/add_dashboard.png)
+![Dashboard table](../static/dashboard_table.png)
+
 ## Adding charts to your dashboard
 
 1. Within a dashboard, click on the `+ Chart` button to open up the chart creation pane.
@@ -25,9 +28,13 @@ You'll see all of your dashboards displayed in a table view.
 
 With a project and a metric selected, you'll see a preview of your chart and the matching runs.
 
+![Add chart](../static/add_chart.png)
+
 ## Filtering traces in your chart
 
-Use the **Chart filters** section to refine the matching runs. These are the same filters available on the Projectsn page and apply to all data series in the chart.
+Use the **Chart filters** section to refine the matching runs. These are the same filters available on the Projects page and apply to all data series in the chart. (See [Filter traces in application](./filter_traces_in_application) for more information on filtering traces.)
+
+![Chart filters](../static/chart_filters.png)
 
 ## Comparing data within a chart
 
@@ -36,15 +43,21 @@ There are two ways to compare data in a chart (i.e. create multiple lines in a c
 1. **Multiple metrics**: Add multiple metrics with the same unit to a single chart. Each metric appears as a separate line. For example, compare P99 with P50 latency.
    When you pick an initial metric, the comparison metrics dropdown will only show metrics with the same unit.
 
+![Multiple metrics](../static/compare_metrics.png)
+
 Or
 
 2. **Data series**: Create multiple data series within a chart, each with its own filters. This is useful for comparing granular data within a single metric.
    An example of using data series is to compare the performance of two different models or configurations. Name each series and apply specific filters.
 
+![Multiple data series](../static/multiple_data_series.png)
+
 ## Chart display options
 
 - Choose between a line chart and a bar chart for visualizing (you can toggle this within the dashboard view)
 - Optionally reassign the chart to a different dashboard
+
+![Multiple data series](../static/bar_chart.png)
 
 ## Saving and managing charts
 
@@ -52,9 +65,13 @@ Or
 - Edit or delete a chart by clicking the triple line button in the top right of the chart.
 - Clone a chart by clicking the triple line button in the top right of the chart and selecting `+ Clone`. This will open a new chart creation pane with the same configurations as the original.
 
+![More actions bar](../static/more_actions_bar.png)
+
 ## View a chart in full screen
 
 Click the expand icon in the top right corner of a chart to view it in full screen. This view offers:
 
 - Greater detail on individual runs contributing to the chart data.
 - The ability to change the time range of the chart.
+
+![Expanded chart](../static/expanded_chart.png)
