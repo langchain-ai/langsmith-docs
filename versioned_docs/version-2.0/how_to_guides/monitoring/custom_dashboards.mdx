@@ -75,3 +75,18 @@ Click the expand icon in the top right corner of a chart to view it in full scre
 - The ability to change the time range of the chart.
 
 ![Expanded chart](../static/expanded_chart.png)
+
+## User journeys
+
+1. **Use monitoring charts for mapping the decisions made by an agent at a particular node.**
+
+Consider an email assistant agent. At a particular node it makes a decision about an email to:
+
+- send an email back
+- notify the user
+- no response needed
+
+You can track the decisions made by the agent at this node by creating a chart with the `Run count` as the metric and a different data series for each decision.
+Using the chart filters, you can filter the runs to only show the runs at this node, in the example that decision is represented by a value in the output.
+
+![Decision at node](../static/decision_at_node.png)
