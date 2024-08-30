@@ -38,6 +38,13 @@ _set_env("LANGCHAIN_API_KEY")
 
 ```python
 ### Dataset name
+
+# Clone dataset
+client = Client()
+dataset = client.clone_public_dataset(
+    "https://smith.langchain.com/public/730d833b-74da-43e2-a614-4e2ca2502606/d"
+)
+
 dataset_name = "LCEL-QA"
 ```
 
