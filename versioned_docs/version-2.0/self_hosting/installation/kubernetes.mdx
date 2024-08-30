@@ -28,7 +28,12 @@ Ensure you have the following tools/items ready. Some items are marked optional:
 
    1. Recommended: At least 16 vCPUs, 64GB Memory available
       - You may need to tune resource requests/limits for all of our different services based off of organization size/usage
+      - We recommend using a cluster autoscaler to handle scaling up/down of nodes based on resource usage
+      - We recommend setting up the metrics server so that autoscaling can be turned on
+      - You must have a node with at least 4 vCPUs and 16GB of memory available as ClickHouse will request this amount of resources by default.
    1. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
+      - We will be using a PostgreSQL database, Redis, and ClickHouse for storing traces. These services require persistent storage.
+      - If using PVs in your cluster, we highly recommend setting up backups in a production environment.
 
    ```bash
    kubectl get storageclass
