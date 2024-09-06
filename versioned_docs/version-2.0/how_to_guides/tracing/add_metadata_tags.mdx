@@ -128,13 +128,14 @@ const rt = new RunTree({
    // highlight-next-line
   extra: { metadata: { "my-key": "my-value" } },
 });
+await rt.postRun();
 const chatCompletion = await client.chat.completions.create({
   model: "gpt-3.5-turbo",
   messages: messages,
 });
 // End and submit the run
-rt.end(chatCompletion);
-await rt.postRun();`),
+await rt.end(chatCompletion);
+await rt.patchRun();`),
   ]}
   groupId="client-language"
 />

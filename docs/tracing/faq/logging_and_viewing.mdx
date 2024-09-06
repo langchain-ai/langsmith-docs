@@ -187,6 +187,7 @@ pipeline = RunTree(
     run_type="chain",
     inputs={"question": question}
 )
+await pipeline.postRun();
 # This can be retrieved in a retrieval step
 context = "During this morning's meeting, we solved all world conflict."
 messages = [
@@ -239,8 +240,8 @@ const chatCompletion = await client.chat.completions.create({
 // End the runs and log them
 childRun.end(chatCompletion);
 await childRun.postRun();
-pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
-await pipeline.postRun();`),
+await pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
+await pipeline.patchRun();`),
   ]}
   groupId="client-language"
 />
@@ -415,12 +416,13 @@ const rt = new RunTree({
     inputs: { messages },
     id: runId
 })
+await rt.postRun();
 const chatCompletion = await client.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: messages,
 });
 rt.end(chatCompletion)
-await rt.postRun()
+await rt.patchRun()
 console.log("Run ID: ", runId);`),
     APIBlock(`import openai
 import requests\n
