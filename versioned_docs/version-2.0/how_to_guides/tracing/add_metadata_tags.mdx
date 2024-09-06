@@ -45,7 +45,10 @@ def call_openai(
     # You can also dynamically set metadata on the parent run:
     # highlight-next-line
     rt = ls.get_current_run_tree()
-    rt.metadata["my-other-key"] = "some-val"
+    # highlight-next-line
+    rt.metadata["some-conditional-key"] = "some-val"
+    # highlight-next-line
+    rt.tags.extend(["another-tag"])
     return client.chat.completions.create(
         model=model,
         messages=messages,
@@ -71,13 +74,21 @@ with ls.trace(
             model="gpt-3.5-turbo",
             messages=messages,
         )
+        rt.metadata["some-conditional-key"] = "some-val"
         rt.end(outputs={"output": chat_completion})
-patched_client = wrap_openai(client)
+\n
+# You can use the same techniques with the wrapped client
+patched_client = wrap_openai(
+    # highlight-next-line
+    client, tracing_extra={"metadata": {"my-key": "my-value"}, "tags": ["a-tag"]}
+)
 chat_completion = patched_client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=messages,
     langsmith_extra={
+        # highlight-next-line
         "tags": ["my-other-tag"],
+        # highlight-next-line
         "metadata": {"my-other-key": "my-value"},
     },
 )
