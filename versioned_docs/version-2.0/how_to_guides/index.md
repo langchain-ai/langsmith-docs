@@ -25,6 +25,11 @@ See the following guides to set up your LangSmith account.
 - [Set up access control (enterprise only)](./how_to_guides/setup/set_up_access_control)
   - [Create a role](./how_to_guides/setup/set_up_access_control#create-a-role)
   - [Assign a role to a user](./how_to_guides/setup/set_up_access_control#assign-a-role-to-a-user)
+- [Set up resource tags](./how_to_guides/setup/set_up_resource_tags)
+  - [Create a tag](./how_to_guides/setup/set_up_resource_tags#create-a-tag)
+  - [Assign a tag to a resource](./how_to_guides/setup/set_up_resource_tags#assign-a-tag-to-a-resource)
+  - [Delete a tag](./how_to_guides/setup/set_up_resource_tags#delete-a-tag)
+  - [Filter resources by tags](./how_to_guides/setup/set_up_resource_tags#filter-resources-by-tags)
 
 ## Tracing
 
@@ -108,6 +113,7 @@ Manage datasets in LangSmith to evaluate and improve your LLM applications.
   - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
   - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
 - [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
+- [Index a dataset for few shot example selection](./how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection)
 
 ## Evaluation
 
@@ -198,6 +204,15 @@ Leverage LangSmith's powerful monitoring and automations features to make sense 
   - [Change the time period](./how_to_guides/monitoring/use_monitoring_charts#change-the-time-period)
   - [Slice data by metadata or tag](./how_to_guides/monitoring/use_monitoring_charts#slice-data-by-metadata-or-tag)
   - [Drill down into specific subsets](./how_to_guides/monitoring/use_monitoring_charts#drill-down-into-specific-subsets)
+- [Create dashboards](./how_to_guides/monitoring/dashboards)
+  - [Creating a new dashboard](./how_to_guides/monitoring/dashboards#creating-a-new-dashboard)
+  - [Adding charts to your dashboard](./how_to_guides/monitoring/dashboards#adding-charts-to-your-dashboard)
+  - [Filtering traces in your chart](./how_to_guides/monitoring/dashboards#filtering-traces-in-your-chart)
+  - [Comparing data within a chart](./how_to_guides/monitoring/dashboards#comparing-data-within-a-chart)
+  - [Chart display options](./how_to_guides/monitoring/dashboards#chart-display-options)
+  - [Saving and managing charts](./how_to_guides/monitoring/dashboards#saving-and-managing-charts)
+  - [View a chart in full screen](./how_to_guides/monitoring/dashboards#view-a-chart-in-full-screen)
+  - [User journeys](./how_to_guides/monitoring/dashboards#user-journeys)
 - [Set up automation rules](./how_to_guides/monitoring/rules)
   - [Create a rule](./how_to_guides/monitoring/rules#create-a-rule)
   - [View logs for your automations](./how_to_guides/monitoring/rules#view-logs-for-your-automations)

@@ -47,6 +47,20 @@ export function PythonBlock(content, caption = "", label = "Python") {
   };
 }
 
+export function AsyncPythonBlock(
+  content,
+  caption = "",
+  label = "Python (Async)"
+) {
+  return {
+    value: "async-python",
+    label,
+    content,
+    caption,
+    language: "python",
+  };
+}
+
 export function APIBlock(content, caption = "") {
   return {
     value: "api",

@@ -288,8 +288,9 @@ The flexibility of the functional interface means you can easly apply evaluators
 ```python
 from evaluate import load
 from langsmith.schemas import Example, Run
+from langsmith.evaluation import RunEvaluator
 
-class PerplexityEvaluator:
+class PerplexityEvaluator(RunEvaluator):
     def __init__(self, prediction_key: Optional[str] = None, model_id: str = "gpt-2"):
         self.prediction_key = prediction_key
         self.model_id = model_id
