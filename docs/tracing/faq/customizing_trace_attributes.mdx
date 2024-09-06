@@ -82,7 +82,7 @@ chat_completion = client.chat.completions.create(
 )
 # End and submit the run
 await rt.end(outputs=chat_completion)
-rt.post()
+rt.postRun()
 `),
     TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";\n
@@ -187,7 +187,7 @@ chat_completion = client.chat.completions.create(
 )
 # End and submit the run
 await rt.end(outputs=chat_completion)
-rt.post()`),
+rt.postRun()`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";\n
 const client = new OpenAI();\n
@@ -285,7 +285,7 @@ chat_completion = client.chat.completions.create(
 )
 # End and submit the run
 await rt.end(outputs=chat_completion)
-rt.post()`),
+rt.postRun()`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";\n
 const client = new OpenAI();\n

@@ -207,9 +207,9 @@ chat_completion = client.chat.completions.create(
 )
 # End the runs and log them
 child_llm_run.end(outputs=chat_completion)
-child_llm_run.post()
+child_llm_run.postRun()
 pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
-pipeline.post()`),
+pipeline.postRun()`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";
 // This can be a user input to your app
@@ -370,7 +370,7 @@ chat_completion = client.chat.completions.create(
     model="gpt-3.5-turbo", messages=messages
 )
 rt.end(outputs=chat_completion)
-rt.post()
+rt.postRun()
 print("RunTree Run ID: ", run_id)\n
 # Collect run ID using openai_wrapper
 run_id = uuid4()
