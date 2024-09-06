@@ -5,12 +5,12 @@ const DOMAINS = {
   US: {
     langsmith: "smith.langchain.com",
     api: "api.smith.langchain.com",
-    hub: "api.hub.langchain.com",
+    hub: "api.smith.langchain.com",
   },
   EU: {
     langsmith: "eu.smith.langchain.com",
     api: "eu.api.smith.langchain.com",
-    hub: "eu.api.hub.langchain.com",
+    hub: "eu.api.smith.langchain.com",
   },
 };
 
