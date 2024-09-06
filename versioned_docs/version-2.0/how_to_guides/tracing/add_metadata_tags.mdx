@@ -45,7 +45,7 @@ def call_openai(
     # You can also dynamically set metadata on the parent run:
     # highlight-next-line
     rt = ls.get_current_run_tree()
-    rt.metadata["my-val"] = "some-val"
+    rt.metadata["my-other-key"] = "some-val"
     return client.chat.completions.create(
         model=model,
         messages=messages,
