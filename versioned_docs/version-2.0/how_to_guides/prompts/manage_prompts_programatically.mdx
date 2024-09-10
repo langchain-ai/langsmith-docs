@@ -20,11 +20,19 @@ All functionality going forward will live in the `langsmith` package.
 
 ## Install packages
 
+In Python, you can directly use the LangSmith SDK (_recommended, full functionality_) or you can use through the LangChain package (limited to pushing and pulling prompts).
+
+In TypeScript, you must use the LangChain npm package for pulling prompts (it also allows pushing). For all other functionality, use the LangSmith package.
+
 <CodeTabs
   tabs={[
-    PythonBlock(`pip install -U langsmith`),
-    LangChainPyBlock(`pip install -U langchain langsmith`),
-    TypeScriptBlock(`yarn add langsmith`),
+    PythonBlock(`pip install -U langsmith \n# version >= 0.1.99`),
+    LangChainPyBlock(
+      `pip install -U langchain langsmith \n# langsmith version >= 0.1.99 and langchain >= 0.2.13`
+    ),
+    TypeScriptBlock(
+      `yarn add langsmith langchain \n// langsmith version >= 0.1.99 and langchain version >= 0.2.14`
+    ),
   ]}
   groupId="client-language"
 />
