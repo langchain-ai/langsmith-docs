@@ -1,5 +1,6 @@
 import {
   CodeTabs,
+  DockerBlock,
   HelmBlock,
 } from "../../../../src/components/InstructionsWithCode";
 
@@ -19,6 +20,7 @@ By default, LangSmith stores run inputs, outputs, and errors in ClickHouse. In a
   - Currently, Azure Blob Storage is not supported (coming soon)
 - A bucket/directory in your blob storage to store the data. We highly recommend creating a separate bucket/directory for LangSmith data.
   - **If you are using TTLs**, you will need to set up a lifecycle policy to delete old data. You can find more information on configuring TTLs [here](/self_hosting/configuration/ttl). These policies should mirror the TTLs you have set in your LangSmith configuration, or you may experience data loss.
+    See [here](#ttl-configuration) on how to setup the lifecycle rules for TTLs for blob storage.
 - Credentials to permit LangSmith Services to access the bucket/directory
   - You will need to provide your LangSmith instance with the necessary credentials to access the bucket/directory. Read the authentication [section](#authentication) below for more information.
 - An API url for your blob storage service
@@ -92,12 +94,93 @@ After creating your bucket and obtaining the necessary credentials, you can conf
         annotations:
           eks.amazonaws.com/role-arn: "<role_arn>"
       `),
+    DockerBlock(
+      `# In your .env file
+BLOB_STORAGE_ENABLED=false # Set to true if you want to enable blob storage
+BLOB_STORAGE_BUCKET_NAME=langsmith-blob-storage # Change to your desired blob storage bucket name
+BLOB_STORAGE_API_URL=https://s3.us-west-2.amazonaws.com # Change to your desired blob storage API URL
+BLOB_STORAGE_ACCESS_KEY=your-access-key # Change to your desired blob storage access key
+BLOB_STORAGE_ACCESS_KEY_SECRET=your-access-key-secret # Change to your desired blob storage access key secret
+`
+    ),
   ]}
 />
 
 :::note Using an existing secret
 
-If using an access key and secret, you can also provide an existing kubernetes secret that contains the access key and secret key.
+If using an access key and secret, you can also provide an existing Kubernetes secret that contains the access key and secret key.
 This is recommended over providing the access key and secret key directly in your config.
 
 :::
+
+## TTL Configuration
+
+If using the [TTL](/self_hosting/configuration/ttl) feature with LangSmith, you'll also have to configure TTL rules for
+your blob storage. Trace information stored on blob storage is stored on a particular prefix path, which determines the TTL for the data.
+When a trace's retention is extended, its corresponding blob storage path changes to ensure that it matches the new extended retention.
+
+The following TTL prefix are used:
+
+- `ttl_s/`: Short term TTL, configured for 14 days.
+- `ttl_l/`: Long term TTL, configured for 400 days.
+
+If you have customized the TTLs in your LangSmith configuration, you will need to adjust the TTLs in your blob storage configuration to match.
+
+### Amazon S3
+
+If using S3 for your blob storage, you will need to setup a filter lifecycle configuration that matches the
+prefixes above. You can find information for this [in the Amazon Documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/intro-lifecycle-rules.html#intro-lifecycle-rules-filter).
+
+As an example, if you are using Terraform to manage your S3 bucket, you would setup something like this:
+
+```hcl
+  rule {
+    id      = "short-term-ttl"
+    prefix  = "ttl_s/"
+    enabled = true
+
+    expiration {
+      days = 14
+    }
+  }
+
+  rule {
+    id      = "long-term-ttl"
+    prefix  = "ttl_l/"
+    enabled = true
+
+    expiration {
+      days = 400
+    }
+  }
+```
+
+### Google Cloud Storage
+
+You will need to setup lifecycle conditions for your GCS buckets that you are using.
+You can find information for this [in the Google Documentation](https://cloud.google.com/storage/docs/lifecycle#conditions),
+specifically using matchesPrefix.
+
+As an example, if you are using Terraform to manage your GCS bucket, you would setup something like this:
+
+```hcl
+  lifecycle_rule {
+    condition {
+      age            = 14
+      matches_prefix = ["ttl_s"]
+    }
+    action {
+      type = "Delete"
+    }
+  }
+
+  lifecycle_rule {
+    condition {
+      age            = 400
+      matches_prefix = ["ttl_l"]
+    }
+    action {
+      type = "Delete"
+    }
+  }
+```

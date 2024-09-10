@@ -92,7 +92,7 @@ chat_completion = client.chat.completions.create(
 )
 # End and submit the run
 rt.end(outputs=chat_completion)
-rt.post()
+rt.postRun()
 `),
     TypeScriptBlock(`import OpenAI from "openai";
 import { traceable } from "langsmith/traceable";
@@ -124,10 +124,11 @@ const rt = new RunTree({
     inputs: { messages },
     // highlight-next-line
     project_name: "My Project"
-});\n
+});
+await rt.postRun();\n
 // Execute a chat completion and handle it within RunTree
 rt.end({outputs: chatCompletion});
-await rt.postRun();`),
+await rt.patchRun();`),
   ]}
   groupId="client-language"
 />

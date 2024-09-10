@@ -20,16 +20,18 @@ For more information on tags and metadata, see the [Concepts](/concepts/tracing#
 <CodeTabs
   tabs={[
     PythonBlock(`import openai
-from langsmith import traceable
-from langsmith.run_trees import RunTree\n
+import langsmith as ls
+from langsmith.wrappers import wrap_openai
 client = openai.Client()\n
 messages = [
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "Hello!"}
 ]\n
+# highlight-next-line
+# You can set metadata & tags **statically** when decorating a function
 # Use the @traceable decorator with tags and metadata
 # Ensure that the LANGCHAIN_TRACING_V2 environment variables are set for @traceable to work
-@traceable(
+@ls.traceable(
     run_type="llm",
     name="OpenAI Call Decorator",
     # highlight-next-line
@@ -40,34 +42,57 @@ messages = [
 def call_openai(
     messages: list[dict], model: str = "gpt-3.5-turbo"
 ) -> str:
+    # You can also dynamically set metadata on the parent run:
+    # highlight-next-line
+    rt = ls.get_current_run_tree()
+    # highlight-next-line
+    rt.metadata["some-conditional-key"] = "some-val"
+    # highlight-next-line
+    rt.tags.extend(["another-tag"])
     return client.chat.completions.create(
         model=model,
         messages=messages,
     ).choices[0].message.content\n
 call_openai(
     messages,
-    # You can also provide tags and metadata at invocation time
+    # To add at **invocation time**, when calling the function.
     # via the langsmith_extra parameter
     # highlight-next-line
     langsmith_extra={"tags": ["my-other-tag"], "metadata": {"my-other-key": "my-value"}}
 )\n
-# Alternatively, you can create a RunTree object with tags and metadata
-rt = RunTree(
-    run_type="llm",
-    name="OpenAI Call RunTree",
-    inputs={"messages": messages},
+# Alternatively, you can use the context manager
+with ls.trace(
+        name="OpenAI Call Trace",
+        run_type="llm",
+        inputs={"messages": messages},
+        # highlight-next-line
+        tags=["my-tag"],
+        # highlight-next-line
+        metadata={"my-key": "my-value"},
+    ) as rt:
+        chat_completion = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+        )
+        rt.metadata["some-conditional-key"] = "some-val"
+        rt.end(outputs={"output": chat_completion})
+\n
+# You can use the same techniques with the wrapped client
+patched_client = wrap_openai(
     # highlight-next-line
-    tags=["my-tag"],
-    # highlight-next-line
-    extra={"metadata": {"my-key": "my-value"}}
+    client, tracing_extra={"metadata": {"my-key": "my-value"}, "tags": ["a-tag"]}
 )
-chat_completion = client.chat.completions.create(
+chat_completion = patched_client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=messages,
+    langsmith_extra={
+        # highlight-next-line
+        "tags": ["my-other-tag"],
+        # highlight-next-line
+        "metadata": {"my-other-key": "my-value"},
+    },
 )
-# End and submit the run
-rt.end(outputs=chat_completion)
-rt.post()`),
+`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { traceable } from "langsmith/traceable";
 import { wrapOpenAI } from "langsmith/wrappers";
@@ -103,13 +128,14 @@ const rt = new RunTree({
    // highlight-next-line
   extra: { metadata: { "my-key": "my-value" } },
 });
+await rt.postRun();
 const chatCompletion = await client.chat.completions.create({
   model: "gpt-3.5-turbo",
   messages: messages,
 });
 // End and submit the run
-rt.end(chatCompletion);
-await rt.postRun();`),
+await rt.end(chatCompletion);
+await rt.patchRun();`),
   ]}
   groupId="client-language"
 />

@@ -36,7 +36,45 @@ Admins may invite users for both cases at the same time.
     workspaceScopeOrgInvitesEnabled: true`),
     DockerBlock(
       `# In your .env file
-FF_WORKSPACE_SCOPE_ORG_INVITES_ENABLED="true"
+WORKSPACE_SCOPE_ORG_INVITES_ENABLED="true"
+    `
+    ),
+  ]}
+/>
+
+### Disabling Organization Creating
+
+By default, any user can create an organization in LangSmith. For self-hosted customers, an admin may want to restrict this ability after setting up initial organizations.
+This feature flag allows an admin to disable the ability for users to create new organizations.
+
+#### Configuration
+
+<CodeTabs
+  tabs={[
+    HelmBlock(`config:
+    orgCreationDisabled: true`),
+    DockerBlock(
+      `# In your .env file
+ORG_CREATION_DISABLED="true"
+    `
+    ),
+  ]}
+/>
+
+### Disabling Personal Organizations
+
+By default, any user who logs in to LangSmith will have a personal organization created for them.
+For self-hosted customers, an admin may want to restrict this ability. This feature flag allows an admin to disable the ability for users to create personal organizations.
+
+#### Configuration
+
+<CodeTabs
+  tabs={[
+    HelmBlock(`config:
+    personalOrgsDisabled: true`),
+    DockerBlock(
+      `# In your .env file
+PERSONAL_ORGS_DISABLED="true"
     `
     ),
   ]}
