@@ -105,6 +105,7 @@ LangChain and LangSmith SDK use [contextvars](https://docs.python.org/3/library/
 
    @ls.traceable
    async def my_child_function(inputs: str, run_tree: ls.RunTree):
+       # highlight-next-line
        with ls.tracing_context(parent=run_tree):
            async for chunk in my_child_runnable.astream(inputs):
                yield chunk
