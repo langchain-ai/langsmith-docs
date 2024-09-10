@@ -23,11 +23,11 @@ The following outlines common causes for "split" traces when building with pytho
 
 When using async calls (especially with streaming) in Python versions < 3.11, you may encounter issues with trace nesting. This is because Python's `asyncio` only [added full support for passing context](https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task) in version 3.11.
 
-#### Understanding the Issue
+#### Why
 
 LangChain and LangSmith SDK use [contextvars](https://docs.python.org/3/library/contextvars.html) to propagate tracing information implicitly. In Python 3.11 and above, this works seamlessly. However, in earlier versions (3.8, 3.9, 3.10), `asyncio` tasks lack proper `contextvar` support, which can lead to disconnected traces.
 
-#### Resolution Steps
+#### To resolve
 
 1. **Upgrade Python Version (Recommended)**
    If possible, upgrade to Python 3.11 or later for automatic context propagation.
@@ -135,9 +135,11 @@ LangChain and LangSmith SDK use [contextvars](https://docs.python.org/3/library/
 
 It's common to start tracing and want to apply some parallelism on child tasks all within a single trace. Python's stdlib `ThreadPoolExecutor` by default breaks tracing.
 
-#### Understanding the Issue
+#### Why
 
 Python's contextvars start empty within new threads. Here are two approaches to handle maintain trace contiguity:
+
+#### To resolve
 
 1. **Using LangSmith's ContextThreadPoolExecutor**
 
