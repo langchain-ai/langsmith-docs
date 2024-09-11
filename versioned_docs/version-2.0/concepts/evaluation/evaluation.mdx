@@ -11,7 +11,7 @@ LangSmith allows you to build high-quality evaluations for your AI application. 
 
 ## Datasets
 
-Datasets are the cornerstone of the LangSmith evaluation workflow. They are collections of examples that provide the necessary inputs and, optionally, expected `reference` outputs for assessing your AI application. Each example within a dataset represents a single data point, consisting of an `inputs` dictionary, an optional `output` dictionary, and an optional `metadata` dictionary. The optional `output` dictionary will often contain a `reference` key, which is the expected LLM application output for the given input.
+Datasets are the cornerstone of the LangSmith evaluation workflow. They consist of examples that provide inputs and, optionally, expected `reference` outputs for assessing your AI application. Each example in a dataset is a data point with an `inputs` dictionary, an optional `outputs` dictionary, and an optional `metadata` dictionary. The `outputs` dictionary, if present, contains information for your evaluator(s) that remains hidden from the function being evaluated. It may include a `reference` key (expected output or label, or additional context), example-specific `criteria`, information the function `must_include` and `must_exclude` for that particular example, or any other information to check your system's outputs.
 
 ### Creating datasets
 
