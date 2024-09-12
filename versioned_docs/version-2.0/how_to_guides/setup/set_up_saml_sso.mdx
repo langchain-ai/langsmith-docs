@@ -46,3 +46,19 @@ SSO services permit a user to use one set of credentials (for example, a name or
 - `Default workspace role` and `Default workspaces` are editable.
   The updated settings will apply to new users only, not existing users.
 - (Coming soon) `SAML metadata URL` and `SAML metadata XML` are editable. This is usually only necessary when cryptographic keys are rotated/expired or the metadata URL has changed but the same IdP is still used.
+
+## Just-in-time (JIT) provisioning
+
+LangSmith supports Just-in-Time provisioning when using SAML SSO. This allows someone signing in via SAML SSO to join the organization and selected workspaces automatically as a member.
+
+::note
+JIT provisioning only runs for new users i.e. users who do not already have access to the organization with the same email address via a [different login method](../../reference/authentication_authorization/authentication_methods.mdx#cloud)
+::
+
+## Login methods and access
+
+Once you have completed your configuration of SAML SSO for your organization, users will be able to login via SAML SSO in addition to [other login methods](../../reference/authentication_authorization/authentication_methods.mdx#cloud) such as username/password and Google Authentication.
+
+- When logged in via SAML SSO, users can only access the corresponding organization with SAML SSO configured.
+- Users with SAML SSO as their only login method do not have [personal organizations](../../concepts/admin/admin.mdx#organizations)
+- When logged in via any other method, users can access the organization with SAML SSO configured along with any other organizations they are a part of
