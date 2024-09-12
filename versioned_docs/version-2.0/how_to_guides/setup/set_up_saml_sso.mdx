@@ -1,0 +1,48 @@
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
+
+# SAML SSO (beta)
+
+Single Sign-On (SSO) functionality is available for Enterprise customers to access LangSmith through a single authentication source. This allows administrators to centrally manage team access and keeps information more secure.
+
+LangSmith's SSO configuration is built using the SAML (Security Assertion Markup Language) 2.0 standard. SAML 2.0 enables connecting an Identity Provider (IdP) to your organization for an easier, more secure login experience.
+
+::note
+SAML SSO is available for organizations on the [Enterprise plan](../../pricing.mdx). Please [contact sales](https://www.langchain.com/contact-sales) to learn more.
+::
+
+## What is SAML SSO?
+
+SSO services permit a user to use one set of credentials (for example, a name or email address and password) to access multiple applications. The service authenticates the end user only once for all the applications the user has been given rights to and eliminates further prompts when the user switches applications during the same session.
+
+## Benefits of SSO
+
+- Streamlines user management across systems for organization owners.
+- Removes the need for end-users to remember and manage multiple passwords. Simplifies end-users experience by allowing them to sign in at one single access point and enjoy a seamless experience across multiple applications.
+
+## Set up SAML SSO for your organization
+
+### Prerequisites
+
+- While in beta, you must reach out to support@langchain.dev to enable for your organization
+- Your organization must be on an Enterprise plan
+- Your Identity Provider (IdP) must support the SAML 2.0 standard
+- Only [Organization Admins](../../concepts/admin#organization-roles) can configure SAML SSO
+
+### Initial configuration
+
+1. Configure a SAML application in your IdP (e.g. Okta) with the following details, then copy the metadata URL or XML for step 3 below
+   1. Single sign-on URL a.k.a. ACS URL: <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>
+   1. Audience URI a.k.a. SP Entity ID: <RegionalUrl suffix='/auth/v1/sso/saml/metadata'/>
+   1. Name ID format: email address
+   1. Application username: email address
+1. Go to `Settings` -> `Members and roles` -> `SSO Configuration`
+1. Fill in the required information and submit to activate SSO login
+   1. Fill in either the `SAML metadata URL` or `SAML metadata XML`
+   1. Select the `Default workspace role` and `Default workspaces`.
+      New users logging in via SSO will be added to the specified workspaces with the selected role.
+
+### Editing SAML SSO settings
+
+- `Default workspace role` and `Default workspaces` are editable.
+  The updated settings will apply to new users only, not existing users.
+- (Coming soon) `SAML metadata URL` and `SAML metadata XML` are editable. This is usually only necessary when cryptographic keys are rotated/expired or the metadata URL has changed but the same IdP is still used.
