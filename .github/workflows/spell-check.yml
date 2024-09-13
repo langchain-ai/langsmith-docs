@@ -7,9 +7,9 @@ jobs:
     name: Check spelling with codespell
     runs-on: ubuntu-latest
     steps:
-      uses: codespell-project/actions-codespell@v2
-      with:
-        check_filenames: true
+      - uses: codespell-project/actions-codespell@v2
+        with:
+          check_filenames: true
   misspell:
     name: Check spelling with misspell
     runs-on: ubuntu-latest
