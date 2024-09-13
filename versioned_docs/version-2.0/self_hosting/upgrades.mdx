@@ -26,6 +26,10 @@ Update your helm chart config file with any updates that are needed in the new v
 
 Run the following command to upgrade the chart(replace version with the version you want to upgrade to):
 
+:::note Namespace
+If you are using a namespace other than the default namespace, you will need to specify the namespace in the `helm` and `kubectl` commands by using the `-n <namespace` flag.
+:::
+
 ```bash
 helm upgrade <release-name> langchain/langsmith --version <version> --values <path-to-values-file>
 ```

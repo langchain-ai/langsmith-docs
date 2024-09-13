@@ -15,8 +15,9 @@ However, you can configure LangSmith to use an external Redis instance (**strong
   - [Amazon ElastiCache](https://aws.amazon.com/elasticache/redis/)
   - [Google Cloud Memorystore](https://cloud.google.com/memorystore)
   - [Azure Cache for Redis](https://azure.microsoft.com/en-us/services/cache/)
-- Note: We do only officially support Redis versions >= 5.
+- Note: We only officially support Redis versions >= 5.
 - We do not support Redis Cluster.
+- By default, we recommend an instance with at least 2 vCPUs and 8GB of memory. However, the actual requirements will depend on your tracing workload. We recommend monitoring your Redis instance and scaling up as needed.
 
 :::important Redis Cluster Not Supported
 Certain tiers of managed Redis services may use Redis Cluster under the hood, but you can point to a single node in the cluster.

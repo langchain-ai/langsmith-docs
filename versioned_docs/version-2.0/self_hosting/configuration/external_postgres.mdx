@@ -19,6 +19,7 @@ However, you can configure LangSmith to use an external Postgres database (**str
 - A user with admin access to the Postgres database. This user will be used to create the necessary tables, indexes, and schemas.
 - This user will also need to have the ability to create extensions in the database. We use/will try to install the btree_gin, btree_gist, pgcrypto, citext, and pg_trgm extensions.
 - If using a schema other than public, ensure that you do not have any other schemas with the extensions enabled, or you must include that in your search path.
+- By default, we recommend an instance with at least 2 vCPUs and 8GB of memory. However, the actual requirements will depend on your workload and the number of users you have. We recommend monitoring your Postgres instance and scaling up as needed.
 
 ## Connection String
 
