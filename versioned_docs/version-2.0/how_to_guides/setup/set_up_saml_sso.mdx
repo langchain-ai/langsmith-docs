@@ -101,6 +101,9 @@ These are instructions for setting up LangSmith SAML SSO with Entra ID (formerly
    1. Sign on URL (Optional): <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>
    1. Leave Relay State and Logout Url empty
    1. Click `Save`
+1. Ensure required claims are present with `Namespace`: `http://schemas.xmlsoap.org/ws/2005/05/identity/claims`
+   1. `sub`: `user.objectid`
+   1. `emailaddress`: `user.userprincipalname` or `user.mail` (if using the latter, ensure all users have the `Email` field filled in under `Contact Information`)
 1. On the SAML-based Sign-on page, under `SAML Certificates`, copy the `App Federation Metadata Url`.
 
 **Step 3: Create a SAML Provider for Microsoft Entra ID in the LangSmith SSO Configuration page**
@@ -116,7 +119,7 @@ Follow the instructions under [initial configuration](#initial-configuration) in
       1. Under Users, click `None Selected`.
       1. Search for the user you want to assign to the enterprise application, and then click `Select`.
       1. Verify that the user is selected, and click `Assign`.
-1. Have the user sign in via Entra ID SSO or go to `Manage > Single sign-on` and select `Test single sign-on with <application name>`
+1. Have the user sign in via the unique login URL from the `SSO Configuration` page, or go to `Manage > Single sign-on` and select `Test single sign-on with <application name>`
 
 ### Google
 
