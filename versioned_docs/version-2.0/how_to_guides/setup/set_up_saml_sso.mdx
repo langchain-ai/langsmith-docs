@@ -73,3 +73,51 @@ This setting can be switched back to `Any method` at any point.
 :::note
 You must be logged in via SAML SSO in order to update this setting to `Only SAML SSO`.
 :::
+
+## Identity Provider (IdP) Setup
+
+These are instructions for setting up LangSmith SAML SSO with Entra ID (formerly Azure), Google, and Okta. If you use a different Identity Provider and need assistance with configuration, please contact our support team.
+
+### Entra ID (Azure)
+
+**Step 1: Create a new application integration**
+
+1. Log in to the [Azure portal](https://portal.azure.com/#home) with a privileged role (e.g. Global Administrator). On the left navigation pane, select the `Entra ID` service.
+1. Navigate to Enterprise Applications and then select All Applications.
+1. Click `Create your own application`.
+1. In the Create your own application window:
+   1. Enter a name for your application (e.g. `LangSmith`)
+   1. Select `Integrate any other application you don't find in the gallery (Non-gallery)`.
+1. Click `Create`.
+
+**Step 2: Configure the application and obtain the Microsoft Entra ID SAML Metadata**
+
+1. Open the enterprise application that you created.
+1. In the left-side navigation, select `Manage > Single sign-on`.
+1. On the Single sign-on page, click `SAML`.
+1. Update the `Basic SAML Configuration`
+   1. Identifier (Entity ID): <RegionalUrl suffix='/auth/v1/sso/saml/metadata'/>
+   1. Reply URL (Assertion Consumer Service URL): <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>
+   1. Sign on URL (Optional): <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>
+   1. Leave Relay State and Logout Url empty
+   1. Click `Save`
+1. On the SAML-based Sign-on page, under `SAML Certificates`, copy the `App Federation Metadata Url`.
+
+**Step 3: Create a SAML Provider for Microsoft Entra ID in the LangSmith SSO Configuration page**
+
+Follow the instructions under [initial configuration](#initial-configuration) in the `Fill in required information` step, using the metadata URL from the previous step.
+
+**Step 4: Verify the SSO setup**
+
+1. Assign the application to users/groups in Entra ID
+   1. Select `Manage > Users and groups`
+   1. Click `Add user/group`
+   1. In the Add Assignment window:
+      1. Under Users, click `None Selected`.
+      1. Search for the user you want to assign to the enterprise application, and then click `Select`.
+      1. Verify that the user is selected, and click `Assign`.
+1. Have the user sign in via Entra ID SSO or go to `Manage > Single sign-on` and select `Test single sign-on with <application name>`
+
+### Google
+
+### Okta
