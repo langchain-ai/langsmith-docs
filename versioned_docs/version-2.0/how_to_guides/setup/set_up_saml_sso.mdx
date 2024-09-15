@@ -98,8 +98,7 @@ These are instructions for setting up LangSmith SAML SSO with Entra ID (formerly
 1. Update the `Basic SAML Configuration`
    1. Identifier (Entity ID): <RegionalUrl suffix='/auth/v1/sso/saml/metadata'/>
    1. Reply URL (Assertion Consumer Service URL): <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>
-   1. Sign on URL (Optional): <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>
-   1. Leave Relay State and Logout Url empty
+   1. Leave Relay State, Logout Url, and Sign on URL empty
    1. Click `Save`
 1. Ensure required claims are present with `Namespace`: `http://schemas.xmlsoap.org/ws/2005/05/identity/claims`
    1. `sub`: `user.objectid`
