@@ -84,6 +84,16 @@ This is to ensure the SAML settings are valid and avoid locking users out of you
 
 If you have issues setting up SAML SSO, please reach out to [support@langchain.dev](mailto:support@langchain.dev).
 
+### FAQ
+
+#### _How do I change a SAML SSO user's email address?_
+
+Some identity providers retain the original `User ID` through an email change while others do not, so we recommend that you follow these steps to avoid duplicate users in LangSmith:
+
+1. Remove the user from the organization (see [here](../setup/set_up_organization.mdx#manage-users))
+1. Change their email address in the IdP
+1. Have them login to LangSmith again via SAML SSO - this will trigger the usual [JIT provisioning](#just-in-time-jit-provisioning) flow with their new email address
+
 ## Identity Provider (IdP) Setup
 
 These are instructions for setting up LangSmith SAML SSO with Entra ID (formerly Azure), Google, and Okta. If you use a different Identity Provider and need assistance with configuration, please contact our support team.
