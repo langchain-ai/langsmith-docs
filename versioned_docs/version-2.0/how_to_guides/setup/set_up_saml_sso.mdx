@@ -69,7 +69,7 @@ Once you have completed your configuration of SAML SSO for your organization, us
 - Users with SAML SSO as their only login method do not have [personal organizations](../../concepts/admin/admin.mdx#organizations)
 - When logged in via any other method, users can access the organization with SAML SSO configured along with any other organizations they are a part of
 
-## Enforce SAML SSO Only
+## Enforce SAML SSO only
 
 To ensure users can only access the organization when logged in using SAML SSO and no other method, update the `Login method` to `Only SAML SSO`.
 Once this happens, users in the organization will be logged out and required to log back in using SAML SSO.  
@@ -77,7 +77,12 @@ This setting can be switched back to `Any method` at any point.
 
 :::note
 You must be logged in via SAML SSO in order to update this setting to `Only SAML SSO`.
+This is to ensure the SAML settings are valid and avoid locking users out of your organization.
 :::
+
+## Support and troubleshooting
+
+If you have issues setting up SAML SSO, please reach out to [support@langchain.dev](mailto:support@langchain.dev).
 
 ## Identity Provider (IdP) Setup
 
