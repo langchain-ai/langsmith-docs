@@ -258,9 +258,15 @@ export function ConfigureLangChainEnvironmentCodeTabs() {
 export LANGCHAIN_API_KEY=<your-api-key>
 # The below examples use the OpenAI API, though it's not necessary in general
 export OPENAI_API_KEY=<your-openai-api-key>`;
-  const typescriptFootnote = `If you are using LangChain with LangSmith and are not in a serverless environment, we also suggest setting the following to reduce latency:
+  const typescriptFootnote = `If you are using LangChain.js with LangSmith and are not in a serverless environment, we also recommend setting the following explicitly to reduce latency:
 
-\`export LANGCHAIN_CALLBACKS_BACKGROUND=true\``;
+\`export LANGCHAIN_CALLBACKS_BACKGROUND=true\`
+
+If you are in a serverless environment, we recommend setting the reverse to allow tracing to finish before your function ends:
+
+\`export LANGCHAIN_CALLBACKS_BACKGROUND=false\`
+
+See [this LangChain.js guide](https://js.langchain.com/docs/how_to/callbacks_serverless) for more information.`;
   return (
     <CodeTabs
       tabs={[

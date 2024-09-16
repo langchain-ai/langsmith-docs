@@ -187,7 +187,8 @@ This tactic is also useful for when you have multiple chains running in a shared
 
 In LangChain Python, LangSmith's tracing is done in a background thread to avoid obstructing your production application. This means that your process may end before all traces are successfully posted to LangSmith. This is especially prevalent in a serverless environment, where your VM may be terminated immediately once your chain or agent completes.
 
-In LangChain JS, the default is to block for a short period of time for the trace to finish due to the greater popularity of serverless environments. You can make callbacks asynchronous by setting the `LANGCHAIN_CALLBACKS_BACKGROUND` environment variable to `"true"`.
+In LangChain JS, prior to `@langchain/core` version `0.3.0`, the default was to block for a short period of time for the trace to finish due to the greater popularity of serverless environments. Versions `>=0.3.0` will have the same default as Python.
+You can explicitly make callbacks synchronous by setting the `LANGCHAIN_CALLBACKS_BACKGROUND` environment variable to `"false"` or asynchronous by setting it to `"true"`. You can also check out [this guide](https://js.langchain.com/docs/how_to/callbacks_serverless) for more options for awaiting backgrounded callbacks in serverless environments.
 
 For both languages, LangChain exposes methods to wait for traces to be submitted before exiting your application.
 Below is an example:
