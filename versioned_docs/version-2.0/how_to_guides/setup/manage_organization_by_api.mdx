@@ -8,8 +8,8 @@ LangSmith's API supports programmatic access via API key to all of the actions a
 
 Before diving into this content, it might be helpful to read the following:
 
-- [Conceptual guide on organizations and workspaces](../concepts/admin)
-- [Organization setup how-to guild](../how_to_guides/setup/set_up_organization.mdx)
+- [Conceptual guide on organizations and workspaces](../../concepts/admin)
+- [Organization setup how-to guild](../../how_to_guides/setup/set_up_organization.mdx)
 
 :::
 
@@ -17,7 +17,7 @@ Before diving into this content, it might be helpful to read the following:
 There are a few limitations that will be lifted soon:
 
 - The LangSmith SDKs do not support these organization management actions yet.
-- [Service Keys](../concepts/admin/admin.mdx#api-keys) don't have access to newly-added workspaces yet (we're adding support soon). We recommend using a PAT of an Organization Admin for now, which by default has the required permissions for these actions.
+- [Service Keys](../../concepts/admin/admin.mdx#api-keys) don't have access to newly-added workspaces yet (we're adding support soon). We recommend using a PAT of an Organization Admin for now, which by default has the required permissions for these actions.
 
 :::
 
@@ -120,7 +120,7 @@ Workspace level:
   />
 
 :::note
-These params should be omitted: `read_only` (deprecated), `password` and `full_name` ([basic auth](../reference/authentication_authorization/authentication_methods.mdx) only)
+These params should be omitted: `read_only` (deprecated), `password` and `full_name` ([basic auth](../../reference/authentication_authorization/authentication_methods.mdx) only)
 :::
 
 ## User-Only Endpoints
@@ -128,7 +128,7 @@ These params should be omitted: `read_only` (deprecated), `password` and `full_n
 These endpoints are user-scoped and require a logged-in user's JWT, so they should only be executed through the UI.
 
 - `/api-key/current` endpoints: these are related a user's PATs
-- `/sso/email-verification/send` (Cloud-only): this endpoint is related to [SAML SSO](../how_to_guides/setup/set_up_saml_sso.mdx)
+- `/sso/email-verification/send` (Cloud-only): this endpoint is related to [SAML SSO](../../how_to_guides/setup/set_up_saml_sso.mdx)
 
 ## Sample Code
 
@@ -167,13 +167,14 @@ def main():
         "X-Tenant-Id": workspace_id,
     }
 
-    # Grab roles
+    # Grab roles - this includes both organization and workspace roles
     roles_res = session.get(f"{orgs_path}/roles")
     roles_res.raise_for_status()
     roles = roles_res.json()
-    # system org roles are ORGANIZATION_ADMIN, ORGANIZATION_USER
-    # system workspace roles are WORKSPACE_ADMIN, WORKSPACE_USER, WORKSPACE_VIEWER
-    roles_by_name = {role["name"]: role for role in roles}
+    # system org roles are 'Organization Admin', 'Organization User'
+    # system workspace roles are 'Admin', 'Editor', 'Viewer'
+    org_roles_by_name = {role["display_name"]: role for role in roles if role["access_scope"] == "organization"}
+    ws_roles_by_name = {role["display_name"]: role for role in roles if role["access_scope"] == "workspace"}
 
     # Invite a user to the org and the new workspace, as an Editor.
     # workspace_role_id is only allowed if RBAC is enabled (an enterprise feature).
@@ -181,14 +182,16 @@ def main():
     new_user_res = session.post(
         f"{orgs_path}/members",
         json={
-        "email": new_user_email,
-        "role_id": roles_by_name["ORGANIZATION_USER"]["id"],
-        "workspace_ids": [workspace_id],
-        "workspace_role_id": roles_by_name["WORKSPACE_USER"]["id"],
-    })
+            "email": new_user_email,
+            "role_id": org_roles_by_name["Organization User"]["id"],
+            "workspace_ids": [workspace_id],
+            "workspace_role_id": ws_roles_by_name["Editor"]["id"],
+        },
+    )
     new_user_res.raise_for_status()
 
-    # Add a user that already exists in the org to the new workspace, as a Viewer
+    # Add a user that already exists in the org to the new workspace, as a Viewer.
+    # workspace_role_id is only allowed if RBAC is enabled (an enterprise feature).
     existing_user_email = "<replace_me>"
     org_members_res = session.get(f"{orgs_path}/members")
     org_members_res.raise_for_status()
@@ -201,7 +204,7 @@ def main():
         json={
             "user_id": existing_org_member["user_id"],
             "workspace_ids": [workspace_id],
-            "workspace_role_id": roles_by_name["WORKSPACE_VIEWER"]["id"],
+            "workspace_role_id": ws_roles_by_name["Viewer"]["id"],
         },
         headers=workspace_headers,
     )
@@ -219,7 +222,7 @@ def main():
     existing_user_id = workspace_member["id"]
     update_res = session.patch(
         f"{workspaces_path}/current/members/{existing_user_id}",
-        json={"role_id": roles_by_name["WORKSPACE_ADMIN"]["id"]},
+        json={"role_id": ws_roles_by_name["Admin"]["id"]},
         headers=workspace_headers,
     )
     update_res.raise_for_status()
@@ -227,7 +230,7 @@ def main():
     # Update the user's organization role to Organization Admin
     update_res = session.patch(
         f"{orgs_path}/members/{existing_org_member['id']}",
-        json={"role_id": roles_by_name["ORGANIZATION_ADMIN"]["id"]},
+        json={"role_id": org_roles_by_name["Organization Admin"]["id"]},
     )
     update_res.raise_for_status()
 

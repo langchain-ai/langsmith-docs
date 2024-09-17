@@ -25,7 +25,6 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 ## Organization Settings
 
 - [Authentication methods](./reference/authentication_authorization/authentication_methods)
-- [Manage your organization using the API](./reference/manage_organization_by_api)
 
 ## Data formats
 

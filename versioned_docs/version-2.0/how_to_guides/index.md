@@ -16,6 +16,7 @@ See the following guides to set up your LangSmith account.
   - [Create an organization](./how_to_guides/setup/set_up_organization#create-an-organization)
   - [Manage and navigate workspaces](./how_to_guides/setup/set_up_organization#manage-and-navigate-workspaces)
   - [Manage users](./how_to_guides/setup/set_up_organization#manage-users)
+  - [Manage your organization using the API](./how_to_guides/setup/manage_organization_by_api)
 - [Set up a workspace](./how_to_guides/setup/set_up_workspace)
   - [Create a workspace](./how_to_guides/setup/set_up_workspace#create-a-workspace)
   - [Manage users](./how_to_guides/setup/set_up_workspace#manage-users)
