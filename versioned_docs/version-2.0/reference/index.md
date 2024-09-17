@@ -22,6 +22,10 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 - [Cloud architecture and scalability](./reference/cloud_architecture_and_scalability)
 - [Regions FAQ](./reference/regions_faq)
 
+## Organization Settings
+
+- [Authentication methods](./reference/authentication_authorization/authentication_methods)
+
 ## Data formats
 
 - [Run (span) data format](./reference/data_formats/run_data_format)
@@ -31,5 +35,3 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
   - [Filter query language](./reference/data_formats/trace_query_syntax#filter-query-language)
 
 ## Authentication and authorization
-
-- [Authentication methods](./reference/authentication_authorization/authentication_methods)
