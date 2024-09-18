@@ -173,8 +173,14 @@ Writing evaluators is discussed in more detail in the [following section](#custo
   tabs={[
     PythonBlock(`from langsmith.schemas import Example, Run\n
 def correct_label(root_run: Run, example: Example) -> dict:
-    score = root_run.outputs.get("output") == example.outputs.get("label")
-    return {"score": int(score), "key": "correct_label"}`),
+    expected = example.outputs.get("label")
+    predicted = root_run.outputs.get("output") 
+    score = expected == actual
+    return {
+      # The key defines the metric name logged to LangSmith
+      "key": "correct_label",
+      "score": int(score),
+    }`),
     typescript`
       import type { EvaluationResult } from "langsmith/evaluation";
       import type { Run, Example } from "langsmith/schemas";
@@ -182,7 +188,11 @@ def correct_label(root_run: Run, example: Example) -> dict:
       // Row-level evaluator
       function correctLabel(rootRun: Run, example: Example): EvaluationResult {
         const score = rootRun.outputs?.outputs === example.outputs?.output;
-        return { key: "correct_label", score };
+        return { 
+          // The key defines the metric name logged to LangSmith
+          key: "correct_label",
+          score,
+        };
       }
     `,
   ]}

@@ -74,10 +74,19 @@ def predict(inputs: dict) -> dict:
     return {"output": response}\n
 # Define evaluators
 def must_mention(run: Run, example: Example) -> dict:
+    # run.outputs contains the 
     prediction = run.outputs.get("output") or ""
+    # Example.outputs contains the reference information (labels, context, etc.) that is hidden from your model
     required = example.outputs.get("must_mention") or []
     score = all(phrase in prediction for phrase in required)
-    return {"key":"must_mention", "score": score}\n
+    return {
+        # The key is the metric name that shows up in LangSmith
+        "key":"must_mention",
+        # Score let you compare quality between runs 
+        "score": score
+        # (Optional) You can also add other contextual information (such as LLM text) via comments
+        "comment":  f"System {'did' if score else 'did not'} mention all of {required}"
+      }\n
 experiment_results = evaluate(
     predict, # Your AI system
     data=dataset_name, # The data to predict and grade over
@@ -132,8 +141,8 @@ const mustMention = async ({ run, example }: { run: Run; example?: Example; }): 
     run?.outputs?.output.includes(phrase)
   );
   return {
-    key: "must_mention",
-    score: score,
+    key: "must_mention", // The name of the evaluation metric
+    score: score, // Lets you compare performance across experiments
   };
 };\n
 await runOnDataset(
