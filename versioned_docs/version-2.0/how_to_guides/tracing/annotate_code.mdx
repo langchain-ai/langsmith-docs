@@ -123,6 +123,47 @@ Note that when wrapping a sync function with \`traceable\`, (e.g. \`formatPrompt
 
 ![](../static/annotate_code_trace.gif)
 
+## Use the `trace` context manager (Python only)
+
+In Python, you can use the `trace` context manager to log traces to LangSmith. This is useful in situations where:
+
+1. You want to log traces for a specific block of code.
+2. You want control over the inputs, outputs, and other attributes of the trace.
+3. It is not feasible to use a decorator or wrapper.
+4. Any or all of the above.
+
+The context manager integrates seamlessly with the `traceable` decorator and `wrap_openai` wrapper, so you can use them together in the same application.
+
+```python
+import openai
+import langsmith as ls
+from langsmith.wrappers import wrap_openai
+
+client = wrap_openai(openai.Client())
+
+@ls.traceable(run_type="tool", name="Retrieve Context")
+def my_tool(question: str) -> str:
+    return "During this morning's meeting, we solved all world conflict."
+
+def chat_pipeline(question: str):
+    context = my_tool(question)
+    messages = [
+        { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
+        { "role": "user", "content": f"Question: {question}\nContext: {context}"}
+    ]
+    chat_completion = client.chat.completions.create(
+        model="gpt-3.5-turbo", messages=messages
+    )
+    return chat_completion.choices[0].message.content
+
+app_inputs = {"input": "Can you summarize this morning's meetings?"}
+
+# highlight-next-line
+with ls.trace("Chat Pipeline", "chain", project_name="my_test", inputs=app_inputs) as rt:
+    output = chat_pipeline("Can you summarize this morning's meetings?")
+    rt.end(outputs={"output": output})
+```
+
 ## Wrap the OpenAI client
 
 The `wrap_openai`/`wrapOpenAI` methods in Python/TypeScript allow you to wrap your OpenAI client in order to automatically log traces -- no decorator or function wrapping required!
@@ -193,6 +234,8 @@ await chatPipeline("Can you summarize this morning's meetings?");`),
 Another, more explicit way to log traces to LangSmith is via the `RunTree` API. This API allows you more control over your tracing - you can manually
 create runs and children runs to assemble your trace. You still need to set your `LANGCHAIN_API_KEY`, but `LANGCHAIN_TRACING_V2` is not
 necessary for this method.
+
+This method is not recommended, as it's easier to make mistakes in propagating trace context.
 
 <CodeTabs
   tabs={[
@@ -265,43 +308,59 @@ await pipeline.patchRun();`),
   groupId="client-language"
 />
 
-## Use the `trace` context manager (Python only)
+## Example usage
 
-In Python, you can use the `trace` context manager to log traces to LangSmith. This is useful in situations where:
+You can extend the utilities above to conveniently trace any code. Below are some example extensions:
 
-1. You want to log traces for a specific block of code.
-2. You want control over the inputs, outputs, and other attributes of the trace.
-3. It is not feasible to use a decorator or wrapper.
-4. Any or all of the above.
-
-The context manager integrates seamlessly with the `traceable` decorator and `wrap_openai` wrapper, so you can use them together in the same application.
+Trace any public method in a class:
 
 ```python
-import openai
-from langsmith import trace
-from langsmith import traceable
-from langsmith.wrappers import wrap_openai
+from typing import Any, Callable, Type, TypeVar
 
-client = wrap_openai(openai.Client())
+T = TypeVar("T")
 
-@traceable(run_type="tool", name="Retrieve Context")
-def my_tool(question: str) -> str:
-    return "During this morning's meeting, we solved all world conflict."
 
-def chat_pipeline(question: str):
-    context = my_tool(question)
-    messages = [
-        { "role": "system", "content": "You are a helpful assistant. Please respond to the user's request only based on the given context." },
-        { "role": "user", "content": f"Question: {question}\nContext: {context}"}
-    ]
-    chat_completion = client.chat.completions.create(
-        model="gpt-3.5-turbo", messages=messages
-    )
-    return chat_completion.choices[0].message.content
+def traceable_cls(cls: Type[T]) -> Type[T]:
+    """Instrument all public methods in a class."""
 
-app_inputs = {"input": "Can you summarize this morning's meetings?"}
+    def wrap_method(name: str, method: Any) -> Any:
+        if callable(method) and not name.startswith("__"):
+            return traceable(name=f"{cls.__name__}.{name}")(method)
+        return method
 
-with trace("Chat Pipeline", "chain", project_name="my_test", inputs=app_inputs) as rt:
-    output = chat_pipeline("Can you summarize this morning's meetings?")
-    rt.end(outputs={"output": output})
+    # Handle __dict__ case
+    for name in dir(cls):
+        if not name.startswith("_"):
+            try:
+                method = getattr(cls, name)
+                setattr(cls, name, wrap_method(name, method))
+            except AttributeError:
+                # Skip attributes that can't be set (e.g., some descriptors)
+                pass
+
+    # Handle __slots__ case
+    if hasattr(cls, "__slots__"):
+        for slot in cls.__slots__:  # type: ignore[attr-defined]
+            if not slot.startswith("__"):
+                try:
+                    method = getattr(cls, slot)
+                    setattr(cls, slot, wrap_method(slot, method))
+                except AttributeError:
+                    # Skip slots that don't have a value yet
+                    pass
+
+    return cls
+
+
+
+@traceable_cls
+class MyClass:
+    def __init__(self, some_val: int):
+        self.some_val = some_val
+
+    def combine(self, other_val: int):
+        return self.some_val + other_val
+
+# See trace: https://smith.langchain.com/public/882f9ecf-5057-426a-ae98-0edf84fdcaf9/r
+MyClass(13).combine(29)
 ```
