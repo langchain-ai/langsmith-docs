@@ -83,3 +83,5 @@ chat_completion = client.chat.completions.create(model="gpt-3.5-turbo", messages
 patch_run(child_run_id, chat_completion.dict())
 patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})
 ```
+
+See the doc on the [Run (span) data format](../../reference/data_formats/run_data_format) for more information.
