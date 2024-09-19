@@ -237,10 +237,10 @@ import numpy as np
 
 def find_similar(examples, topic, k=5):
     inputs = [e.inputs['topic'] for e in examples] + [topic]
-    embedds = client.embeddings.create(input=inputs, model="text-embedding-3-small")
-    embedds = [e.embedding for e in embedds.data]
-    embedds = np.array(embedds)
-    args = np.argsort(-embedds.dot(embedds[-1])[:-1])[:5]
+    vectors = client.embeddings.create(input=inputs, model="text-embedding-3-small")
+    vectors = [e.embedding for e in vectors.data]
+    vectors = np.array(vectors)
+    args = np.argsort(-vectors.dot(vectors[-1])[:-1])[:5]
     examples = [examples[i] for i in args]
     return examples
 ```
