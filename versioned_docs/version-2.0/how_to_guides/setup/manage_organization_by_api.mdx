@@ -123,6 +123,24 @@ Workspace level:
 These params should be omitted: `read_only` (deprecated), `password` and `full_name` ([basic auth](../../reference/authentication_authorization/authentication_methods.mdx) only)
 :::
 
+## API Keys
+
+:::note
+Use the `X-Tenant-Id` header to specify which workspace to target.  
+If the header is not present, operations will default to the workspace the API key was initially created in.
+:::
+
+- <RegionalUrl
+    text="Create a service key"
+    type="api"
+    suffix="/redoc#tag/api-key/operation/generate_api_key_api_v1_api_key_post"
+  />
+- <RegionalUrl
+    text="Delete a service key"
+    type="api"
+    suffix="/redoc#tag/api-key/operation/delete_api_key_api_v1_api_key__api_key_id__delete"
+  />
+
 ## User-Only Endpoints
 
 These endpoints are user-scoped and require a logged-in user's JWT, so they should only be executed through the UI.
@@ -156,6 +174,7 @@ def main():
     session.headers.update(headers)
     workspaces_path = f"{base_url}/api/v1/workspaces"
     orgs_path = f"{base_url}/api/v1/orgs/current"
+    api_keys_path = f"{base_url}/api/v1/api-key"
 
     # Create a workspace
     workspace_res = session.post(workspaces_path, json={"display_name": "My Workspace"})
@@ -163,7 +182,7 @@ def main():
     workspace = workspace_res.json()
     workspace_id = workspace["id"]
 
-    workspace_headers = {
+    new_workspace_headers = {
         "X-Tenant-Id": workspace_id,
     }
 
@@ -206,12 +225,12 @@ def main():
             "workspace_ids": [workspace_id],
             "workspace_role_id": ws_roles_by_name["Viewer"]["id"],
         },
-        headers=workspace_headers,
+        headers=new_workspace_headers,
     )
     existing_user_res.raise_for_status()
 
     # List all members of the workspace
-    members_res = session.get(f"{workspaces_path}/current/members", headers=workspace_headers)
+    members_res = session.get(f"{workspaces_path}/current/members", headers=new_workspace_headers)
     members_res.raise_for_status()
     members = members_res.json()
     workspace_member = next(
@@ -223,7 +242,7 @@ def main():
     update_res = session.patch(
         f"{workspaces_path}/current/members/{existing_user_id}",
         json={"role_id": ws_roles_by_name["Admin"]["id"]},
-        headers=workspace_headers,
+        headers=new_workspace_headers,
     )
     update_res.raise_for_status()
 
@@ -233,6 +252,16 @@ def main():
         json={"role_id": org_roles_by_name["Organization Admin"]["id"]},
     )
     update_res.raise_for_status()
+
+    # Create a new Service key
+    api_key_res = session.post(
+        api_keys_path,
+        json={"description": "my key"},
+        headers=new_workspace_headers,
+    )
+    api_key_res.raise_for_status()
+    api_key_json = api_key_res.json()
+    api_key = api_key_json["key"]
 
 
 if __name__ == "__main__":
