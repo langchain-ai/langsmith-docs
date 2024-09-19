@@ -64,7 +64,7 @@ call_openai(messages)\n
 call_openai(
     messages,
     # highlight-next-line
-    langsmith_extra={"project_name": "My Overriden Project"},
+    langsmith_extra={"project_name": "My Overridden Project"},
 )\n
 # The wrapped OpenAI client accepts all the same langsmith_extra parameters
 # as @traceable decorated functions, and logs traces to LangSmith automatically.

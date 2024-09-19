@@ -160,7 +160,7 @@ class State(TypedDict):
 
 ### SQL Assistant
 
-Use [prompt based roughtly on what is shown here](https://python.langchain.com/v0.2/docs/tutorials/sql_qa/#agents).
+Use [prompt based roughly on what is shown here](https://python.langchain.com/v0.2/docs/tutorials/sql_qa/#agents).
 
 ```python
 from langchain_core.runnables import Runnable, RunnableConfig
@@ -178,8 +178,8 @@ class Assistant:
             # Invoke the tool-calling LLM
             result = self.runnable.invoke(state)
             # If it is a tool call -> response is valid
-            # If it has meaninful text -> response is valid
-            # Otherwise, we re-prompt it b/c response is not meaninful
+            # If it has meaningful text -> response is valid
+            # Otherwise, we re-prompt it b/c response is not meaningful
             if not result.tool_calls and (
                 not result.content
                 or isinstance(result.content, list)
@@ -478,7 +478,7 @@ def check_specific_tool_call(root_run: Run, example: Example) -> dict:
     """
     Check if the first tool call in the response matches the expected tool call.
     """
-    # Exepected tool call
+    # Expected tool call
     expected_tool_call = 'sql_db_list_tables'
 
     # Run

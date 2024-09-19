@@ -39,7 +39,7 @@ df['version'] = df['version'].apply(lambda x: f"version:{x}")
 
 ### Save to CSV
 
-To upload the data to LangSmith, we first need to save it to a CSV, which we can do using the `to_csv` function provided by pandas. Make sure to save this file somewhere that is easily accesible to you.
+To upload the data to LangSmith, we first need to save it to a CSV, which we can do using the `to_csv` function provided by pandas. Make sure to save this file somewhere that is easily accessible to you.
 
 ```python
 df.to_csv("./../SWE-bench.csv",index=False)
@@ -55,7 +55,7 @@ Next, select `Key-Value` as the dataset type. Lastly head to the `Create Schema`
 
 Once you have populated the `Input fields` (and left the `Output fields` empty!) you can click the blue `Create` button in the top right corner, and your dataset will be created!
 
-### Upload CSV to LangSmith Programatically
+### Upload CSV to LangSmith Programmatically
 
 Alternatively you can upload your csv to LangSmith using the sdk as shown in the code block below:
 
@@ -178,7 +178,7 @@ def convert_runs_to_langsmith_feedback(
             else:
                 feedback_for_instance.append({"key":"resolved-patch","score":0})
         else:
-            # The instance did not run succesfully
+            # The instance did not run successfully
             feedback_for_instance += [{"key":"completed-patch","score":0},{"key":"resolved-patch","score":0}]
         feedback_for_all_instances[prediction['run_id']] = feedback_for_instance
 

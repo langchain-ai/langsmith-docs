@@ -182,7 +182,7 @@ stub = Stub("auth-example", image=Image.debian_slim().pip_install("langsmith"))
 @web_endpoint(method="POST")
 # We set up a `secret` query parameter
 def f(data: dict, secret: str = Query(...)):
-    # You can import dependencies you don't have locally inside Modal funxtions
+    # You can import dependencies you don't have locally inside Modal functions
     from langsmith import Client
 
     # First, we validate the secret key we pass
