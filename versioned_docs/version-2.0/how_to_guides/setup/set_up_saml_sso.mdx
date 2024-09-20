@@ -36,8 +36,8 @@ See IdP-specific instructions [below](#identity-provider-idp-setup)
 :::note
 
 1. In your IdP: Configure a SAML application with the following details, then copy the metadata URL or XML for step 3 below
-   1. Single sign-on URL a.k.a. ACS URL: <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>
-   1. Audience URI a.k.a. SP Entity ID: <RegionalUrl suffix='/auth/v1/sso/saml/metadata'/>
+   1. Single sign-on URL a.k.a. ACS URL: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/acs'/>
+   1. Audience URI a.k.a. SP Entity ID: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/metadata'/>
    1. Name ID format: email address
    1. Application username: email address
    1. Required claims: `sub` and `email`
@@ -118,8 +118,8 @@ For additional information, see Microsoft's [documentation](https://learn.micros
 1. In the left-side navigation, select `Manage > Single sign-on`.
 1. On the Single sign-on page, click `SAML`.
 1. Update the `Basic SAML Configuration`
-   1. `Identifier (Entity ID)`: <RegionalUrl suffix='/auth/v1/sso/saml/metadata'/>
-   1. `Reply URL (Assertion Consumer Service URL)`: <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>
+   1. `Identifier (Entity ID)`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/metadata'/>
+   1. `Reply URL (Assertion Consumer Service URL)`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/acs'/>
    1. Leave `Relay State`, `Logout Url`, and `Sign on URL` empty
    1. Click `Save`
 1. Ensure required claims are present with `Namespace`: `http://schemas.xmlsoap.org/ws/2005/05/identity/claims`
@@ -154,8 +154,8 @@ For additional information, see Google's [documentation](https://support.google.
 1. Enter the app name and, optionally, upload an icon. Click `Continue`.
 1. On the Google Identity Provider details page, download the `IDP metadata` and save it for Step 2 below. Click Continue.
 1. In the `Service Provider Details` window, enter:
-   1. `ACS URL`: <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>
-   1. `Entity ID`: <RegionalUrl suffix='/auth/v1/sso/saml/metadata'/>
+   1. `ACS URL`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/acs'/>
+   1. `Entity ID`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/metadata'/>
    1. Leave `Start URL` and the `Signed response` box empty.
    1. Set `Name ID` format to `EMAIL` and leave `Name ID` as the default (`Basic Information > Primary email`).
    1. Click `Continue`.
@@ -194,8 +194,8 @@ For additional information, see Okta's [documentation](https://help.okta.com/en-
 1. Select `SAML 2.0`
 1. Enter an `App name` (e.g. `LangSmith`) and optionally an `App logo`, then click `Next`
 1. Enter the following information in the `Conofigure SAML` page:
-   1. `Single sign-on URL` a.k.a. `ACS URL`: <RegionalUrl suffix='/auth/v1/sso/saml/acs'/>. Keep `Use this for Recipient URL and Destination URL` checked.
-   1. `Audience URI (SP Entity ID)`: <RegionalUrl suffix='/auth/v1/sso/saml/metadata'/>
+   1. `Single sign-on URL` a.k.a. `ACS URL`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/acs'/>. Keep `Use this for Recipient URL and Destination URL` checked.
+   1. `Audience URI (SP Entity ID)`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/metadata'/>
    1. `Name ID format`: `EmailAddress`
    1. `Application username`: `email`
    1. Leave the rest of the fields empty or set to their default.
