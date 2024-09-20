@@ -3,11 +3,13 @@ import CodeBlock from "@theme/CodeBlock";
 
 const DOMAINS = {
   US: {
+    auth: "auth.langchain.com",
     langsmith: "smith.langchain.com",
     api: "api.smith.langchain.com",
     hub: "api.smith.langchain.com",
   },
   EU: {
+    auth: "eu.auth.langchain.com",
     langsmith: "eu.smith.langchain.com",
     api: "eu.api.smith.langchain.com",
     hub: "eu.api.smith.langchain.com",
