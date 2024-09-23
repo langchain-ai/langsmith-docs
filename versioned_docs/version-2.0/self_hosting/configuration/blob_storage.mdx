@@ -74,8 +74,7 @@ Once you have a provisioned service account, you will need to generate a [`HMAC 
 ## CH Search
 
 By default, LangSmith will still store tokens for search in ClickHouse. If you are using LangSmith Managed Clickhouse, you
-may want to disable this feature to avoid sending potentially sensitive information to ClickHouse. You can do this by setting
-`CH_SEARCH_ENABLED=false` in your `.env` file.
+may want to disable this feature to avoid sending potentially sensitive information to ClickHouse. You can do this in your blob storage configuration.
 
 ## Configuration
 
