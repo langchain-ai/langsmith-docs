@@ -74,10 +74,10 @@ url = prompts.push("joke-generator", prompt)
 # url is a link to the prompt in the UI
 print(url)
 `),
-    TypeScriptBlock(`import * as prompts from "langchain/hub";
+    TypeScriptBlock(`import * as hub from "langchain/hub";
 import { ChatPromptTemplate } from "@langchain/core/prompts";\n
 const prompt = ChatPromptTemplate.fromTemplate("tell me a joke about {topic}");
-url = prompts.push("joke-generator", chain);
+const url = hub.push("joke-generator", chain);
 // url is a link to the prompt in the UI
 console.log(url);
 `),
@@ -110,13 +110,13 @@ url = prompts.push("joke-generator-with-model", chain)
 # url is a link to the prompt in the UI
 print(url)
 `),
-    TypeScriptBlock(`import * as prompts from "langchain/hub";
+    TypeScriptBlock(`import * as hub from "langchain/hub";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";\n
 const model = new ChatOpenAI({ model: "gpt-4o-mini" });\n
 const prompt = ChatPromptTemplate.fromTemplate("tell me a joke about {topic}");
 const chain = prompt.pipe(model);\n
-prompts.push("joke-generator-with-model", chain);`),
+await hub.push("joke-generator-with-model", chain);`),
   ]}
   groupId="client-language"
 />
@@ -144,9 +144,9 @@ prompt = prompts.pull("joke-generator")
 model = ChatOpenAI(model="gpt-4o-mini")\n
 chain = prompt | model
 chain.invoke({"topic": "cats"})`),
-    TypeScriptBlock(`import * as prompts from "langchain/hub";
+    TypeScriptBlock(`import * as hub from "langchain/hub";
 import { ChatOpenAI } from "@langchain/openai";\n
-const prompt = await prompts.pull("joke-generator");
+const prompt = await hub.pull("joke-generator");
 const model = new ChatOpenAI({ model: "gpt-4o-mini" });\n
 const chain = prompt.pipe(model);
 await chain.invoke({"topic": "cats"});`),
@@ -168,9 +168,9 @@ chain.invoke({"topic": "cats"})`),
     LangChainPyBlock(`from langchain import hub as prompts
 chain = prompts.pull("joke-generator-with-model", include_model=True)
 chain.invoke({"topic": "cats"})`),
-    TypeScriptBlock(`import * as prompts from "langchain/hub";
+    TypeScriptBlock(`import * as hub from "langchain/hub";
 import { Runnable } from "@langchain/core/runnables";\n
-const chain = await prompts.pull<Runnable>("joke-generator-with-model", { includeModel: true });
+const chain = await hub.pull<Runnable>("joke-generator-with-model", { includeModel: true });
 await chain.invoke({"topic": "cats"});`),
   ]}
   groupId="client-language"
@@ -235,10 +235,10 @@ prompt = client.pull_prompt("joke-generator")
 prompt_value = prompt.invoke({"topic": "cats"})\n
 openai_payload = convert_prompt_to_openai(prompt_value)
 openai_response = oai_client.chat.completions.create(**openai_payload)`),
-    TypeScriptBlock(`import * as prompts from "langchain/hub";
+    TypeScriptBlock(`import * as hub from "langchain/hub";
 import { convertPromptToOpenAI } from "@langchain/openai";\n
 import OpenAI from "openai";\n
-const prompt = await prompts.pull("jacob/joke-generator");
+const prompt = await hub.pull("jacob/joke-generator");
 const formattedPrompt = await prompt.invoke({
   topic: "cats",
 });\n
@@ -277,10 +277,10 @@ prompt = client.pull_prompt("joke-generator")
 prompt_value = prompt.invoke({"topic": "cats"})\n
 anthropic_payload = convert_prompt_to_anthropic(prompt_value)
 anthropic_response = anthropic_client.messages.create(**anthropic_payload)`),
-    TypeScriptBlock(`import * as prompts from "langchain/hub";
+    TypeScriptBlock(`import * as hub from "langchain/hub";
 import { convertPromptToAnthropic } from "@langchain/anthropic";\n
 import Anthropic from "@anthropic-ai/sdk";\n
-const prompt = await prompts.pull("jacob/joke-generator");
+const prompt = await hub.pull("jacob/joke-generator");
 const formattedPrompt = await prompt.invoke({
   topic: "cats",
 });\n
