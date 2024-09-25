@@ -146,7 +146,7 @@ chain = prompt | model
 chain.invoke({"topic": "cats"})`),
     TypeScriptBlock(`import * as prompts from "langchain/hub";
 import { ChatOpenAI } from "@langchain/openai";\n
-const prompt = prompts.pull("joke-generator");
+const prompt = await prompts.pull("joke-generator");
 const model = new ChatOpenAI({ model: "gpt-4o-mini" });\n
 const chain = prompt.pipe(model);
 await chain.invoke({"topic": "cats"});`),
@@ -170,7 +170,7 @@ chain = prompts.pull("joke-generator-with-model", include_model=True)
 chain.invoke({"topic": "cats"})`),
     TypeScriptBlock(`import * as prompts from "langchain/hub";
 import { Runnable } from "@langchain/core/runnables";\n
-const chain = prompts.pull<Runnable>("joke-generator-with-model", { includeModel: true });
+const chain = await prompts.pull<Runnable>("joke-generator-with-model", { includeModel: true });
 await chain.invoke({"topic": "cats"});`),
   ]}
   groupId="client-language"
@@ -182,7 +182,7 @@ When pulling a prompt, you can also specify a specific commit hash to pull a spe
   tabs={[
     PythonBlock(`prompt = client.pull_prompt("joke-generator:12344e88")`),
     LangChainPyBlock(`prompt = prompts.pull("joke-generator:12344e88")`),
-    TypeScriptBlock(`prompt = prompts.pull("joke-generator:12344e88")`),
+    TypeScriptBlock(`const prompt = await prompts.pull("joke-generator:12344e88")`),
   ]}
   groupId="client-language"
 />
@@ -193,7 +193,7 @@ To pull a public prompt from the LangChain Hub, you need to specify the handle o
   tabs={[
     PythonBlock(`prompt = client.pull_prompt("efriis/my-first-prompt")`),
     LangChainPyBlock(`prompt = prompts.pull("efriis/my-first-prompt")`),
-    TypeScriptBlock(`prompt = prompts.pull("efriis/my-first-prompt")`),
+    TypeScriptBlock(`const prompt = await prompts.pull("efriis/my-first-prompt")`),
   ]}
   groupId="client-language"
 />
@@ -234,8 +234,8 @@ openai_response = oai_client.chat.completions.create(**openai_payload)`),
     TypeScriptBlock(`import * as prompts from "langchain/hub";
 import { convertPromptToOpenAI } from "@langchain/openai";\n
 import OpenAI from "openai";\n
-const prompt = prompts.pull("jacob/joke-generator");
-const formattedPrompt = prompt.invoke({
+const prompt = await prompts.pull("jacob/joke-generator");
+const formattedPrompt = await prompt.invoke({
   topic: "cats",
 });\n
 const { messages } = convertPromptToOpenAI(formattedPrompt);\n
@@ -276,8 +276,8 @@ anthropic_response = anthropic_client.messages.create(**anthropic_payload)`),
     TypeScriptBlock(`import * as prompts from "langchain/hub";
 import { convertPromptToAnthropic } from "@langchain/anthropic";\n
 import Anthropic from "@anthropic-ai/sdk";\n
-const prompt = prompts.pull("jacob/joke-generator");
-const formattedPrompt = prompt.invoke({
+const prompt = await prompts.pull("jacob/joke-generator");
+const formattedPrompt = await prompt.invoke({
   topic: "cats",
 });\n
 const { messages, system } = convertPromptToAnthropic(formattedPrompt);\n
