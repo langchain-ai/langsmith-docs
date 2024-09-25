@@ -183,7 +183,7 @@ When pulling a prompt, you can also specify a specific commit hash to pull a spe
     PythonBlock(`prompt = client.pull_prompt("joke-generator:12344e88")`),
     LangChainPyBlock(`prompt = prompts.pull("joke-generator:12344e88")`),
     TypeScriptBlock(
-      `const prompt = await prompts.pull("joke-generator:12344e88")`
+      `const prompt = await hub.pull("joke-generator:12344e88")`
     ),
   ]}
   groupId="client-language"
@@ -196,7 +196,7 @@ To pull a public prompt from the LangChain Hub, you need to specify the handle o
     PythonBlock(`prompt = client.pull_prompt("efriis/my-first-prompt")`),
     LangChainPyBlock(`prompt = prompts.pull("efriis/my-first-prompt")`),
     TypeScriptBlock(
-      `const prompt = await prompts.pull("efriis/my-first-prompt")`
+      `const prompt = await hub.pull("efriis/my-first-prompt")`
     ),
   ]}
   groupId="client-language"
