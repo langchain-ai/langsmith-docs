@@ -112,7 +112,7 @@ print(url)
 `),
     TypeScriptBlock(`import * as prompts from "langchain/hub";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { ChatOpenAI } from "langchain-openai";\n
+import { ChatOpenAI } from "@langchain/openai";\n
 const model = new ChatOpenAI({ model: "gpt-4o-mini" });\n
 const prompt = ChatPromptTemplate.fromTemplate("tell me a joke about {topic}");
 const chain = prompt.pipe(model);\n
@@ -145,11 +145,11 @@ model = ChatOpenAI(model="gpt-4o-mini")\n
 chain = prompt | model
 chain.invoke({"topic": "cats"})`),
     TypeScriptBlock(`import * as prompts from "langchain/hub";
-import { ChatOpenAI } from "langchain-openai";\n
+import { ChatOpenAI } from "@langchain/openai";\n
 const prompt = prompts.pull("joke-generator");
 const model = new ChatOpenAI({ model: "gpt-4o-mini" });\n
 const chain = prompt.pipe(model);
-chain.invoke({"topic": "cats"});`),
+await chain.invoke({"topic": "cats"});`),
   ]}
   groupId="client-language"
 />
@@ -171,7 +171,7 @@ chain.invoke({"topic": "cats"})`),
     TypeScriptBlock(`import * as prompts from "langchain/hub";
 import { Runnable } from "@langchain/core/runnables";\n
 const chain = prompts.pull<Runnable>("joke-generator-with-model", { includeModel: true });
-chain.invoke({"topic": "cats"});`),
+await chain.invoke({"topic": "cats"});`),
   ]}
   groupId="client-language"
 />
@@ -203,6 +203,21 @@ To pull a public prompt from the LangChain Hub, you need to specify the handle o
 If you want to store your prompts in LangSmith but use them directly with a model provider's API, you can use our conversion methods.
 These convert your prompt into the payload required for the OpenAI or Anthropic API.
 
+These conversion methods rely on logic from within LangChain integration packages, and you will need to install the appropriate package as a dependency
+in addition to your official SDK of choice. Here are some examples:
+
+### OpenAI
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`pip install -U langchain_openai`),
+    TypeScriptBlock(
+      `yarn add @langchain/openai @langchain/core \n// @langchain/openai version >= 0.3.2`
+    ),
+  ]}
+  groupId="client-language"
+/>
+
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client, convert_prompt_to_openai
@@ -216,7 +231,64 @@ prompt = client.pull_prompt("joke-generator")
 prompt_value = prompt.invoke({"topic": "cats"})\n
 openai_payload = convert_prompt_to_openai(prompt_value)
 openai_response = oai_client.chat.completions.create(**openai_payload)`),
-    TypeScriptBlock(`// Coming soon...`),
+    TypeScriptBlock(`import * as prompts from "langchain/hub";
+import { convertPromptToOpenAI } from "@langchain/openai";\n
+import OpenAI from "openai";\n
+const prompt = prompts.pull("jacob/joke-generator");
+const formattedPrompt = prompt.invoke({
+  topic: "cats",
+});\n
+const { messages } = convertPromptToOpenAI(formattedPrompt);\n
+const openAIClient = new OpenAI();\n
+const openAIResponse = await openAIClient.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages,
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+### Anthropic
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`pip install -U langchain_anthropic`),
+    TypeScriptBlock(
+      `yarn add @langchain/anthropic @langchain/core \n// @langchain/anthropic version >= 0.3.3`
+    ),
+  ]}
+  groupId="client-language"
+/>
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client, convert_prompt_to_anthropic
+from anthropic import Anthropic\n
+# langsmith client
+client = Client()\n
+# anthropic client
+anthropic_client = Anthropic()\n
+# pull prompt and invoke to populate the variables
+prompt = client.pull_prompt("joke-generator")
+prompt_value = prompt.invoke({"topic": "cats"})\n
+anthropic_payload = convert_prompt_to_anthropic(prompt_value)
+anthropic_response = anthropic_client.messages.create(**anthropic_payload)`),
+    TypeScriptBlock(`import * as prompts from "langchain/hub";
+import { convertPromptToAnthropic } from "@langchain/anthropic";\n
+import Anthropic from "@anthropic-ai/sdk";\n
+const prompt = prompts.pull("jacob/joke-generator");
+const formattedPrompt = prompt.invoke({
+  topic: "cats",
+});\n
+const { messages, system } = convertPromptToAnthropic(formattedPrompt);\n
+const anthropicClient = new Anthropic();\n
+const anthropicResponse = await anthropicClient.messages.create({
+  model: "claude-3-haiku-20240307",
+  system,
+  messages,
+  max_tokens: 1024,
+  stream: false,
+});`),
   ]}
   groupId="client-language"
 />
