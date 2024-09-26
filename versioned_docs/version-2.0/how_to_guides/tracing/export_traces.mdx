@@ -152,6 +152,34 @@ for await (const run of client.listRuns({
 
 For more complex queries, you can use the query language described in the [filter query language reference](../../reference/data_formats/trace_query_syntax#filter-query-language).
 
+### List all root runs in a conversational thread
+
+This is the way to fetch runs in a conversational thread. For more information on setting up threads, refer to our [how-to guide on setting up threads](/how_to_guides/monitoring/threads).
+Threads are grouped by setting a shared thread ID. The LangSmith UI lets you use any one of the following three metadata keys: `session_id`, `conversation_id`, or `thread_id`. The following query matches on any of them.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`group_key = "<your_thread_id>"
+filter_string = f'and(in(metadata_key, ["session_id","conversation_id","thread_id"]), eq(metadata_value, "{group_key}"))'
+thread_runs = client.list_runs(
+    project_name="<your_project>",
+    filter=filter_string,
+    is_root=True
+)`),
+    TypeScriptBlock(`const groupKey = "<your_thread_id>";
+const filterString = \`and(in(metadata_key, ["session_id","conversation_id","thread_id"]), eq(metadata_value, "\${groupKey}"))\`;
+const threadRuns: Run[] = [];
+for await (const run of client.listRuns({
+  projectName: "<your_project>",
+  filter: filterString,
+  isRoot: true
+})) {
+  threadRuns.push(run);
+};`),
+  ]}
+  groupId="client-language"
+/>
+
 ### List all runs called "extractor" whose root of the trace was assigned feedback "user_score" score of 1
 
 <CodeTabs
