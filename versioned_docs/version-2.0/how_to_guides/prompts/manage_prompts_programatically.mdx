@@ -220,8 +220,8 @@ in addition to your official SDK of choice. Here are some examples:
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client, convert_prompt_to_openai
-from openai import OpenAI\n
+    PythonBlock(`from openai import OpenAI\n
+from langsmith.client import Client, convert_prompt_to_openai_format\n
 # langsmith client
 client = Client()\n
 # openai client
@@ -229,7 +229,7 @@ oai_client = OpenAI()\n
 # pull prompt and invoke to populate the variables
 prompt = client.pull_prompt("joke-generator")
 prompt_value = prompt.invoke({"topic": "cats"})\n
-openai_payload = convert_prompt_to_openai(prompt_value)
+openai_payload = convert_prompt_to_openai_format(prompt_value)
 openai_response = oai_client.chat.completions.create(**openai_payload)`),
     TypeScriptBlock(`import * as hub from "langchain/hub";
 import { convertPromptToOpenAI } from "@langchain/openai";\n
@@ -262,16 +262,16 @@ const openAIResponse = await openAIClient.chat.completions.create({
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client, convert_prompt_to_anthropic
-from anthropic import Anthropic\n
+    PythonBlock(`from anthropic import Anthropic\n
+from langsmith.client import Client, convert_prompt_to_anthropic_format\n
 # langsmith client
-client = Client()\n
+client = Client()
 # anthropic client
-anthropic_client = Anthropic()\n
+anthropic_client = Anthropic()
 # pull prompt and invoke to populate the variables
 prompt = client.pull_prompt("joke-generator")
-prompt_value = prompt.invoke({"topic": "cats"})\n
-anthropic_payload = convert_prompt_to_anthropic(prompt_value)
+prompt_value = prompt.invoke({"topic": "cats"})
+anthropic_payload = convert_prompt_to_anthropic_format(prompt_value)
 anthropic_response = anthropic_client.messages.create(**anthropic_payload)`),
     TypeScriptBlock(`import * as hub from "langchain/hub";
 import { convertPromptToAnthropic } from "@langchain/anthropic";\n
