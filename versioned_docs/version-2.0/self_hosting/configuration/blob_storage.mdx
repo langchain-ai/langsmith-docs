@@ -71,6 +71,11 @@ Your service account will need the `Storage Admin` role or a custom role with eq
 
 Once you have a provisioned service account, you will need to generate a [`HMAC key`](https://cloud.google.com/storage/docs/authentication/hmackeys) for that service account. This key and secret will be used to authenticate with Google Cloud Storage.
 
+## CH Search
+
+By default, LangSmith will still store tokens for search in ClickHouse. If you are using LangSmith Managed Clickhouse, you
+may want to disable this feature to avoid sending potentially sensitive information to ClickHouse. You can do this in your blob storage configuration.
+
 ## Configuration
 
 After creating your bucket and obtaining the necessary credentials, you can configure LangSmith to use your blob storage system.
@@ -81,6 +86,7 @@ After creating your bucket and obtaining the necessary credentials, you can conf
   config:
     blobStorage:
       enabled: true
+      chSearchEnabled: true # Set to false if you want to disable CH search (Recommended for LangSmith Managed Clickhouse)
       bucketName: "your-bucket-name"
       apiURL: "Your connection url"
       accessKey: "Your access key" # Optional. Only required if using access key and secret key

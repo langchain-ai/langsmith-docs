@@ -36,6 +36,11 @@ Additionally, sensitive information can be configured to be not stored in Clickh
 - We only support standalone ClickHouse (not clustered or replicated) or ClickHouse Cloud.
 - We only support ClickHouse versions >= 23.9. Use of ClickHouse versions >= 24.2 requires LangSmith v0.6 or later. See the [LangSmith release notes](../release_notes) for more information.
 
+## LangSmith-managed ClickHouse
+
+- If using LangSmith-managed ClickHouse, you will need to set up a VPC peering connection between the LangSmith VPC and the ClickHouse VPC. Please reach out to [support@langchain.dev](mailto:support@langchain.dev) for more information.
+- You will also need to set up Blob Storage. You can read more about Blob Storage in the [Blob Storage documentation](/self_hosting/configuration/blob_storage).
+
 ## Parameters
 
 You will need to provide several parameters to your LangSmith installation to configure an external ClickHouse database. These parameters include:
