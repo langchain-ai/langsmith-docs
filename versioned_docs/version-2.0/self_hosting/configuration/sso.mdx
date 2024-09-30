@@ -51,7 +51,11 @@ For providers that do _not_ support `Authorization Code with PKCE`, LangSmith Se
 
 :::note
 You may upgrade a [basic auth](./basic_auth.mdx) installation to this mode, but not a [none auth](../../reference/authentication_authorization/authentication_methods.mdx#none) installation.
-In order to upgrade, simply add the required configuration parameters as shown below. Users may then login via OAuth _only_.
+In order to upgrade, simply remove the basic auth configuration and add the required configuration parameters as shown below. Users may then login via OAuth _only_.
+:::
+
+:::warning
+LangSmith does not support moving from SSO to basic auth mode in self-hosted at the moment.
 :::
 
 - Your IdP must support the `Authorization Code` flow _without_ PKCE.
