@@ -1,0 +1,55 @@
+---
+sidebar_label: Troubleshooting
+sidebar_position: 9
+description: "Troubleshooting common issues with your Self-Hosted LangSmith instance."
+---
+
+# Troubleshooting
+
+This guide will walk you through common issues you may encounter when running a self-hosted instance of LangSmith.
+
+While running LangSmith, you may encounter unexpected 500 errors, slow performance, or other issues. This guide will help you diagnose and resolve these issues.
+
+The first step in troubleshooting is to check the logs of the various services that make up LangSmith.
+
+If running on Kubernetes, you can check the logs of a pod by running the following command (replace `langsmith` with the name of your deployment if you deployed with a different name):
+
+```bash
+kubectl logs -l app.kubernetes.io/instance=langsmith --prefix -n <namespace> >> logs.txt
+```
+
+If running on Docker, you can check the logs of a container by running the following command:
+
+```bash
+docker compose logs >> logs.txt
+```
+
+Generally, the main services you will want to analyze are:
+
+- `langsmith-backend`: The main backend service.
+- `langsmith-queue`: The queue service.
+
+## Common issues
+
+### _DB::Exception: Cannot reserve 1.00 MiB, not enough space: While executing WaitForAsyncInsert. (NOT_ENOUGH_SPACE)_
+
+This error occurs when ClickHouse runs out of disk space. You will need to increase the disk space available to ClickHouse.
+
+#### Kubernetes
+
+In Kubernetes, you will need to increase the size of the ClickHouse PVC. To achieve this, you can perform the following steps:
+
+1. Ensure the storage class has AllowVolumeExpansion: true , this will be pretty easy:
+1. Edit your pvc to have the new size: `kubectl edit pvc data-langsmith-clickhouse-0 -n <namespace>` or `kubectl patch pvc data-langsmith-clickhouse-0 '{"spec":{"resources":{"requests":{"storage":"100Gi"}}}}' -n <namespace>`
+1. Update your helm chart `langsmith_config.yaml` to new size(e.g `100 Gi`)
+1. Delete the clickhouse statefulset `kubectl delete statefulset langsmith-clickhouse --cascade=orphan -n <namespace>`
+1. Apply helm chart with updated size (You can follow the upgrade guide [here](./upgrades))
+1. Your pvc should now have the new size. Verify by running `kubectl get pvc` and `kubectl exec langsmith-clickhouse-0 -- bash -c "df"`
+
+#### Docker
+
+In Docker, you will need to increase the size of the ClickHouse volume. To achieve this, you can perform the following steps:
+
+1. Stop your instance of LangSmith. `docker compose down`
+1. If using bind mount, you will need to increase the size of the mount point.
+1. If using a docker `volume`, you will need to allocate more space to the volume/docker.
