@@ -12,13 +12,13 @@ While running LangSmith, you may encounter unexpected 500 errors, slow performan
 
 The first step in troubleshooting is to check the logs of the various services that make up LangSmith.
 
-If running on Kubernetes, you can check the logs of a pod by running the following command (replace `langsmith` with the name of your deployment if you deployed with a different name):
+If running on Kubernetes, you can check the logs of your deployment by running the following command (replace `langsmith` with the name of your deployment if you deployed with a different name):
 
 ```bash
 kubectl logs -l app.kubernetes.io/instance=langsmith --prefix -n <namespace> >> logs.txt
 ```
 
-If running on Docker, you can check the logs of a container by running the following command:
+If running on Docker, you can check the logs your deployment by running the following command:
 
 ```bash
 docker compose logs >> logs.txt
