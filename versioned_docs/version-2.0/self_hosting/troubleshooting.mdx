@@ -39,7 +39,11 @@ This error occurs when ClickHouse runs out of disk space. You will need to incre
 
 In Kubernetes, you will need to increase the size of the ClickHouse PVC. To achieve this, you can perform the following steps:
 
-1. Ensure the storage class has AllowVolumeExpansion: true , this will be pretty easy:
+1. Get the storage class of the PVC: `kubectl get pvc data-langsmith-clickhouse-0 -n <namespace> -o jsonpath='{.spec.storageClassName}'`
+1. Ensure the storage class has AllowVolumeExpansion: true: `kubectl get sc <storage-class-name> -o jsonpath='{.allowVolumeExpansion}'`
+   - If it is false, some storage classes can be updated to allow volume expansion.
+   - To update the storage class, you can run `kubectl patch sc <storage-class-name> -p '{"allowVolumeExpansion": true}'`
+   - If this fails, you may need to create a new storage class with the correct settings.
 1. Edit your pvc to have the new size: `kubectl edit pvc data-langsmith-clickhouse-0 -n <namespace>` or `kubectl patch pvc data-langsmith-clickhouse-0 '{"spec":{"resources":{"requests":{"storage":"100Gi"}}}}' -n <namespace>`
 1. Update your helm chart `langsmith_config.yaml` to new size(e.g `100 Gi`)
 1. Delete the clickhouse statefulset `kubectl delete statefulset langsmith-clickhouse --cascade=orphan -n <namespace>`
