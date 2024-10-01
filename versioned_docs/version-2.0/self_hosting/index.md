@@ -20,7 +20,7 @@ Step-by-step guides that cover the installation, configuration, and scaling of y
   - [Connect to an external Redis instance](./self_hosting/configuration/external_redis): Configure LangSmith to use an external Redis instance.
   - [Email/password a.k.a. basic auth (beta)](./self_hosting/configuration/basic_auth): Configure LangSmith to use email/password authentication.
   - [Blob storage](./self_hosting/configuration/blob_storage): Configure LangSmith to use blob storage.
-  - [TTLs](./self_hosting/configuration/ttls): Configure LangSmith to use TTLs.
+  - [TTLs](./self_hosting/configuration/ttl): Configure LangSmith to use TTLs.
 - [Usage](./self_hosting/usage): How to use your self-hosted instance of LangSmith.
 - [Upgrades](./self_hosting/upgrades): How to upgrade your self-hosted instance of LangSmith.
 - [Release notes](./self_hosting/release_notes): The latest release notes for LangSmith.
