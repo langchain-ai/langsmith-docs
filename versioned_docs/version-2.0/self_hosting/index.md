@@ -18,12 +18,17 @@ Step-by-step guides that cover the installation, configuration, and scaling of y
   - [Connect to an external ClickHouse database](./self_hosting/configuration/external_clickhouse): Configure LangSmith to use an external ClickHouse database.
   - [Connect to an external Postgres database](./self_hosting/configuration/external_postgres): Configure LangSmith to use an external Postgres database.
   - [Connect to an external Redis instance](./self_hosting/configuration/external_redis): Configure LangSmith to use an external Redis instance.
+  - [Email/password a.k.a. basic auth (beta)](./self_hosting/configuration/basic_auth): Configure LangSmith to use email/password authentication.
+  - [Blob storage](./self_hosting/configuration/blob_storage): Configure LangSmith to use blob storage.
+  - [TTLs](./self_hosting/configuration/ttl): Configure LangSmith to use TTLs.
 - [Usage](./self_hosting/usage): How to use your self-hosted instance of LangSmith.
 - [Upgrades](./self_hosting/upgrades): How to upgrade your self-hosted instance of LangSmith.
 - [Release notes](./self_hosting/release_notes): The latest release notes for LangSmith.
+- - [Week of August 26, 2024 - LangSmith v0.7](./self_hosting/release_notes#week-of-august-26-2024---langsmith-v07): Release notes for version 0.7 of LangSmith.
   - [Week of June 17, 2024 - LangSmith v0.6](./self_hosting/release_notes#week-of-june-17-2024---langsmith-v05): Release notes for version 0.6 of LangSmith.
   - [Week of May 13, 2024 - LangSmith v0.5](./self_hosting/release_notes#week-of-may-13-2024---langsmith-v05): Release notes for version 0.5 of LangSmith.
   - [Week of March 25, 2024 - LangSmith v0.4](./self_hosting/release_notes#week-of-march-25-2024---langsmith-v04): Release notes for version 0.4 of LangSmith.
   - [Week of Februrary 21, 2024 - LangSmith v0.3](./self_hosting/release_notes#week-of-february-21-2024---langsmith-v03): Release notes for version 0.3 of LangSmith.
   - [Week of January 29, 2024 - LangSmith v0.2](./self_hosting/release_notes#week-of-january-29-2024---langsmith-v02): Release notes for version 0.2 of LangSmith.
 - [FAQ](./self_hosting/faq): Frequently asked questions about LangSmith.
+- [Troubleshooting](./self_hosting/troubleshooting): Troubleshooting common issues with your Self-Hosted LangSmith instance.
