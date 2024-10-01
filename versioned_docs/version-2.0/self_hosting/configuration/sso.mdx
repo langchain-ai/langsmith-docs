@@ -62,13 +62,13 @@ LangSmith does not support moving from SSO to basic auth mode in self-hosted at 
 - Your IdP must support using an external discovery/issuer URL. We will use this to fetch the necessary routes and keys for your IdP.
 - You must provide the `OIDC`, `email`, and `profile` scopes to LangSmith. We use these to fetch the necessary user information and email for your users.
 - You will need to set the callback URL in your IdP to `http://<host>/api/v1/oauth/custom-oidc/callback`, where host is the domain or IP you have provisioned for your LangSmith instance. This is where your IdP will redirect the user after they have authenticated.
-- You will need to provide the `oauthClientId`, `oauthClientSecret`, `baseUrl`, and `oauthIssuerUrl` in your `values.yaml` file. This is where you will configure your LangSmith instance.
+- You will need to provide the `oauthClientId`, `oauthClientSecret`, `langsmithUrl`, and `oauthIssuerUrl` in your `values.yaml` file. This is where you will configure your LangSmith instance.
 
 <CodeTabs
   tabs={[
     HelmBlock(`config:
   authType: mixed
-  baseUrl: https://\<YOUR DOMAIN\>.com
+  langsmithUrl: https://langsmith.example.com
   oauth:
     enabled: true
     oauthClientId: \<YOUR CLIENT ID\>
@@ -77,6 +77,7 @@ LangSmith does not support moving from SSO to basic auth mode in self-hosted at 
     DockerBlock(
       `# In your .env file
 AUTH_TYPE=mixed
+LANGSMITH_URL=https://langsmith.example.com
 OAUTH_CLIENT_ID=your-client-id
 OAUTH_CLIENT_SECRET=your-client-secret
 OAUTH_ISSUER_URL=https://your-issuer-url
