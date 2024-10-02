@@ -120,7 +120,7 @@ await chain.invoke(
 
 ## Add metadata and tags to traces
 
-LangSmith supports sending arbitrary metadata and tags along with traces.
+You can send annotate your traces with arbitrary metadata and tags by providing them in the [Config](https://api.python.langchain.com/en/latest/runnables/langchain_core.runnables.config.RunnableConfig.html#langchain-core-runnables-config-runnableconfig).
 This is useful for associating additional information with a trace, such as the environment in which it was executed, or the user who initiated it.
 For information on how to query traces and runs by metadata and tags, see [this guide](./export_traces)
 
@@ -169,7 +169,8 @@ await chain.invoke({input: "What is the meaning of life?"}, {tags: ["invoke-tag"
 
 ## Customize run name
 
-When you create a run, you can specify a name for the run. This name is used to identify the run in LangSmith and can be used to filter and group runs. The name is also used as the title of the run in the LangSmith UI.
+You can customize the name of a given run when invoking or streaming your LangChain code by providing it in the [Config](https://api.python.langchain.com/en/latest/runnables/langchain_core.runnables.config.RunnableConfig.html#langchain-core-runnables-config-runnableconfig).
+This name is used to identify the run in LangSmith and can be used to filter and group runs. The name is also used as the title of the run in the LangSmith UI.
 This can be done by setting a `run_name` in the `RunnableConfig` object at construction or by passing a `run_name` in the invocation parameters in JS/TS.
 
 :::note
@@ -193,6 +194,34 @@ await chain.invoke({ input: "What is the meaning of life?" }, {runName: "MyCusto
   ]}
   groupId="client-language"
 />
+
+## Customize run ID
+
+You can customize the ID of a given run when invoking or streaming your LangChain code by providing it in the [Config](https://api.python.langchain.com/en/latest/runnables/langchain_core.runnables.config.RunnableConfig.html#langchain-core-runnables-config-runnableconfig).
+This ID is used to uniquely identify the run in LangSmith and can be used to query specific runs. The ID can be useful for linking runs across different systems or for implementing custom tracking logic.
+This can be done by setting a `run_id` in the `RunnableConfig` object at construction or by passing a `run_id` in the invocation parameters in JS/TS.
+
+:::note
+
+This feature is not currently supported directly for LLM objects.
+
+:::
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`import uuid\n
+my_uuid = uuid.uuid4()
+# You can configure the run ID at invocation time:
+chain.invoke({"input": "What is the meaning of life?"}, {"run_id": my_uuid})`),
+    TypeScriptBlock(`import { v4 as uuidv4 } from 'uuid';\n
+const myUuid = uuidv4();\n
+// You can configure the run ID at invocation time, like below
+await chain.invoke({ input: "What is the meaning of life?" }, { runId: myUuid });`),
+  ]}
+  groupId="client-language"
+/>
+
+Note that if you do this at the **root** of a trace (i.e., the top-level run, that run ID will be used as the `trace_id`).
 
 ## Access run (span) ID for LangChain invocations
 
