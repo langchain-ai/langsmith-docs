@@ -93,6 +93,10 @@ Some identity providers retain the original `User ID` through an email change wh
 1. Change their email address in the IdP
 1. Have them login to LangSmith again via SAML SSO - this will trigger the usual [JIT provisioning](#just-in-time-jit-provisioning) flow with their new email address
 
+#### _How do I fix "405 method not allowed"?_
+
+Ensure you're using the correct ACS URL: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/acs'/>
+
 ## Identity Provider (IdP) Setup
 
 These are instructions for setting up LangSmith SAML SSO with Entra ID (formerly Azure), Google, and Okta. If you use a different Identity Provider and need assistance with configuration, please contact our support team.
