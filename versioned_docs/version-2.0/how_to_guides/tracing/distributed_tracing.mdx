@@ -35,7 +35,51 @@ async def my_client_function():
         return await client.post("/my-route", headers=headers)
 ```
 
-Then the server (or other service) can continue the trace by passing the headers in as `langsmith_extra`:
+Then the server (or other service) can continue the trace by handling the headers appropriately.
+If you are using an asgi app Starlette or FastAPI, you can connect the distributed trace using LangSmith's `TracingMiddleware`.
+
+:::info
+The `TracingMiddleware` class was added in `langsmith==0.1.133`.
+:::
+
+Example using FastAPI:
+
+```python
+from langsmith import traceable
+from langsmith.middleware import TracingMiddleware
+from fastapi import FastAPI, Request
+
+
+app = FastAPI()  # Or Flask, Django, or any other framework
+app.add_middleware(TracingMiddleware)
+
+@traceable
+async def some_function():
+    ...
+
+@app.post("/my-route")
+async def fake_route(request: Request):
+  return await some_function()
+```
+
+Or in Starlette:
+
+```python
+from starlette.applications import Starlette
+from starlette.middleware import Middleware
+from langsmith.middleware import TracingMiddleware
+
+routes = ...
+
+middleware = [
+    Middleware(TracingMiddleware),
+]
+
+app = Starlette(..., middleware=middleware)
+
+```
+
+If you are using other server frameworks, you can always "receive" the distributed trace by passing the headers in through `langsmith_extra`:
 
 ```python
 # server.py
