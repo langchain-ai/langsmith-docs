@@ -1,6 +1,6 @@
 ---
 sidebar_label: Scripts
-sidebar_position: 2
+sidebar_position: 1
 description: "Administration scripts for LangSmith"
 ---
 
