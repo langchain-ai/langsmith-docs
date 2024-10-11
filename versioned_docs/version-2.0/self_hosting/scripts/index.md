@@ -1,6 +1,6 @@
 ---
 sidebar_label: Scripts
-sidebar_position: 2
+sidebar_position: 1
 description: "Administration scripts for LangSmith"
 ---
 
@@ -15,4 +15,5 @@ This section contains guides for performing common administrative tasks that are
 - [Delete a trace](/self_hosting/scripts/delete_traces): Delete a trace in LangSmith.
 - [Generate Clickhouse statistics](/self_hosting/scripts/generate_clickhouse_stats): Generate Clickhouse statistics.
 - [Generate LangSmith Query statistics](/self_hosting/scripts/generate_query_stats): Generate LangSmith Query statistics from Clickhouse.
-- [Running Support Queries](/self_hosting/scripts/generate_query_stats): Running other support queries supplied by the LangChain support team.
+- [Running Postgres Support Queries](/self_hosting/scripts/running_pg_support_queries): Running other postgres-related support queries supplied by the LangChain support team.
+- [Running Clickhouse Support Queries](/self_hosting/scripts/running_ch_support_queries): Running other Clickhouse-related support queries supplied by the LangChain support team.
