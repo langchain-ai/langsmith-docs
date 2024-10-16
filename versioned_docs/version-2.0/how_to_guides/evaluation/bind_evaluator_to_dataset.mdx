@@ -54,10 +54,16 @@ You can specify the scoring criteria in the "schema" field. In this example, we 
 1. **Select the `Custom code` type evaluator**
 2. **Write your evaluation function**
 
-:::note
-Custom code evaluators use pyodide sandboxes under the hood to ensure security for our customers. You are
-restricted to import only their [supported packages](https://pyodide.org/en/stable/usage/packages-in-pyodide.html).
-Most commonly used python packages are available (e.g. numpy, pandas, jsonschema, etc)
+:::note Custom code evaluators only support a subset of python packages. 
+
+You can import the following packages:
+```
+  numpy: "numpy"
+  pandas: "pandas"
+  jsonschema: "jsonschema"
+  scipy: "scipy"
+  sklearn: "scikit-learn"
+```
 :::
 
 In the UI, you will see a panel that lets you write your code inline, with some starter code:
