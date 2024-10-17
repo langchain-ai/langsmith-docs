@@ -21,7 +21,7 @@ on sampled runs that you can query downstream in our application. There are two 
 
 ![](../static/automations.png)
 
-## Configure LLM as a judge online evaluations
+## Configure LLM as judge evaluators
 
 Currently, we provide support for specifying a prompt template, a model, and a set of criteria to evaluate the runs on.
 
@@ -84,5 +84,63 @@ The name of the schema cannot have spaces since it is used as the name of a tool
 
 Click `Add Rule` -> `Code evaluator` to create an evaluator. 
 
-### Write Code 
+### Write your evaluation function
 
+:::note Custom code evaluators only support a subset of python packages. 
+
+You can import the following packages:
+```
+  numpy: "numpy"
+  pandas: "pandas"
+  jsonschema: "jsonschema"
+  scipy: "scipy"
+  sklearn: "scikit-learn"
+```
+:::
+
+In the UI, you will see a panel that lets you write your code inline, with some starter code:
+
+![](./static/online-eval-custom-code.png)
+
+Custom code evaluators take in one arguments:
+
+- A `Run` ([reference](../../../reference/data_formats/run_data_format)). This represents the sampled run to evaluate.
+
+They return a single value:
+
+- Feedback(s) Dictionary: A dictionary whose keys are the type of feedback you want to return, and values are the
+  score you will give for that feedback key. For example, `{"correctness": 1, "silliness": 0}` would create two types
+  of feedback on the run, one saying it is correct, and the other saying it is not silly.
+
+In the below screenshot, you can see an example of a simple function that validates that each run in the experiment
+has a known json field:
+
+```{python}
+import json
+
+def perform_eval(run):
+  output_to_validate = run['outputs']
+  is_valid_json = 0
+
+  # assert you can serialize/deserialize as json
+  try:
+    json.loads(json.dumps(output_to_validate))
+  except Exception as e:
+    return { "formatted": False }
+
+  # assert output facts exist
+  if "facts" not in output_to_validate:
+    return { "formatted": False }
+
+  # assert required fields exist
+  if "years_mentioned" not in output_to_validate["facts"]:
+    return { "formatted": False }
+
+  return {"formatted": True}
+```
+
+### Test and save your evaluation function
+
+Before saving, you can click test, and LangSmith will pull up a recent run to make sure that your code executes properly. 
+
+Save once your code works, and your online evaluator will now run over newly sampled runs (or backfilled ones too if you chose the backfill option).
