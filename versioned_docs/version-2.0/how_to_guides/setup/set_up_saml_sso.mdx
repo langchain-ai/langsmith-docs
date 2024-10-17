@@ -34,6 +34,10 @@ SSO services permit a user to use one set of credentials (for example, a name or
 See IdP-specific instructions [below](#identity-provider-idp-setup)
 :::note
 
+:::note
+The URLs are different for the US and EU. Please make sure to select your region from the dropdown in the top right.
+:::
+
 1. In your IdP: Configure a SAML application with the following details, then copy the metadata URL or XML for step 3 below
    1. Single sign-on URL a.k.a. ACS URL: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/acs'/>
    1. Audience URI a.k.a. SP Entity ID: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/metadata'/>
@@ -196,7 +200,7 @@ For additional information, see Okta's [documentation](https://help.okta.com/en-
 1. Under `Applications > Applications` click `Create App Integration`
 1. Select `SAML 2.0`
 1. Enter an `App name` (e.g. `LangSmith`) and optionally an `App logo`, then click `Next`
-1. Enter the following information in the `Conofigure SAML` page:
+1. Enter the following information in the `Configure SAML` page:
    1. `Single sign-on URL` a.k.a. `ACS URL`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/acs'/>. Keep `Use this for Recipient URL and Destination URL` checked.
    1. `Audience URI (SP Entity ID)`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/metadata'/>
    1. `Name ID format`: `EmailAddress`
