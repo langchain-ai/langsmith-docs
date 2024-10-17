@@ -12,11 +12,11 @@ Before diving into this content, it might be helpful to read the following:
 
 :::
 
-Online evaluations is a powerful LangSmith feature that allows you to gain insight on your production traces. You 
+Online evaluations is a powerful LangSmith feature that allows you to gain insight on your production traces. You
 simply configure a sample of runs that you want to be evaluated from production, and the evaluator will leave feedback
 on sampled runs that you can query downstream in our application. There are two types of online evaluations we support:
 
-- Custom Code: write a python evaluator directly in LangSmith. Often used for validating structure or statistical properties of your data. 
+- Custom Code: write a python evaluator directly in LangSmith. Often used for validating structure or statistical properties of your data.
 - LLM as a Judge: use an LLM to evaluate your traces. Often used to understand higher level qualities of your output (e.g. toxicity, hallucination, etc)
 
 ![](../static/automations.png)
@@ -80,15 +80,16 @@ The names and the descriptions of the fields will be passed into the prompt. Beh
 The name of the schema cannot have spaces since it is used as the name of a tool.
 :::
 
-## Configure custom code evaluators 
+## Configure custom code evaluators
 
-Click `Add Rule` -> `Code evaluator` to create an evaluator. 
+Click `Add Rule` -> `Code evaluator` to create an evaluator.
 
 ### Write your evaluation function
 
-:::note Custom code evaluators restrictions. 
+:::note Custom code evaluators restrictions.
 
 **Allowed Libraries**: You can import all standard library functions, as well as the following public packages:
+
 ```
   numpy (v2.2.2): "numpy"
   pandas (v1.5.2): "pandas"
@@ -143,6 +144,6 @@ def perform_eval(run):
 
 ### Test and save your evaluation function
 
-Before saving, you can click test, and LangSmith will pull up a recent run to make sure that your code executes properly. 
+Before saving, you can click test, and LangSmith will pull up a recent run to make sure that your code executes properly.
 
 Save once your code works, and your online evaluator will now run over newly sampled runs (or backfilled ones too if you chose the backfill option).
