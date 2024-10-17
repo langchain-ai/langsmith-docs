@@ -16,9 +16,9 @@ When you configure an evaluator for a dataset, it will only affect the experimen
 1. **Navigate to the dataset details page** by clicking **Datasets and Testing** in the sidebar and selecting the dataset you want to configure the evaluator for.
 2. **Click on the `Add Auto-Evaluator` button** to add an evaluator to the dataset. This will open a modal you can use to configure the evaluator.
 
-The next steps vary based on the evaluator type. 
+The next steps vary based on the evaluator type.
 
-## LLM as judge evaluators 
+## LLM as judge evaluators
 
 1. **Select the LLM as judge type evaluator**
 2. **Give your evaluator a name** and **set an inline prompt or load a prompt from the prompt hub** that will be used to evaluate the results of the runs in the experiment.
@@ -50,13 +50,13 @@ You can specify the scoring criteria in the "schema" field. In this example, we 
 
 ## Custom code evaluators
 
-
 1. **Select the `Custom code` type evaluator**
 2. **Write your evaluation function**
 
-:::note Custom code evaluators restrictions. 
+:::note Custom code evaluators restrictions.
 
 **Allowed Libraries**: You can import all standard library functions, as well as the following public packages:
+
 ```
   numpy (v2.2.2): "numpy"
   pandas (v1.5.2): "pandas"
@@ -118,11 +118,11 @@ def perform_eval(run, example):
 
 Before saving, you can click test, and LangSmith will run your code over a past run+example pair to make sure your evaluation code works.
 
-This auto evaluator will now leave feedback on any type of future experiment, whether it be from the SDK or via Playground. 
+This auto evaluator will now leave feedback on any type of future experiment, whether it be from the SDK or via Playground.
 
 4. **See the results in action**
 
-To visualize the feedback left on new experiments, try running a new experiment via playground. 
+To visualize the feedback left on new experiments, try running a new experiment via playground.
 
 On the dataset, if you now click to the `experiments` tab -> `+ Experiment` -> `Run in Playground`, you can see the results in action.
 Your runs in your experiments will be automatically marked with the key specified in your code sample above (here, `formatted`):
