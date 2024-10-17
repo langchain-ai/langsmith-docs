@@ -54,16 +54,18 @@ You can specify the scoring criteria in the "schema" field. In this example, we 
 1. **Select the `Custom code` type evaluator**
 2. **Write your evaluation function**
 
-:::note Custom code evaluators only support a subset of python packages. 
+:::note Custom code evaluators restrictions. 
 
-You can import all standard library functions, as well as the following public packages:
+**Allowed Libraries**: You can import all standard library functions, as well as the following public packages:
 ```
-  numpy: "numpy"
-  pandas: "pandas"
-  jsonschema: "jsonschema"
-  scipy: "scipy"
-  sklearn: "scikit-learn"
+  numpy (v2.2.2): "numpy"
+  pandas (v1.5.2): "pandas"
+  jsonschema (v4.21.1): "jsonschema"
+  scipy (v1.14.1): "scipy"
+  sklearn (v1.26.4): "scikit-learn"
 ```
+
+**Network Access**: You cannot access the internet from a custom code evaluator.
 :::
 
 In the UI, you will see a panel that lets you write your code inline, with some starter code:
