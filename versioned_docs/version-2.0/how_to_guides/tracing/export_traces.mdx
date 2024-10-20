@@ -9,7 +9,7 @@ import {
 } from "@site/src/components/InstructionsWithCode";
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
-# Export traces
+# Query traces
 
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
@@ -20,7 +20,12 @@ Before diving into this content, it might be helpful to read the following:
 
 :::
 
-The recommended way to export runs (the span data in LangSmith traces) is to use the `list_runs` method in the SDK or `/runs/query` endpoint in the API.
+:::note
+If you are looking to export a large volume of traces, we recommen that your use the [Bulk Data Export](./export_traces) functionality, as it will better
+handle large data volumes and will support automatic retries, and parallelization across partitions.
+:::
+
+The recommended way to query runs (the span data in LangSmith traces) is to use the `list_runs` method in the SDK or `/runs/query` endpoint in the API.
 
 LangSmith stores traces in a simple format that is specified in the [Run (span) data format](../../reference/data_formats/run_data_format).
 
