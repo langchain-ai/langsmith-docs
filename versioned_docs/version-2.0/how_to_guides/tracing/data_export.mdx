@@ -13,7 +13,7 @@ data offline in a tool such as BigQuery, Snowflake, RedShift, Jupyter Notebooks,
 
 An export can be launched to target a specific LangSmith project and date range. Once a batch export is launched, our system will handle the orchestration and resilience of the export process.
 Please note that exporting your data may take some time depending on the size of your data. We also have a limit on how many of your exports can run at the same time.
-There is a also a limit of one day of runtime per export job.
+Bulk exports also have a runtime timeout of 24 hours.
 
 ## Destinations
 
@@ -25,7 +25,7 @@ other systems. The data export will contain equivalent data fields as the [Run d
 
 ### Destinations - Providing a S3 bucket
 
-To export LangSmith data, you will need to provide a S3 bucket where the data will be exported to.
+To export LangSmith data, you will need to provide an S3 bucket where the data will be exported to.
 
 The following information is needed for the export:
 
