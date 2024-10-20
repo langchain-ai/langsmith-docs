@@ -88,7 +88,7 @@ Get started with LangSmith's tracing features to start adding observability to y
 - [Trace without setting environment variables](./how_to_guides/tracing/trace_without_env_vars)
 - [Trace using the LangSmith REST API](./how_to_guides/tracing/trace_with_api)
 - [Calculate token-based costs for traces](./how_to_guides/tracing/calculate_token_based_costs)
-- [Bulk Exporting Traces](./reference/data_formats/data_export)
+- [Bulk Exporting Traces](./how_to_guides/tracing/data_export)
 
 ## Datasets
 
