@@ -41,9 +41,9 @@ const config = {
               label: "stable",
               badge: false,
             },
-            "1.0": {
-              label: "stable",
-              banner: "none",
+            "old": {
+              label: "old",
+              banner: "unmaintained",
               badge: false,
               path: "old",
             },
@@ -87,7 +87,6 @@ const config = {
       }),
     ],
   ],
-
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
