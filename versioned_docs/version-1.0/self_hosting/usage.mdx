@@ -1,10 +1,10 @@
 ---
 sidebar_label: Usage
-sidebar_position: 4
+sidebar_position: 3
 table_of_contents: true
 ---
 
-# Using your self-hosted instance of LangSmith
+# How to use your self-hosted instance of LangSmith
 
 This guide will walk you through the process of using your self-hosted instance of LangSmith.
 
@@ -12,18 +12,16 @@ This guide will walk you through the process of using your self-hosted instance 
 This guide assumes you have already deployed a self-hosted LangSmith instance. If you have not, please refer to the [kubernetes deployment guide](/self_hosting/installation/kubernetes) or the [docker deployment guide](/self_hosting/installation/docker).
 :::
 
-### Configuring the application you want to use with LangSmith
+### Using your deployment:
 
-LangSmith has two APIs: One for interacting with the LangChain Hub/prompts and one for interacting with the backend of the LangSmith application. Each exists at its own URL and in a self-hosted environment are set via the `LANGCHAIN_HUB_API_URL` and `LANGCHAIN_ENDPOINT` environment variables, respectively, and have their own separate SDKs.
-
-1. Once you have deployed your instance, you can access the LangSmith UI at `http://<host>`.
-2. The backend API will be available at `http://<host>/api`
+1. Once you have deployed your instance, you can access the LangSmith UI at `http://<external ip>`.
+2. The backend API will be available at `http://<external ip>/api` and the hub API will be available at `http://<external ip>/api-hub`.
 
 To use the LangSmith API, you will need to set the following environment variables in your application:
 
 ```bash
-LANGCHAIN_ENDPOINT=http://<host>/api
-LANGCHAIN_HUB_API_URL=http://<host>/api # Only set this if using the legacy langchainhub SDK
+LANGCHAIN_ENDPOINT=http://<external ip>/api
+LANGCHAIN_HUB_API_URL=http://<external ip>/api-hub
 LANGCHAIN_API_KEY=foo # Set to a legitimate API key if using OAuth
 ```
 
@@ -34,22 +32,16 @@ import langsmith
 
 langsmith_client = langsmith.Client(
     api_key='<api_key>',
-    api_url='http://<host>/api',
+    api_url='http://<external ip>/api',
 )
 
-# Deprecated, you can use the Langsmith client for all interactions
 import langchainhub
 
-# Deprecated, use langsmith.Client instead
 langchainhub.Client(
     api_key='<api_key>',
-    api_url='http://<host>/api'
+    api_url='http://<external ip>/api-hub'
 )
 ```
 
 After setting the above, you should be able to run your code and see the results in your self-hosted instance.
 We recommend running through the [<u>quickstart guide</u>](https://docs.smith.langchain.com/#quick-start) to get a feel for how to use LangSmith.
-
-### API Reference
-
-To access the API reference, navigate to `http://<host>/api/docs` in your browser.

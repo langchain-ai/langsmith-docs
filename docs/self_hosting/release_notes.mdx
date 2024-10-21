@@ -1,13 +1,145 @@
 ---
-sidebar_label: Release Notes (Self-Hosted)
-sidebar_position: 4
+sidebar_label: Release notes (self-hosted)
+sidebar_position: 7
 ---
 
 # LangSmith Release Notes
 
 :::note
-If you are updating directly from LangSmith v0.1.x and you wish to retain access to run data in the Langsmith UI after updating, you must first update to v0.2.x and perform a data migration. **Updating directly from v0.1.x to v0.3.x or later will result in data loss as the `runs` table in postgres will be dropped when deploying LangSmith v0.3.x or higher.** Details are available at https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docs/UPGRADE-0.2.x.md
+**Reminder: API keys prefixed with `ls__` will be disabled in favor of `lsv2...` style keys as of LangSmith Helm release v0.8 to be released in October 2024.** For more information see [the Admin concepts guide.](https://docs.smith.langchain.com/concepts/admin#api-keys)
 :::
+
+## Week of August 26, 2024 - LangSmith v0.7
+
+This release adds a number of new features, improves the performance of the Threads view, and adds password authentication support and adds support for setting a default Time To Live (TTL) on LangSmith traces.
+
+### New Features since v0.6.0
+
+- [Resource tags to organize your Workspace in LangSmith](https://changelog.langchain.com/announcements/resource-tags-to-organize-your-workspace-in-langsmith)
+- [Generate synthetic examples to enhance a LangSmith dataset](https://changelog.langchain.com/announcements/generate-synthetic-examples-to-enhance-a-langsmith-dataset)
+- [Enhanced trace comparison view and saveable custom trace filters](https://changelog.langchain.com/announcements/trace-comparison-view-saving-custom-trace-filters)
+- [Defining, validating and updating dataset schemas](https://changelog.langchain.com/announcements/define-validate-and-update-dataset-schemas-in-langsmith)
+- [Multiple annotators can review a run in LangSmith](https://changelog.langchain.com/announcements/multiple-annotators-can-review-a-run-in-langsmith)
+- [Support for filtering runs within the trace view](https://changelog.langchain.com/announcements/filtering-runs-within-the-trace-view)
+- [Enhanced key-value search](https://changelog.langchain.com/announcements/enhanced-key-value-search-matching-inputs-and-outputs)
+- [Webhook notifications for run rules](https://changelog.langchain.com/announcements/set-up-webhook-notifications-for-run-rules)
+- [Support for comparing multiple prompts and model configurations side-by-side in the LangSmith Playground](https://changelog.langchain.com/announcements/build-prompts-faster-and-compare-in-langsmith-playground)
+- [Support for storing the model and configuration when saving a Prompt](https://changelog.langchain.com/announcements/store-the-model-and-configuration-when-saving-a-prompt)
+
+### Performance and Reliability Changes
+
+- Improved performance of Threads view for very large projects
+- Improved error handling in cases where the Clickhouse database is temporarily unavailable
+
+### Infrastructure Changes
+
+- Added a Helm configuration option for Time To Live for traces. When set, this setting will apply only to net-new ingested traces and by changing this setting, _traces will be automatically and irrevocably deleted from Clickhouse after expiration of the TTL._ For more details see [TTL and Data Retention](./configuration/ttl). You may also need to change/audit your project default TTL settings.
+- Added configuration option to enable `blobStorage`. This will move run inputs, outputs, and errors to blob storage to lower load on ClickHouse/reduce disk usage. Currently only S3 and GCP are supported. For more details see [Enable Blob Storage](./configuration/blob_storage).
+- Default Resource/Limits for all resources. Note that you may need to tweak your cluster settings.
+  - By default we will use:
+    - 16 CPU
+    - 64 GB RAM
+    - You will need a node that can fit 4 CPU/16 GB RAM
+  - To override these settings you can manually configure resources requests/limits yourself
+- Turned bundled `Redis` persistence on by default. If you are using the bundled version of `redis` you may need to recreate your `Redis` StatefulSet if you had not previously turned on persistence.
+- Updated `clickhouseMigration` command to wait for clickhouse initialization prior to running migrations.
+- Deprecation of `<domain>/api-hub url`. You can now use the `<domain>/api` url for all api interactions. This will be fully removed in the v0.8 release so make sure to migrate any apps using the previous url.
+- Health checks added to `queue` pods.
+- Updates to the `nginx` config.
+- Removed the OpenAI key configuration option.
+
+### Admin Changes
+
+- Added support for simple password authentication. For more details see [Email/password a.k.a. basic auth](./configuration/basic_auth)
+  - **Note that at this time there is no migration path from simple to OIDC authentication** — we are working on this migration path for a subsequent release.
+- Added support to disable personal orgs.
+- Added support to disable org creation.
+- Added config option to allow workspace admins to add workspace users.
+- We have delayed deprecation of the v1 API Keys prefixed with `ls__` until the v0.8 release of LangSmith which should happen on or around October 1. Please update your API keys to Service Keys prefixed with `lsv2__sk` at your earliest convenience.
+
+### Deprecation notices
+
+With the release of v0.7:
+
+- The LangChain Hub SDK is now deprecated and its functionality folded into the [LangSmith SDK](https://github.com/langchain-ai/langsmith-sdk).
+- LangSmith v0.6.x and earlier are now in maintenance mode and may only receive critical security fixes.
+
+## Week of June 17, 2024 - LangSmith v0.6
+
+LangSmith v0.6 improves run rules performance and reliability, adds support for multiple Workspaces within an Organization, custom models in Playground, and significant enhancements to Evaluations.
+
+### New Features since v0.5
+
+- Dataset splits for evaluation and filtering/editing dataset examples. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#datasetsplits)
+- You can now run multiple repetitions of your experiment in LangSmith. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#repetitions)
+- Off-the-shelf online evaluator prompts to catch bad retrieval and hallucinations for RAG. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#onlineevaluatorprompts)
+- Manage private prompts without a handle. [Learn More...](https://blog.langchain.dev/week-of-5-27-langchain-release-notes/#privateprompts)
+- Workspaces in LangSmith for improved collaboration & organization. [Learn More...](https://blog.langchain.dev/week-of-6-10-langchain-release-notes/#workspaces)
+- Enter the playground from scratch instead of from a trace or a prompt. [Learn More...](https://blog.langchain.dev/week-of-6-10-langchain-release-notes/#playground-from-scratch)
+- Variable mapping for online evaluator prompts. [Learn More...](https://blog.langchain.dev/week-of-6-10-langchain-release-notes/#variable-mapping)
+- Custom Model support in Playground. [Learn More...](https://docs.smith.langchain.com/how_to_guides/playground/custom_endpoint)
+
+### Performance and Reliability Changes
+
+- Improved performance of run rules especially in cases where rule execution may exceed the interval of rule execution.
+- Reduced run rule interval from 5 minutes to 1 minute resulting in more frequent application of rules
+- Improved performance when querying Hub via the SDK. NOTE: Accessing these improvements requires v0.1.20 or greater of the [Hub SDK](https://github.com/langchain-ai/hub-sdk)
+
+### Infrastructure changes
+
+- [Docker Compose only] The default port has changed from 80 to 1980.
+- [Helm] The playground image start command has changed. If you are using a custom Helm chart, you may need to review the configuration for Playground and adjust your Helm config accordingly.
+- [Helm] Added the ability to configure your probes in the `values.yaml` file. This allows you to adjust the readiness and liveness probes for the LangSmith services. You may need to adjust these if you had changed container ports.
+- [Helm] Added ArgoCD `PostSync` annotations to hook jobs to ensure that the jobs are run properly in ArgoCD. You may need to remove this annotation if you were previously setting it manually.
+- Updated Clickhouse from v23.9 to v24.2 NOTE: Applies only to environments using the LangSmith-provided Clickhouse.
+
+### Admin changes
+
+- Added support for Workspaces. See the [Admin concepts guide](/concepts/admin#workspaces) for more details.
+- Added global setting `orgCreationDisabled` to `values.yaml` to disable creation of new Organizations.
+- Added support for custom TLS certificates for the for the Azure OpenAI model provider. See the [how-to guide](/how_to_guides/playground/custom_tls_certificates) for more details.
+
+### Deprecation notices
+
+With the release of v0.6:
+
+- LangSmith v0.5.x and earlier are now in maintenance mode and may only receive critical security fixes.
+
+## Week of May 13, 2024 - LangSmith v0.5
+
+LangSmith v0.5 improves performance and reliability, adds features to improve regression testing, production monitoring and automation, and implements Role-Based Access Controls (RBAC).
+
+### Breaking changes[](https://docs.smith.langchain.com/self_hosting/release_notes#breaking-changes)
+
+- We will be dropping support for API keys in favor of personal access tokens (PATs) and Service Keys. We recommend using PATs and Service Keys for all new integrations. **API keys prefixed with `ls__` will NO LONGER work as of LangSmith Helm release v0.7 to be released in August 2024.**
+
+### New Features since v0.4
+
+- Role-Based Access Controls. See: [https://blog.langchain.dev/access-control-updates-for-langsmith/](https://blog.langchain.dev/access-control-updates-for-langsmith/)
+- Improved regression testing experience. See: [https://blog.langchain.dev/regression-testing/](https://blog.langchain.dev/regression-testing/)
+- Improved production monitoring and automation: See: [https://blog.langchain.dev/langsmith-production-logging-automations/](https://blog.langchain.dev/langsmith-production-logging-automations/)
+
+### Performance and Reliability Changes
+
+- Split ingest, session deletion, and automation jobs to execute within separate resource pools.
+
+### Infrastructure changes
+
+- As of LangSmith v0.4, Clickhouse persistence now uses `50Gi` of storage by default. You can adjust this by changing the `clickhouse.statefulSet.persistence.size` value in your `values.yaml` file.
+  - If your existing configuration cannot support 50Gi, you may need to resize your existing storage class or set `clickhouse.statefulSet.persistence.size` to the previous default value of `8Gi`.
+  - It is **strongly** recommend that you monitor the consumption of storage on your Clickhouse volume to ensure the volume does not near full capacity, which may cause run ingest to behave erratically.
+- New Platform-Backend service used internally. This service also uses it’s own image. You may need to adjust your helm `values` files accordingly.
+
+### Admin changes
+
+- Added new Role-Based Access Controls. For more details see the [Admin](../concepts/admin) and [Set Up Access Control](../how_to_guides/setup/set_up_access_control) sections of the docs.
+- Introduction of PATs and Service Keys. Old API keys have been migrated to service keys.
+
+### Deprecation notices
+
+With the release of v0.5:
+
+- LangSmith v0.4.x and earlier are now in maintenance mode and may only receive critical security fixes.
 
 ## Week of March 25, 2024 - LangSmith v0.4
 

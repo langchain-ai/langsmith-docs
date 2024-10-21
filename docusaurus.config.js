@@ -35,18 +35,18 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          lastVersion: "2.0",
+          lastVersion: "current",
           versions: {
             current: {
-              label: "old",
-              path: "old",
+              label: "stable",
               badge: false,
-              banner: "unmaintained",
+              
             },
-            "2.0": {
+            "1.0": {
               label: "stable",
               banner: "none",
               badge: false,
+              path: "old",
             },
           },
           sidebarPath: require.resolve("./sidebars.js"),

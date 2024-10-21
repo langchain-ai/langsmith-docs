@@ -1,5 +1,5 @@
 ---
-sidebar_label: Quick Start
+sidebar_label: Quick start
 sidebar_position: 1
 table_of_contents: true
 ---
@@ -10,6 +10,7 @@ import {
   CodeTabs,
   PythonBlock,
   TypeScriptBlock,
+  typescript,
 } from "@site/src/components/InstructionsWithCode";
 import {
   LangChainInstallationCodeTabs,
@@ -22,16 +23,13 @@ import {
 } from "@site/src/components/QuickStart";
 import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
 import DocCardList from "@theme/DocCardList";
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
-# Getting started with LangSmith
+# Get started with LangSmith
 
-## Introduction
+**LangSmith** is a platform for building production-grade LLM applications. It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence. Use of LangChain is not necessary - LangSmith works on its own!
 
-[LangSmith](https://smith.langchain.com/) is a platform for building production-grade LLM applications. It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence. Use of LangChain is not necessary - LangSmith works on its own!
-
-## Install LangSmith
-
-We offer Python and Typescript SDKs for all your LangSmith needs.
+## 1. Install LangSmith
 
 <CodeTabs
   tabs={[
@@ -45,24 +43,30 @@ We offer Python and Typescript SDKs for all your LangSmith needs.
       value: "typescript",
       label: "TypeScript",
       language: "bash",
-      content: `yarn add langchain langsmith`,
+      content: `yarn add langsmith`,
     },
   ]}
   groupId="client-language"
 />
 
-## Create an API key
+## 2. Create an API key
 
-To create an API key head to the [Settings page](https://smith.langchain.com/settings). Then click **Create API Key.**
+To create an API key head to the <RegionalUrl text='Settings page' suffix='/settings' />. Then click **Create API Key.**
 
-## Setup your environment
+## 3. Set up your environment
 
 <ConfigureSDKEnvironmentCodeTabs />
 
-## Log your first trace
+## 4. Log your first trace
+
+:::tip Tracing to LangSmith for LangChain users
+There is no need to use the LangSmith SDK directly if your application is built entirely on LangChain (either Python and JS).
+
+We've outlined a tracing guide specifically for LangChain users [here](./how_to_guides/tracing/trace_with_langchain).
+:::
 
 We provide multiple ways to log traces to LangSmith. Below, we'll highlight
-how to use `traceable`. See more on the [Integrations](./tracing/integrations/index.mdx) page.
+how to use `traceable`. See more on the [Annotate code for tracing](./how_to_guides/tracing/annotate_code) page.
 
 <CodeTabs
   tabs={[
@@ -83,11 +87,11 @@ how to use `traceable`. See more on the [Integrations](./tracing/integrations/in
 />
 
 - View a [sample output trace](https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r).
-- Learn more about tracing on the [tracing page](./tracing/index.mdx).
+- Learn more about tracing in the [how-to guides](./how_to_guides/index.md).
 
-## Create your first evaluation
+## 5. Run your first evaluation
 
-Evalution requires a system to test, [data](./evaluation/faq/index.mdx) to serve as test cases, and optionally evaluators to grade the results. Here we use a built-in accuracy evaluator.
+Evaluation requires a system to test, data to serve as test cases, and optionally evaluators to grade the results. Here we use a built-in accuracy evaluator.
 
 <CodeTabs
   tabs={[
@@ -127,85 +131,55 @@ experiment_results = evaluate(
 )
 `,
     },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "typescript",
-      content: `import { Client, Run, Example } from 'langsmith';
-import { runOnDataset } from 'langchain/smith';
-import { EvaluationResult } from 'langsmith/evaluation';\n
-const client = new Client();\n
-// Define dataset: these are your test cases
-const datasetName = "Sample Dataset";
-const dataset = await client.createDataset(datasetName, {
-    description: "A sample dataset in LangSmith."
-});
-await client.createExamples({
-    inputs: [
-        { postfix: "to LangSmith" },
-        { postfix: "to Evaluations in LangSmith" },
-    ],
-    outputs: [
-        { output: "Welcome to LangSmith" },
-        { output: "Welcome to Evaluations in LangSmith" },
-    ],
-    datasetId: dataset.id,
-});\n
-// Define your evaluator
-const exactMatch = async ({ run, example }: { run: Run; example?: Example; }): Promise<EvaluationResult> => {
-    return {
-        key: 'exact_match',
-        score: run.outputs?.output === example?.outputs?.output ? 1 : 0,
-    };
-};\n
-await runOnDataset(
-    (input: { postfix: string }) => ({ output: \`Welcome $\{input.postfix\}\` }), // Your AI system goes here
-    datasetName, // The data to predict and grade over
-    {
-        evaluationConfig: { customEvaluators: [exactMatch] },
-        projectMetadata: {
+    typescript`
+      import { Client, Run, Example } from "langsmith";
+      import { evaluate } from "langsmith/evaluation";
+      import { EvaluationResult } from "langsmith/evaluation";
+      
+      const client = new Client();
+      
+      // Define dataset: these are your test cases
+      const datasetName = "Sample Dataset";
+      const dataset = await client.createDataset(datasetName, {
+        description: "A sample dataset in LangSmith.",
+      });
+      await client.createExamples({
+        inputs: [
+          { postfix: "to LangSmith" },
+          { postfix: "to Evaluations in LangSmith" },
+        ],
+        outputs: [
+          { output: "Welcome to LangSmith" },
+          { output: "Welcome to Evaluations in LangSmith" },
+        ],
+        datasetId: dataset.id,
+      });
+      
+      // Define your evaluator
+      const exactMatch = async (
+        run: Run,
+        example: Example
+      ): Promise<EvaluationResult> => {
+        return {
+          key: "exact_match",
+          score: run.outputs?.output === example?.outputs?.output,
+        };
+      };
+      
+      await evaluate(
+        (input: { postfix: string }) => ({ output: \`Welcome $\{input.postfix\}\` }),
+        {
+          data: datasetName,
+          evaluators: [exactMatch],
+          metadata: {
             version: "1.0.0",
             revision_id: "beta",
-        },
-    }
-);`,
-    },
+          },
+        }
+      );
+    `,
   ]}
   groupId="client-language"
 />
 
-- See more on the [evaluation quick start page](./evaluation/quickstart.mdx).
-
-## Next Steps
-
-Check out the following sections to learn more about LangSmith:
-
-- **[User Guide](./user_guide.mdx)**: Learn about the workflows LangSmith supports at each stage of the LLM application lifecycle.
-- **[Pricing](/pricing)**: Learn about the pricing model for LangSmith.
-- **[Self-Hosting](./self_hosting)**: Learn about self-hosting options for LangSmith.
-- **[Tracing](./tracing/index.mdx)**: Learn about the tracing capabilities of LangSmith.
-- **[Evaluation](./evaluation/index.mdx)**: Learn about the evaluation capabilities of LangSmith.
-
-## Additional Resources
-
-- **[LangSmith Cookbook](https://github.com/langchain-ai/langsmith-cookbook/tree/main)**: A collection of tutorials and end-to-end walkthroughs using LangSmith.
-- **[LangChain Python](https://python.langchain.com/)**: Docs for the Python LangChain library.
-- **[LangChain Python API Reference](https://api.python.langchain.com/)**: documentation to review the core APIs of LangChain.
-- **[LangChain JS](https://js.langchain.com/docs/)**: Docs for the TypeScript LangChain library
-- **[Discord](https://discord.gg/6adMQxSpJS)**: Join us on our Discord to discuss all things LangChain!
-
-## FAQ
-
-### How do I migrate projects between organizations?
-
-Currently we do not support project migration betwen organizations. While you can manually imitate this by reading and writing runs and datasets using the SDK (see the querying runs and traces guide [here](./tracing/faq/querying_traces.mdx)), it will be fastest to create a new project within your organization and go from there.
-
-### Why aren't my runs aren't showing up in my project?
-
-If you aren't seeing any warnings when running your application, it may be that you are still using an API key from your "personal" organization. Check your most recent runs there to confirm by selecting your `Personal` tenant in the [settings](https://smith.langchain.com/settings) page and then viewing your [projects](https://smith.langchain.com/projects).
-
-If you're still running into issues, please reach out to us at <a href="mailto:support@langchain.dev">support@langchain.dev</a>.
-
-### My team deals with sensitive data that cannot be logged. How can I ensure that only my team can access it?
-
-If you are interested in a private deployment of LangSmith or if you need to self-host, please reach out to us at <a href="mailto:sales@langchain.dev">sales@langchain.dev</a>. Self-hosting LangSmith requires an annual enterprise license that also comes with support and formalized access to the LangChain team.
+- Learn more about evaluation in the [how-to guides](./how_to_guides/index.md).
