@@ -40,7 +40,6 @@ const config = {
             current: {
               label: "stable",
               badge: false,
-              
             },
             "1.0": {
               label: "stable",
