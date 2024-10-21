@@ -41,7 +41,7 @@ const config = {
               label: "stable",
               badge: false,
             },
-            "old": {
+            old: {
               label: "old",
               banner: "unmaintained",
               badge: false,
