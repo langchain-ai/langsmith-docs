@@ -49,7 +49,6 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --header 'X-API-Key: YOUR_API_KEY' \
   --header 'X-Tenant-Id: YOUR_WORKSPACE_ID' \
-  --header 'X-Organization-Id: YOUR_ORG_ID' \
   --data '{
     "destination_type": "s3",
     "display_name": "My S3 Destination",
@@ -80,7 +79,6 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --header 'X-API-Key: YOUR_API_KEY' \
   --header 'X-Tenant-Id: YOUR_WORKSPACE_ID' \
-  --header 'X-Organization-Id: YOUR_ORG_ID' \
   --data '{
     "bulk_export_destination_id": "your_destination_id",
     "session_id": "project_uuid",
@@ -102,8 +100,7 @@ curl --request GET \
   --url 'https://api.smith.langchain.com/api/v1/bulk-exports/{export_id}' \
   --header 'Content-Type: application/json' \
   --header 'X-API-Key: YOUR_API_KEY' \
-  --header 'X-Tenant-Id: YOUR_WORKSPACE_ID' \
-  --header 'X-Organization-Id: YOUR_ORG_ID'
+  --header 'X-Tenant-Id: YOUR_WORKSPACE_ID'
 ```
 
 Replace `{export_id}` with the ID of the export you want to monitor. This command retrieves the current status of the specified export job.
@@ -118,8 +115,7 @@ curl --request GET \
   --url 'https://api.smith.langchain.com/api/v1/bulk-exports/{export_id}/runs' \
   --header 'Content-Type: application/json' \
   --header 'X-API-Key: YOUR_API_KEY' \
-  --header 'X-Tenant-Id: YOUR_WORKSPACE_ID' \
-  --header 'X-Organization-Id: YOUR_ORG_ID'
+  --header 'X-Tenant-Id: YOUR_WORKSPACE_ID'
 ```
 
 This command fetches all runs related to the specified export, providing details such as run ID, status, creation time, rows exported, etc.
@@ -133,8 +129,7 @@ curl --request GET \
   --url 'https://api.smith.langchain.com/api/v1/bulk-exports' \
   --header 'Content-Type: application/json' \
   --header 'X-API-Key: YOUR_API_KEY' \
-  --header 'X-Tenant-Id: YOUR_WORKSPACE_ID' \
-  --header 'X-Organization-Id: YOUR_ORG_ID'
+  --header 'X-Tenant-Id: YOUR_WORKSPACE_ID'
 ```
 
 This command returns a list of all export jobs along with their current statuses and creation timestamps.
@@ -149,7 +144,6 @@ curl --request PATCH \
   --header 'Content-Type: application/json' \
   --header 'X-API-Key: YOUR_API_KEY' \
   --header 'X-Tenant-Id: YOUR_WORKSPACE_ID' \
-  --header 'X-Organization-Id: YOUR_ORG_ID' \
   --data '{
     "status": "Cancelled"
 }'
