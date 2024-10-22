@@ -44,6 +44,13 @@ class HTMLdf(HTMLParser):
         parser.feed(x)
         return parser.df
 
+class RemoveEmptyCellsPreprocessor(Preprocessor):
+    """
+    A custom preprocessor to remove empty cells from the notebook.
+    """
+    def preprocess(self, notebook, resources):
+        notebook.cells = [cell for cell in notebook.cells if cell.source.strip()]
+        return notebook, resources
 
 class Black(Preprocessor):
     """Format code that has a cell tag `black`"""
@@ -136,19 +143,9 @@ def get_mdx_exporter():
     """A mdx notebook exporter which composes many pre-processors together."""
     # TODO: Combine with other ad-hoc logic
     c = Config()
-    # pp = [Black, EscapePreprocessor, HTMLEscape]
-    pp = [Black, EscapePreprocessor]
+    pp = [Black, RemoveEmptyCellsPreprocessor, EscapePreprocessor, HTMLEscape]
     c.MarkdownExporter.preprocessors = pp
-    
-    import os
-    template_dir = os.path.join(os.getcwd(), "subdirectories/scripts/notebook_convert_templates")
-    print("Template directory:", template_dir)
-    return MarkdownExporter(
-        preprocessors=[Black, EscapePreprocessor, HTMLEscape],
-        template_name="mdoutput",
-        extra_template_basedirs=[os.getcwd() + "/subdirectories/scripts/notebook_convert_templates"],
-    )
-    # return MarkdownExporter(config=c)
+    return MarkdownExporter(config=c)
 
 
 def convert_notebooks_to_markdown(root_path: str) -> None:
@@ -315,8 +312,8 @@ def replace_brackets(content: str) -> str:
             #      We should consider a more robust solution in the future. However,
             #      this is a quick fix for now since cookbooks are marked as old and
             #      we only leave them around as past reference. We want to fix our build,
-            # line = line.replace("{", "&#123;")
-            # line = line.replace("}", "&#125;")
+            line = line.replace("{", "&#123;")
+            line = line.replace("}", "&#125;")
         new_content += line + "\n"
     return new_content
 
@@ -330,7 +327,6 @@ def replace_dead_readme_links(content: str) -> str:
     return re.sub(pattern, "(/)", content)
 
 def move_to_docs(root_path: str, destination_path: str) -> None:
-    print("moving to docs")
     """Move all markdown files and linked images to the docs folder."""
     img_extensions = [".png", ".jpg", ".jpeg", ".gif", ".svg"]
     for dirpath, _, filenames in tqdm(os.walk(root_path)):
@@ -453,7 +449,6 @@ We suggest running the code by forking or cloning the repository.
                     content = replace_dead_readme_links(content)
                     content = add_github_backlink(content).strip()
 
-                    print(dest)
                     with open(dest, "w", encoding="utf-8") as md_file:
                         md_file.write(content)
 
