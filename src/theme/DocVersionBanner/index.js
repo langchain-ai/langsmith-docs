@@ -7,7 +7,6 @@ import {
   useActivePlugin,
   useDocVersionSuggestions,
   useActiveVersion,
-  // useAllVersions,
 } from "@docusaurus/plugin-content-docs/client";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ThemeClassNames } from "@docusaurus/theme-common";
