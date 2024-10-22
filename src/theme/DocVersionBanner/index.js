@@ -6,6 +6,8 @@ import Translate from "@docusaurus/Translate";
 import {
   useActivePlugin,
   useDocVersionSuggestions,
+  useActiveVersion,
+  // useAllVersions,
 } from "@docusaurus/plugin-content-docs/client";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ThemeClassNames } from "@docusaurus/theme-common";
@@ -118,12 +120,18 @@ function DocVersionBannerEnabled({ className, versionMetadata }) {
   );
 }
 export default function DocVersionBanner({ className }) {
-  const versionMetadata = useDocsVersion();
-  if (versionMetadata.banner) {
+  const activeVersion = useActiveVersion();
+  
+  console.log("this is version metadata")
+  console.log(activeVersion)
+  if (activeVersion.label === "old") {
+    const bannerMetadata = {
+      "banner": "unmaintained"
+    };
     return (
       <DocVersionBannerEnabled
         className={className}
-        versionMetadata={versionMetadata}
+        versionMetadata={bannerMetadata}
       />
     );
   }
