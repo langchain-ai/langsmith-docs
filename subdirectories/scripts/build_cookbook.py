@@ -301,6 +301,8 @@ def replace_brackets(content: str) -> str:
             # TODO: Handle single backticks
             line = line.replace("<", "&lt;")
             line = line.replace(">", "&gt;")
+            line = line.replace("{", "&#123;")
+            line = line.replace("}", "&#125;")
         new_content += line + "\n"
     return new_content
 
@@ -314,6 +316,7 @@ def replace_dead_readme_links(content: str) -> str:
     return re.sub(pattern, "(/)", content)
 
 def move_to_docs(root_path: str, destination_path: str) -> None:
+    print("moving to docs")
     """Move all markdown files and linked images to the docs folder."""
     img_extensions = [".png", ".jpg", ".jpeg", ".gif", ".svg"]
     for dirpath, _, filenames in tqdm(os.walk(root_path)):
@@ -436,6 +439,7 @@ We suggest running the code by forking or cloning the repository.
                     content = replace_dead_readme_links(content)
                     content = add_github_backlink(content).strip()
 
+                    print(dest)
                     with open(dest, "w", encoding="utf-8") as md_file:
                         md_file.write(content)
 
