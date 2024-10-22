@@ -9,12 +9,12 @@ While you can always [annotate runs inline](./annotate_traces_inline), annotatio
 
 ## Create an annotation queue
 
-![](../static/create_annotation_queue.png)
+![](./static/create_annotation_queue.png)
 
 To create an annotation queue, navigate to the **Annotation queues** section through the homepage or left-hand navigation bar.
 Then click **+ New annotation queue** in the top right corner.
 
-![](../static/annotation_queue_form.png)
+![](./static/annotation_queue_form.png)
 
 Fill in the form with the **name** and **description** of the queue.
 You can also assign a **default dataset** to queue, which will streamline the process of sending the inputs and outputs of certain runs to datasets in your LangSmith workspace.
@@ -42,17 +42,17 @@ Because of these settings, it's possible (and likely) that the number of runs vi
 
 You can update these settings at any time by clicking on the pencil icon in the **Annotation Queues** section.
 
-![](../static/annotation_queue_edit.png)
+![](./static/annotation_queue_edit.png)
 
 ## Assign runs to an annotation queue
 
 To assign runs to an annotation queue, either:
 
 1. Click on **Add to Annotation Queue** in top right corner of any trace view. You can add ANY intermediate run (span) of the trace to an annotation queue, not just the root span.
-   ![](../static/add_to_annotation_queue.png)
+   ![](./static/add_to_annotation_queue.png)
 
 2. Select multiple runs in the runs table then click **Add to Annotation Queue** at the bottom of the page.
-   ![](../static/multi_select_annotation_queue.png)
+   ![](./static/multi_select_annotation_queue.png)
 
 3. [Set up an automation rule](../monitoring/rules) that automatically assigns runs which pass a certain filter and sampling condition to an annotation queue.
 
@@ -73,4 +73,4 @@ You can also remove the run from the queue for all users, despite any current re
 
 The keyboard shortcuts shown can help streamline the review process.
 
-![](../static/review_runs.png)
+![](./static/review_runs.png)

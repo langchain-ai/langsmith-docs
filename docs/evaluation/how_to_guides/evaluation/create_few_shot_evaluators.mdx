@@ -34,7 +34,7 @@ as your output key. For example, if your main prompt has variables `question` an
 You may also specify the number of few-shot examples to use. The default is 5. If your examples will tend to be very long, you may want to set this number lower to save tokens - whereas if your examples tend
 to be short, you can set a higher number in order to give your evaluator more examples to learn from. If you have more examples in your dataset than this number, we will randomly choose them for you.
 
-![Use corrections as few-shot examples](./static/use_corrections_as_few_shot.png)
+![Use corrections as few-shot examples](../evaluation/static/use_corrections_as_few_shot.png)
 
 Note that few-shot examples are not currently supported in evaluators that use Hub prompts.
 
@@ -51,7 +51,7 @@ begin seeing examples populated inside your corrections dataset. As you make cor
 The inputs to the few-shot examples will be the relevant fields from the inputs, outputs, and reference (if this an offline evaluator) of your chain/dataset.
 The outputs will be the corrected evaluator score and the explanations that you created when you left the corrections. Feel free to edit these to your liking. Here is an example of a few-shot example in a corrections dataset:
 
-![Few-shot example](./static/few_shot_example.png)
+![Few-shot example](../evaluation/static/few_shot_example.png)
 
 Note that the corrections may take a minute or two to be populated into your few-shot dataset. Once they are there, future runs of your evaluator will include them in the prompt!
 
@@ -59,12 +59,12 @@ Note that the corrections may take a minute or two to be populated into your few
 
 In order to view your corrections dataset, go to your rule and click "Edit Rule" (or "Edit Evaluator" from a dataset):
 
-![Edit Evaluator](./static/edit_evaluator.png)
+![Edit Evaluator](../evaluation/static/edit_evaluator.png)
 
 If this is an online evaluator (in a tracing project), you will need to click to edit your prompt:
 
-![Edit Prompt](./static/click_to_edit_prompt.png)
+![Edit Prompt](../evaluation/static/click_to_edit_prompt.png)
 
 From this screen, you will see a button that says "View few-shot dataset". Clicking this will bring you to your dataset of corrections, where you can view and update your few-shot examples:
 
-![View few-shot dataset](./static/view_few_shot_ds.png)
+![View few-shot dataset](../evaluation/static/view_few_shot_ds.png)

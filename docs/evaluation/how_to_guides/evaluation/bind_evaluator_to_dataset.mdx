@@ -23,7 +23,7 @@ The next steps vary based on the evaluator type.
 1. **Select the LLM as judge type evaluator**
 2. **Give your evaluator a name** and **set an inline prompt or load a prompt from the prompt hub** that will be used to evaluate the results of the runs in the experiment.
 
-![Add evaluator name and prompt](../static/create_evaluator.png)
+![Add evaluator name and prompt](../evaluation/static/create_evaluator.png)
 
 Importantly, evaluator prompts can only contain the following input variables:
 
@@ -42,11 +42,11 @@ LangSmith currently doesn't support setting up evaluators in the application tha
 
 You can specify the scoring criteria in the "schema" field. In this example, we are asking the LLM to grade on "correctness" of the output with respect to the reference, with a boolean output of 0 or 1. The name of the field in the schema will be interpreted as the feedback key and the type will be the type of the score.
 
-![Evaluator prompt](../static/evaluator_prompt.png)
+![Evaluator prompt](../evaluation/static/evaluator_prompt.png)
 
 3. **Save the evaluator** and navigate back to the dataset details page. Each **subsequent** experiment run from the dataset will now be evaluated by the evaluator you configured. Note that in the below image, each run in the experiment has a "correctness" score.
 
-![Playground evaluator results](../static/playground_evaluator_results.png)
+![Playground evaluator results](../evaluation/static/playground_evaluator_results.png)
 
 ## Custom code evaluators
 
@@ -70,7 +70,7 @@ You can specify the scoring criteria in the "schema" field. In this example, we 
 
 In the UI, you will see a panel that lets you write your code inline, with some starter code:
 
-![](./static/code-autoeval-popup.png)
+![](../evaluation/static/code-autoeval-popup.png)
 
 Custom Code evaluators take in two arguments:
 
@@ -127,8 +127,8 @@ To visualize the feedback left on new experiments, try running a new experiment 
 On the dataset, if you now click to the `experiments` tab -> `+ Experiment` -> `Run in Playground`, you can see the results in action.
 Your runs in your experiments will be automatically marked with the key specified in your code sample above (here, `formatted`):
 
-![](./static/show-feedback-from-autoeval-code.png)
+![](../evaluation/static/show-feedback-from-autoeval-code.png)
 
 And if you navigate back to your dataset, you'll see summary stats for said experiment in the `experiments` tab:
 
-![](./static/experiments-tab-code-results.png)
+![](../evaluation/static/experiments-tab-code-results.png)
