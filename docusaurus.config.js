@@ -6,6 +6,7 @@ require("dotenv").config();
 // eslint-disable-next-line import/no-extraneous-dependencies
 
 const prism = require("prism-react-renderer");
+
 const baseLightCodeBlockTheme = prism.themes.vsLight;
 const baseDarkCodeBlockTheme = prism.themes.vsDark;
 
@@ -96,12 +97,13 @@ const config = {
             const { defaultCreateSitemapItems, ...rest } = params;
             const items = await defaultCreateSitemapItems(rest);
             return items.map((item) => {
+              const newItem = { ...item };
               if (item.url.includes("/old/")) {
-                item.priority = 0.2;
+                newItem.priority = 0.2;
               } else {
-                item.priority = 0.8;
+                newItem.priority = 0.8;
               }
-              return item;
+              return newItem;
             });
           },
         },

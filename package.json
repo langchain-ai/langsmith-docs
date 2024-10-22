@@ -68,7 +68,7 @@
     "langsmith": "^0.0.47",
     "supabase": "^1.148.6",
     "ts-jest": "^29.1.1",
-    "typedoc": "^0.24.4",
+    "typedoc": "^0.26.10",
     "typedoc-plugin-markdown": "^4.0.0-next.60",
     "typescript": "^5.1.6"
   },
