@@ -415,7 +415,7 @@ We suggest running the code by forking or cloning the repository.
 if __name__ == "__main__":
     cookbook_directory = Path(__file__).parents[1] / "langsmith-cookbook"
     convert_notebooks_to_markdown(cookbook_directory)
-    # NOTE: the cookbooks directory is only used in version 1.0 of docs and should thus
+    # NOTE: the cookbooks directory is only used in the old version of docs and should thus
     #       only build into this directory
     docs_directory = Path(__file__).parents[2] / "versioned_docs" / "version-old"
     move_to_docs(cookbook_directory, docs_directory)
