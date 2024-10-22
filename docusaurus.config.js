@@ -5,6 +5,11 @@ require("dotenv").config();
 // Note: type annotations allow type checking and IDEs autocompletion
 // eslint-disable-next-line import/no-extraneous-dependencies
 
+const prism = require("prism-react-renderer");
+
+const baseLightCodeBlockTheme = prism.themes.vsLight;
+const baseDarkCodeBlockTheme = prism.themes.vsDark;
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "🦜️🛠️ LangSmith",
@@ -95,8 +100,12 @@ const config = {
         respectPrefersColorScheme: true,
       },
       prism: {
-        theme: require("prism-react-renderer/themes/vsLight"),
-        darkTheme: require("prism-react-renderer/themes/vsDark"),
+        theme: {
+          ...baseLightCodeBlockTheme,
+        },
+        darkTheme: {
+          ...baseDarkCodeBlockTheme,
+        },
       },
       image: "img/langsmith-preview.png",
       navbar: {

@@ -1,6 +1,6 @@
 {
   "name": "docs",
-  "version": "0.0.0",
+  "version": "1.22.22",
   "private": true,
   "packageManager": "yarn@1.22.19",
   "scripts": {
@@ -24,13 +24,13 @@
     "gen:supabase": "npx supabase gen types typescript --project-id 'xsqpnijvmbodcxyapnyq' --schema public > ./src/supabase.d.ts"
   },
   "dependencies": {
-    "@docusaurus/core": "2.4.3",
-    "@docusaurus/preset-classic": "2.4.3",
-    "@docusaurus/remark-plugin-npm2yarn": "^2.4.3",
-    "@docusaurus/theme-mermaid": "2.4.3",
+    "@docusaurus/core": "3.5.2",
+    "@docusaurus/preset-classic": "3.5.2",
+    "@docusaurus/remark-plugin-npm2yarn": "^3.5.2",
+    "@docusaurus/theme-mermaid": "3.5.2",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
-    "@mdx-js/react": "^1.6.22",
+    "@mdx-js/react": "^3.0.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/joy": "^5.0.0-alpha.81",
     "@scalar/docusaurus": "^0.2.26",
@@ -42,9 +42,10 @@
     "json-loader": "^0.5.7",
     "marked": "^12.0.1",
     "prettier": "^2.7.1",
+    "prism-react-renderer": "^2.1.0",
     "process": "^0.11.10",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "webpack": "^5.75.0"
   },
   "devDependencies": {
@@ -52,7 +53,7 @@
     "@docusaurus/module-type-aliases": "^2.4.1",
     "@tsconfig/docusaurus": "^1.0.7",
     "@types/jest": "^29.5.3",
-    "docusaurus-plugin-typedoc": "next",
+    "docusaurus-plugin-typedoc": "^1.0.0-next.30",
     "dotenv": "^16.4.5",
     "eslint": "^8.19.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -67,8 +68,8 @@
     "langsmith": "^0.0.47",
     "supabase": "^1.148.6",
     "ts-jest": "^29.1.1",
-    "typedoc": "^0.24.4",
-    "typedoc-plugin-markdown": "next",
+    "typedoc": "^0.26.10",
+    "typedoc-plugin-markdown": "^4.0.0-next.60",
     "typescript": "^5.1.6"
   },
   "browserslist": {

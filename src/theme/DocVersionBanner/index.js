@@ -6,13 +6,11 @@ import Translate from "@docusaurus/Translate";
 import {
   useActivePlugin,
   useDocVersionSuggestions,
+  useActiveVersion,
 } from "@docusaurus/plugin-content-docs/client";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ThemeClassNames } from "@docusaurus/theme-common";
-import {
-  useDocsPreferredVersion,
-  useDocsVersion,
-} from "@docusaurus/theme-common/internal";
+import { useDocsPreferredVersion } from "@docusaurus/theme-common/internal";
 
 function UnreleasedVersionLabel({ siteTitle, versionMetadata }) {
   return (
@@ -118,12 +116,16 @@ function DocVersionBannerEnabled({ className, versionMetadata }) {
   );
 }
 export default function DocVersionBanner({ className }) {
-  const versionMetadata = useDocsVersion();
-  if (versionMetadata.banner) {
+  const activeVersion = useActiveVersion();
+
+  if (activeVersion.label === "old") {
+    const bannerMetadata = {
+      banner: "unmaintained",
+    };
     return (
       <DocVersionBannerEnabled
         className={className}
-        versionMetadata={versionMetadata}
+        versionMetadata={bannerMetadata}
       />
     );
   }

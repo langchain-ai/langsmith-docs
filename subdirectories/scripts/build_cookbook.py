@@ -44,6 +44,13 @@ class HTMLdf(HTMLParser):
         parser.feed(x)
         return parser.df
 
+class RemoveEmptyCellsPreprocessor(Preprocessor):
+    """
+    A custom preprocessor to remove empty cells from the notebook.
+    """
+    def preprocess(self, notebook, resources):
+        notebook.cells = [cell for cell in notebook.cells if cell.source.strip()]
+        return notebook, resources
 
 class Black(Preprocessor):
     """Format code that has a cell tag `black`"""
@@ -64,6 +71,33 @@ def clean_markdown(markdown: str, all_attrs: bool = False) -> str:
     markdown = remove_stray_divs(markdown)
     return markdown
 
+class EscapePreprocessor(Preprocessor):
+    def preprocess_cell(self, cell, resources, index):
+        if cell.cell_type == "code":
+            if "outputs" in cell:
+                filter_out = set()
+                for i, output in enumerate(cell["outputs"]):
+                    if output.get("data") and output["data"].get("text/html"):
+                        # Process this later in the html processor
+                        continue
+                    if "text" in output:
+                        if not output["text"].strip():
+                            filter_out.add(i)
+                            continue
+                        output["text"] = output["text"].replace("```", r"\`\`\`")
+                    elif "data" in output:
+                        for key, value in output["data"].items():
+                            if isinstance(value, str):
+                                output["data"][key] = value.replace("```", r"\`\`\`")
+                cell["outputs"] = [
+                    output
+                    for i, output in enumerate(cell["outputs"])
+                    if i not in filter_out
+                ]
+                
+        return cell, resources
+
+
 
 class HTMLEscape(Preprocessor):
     """
@@ -82,6 +116,7 @@ class HTMLEscape(Preprocessor):
                     else:
                         cell.metadata.html_center = True
                         o["data"]["text/html"] = "```html\n" + html.strip() + "\n```"
+                        
         return cell, resources
 
 
@@ -108,7 +143,7 @@ def get_mdx_exporter():
     """A mdx notebook exporter which composes many pre-processors together."""
     # TODO: Combine with other ad-hoc logic
     c = Config()
-    pp = [Black, HTMLEscape]
+    pp = [Black, RemoveEmptyCellsPreprocessor, EscapePreprocessor, HTMLEscape]
     c.MarkdownExporter.preprocessors = pp
     return MarkdownExporter(config=c)
 
@@ -273,6 +308,12 @@ def replace_brackets(content: str) -> str:
             # TODO: Handle single backticks
             line = line.replace("<", "&lt;")
             line = line.replace(">", "&gt;")
+            # Note: this will break some rendering of pandas tables in our old cookbooks. 
+            #      We should consider a more robust solution in the future. However,
+            #      this is a quick fix for now since cookbooks are marked as old and
+            #      we only leave them around as past reference. We want to fix our build,
+            line = line.replace("{", "&#123;")
+            line = line.replace("}", "&#125;")
         new_content += line + "\n"
     return new_content
 
