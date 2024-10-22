@@ -417,5 +417,5 @@ if __name__ == "__main__":
     convert_notebooks_to_markdown(cookbook_directory)
     # NOTE: the cookbooks directory is only used in version 1.0 of docs and should thus
     #       only build into this directory
-    docs_directory = Path(__file__).parents[2] / "versioned_docs" / "old"
+    docs_directory = Path(__file__).parents[2] / "versioned_docs" / "version-old"
     move_to_docs(cookbook_directory, docs_directory)
