@@ -87,6 +87,32 @@ const config = {
       }),
     ],
   ],
+  plugins: [
+    [
+      [
+        "@docusaurus/plugin-sitemap",
+        {
+          changefreq: 'weekly',
+          // Function to determine the priority based on the URL
+          createSitemap: async (siteConfig, routesPaths) => {
+            const baseUrl = siteConfig.baseUrl;
+  
+            return routesPaths.map((routePath) => {
+              // Check if the URL contains the old version's path ("old")
+              const isOldVersion = routePath.includes('/old/');
+              const priority = isOldVersion ? 0.2 : 0.8;
+  
+              return {
+                url: `${baseUrl}${routePath}`,
+                changefreq: 'weekly',
+                priority,
+              };
+            });
+          },
+        },
+      ],
+    ],
+  ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
