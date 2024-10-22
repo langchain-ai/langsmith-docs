@@ -122,8 +122,6 @@ function DocVersionBannerEnabled({ className, versionMetadata }) {
 export default function DocVersionBanner({ className }) {
   const activeVersion = useActiveVersion();
 
-  console.log("this is version metadata");
-  console.log(activeVersion);
   if (activeVersion.label === "old") {
     const bannerMetadata = {
       banner: "unmaintained",
