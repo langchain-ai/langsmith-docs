@@ -89,24 +89,6 @@ const config = {
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
-        sitemap: {
-          changefreq: "weekly",
-          priority: 0.5,
-          filename: "sitemap.xml",
-          createSitemapItems: async (params) => {
-            const { defaultCreateSitemapItems, ...rest } = params;
-            const items = await defaultCreateSitemapItems(rest);
-            return items.map((item) => {
-              const newItem = { ...item };
-              if (item.url.includes("/old/")) {
-                newItem.priority = 0.2;
-              } else {
-                newItem.priority = 0.8;
-              }
-              return newItem;
-            });
-          },
-        },
       }),
     ],
   ],

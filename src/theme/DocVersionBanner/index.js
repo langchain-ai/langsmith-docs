@@ -12,7 +12,6 @@ import {
 import { ThemeClassNames } from "@docusaurus/theme-common";
 import {
   useDocsPreferredVersion,
-  useDocsVersion,
 } from "@docusaurus/theme-common/internal";
 
 function UnreleasedVersionLabel({ siteTitle, versionMetadata }) {
