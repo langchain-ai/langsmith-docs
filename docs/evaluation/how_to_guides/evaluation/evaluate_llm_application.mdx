@@ -15,7 +15,7 @@ import {
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
 
-- [Conceptual guide on evaluation](../../concepts/evaluation)
+- [Conceptual guide on evaluation](../../evaluation/concepts/index)
 - [How-to guide on managing datasets](../datasets/manage_datasets_in_application)
 - [How-to guide on managing datasets programmatically](../datasets/manage_datasets_programmatically)
 
@@ -234,7 +234,7 @@ Evaluation scores are stored against each individual output produced by the targ
 
 _If you've annotated your code for tracing, you can open the trace of each row in a side panel view._
 
-![](../static/view_experiment.gif)
+![](../evaluation/static/view_experiment.gif)
 
 ## Use custom evaluators
 
@@ -501,7 +501,7 @@ You can then pass this evaluator to the `evaluate` method as follows:
 
 In the LangSmith UI, you'll the summary evaluator's score displayed with the corresponding key.
 
-![](../static/summary_eval.png)
+![](../evaluation/static/summary_eval.png)
 
 ## Evaluate a LangChain runnable
 
@@ -572,7 +572,7 @@ Then, pass the `runnable.invoke` method to the `evaluate` method. Note that the 
 
 The runnable is traced appropriately for each output.
 
-![](../static/runnable_eval.png)
+![](../evaluation/static/runnable_eval.png)
 
 ## Return multiple scores
 
@@ -630,4 +630,4 @@ def multiple_scores(root_run: Run, example: Example) -> dict:
 
 Rows from the resulting experiment will display each of the scores.
 
-![](../static/multiple_scores.png)
+![](../evaluation/static/multiple_scores.png)
