@@ -84,33 +84,24 @@ const config = {
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
-      }),
-    ],
-  ],
-  plugins: [
-    [
-      [
-        "@docusaurus/plugin-sitemap",
-        {
+        sitemap: {
           changefreq: 'weekly',
-          // Function to determine the priority based on the URL
-          createSitemap: async (siteConfig, routesPaths) => {
-            const baseUrl = siteConfig.baseUrl;
-  
-            return routesPaths.map((routePath) => {
-              // Check if the URL contains the old version's path ("old")
-              const isOldVersion = routePath.includes('/old/');
-              const priority = isOldVersion ? 0.2 : 0.8;
-  
-              return {
-                url: `${baseUrl}${routePath}`,
-                changefreq: 'weekly',
-                priority,
-              };
+          priority: 0.5,
+          filename: 'sitemap.xml',
+          createSitemapItems: async (params) => {
+            const {defaultCreateSitemapItems, ...rest} = params;
+            const items = await defaultCreateSitemapItems(rest);
+            return items.map((item) => {
+              if (item.url.includes('/old/')) {
+                item.priority = 0.2;
+              } else {
+                item.priority = 0.8;
+              }
+              return item;
             });
           },
         },
-      ],
+      }),
     ],
   ],
   themeConfig:
@@ -121,8 +112,9 @@ const config = {
         respectPrefersColorScheme: true,
       },
       prism: {
-        theme: require("prism-react-renderer/themes/vsLight"),
-        darkTheme: require("prism-react-renderer/themes/vsDark"),
+        // theme: require("prism-react-renderer/themes/vsLight"),
+        // darkTheme: require("prism-react-renderer/themes/vsDark"),
+        additionalLanguages: ["python", "typescript"],
       },
       image: "img/langsmith-preview.png",
       navbar: {

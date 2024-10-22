@@ -231,14 +231,14 @@ for d in dataset:
 evaluate_predictions(dataset,predictions,max_workers=8,force_rebuild=False,cache_level="env",clean=False \
                      ,open_file_limit=4096,run_id="test",timeout=1_800)
 ```
-
+```
     Running 3 unevaluated instances...
     Base image sweb.base.arm64:latest already exists, skipping build.
     Base images built successfully.
     Total environment images to build: 2
 
 
-    Building environment images: 100%|██████████| 2/2 [00:47<00:00, 23.94s/it]
+    Building environment images: 100% 2/2 [00:47<00:00, 23.94s/it]
 
 
     All environment images built successfully.
@@ -269,7 +269,7 @@ evaluate_predictions(dataset,predictions,max_workers=8,force_rebuild=False,cache
     All instances run.
     Cleaning cached images...
     Removed 0 images.
-
+```
 ## Sending Evaluation to LangSmith
 
 Now, we can actually send our evaluation feedback to LangSmith by using the `evaluate_existing` function. Our evaluate function is incredibly simple in this case, because the `convert_runs_to_langsmith_feedback` function above made our life very easy by saving all the feedback to a single file.
@@ -287,6 +287,7 @@ experiment_name = result.experiment_name
 evaluate_existing(experiment_name, evaluators=[swe_bench_evaluator])
 ```
 
+```
     View the evaluation results for experiment: 'perfect-lip-22' at:
     https://smith.langchain.com/o/ebbaf2eb-769b-4505-aca2-d11de10372a4/datasets/a9bffcdf-1dfe-4aef-8805-8806f0110067/compare?selectedSessions=182de5dc-fc9d-4065-a3e1-34527f952fd8
 
@@ -300,7 +301,7 @@ evaluate_existing(experiment_name, evaluators=[swe_bench_evaluator])
 
 
     <ExperimentResults perfect-lip-22>
-
+```
 After running, we can go to the experiments tab of our dataset, and check that our feedback keys were properly assigned. If they were, you should see something that resembles the following image:
 
 ![LangSmith feedback](static/swebench_langsmith_feedback.png)
