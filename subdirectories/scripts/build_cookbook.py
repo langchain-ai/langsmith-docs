@@ -136,9 +136,19 @@ def get_mdx_exporter():
     """A mdx notebook exporter which composes many pre-processors together."""
     # TODO: Combine with other ad-hoc logic
     c = Config()
-    pp = [Black, EscapePreprocessor, HTMLEscape]
+    # pp = [Black, EscapePreprocessor, HTMLEscape]
+    pp = [Black, EscapePreprocessor]
     c.MarkdownExporter.preprocessors = pp
-    return MarkdownExporter(config=c)
+    
+    import os
+    template_dir = os.path.join(os.getcwd(), "subdirectories/scripts/notebook_convert_templates")
+    print("Template directory:", template_dir)
+    return MarkdownExporter(
+        preprocessors=[Black, EscapePreprocessor, HTMLEscape],
+        template_name="mdoutput",
+        extra_template_basedirs=[os.getcwd() + "/subdirectories/scripts/notebook_convert_templates"],
+    )
+    # return MarkdownExporter(config=c)
 
 
 def convert_notebooks_to_markdown(root_path: str) -> None:
@@ -305,8 +315,8 @@ def replace_brackets(content: str) -> str:
             #      We should consider a more robust solution in the future. However,
             #      this is a quick fix for now since cookbooks are marked as old and
             #      we only leave them around as past reference. We want to fix our build,
-            line = line.replace("{", "&#123;")
-            line = line.replace("}", "&#125;")
+            # line = line.replace("{", "&#123;")
+            # line = line.replace("}", "&#125;")
         new_content += line + "\n"
     return new_content
 
