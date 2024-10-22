@@ -89,14 +89,14 @@ const config = {
           customCss: require.resolve("./src/css/custom.css"),
         },
         sitemap: {
-          changefreq: 'weekly',
+          changefreq: "weekly",
           priority: 0.5,
-          filename: 'sitemap.xml',
+          filename: "sitemap.xml",
           createSitemapItems: async (params) => {
-            const {defaultCreateSitemapItems, ...rest} = params;
+            const { defaultCreateSitemapItems, ...rest } = params;
             const items = await defaultCreateSitemapItems(rest);
             return items.map((item) => {
-              if (item.url.includes('/old/')) {
+              if (item.url.includes("/old/")) {
                 item.priority = 0.2;
               } else {
                 item.priority = 0.8;

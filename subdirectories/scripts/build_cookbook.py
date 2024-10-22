@@ -64,6 +64,33 @@ def clean_markdown(markdown: str, all_attrs: bool = False) -> str:
     markdown = remove_stray_divs(markdown)
     return markdown
 
+class EscapePreprocessor(Preprocessor):
+    def preprocess_cell(self, cell, resources, index):
+        if cell.cell_type == "code":
+            if "outputs" in cell:
+                filter_out = set()
+                for i, output in enumerate(cell["outputs"]):
+                    if output.get("data") and output["data"].get("text/html"):
+                        # Process this later in the html processor
+                        continue
+                    if "text" in output:
+                        if not output["text"].strip():
+                            filter_out.add(i)
+                            continue
+                        output["text"] = output["text"].replace("```", r"\`\`\`")
+                    elif "data" in output:
+                        for key, value in output["data"].items():
+                            if isinstance(value, str):
+                                output["data"][key] = value.replace("```", r"\`\`\`")
+                cell["outputs"] = [
+                    output
+                    for i, output in enumerate(cell["outputs"])
+                    if i not in filter_out
+                ]
+                
+        return cell, resources
+
+
 
 class HTMLEscape(Preprocessor):
     """
@@ -82,6 +109,7 @@ class HTMLEscape(Preprocessor):
                     else:
                         cell.metadata.html_center = True
                         o["data"]["text/html"] = "```html\n" + html.strip() + "\n```"
+                        
         return cell, resources
 
 
@@ -108,7 +136,7 @@ def get_mdx_exporter():
     """A mdx notebook exporter which composes many pre-processors together."""
     # TODO: Combine with other ad-hoc logic
     c = Config()
-    pp = [Black, HTMLEscape]
+    pp = [Black, EscapePreprocessor, HTMLEscape]
     c.MarkdownExporter.preprocessors = pp
     return MarkdownExporter(config=c)
 
