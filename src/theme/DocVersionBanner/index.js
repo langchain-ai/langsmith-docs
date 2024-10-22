@@ -10,9 +10,7 @@ import {
 } from "@docusaurus/plugin-content-docs/client";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ThemeClassNames } from "@docusaurus/theme-common";
-import {
-  useDocsPreferredVersion,
-} from "@docusaurus/theme-common/internal";
+import { useDocsPreferredVersion } from "@docusaurus/theme-common/internal";
 
 function UnreleasedVersionLabel({ siteTitle, versionMetadata }) {
   return (
