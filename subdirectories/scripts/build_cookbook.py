@@ -301,6 +301,10 @@ def replace_brackets(content: str) -> str:
             # TODO: Handle single backticks
             line = line.replace("<", "&lt;")
             line = line.replace(">", "&gt;")
+            # Note: this will break some rendering of pandas tables in our old cookbooks. 
+            #      We should consider a more robust solution in the future. However,
+            #      this is a quick fix for now since cookbooks are marked as old and
+            #      we only leave them around as past reference. We want to fix our build,
             line = line.replace("{", "&#123;")
             line = line.replace("}", "&#125;")
         new_content += line + "\n"
