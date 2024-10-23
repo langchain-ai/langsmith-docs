@@ -30,7 +30,7 @@ Configure your datasets so that you can search for few shot examples based on an
 Navigate to the datasets UI, and click the new `Few-Shot search` tab. Hit the `Start sync` button, which will
 create a new index on your dataset to make it searchable.
 
-![](../static/few_shot_tab_unsynced.png)
+![](./static/few_shot_tab_unsynced.png)
 
 By default, we sync to the latest version of your dataset. That means when new examples are added to your dataset, they
 will automatically be added to your index. This process runs every few minutes, so there should be a very short delay for
@@ -41,11 +41,11 @@ in the next section.
 
 Now that you have turned on indexing for your dataset, you will see the new few shot playground.
 
-![](../static/few_shot_synced_empty_state.png)
+![](./static/few_shot_synced_empty_state.png)
 
 You can type in a sample input, and check which results would be returned by our search API.
 
-![](../static/few_shot_search_results.png)
+![](./static/few_shot_search_results.png)
 
 Each result will have a score and a link to the example in the dataset. The scoring system works such that
 0 is a completely random result, and higher scores are better. Results will be sorted in descending order
@@ -62,7 +62,7 @@ may evolve over time. They are simply used for convenience in vibe-testing outpu
 Click the `Get Code Snippet` button in the previous diagram, you'll be taken to a screen that has
 code snippets from our LangSmith SDK in different languages.
 
-![](../static/few_shot_code_snippet.png)
+![](./static/few_shot_code_snippet.png)
 
 For code samples on using few shot search in LangChain python applications, please see our [how-to guide
 in the LangChain docs](https://python.langchain.com/v0.2/docs/how_to/example_selectors_langsmith/).

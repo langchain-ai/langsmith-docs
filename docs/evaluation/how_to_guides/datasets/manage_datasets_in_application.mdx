@@ -17,29 +17,29 @@ The easiest way to interact with datasets is directly in the LangSmith app. Here
 
 To get started, you can create a new datasets by heading to the "Datasets and Testing" section of the application and clicking on "+ New Dataset".
 
-![](../static/new_dataset.png)
+![](./static/new_dataset.png)
 
 Then, enter the relevant dataset details, including a name, optional description, and dataset type. Please see the [concepts](../../evaluation/concepts/index#datasets-and-examples) for more information on dataset types. For most flexibility, the key-value dataset type is recommended.
 
-![](../static/enter_dataset_details.png)
+![](./static/enter_dataset_details.png)
 
 You can then add examples to the dataset by clicking on "Add Example". Here, you can enter the input and output as JSON objects.
 
-![](../static/add_manual_example.png)
+![](./static/add_manual_example.png)
 
 ## Dataset schema validation
 
 If you are creating a key-value dataset, you may optionally define a schema for your dataset. All examples you create will be validated against this schema.
 
-![Defining dataset schema](../static/dataset_schema_definition.png)
+![Defining dataset schema](./static/dataset_schema_definition.png)
 
 Dataset schemas are defined with standard [JSON schemas](https://json-schema.org/). If you would rather manually enter raw JSON, click "Editor" at the bottom of the schema editor and then select "JSON".
 
-![Custom JSON schema input](../static/custom_json_schema.png)
+![Custom JSON schema input](./static/custom_json_schema.png)
 
 If you have defined a schema for your dataset, you will get easy validation when creating new examples:
 
-![Schema validation on example creation](../static/schema_validation.png)
+![Schema validation on example creation](./static/schema_validation.png)
 
 ## Add inputs and outputs from traces to datasets
 
@@ -58,21 +58,21 @@ You can use [automations](../monitoring/rules) to automatically add traces to a 
 
 :::
 
-![Add to Dataset](../static/add_to_dataset.png)
+![Add to Dataset](./static/add_to_dataset.png)
 
 From there, we select the dataset to organize it in and update the ground truth output values if necessary.
 
-![Modify example](../static/modify_example.png)
+![Modify example](./static/modify_example.png)
 
 ## Upload a CSV file to create a dataset
 
 The easiest way to create a dataset from your own data is by clicking the 'upload a CSV dataset' button on the home page or in the top right-hand corner of the 'Datasets & Testing' page.
 
-![Upload CSV](../static/create_dataset_csv.png)
+![Upload CSV](./static/create_dataset_csv.png)
 
 Select a name and description for the dataset, and then confirm that the inferred input and output columns are correct.
 
-![Confirm Columns](../static/select_columns.png)
+![Confirm Columns](./static/select_columns.png)
 
 ## Generate synthetic examples
 
@@ -81,11 +81,11 @@ For a dataset with a specified schema, you can generate synthetic examples to en
 1. **Select few-shot examples**: Choose a set of examples to guide the LLM's generation. You can manually select these examples from your dataset or use the automatic selection option.
 2. **Specify the number of examples**: Enter the number of synthetic examples you want to generate.
 3. **Configure API Key**: Ensure your OpenAI API key is entered at the "API Key" link.
-   ![Generate Synthetic Examples](../static/generate_synthetic_examples_create.png)
+   ![Generate Synthetic Examples](./static/generate_synthetic_examples_create.png)
 
 After clicking "Generate," the examples will appear on the page. You can choose which examples to add to your dataset, with the option to edit them before finalizing.
 Each example will be validated against your specified dataset schema and tagged as "synthetic" in the source metadata.
-![Generate Synthetic Examples](../static/generate_synthetic_examples_pane.png)
+![Generate Synthetic Examples](./static/generate_synthetic_examples_pane.png)
 
 ## Export a dataset
 
@@ -94,11 +94,11 @@ You can export your LangSmith dataset to CSV or OpenAI evals format directly fro
 To do so, click "Export Dataset" from the homepage.
 To do so, select a dataset, click on "Examples", and then click the "Export Dataset" button at the top of the examples table.
 
-![Export Dataset Button](../static/export-dataset-button.png)
+![Export Dataset Button](./static/export-dataset-button.png)
 
 This will open a modal where you can select the format you want to export to.
 
-![Export Dataset Modal](../static/export-dataset-modal.png)
+![Export Dataset Modal](./static/export-dataset-modal.png)
 
 ## Create and manage dataset splits
 
@@ -119,7 +119,7 @@ evaluate your application.
 In order to create and manage splits in the app, you can select some examples in your dataset and click "Add to Split". From the resulting popup menu,
 you can select and unselect splits for the selected examples, or create a new split.
 
-![Add to Split](../static/add_to_split2.png)
+![Add to Split](./static/add_to_split2.png)
 
 ## Edit example metadata
 
@@ -127,15 +127,15 @@ You can add metadata to your examples by clicking on an example and then clickin
 From this page, you can update/delete existing metadata, or add new metadata. You may use this to store information about
 your examples, such as tags or version info, which you can [then filter by when you call `list_examples` in the SDK](/how_to_guides/datasets/manage_datasets_programmatically#list-examples-by-metadata).
 
-![Add Metadata](../static/add_metadata.png)
+![Add Metadata](./static/add_metadata.png)
 
 ## Filter examples
 
 You can filter examples by metadata key/value or full-text search. To filter examples, click "Filter" in the top left of the table:
 
-![Filter Examples](../static/filter_examples.png)
+![Filter Examples](./static/filter_examples.png)
 
 Next, click "Add filter" and select "Full Text" or "Metadata" from the resulting dropdown. You may add multiple filters, and only examples that satisfy all of the
 filters will be displayed in the table.
 
-![Filters Applied to Examples](../static/filters_applied.png)
+![Filters Applied to Examples](./static/filters_applied.png)
