@@ -31,6 +31,7 @@ See the following guides to set up your LangSmith account.
   - [Assign a tag to a resource](./how_to_guides/setup/set_up_resource_tags#assign-a-tag-to-a-resource)
   - [Delete a tag](./how_to_guides/setup/set_up_resource_tags#delete-a-tag)
   - [Filter resources by tags](./how_to_guides/setup/set_up_resource_tags#filter-resources-by-tags)
+<<<<<<< HEAD
 
 ## Datasets
 
@@ -93,3 +94,5 @@ Quickly iterate on prompts and models in the LangSmith Playground.
 - [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)
 - [Use a custom model](./how_to_guides/playground/custom_endpoint)
 - [Save settings configuration](./how_to_guides/playground/save_model_configuration)
+=======
+>>>>>>> e685220 (prompt engineering complete)
