@@ -13,17 +13,17 @@ import {
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
 
-- [Conceptual guide on tracing and feedback](/observability/concepts)
+- [Conceptual guide on tracing and feedback](../../../observability/concepts)
 - [Reference guide on feedback data format](/reference/data_formats/feedback_data_format)
 
 :::
 
 In many applications, but even more so for LLM applications, it is important to collect user feedback to understand how your application is performing in real-world scenarios.
 The ability to observe user feedback along with trace data can be very powerful to drill down into the most interesting datapoints, then send those datapoints for further review, automatic evaluation, or even datasets.
-To learn more about how to filter traces based on various attributes, including user feedback, see [this guide](/observability/how_to_guides/monitoring/filter_traces_in_application)
+To learn more about how to filter traces based on various attributes, including user feedback, see [this guide](../../../observability/how_to_guides/monitoring/filter_traces_in_application)
 
 LangSmith makes it easy to attach user feedback to traces.
-It's often helpful to expose a simple mechanism (such as a thumbs-up, thumbs-down button) to collect user feedback for your application responses. You can then use the LangSmith SDK or API to send feedback for a trace. To get the `run_id` of a logged run, see [this guide](/observability/how_to_guides/tracing//access_current_span).
+It's often helpful to expose a simple mechanism (such as a thumbs-up, thumbs-down button) to collect user feedback for your application responses. You can then use the LangSmith SDK or API to send feedback for a trace. To get the `run_id` of a logged run, see [this guide](../../../observability/how_to_guides/tracing/access_current_span).
 
 :::note
 
