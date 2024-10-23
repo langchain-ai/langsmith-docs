@@ -248,6 +248,12 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
   - [Pull a prompt](./how_to_guides/prompts/manage_prompts_programatically#pull_a_prompt)
   - [Use a prompt without LangChain](./how_to_guides/prompts/manage_prompts_programatically#use_a_prompt_without_langchain)
   - [List, delete, and like prompts](./how_to_guides/prompts/manage_prompts_programatically#list_delete_and_like_prompts)
+- [Prompt tags](./how_to_guides/prompts/prompt_tags)
+  - [Create a tag](./how_to_guides/prompts/prompt_tags#create_a_tag)
+  - [Move a tag](./how_to_guides/prompts/prompt_tags#move_a_tag)
+  - [Delete a tag](./how_to_guides/prompts/prompt_tags#delete_a_tag)
+  - [Using tags in code](./how_to_guides/prompts/prompt_tags#using_tags_in_code)
+  - [Common use cases](./how_to_guides/prompts/prompt_tags#common_use_cases)
 - [LangChain Hub](./how_to_guides/prompts/langchain_hub)
 
 ## Playground
