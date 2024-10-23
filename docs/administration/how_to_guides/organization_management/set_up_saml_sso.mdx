@@ -7,7 +7,7 @@ Single Sign-On (SSO) functionality is available for Enterprise customers to acce
 LangSmith's SSO configuration is built using the SAML (Security Assertion Markup Language) 2.0 standard. SAML 2.0 enables connecting an Identity Provider (IdP) to your organization for an easier, more secure login experience.
 
 :::note
-SAML SSO is available for organizations on the [Enterprise plan](../../pricing.mdx). Please [contact sales](https://www.langchain.com/contact-sales) to learn more.
+SAML SSO is available for organizations on the [Enterprise plan](../../pricing). Please [contact sales](https://www.langchain.com/contact-sales) to learn more.
 :::
 
 ## What is SAML SSO?
@@ -26,7 +26,7 @@ SSO services permit a user to use one set of credentials (for example, a name or
 
 - Your organization must be on an Enterprise plan
 - Your Identity Provider (IdP) must support the SAML 2.0 standard
-- Only [Organization Admins](../../concepts/admin#organization-roles) can configure SAML SSO
+- Only [Organization Admins](../../concepts/index#organization-roles) can configure SAML SSO
 
 ### Initial configuration
 
@@ -61,15 +61,15 @@ The URLs are different for the US and EU. Please make sure to select your region
 LangSmith supports Just-in-Time provisioning when using SAML SSO. This allows someone signing in via SAML SSO to join the organization and selected workspaces automatically as a member.
 
 :::note
-JIT provisioning only runs for new users i.e. users who do not already have access to the organization with the same email address via a [different login method](../../reference/authentication_authorization/authentication_methods.mdx#cloud)
+JIT provisioning only runs for new users i.e. users who do not already have access to the organization with the same email address via a [different login method](../../../reference/authentication_authorization/authentication_methods.mdx#cloud)
 :::
 
 ## Login methods and access
 
-Once you have completed your configuration of SAML SSO for your organization, users will be able to login via SAML SSO in addition to [other login methods](../../reference/authentication_authorization/authentication_methods.mdx#cloud) such as username/password and Google Authentication.
+Once you have completed your configuration of SAML SSO for your organization, users will be able to login via SAML SSO in addition to [other login methods](../../../reference/authentication_authorization/authentication_methods.mdx#cloud) such as username/password and Google Authentication.
 
 - When logged in via SAML SSO, users can only access the corresponding organization with SAML SSO configured.
-- Users with SAML SSO as their only login method do not have [personal organizations](../../concepts/admin/admin.mdx#organizations)
+- Users with SAML SSO as their only login method do not have [personal organizations](../../concepts/index#organizations)
 - When logged in via any other method, users can access the organization with SAML SSO configured along with any other organizations they are a part of
 
 ## Enforce SAML SSO only
@@ -93,7 +93,7 @@ If you have issues setting up SAML SSO, please reach out to [support@langchain.d
 
 Some identity providers retain the original `User ID` through an email change while others do not, so we recommend that you follow these steps to avoid duplicate users in LangSmith:
 
-1. Remove the user from the organization (see [here](../setup/set_up_organization.mdx#manage-users))
+1. Remove the user from the organization (see [here](./set_up_organization.mdx#manage-users))
 1. Change their email address in the IdP
 1. Have them login to LangSmith again via SAML SSO - this will trigger the usual [JIT provisioning](#just-in-time-jit-provisioning) flow with their new email address
 

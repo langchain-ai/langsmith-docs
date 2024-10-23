@@ -10,12 +10,12 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 Before diving into this content, it might be helpful to read the following:
 
-- [Conceptual guide on organizations and workspaces](../../concepts/admin)
+- [Conceptual guide on organizations and workspaces](../../concepts/index)
 
 :::
 
 :::note
-If you're interested in managing your organization and workspaces programmatically, see [this hot-to guide](../../how_to_guides/setup/manage_organization_by_api.mdx).
+If you're interested in managing your organization and workspaces programmatically, see [this hot-to guide](.//manage_organization_by_api.mdx).
 :::
 
 ## Create an organization
@@ -25,14 +25,14 @@ When you log in for the first time, a personal organization will be created for 
 To do this, head to the <RegionalUrl text='Settings page' suffix='/settings'/> and click **Create Organization**.  
 Shared organizations require a credit card before they can be used. You will need to [set up billing](./set_up_billing) to proceed.
 
-![](../static/create_organization.png)
+![](./static/create_organization.png)
 
 ## Manage and navigate workspaces
 
 Once you've subscribed to a plan that allows for multiple users per organization, you can [set up workspaces](./set_up_workspace) to collaborate more effectively and isolate LangSmith resources between different groups of users.
 To navigate between workspaces and access the resources within each workspace (trace projects, annotation queues, etc.), select the desired workspace from the picker in the top left:
 
-![](../static/select_workspace.png)
+![](./static/select_workspace.png)
 
 ## Manage users
 
@@ -43,7 +43,7 @@ Here you can
 - Edit a user's organization role
 - Remove users from your organization
 
-![](../static/organization_members_and_roles.png)
+![](./static/organization_members_and_roles.png)
 
 Organizations on the Enterprise plan may set up custom workspace roles in the `Roles` tab here. See the [access control setup guide](./set_up_access_control.mdx) for more details.
 
@@ -59,4 +59,4 @@ The `Organization User` role is only available in organizations on plans with mu
 Custom organization-scoped roles are not available yet.
 :::
 
-See [this conceptual guide](../../concepts/admin#organization-roles) for a full list of permissions associated with each role.
+See [this conceptual guide](../../concepts/index#organization-roles) for a full list of permissions associated with each role.
