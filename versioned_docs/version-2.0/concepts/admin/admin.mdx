@@ -98,25 +98,29 @@ And workspace members are managed in workspace settings:
 
 ## API keys
 
-:::danger Dropping support August 15, 2024
-We will be dropping support for API keys on August 15, 2024 in favor of personal access tokens (PATs) and service keys. We recommend using PATs and service keys for all new integrations. API keys prefixed with `ls__` will NO LONGER work after August 15, 2024.
+:::danger Dropped support October 22, 2024
+We have dropped support for `ls__` prefixed API keys on October 22, 2024 in favor of personal access tokens (PATs) and service keys. We recommend using PATs and service keys for all new integrations. API keys prefixed with `ls__` will NO LONGER work.
 :::
 
 API keys are used to authenticate requests to the LangSmith API. They are created by users and scoped to a workspace. This means that all requests made with an API key will be associated with the workspace that the key was created in. The API key will have the ability to create, read, update, delete all resources within that workspace.
 
-API keys are prefixed with `ls__`. These keys will also show up in the UI under the service keys tab.
+These inactive API keys are prefixed with `ls__`. These keys will also show up in the UI under the service keys tab.
 
 ### Personal Access Tokens (PATs)
 
 Personal Access Tokens (PATs) are used to authenticate requests to the LangSmith API. They are created by users and scoped to a user. The PAT will have the same permissions as the user that created it.
 
-PATs are prefixed with `lsv2_pt_`
+When a user's permission changes or they are removed from a workspace, that is reflected in the PAT permissions. Similarly, if the user is removed from the org, requests using the PAT will start failing.
+
+PATs are prefixed with `lsv2_pt_`.
 
 ### Service keys
 
-Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account.
+Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account rather than a human user. Service Keys have Admin permissions in all workspaces present at the time they were created. 
 
-Service keys are prefixed with `lsv2_sk_`
+Service keys are preferred for API requests scoped to a workspace because they don't rely on a specific user, while PATs are preferred for [API requests scoped to an organization](../../how_to_guides/setup/manage_organization_by_api.mdx) for now.
+
+Service keys are prefixed with `lsv2_sk_`.
 
 :::note
 To see how to create a service key or Personal Access Token, see the [setup guide](../../how_to_guides/setup/create_account_api_key.mdx)
