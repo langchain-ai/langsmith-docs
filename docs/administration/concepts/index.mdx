@@ -190,11 +190,11 @@ for savings up to 10x. On this page, we'll go through how data retention works a
 
 #### Why retention matters
 
-* **Privacy**: Many data privacy regulations, such as GDPR in Europe or CCPA in California, require organizations to delete personal data
-once it's no longer necessary for the purposes for which it was collected. Setting retention periods aids in compliance with
-such regulations.
-* **Cost**: LangSmith charges less for traces that have low data retention. See our tutorial on how to [optimize spend](../../tutorials/Administrators/manage_spend)
-for details.
+- **Privacy**: Many data privacy regulations, such as GDPR in Europe or CCPA in California, require organizations to delete personal data
+  once it's no longer necessary for the purposes for which it was collected. Setting retention periods aids in compliance with
+  such regulations.
+- **Cost**: LangSmith charges less for traces that have low data retention. See our tutorial on how to [optimize spend](../../tutorials/Administrators/manage_spend)
+  for details.
 
 #### How it works
 
@@ -241,13 +241,13 @@ If you have questions or concerns about our pricing model, please feel free to r
 
 **How does data retention affect downstream features?**
 
-* **Annotation Queues, Run Rules, and Feedback**: Traces that use these features will be [auto-upgraded](#data-retention-auto-upgrades).
-* **Monitoring**: The monitoring tab will continue to work even after a base tier trace's data retention period ends. It is powered by
-trace metadata that exists for >30 days, meaning that your monitoring graphs will continue to stay accurate even on
-`base` tier traces.
-* **Datasets**: Datasets have an indefinite data retention period. Restated differently, if you add a trace's inputs and outputs to a dataset,
-they will never be deleted. We suggest that if you are using LangSmith for data collection, you take advantage of the datasets
-feature.
+- **Annotation Queues, Run Rules, and Feedback**: Traces that use these features will be [auto-upgraded](#data-retention-auto-upgrades).
+- **Monitoring**: The monitoring tab will continue to work even after a base tier trace's data retention period ends. It is powered by
+  trace metadata that exists for >30 days, meaning that your monitoring graphs will continue to stay accurate even on
+  `base` tier traces.
+- **Datasets**: Datasets have an indefinite data retention period. Restated differently, if you add a trace's inputs and outputs to a dataset,
+  they will never be deleted. We suggest that if you are using LangSmith for data collection, you take advantage of the datasets
+  feature.
 
 #### Billing model
 
@@ -402,5 +402,3 @@ may take a minute or two before the new limits apply.
 ### Related content
 
 - Tutorial on how to [optimize spend](../../tutorials/Administrators/manage_spend)
-
-
