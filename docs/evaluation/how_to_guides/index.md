@@ -73,3 +73,30 @@ Collect human feedback to improve your LLM applications.
   - [Create an annotation queue](./how_to_guides/human_feedback/annotation_queues#create-an-annotation-queue)
   - [Assign runs to an annotation queue](./how_to_guides/human_feedback/annotation_queues#assign-runs-to-an-annotation-queue)
   - [Review runs in an annotation queue](./how_to_guides/human_feedback/annotation_queues#review-runs-in-an-annotation-queue)
+  
+## Datasets
+
+Manage datasets in LangSmith to evaluate and improve your LLM applications.
+
+- [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
+  - [Create a new dataset and add examples manually](./how_to_guides/datasets/manage_datasets_in_application#create-a-new-dataset-and-add-examples-manually)
+  - [Dataset schema validation](./how_to_guides/datasets/manage_datasets_in_application#dataset-schema-validation)
+  - [Add inputs and outputs from traces to datasets](./how_to_guides/datasets/manage_datasets_in_application#add-inputs-and-outputs-from-traces-to-datasets)
+  - [Upload a CSV file to create a dataset](./how_to_guides/datasets/manage_datasets_in_application#upload-a-csv-file-to-create-a-dataset)
+  - [Generate synthetic examples](./how_to_guides/datasets/manage_datasets_in_application#generate-synthetic-examples)
+  - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
+  - [Create and manage dataset splits](./how_to_guides/datasets/manage_datasets_in_application#create-and-manage-dataset-splits)
+- [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
+  - [Create a dataset from list of values](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-list-of-values)
+  - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces)
+  - [Create a dataset from a CSV file](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-csv-file)
+  - [Create a dataset from a pandas DataFrame](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-pandas-dataframe)
+  - [Fetch datasets](./how_to_guides/datasets/manage_datasets_programmatically#fetch-datasets)
+  - [Fetch examples](./how_to_guides/datasets/manage_datasets_programmatically#fetch-examples)
+  - [Update examples](./how_to_guides/datasets/manage_datasets_programmatically#update-examples)
+  - [Bulk update examples](./how_to_guides/datasets/manage_datasets_programmatically#bulk-update-examples)
+- [Version datasets](./how_to_guides/datasets/version_datasets)
+  - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
+  - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
+- [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
+- [Index a dataset for few shot example selection](./how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection)
