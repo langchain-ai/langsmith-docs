@@ -16,12 +16,12 @@ Explanations, clarification and discussion of key topics in LangSmith.
 
 ## Tracing
 
-- [Runs](./concepts/tracing#runs)
-- [Traces](./concepts/tracing#traces)
-- [Projects](./concepts/tracing#projects)
-- [Feedback](./concepts/tracing#feedback)
-- [Tags](./concepts/tracing#tags)
-- [Metadata](./concepts/tracing#metadata)
+- [Runs](./observability/concepts/index#runs)
+- [Traces](./observability/concepts/index#traces)
+- [Projects](./observability/concepts/index#projects)
+- [Feedback](./observability/concepts/index#feedback)
+- [Tags](./observability/concepts/index#tags)
+- [Metadata](./observability/concepts/index#metadata)
 
 ## Evaluation
 
