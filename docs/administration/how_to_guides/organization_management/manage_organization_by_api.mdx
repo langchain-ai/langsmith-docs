@@ -9,7 +9,7 @@ LangSmith's API supports programmatic access via API key to all of the actions a
 Before diving into this content, it might be helpful to read the following:
 
 - [Conceptual guide on organizations and workspaces](../../concepts)
-- [Organization setup how-to guild](.//set_up_organization.mdx)
+- [Organization setup how-to guild](./set_up_organization.mdx)
 
 :::
 
@@ -120,7 +120,7 @@ Workspace level:
   />
 
 :::note
-These params should be omitted: `read_only` (deprecated), `password` and `full_name` ([basic auth](..//reference/authentication_authorization/authentication_methods.mdx) only)
+These params should be omitted: `read_only` (deprecated), `password` and `full_name` ([basic auth](/reference/authentication_authorization/authentication_methods.mdx) only)
 :::
 
 ## API Keys
@@ -146,7 +146,7 @@ If the header is not present, operations will default to the workspace the API k
 These endpoints are user-scoped and require a logged-in user's JWT, so they should only be executed through the UI.
 
 - `/api-key/current` endpoints: these are related a user's PATs
-- `/sso/email-verification/send` (Cloud-only): this endpoint is related to [SAML SSO](.//set_up_saml_sso.mdx)
+- `/sso/email-verification/send` (Cloud-only): this endpoint is related to [SAML SSO](./set_up_saml_sso.mdx)
 
 ## Sample Code
 
