@@ -43,6 +43,9 @@ module.exports = {
         },
       ],
       link: { type: "doc", id: "observability/concepts/index" },
+      customProps: {
+        maxDepth: 3, // Set the maximum depth for this category
+      },
     },
     {
       type: "category",
