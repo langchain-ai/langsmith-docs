@@ -22,7 +22,7 @@ We will outline the steps for creating an automation rule in LangSmith below.
 
 To create a rule, head click on **Rules** in the top right corner of any project details page, then scroll to the bottom and click on **+ Add Rule**.
 
-![](../static/add_automation_rule.png)
+![](./static/add_automation_rule.png)
 
 _Alternatively_, you can access rules in settings by navigating to <RegionalUrl text='this link' suffix='/settings/workspaces/rules'/>, click on **+ Add Rule**, then **Project Rule**.
 
@@ -37,13 +37,13 @@ There are currently two types of rules you can create: **Project Rule** and **Da
 
 Give your rule a name, for example "my_rule":
 
-![](../static/give_rule_name.png)
+![](./static/give_rule_name.png)
 
 ### Step 2: Define the filter
 
 You can create a filter as you normally would to filter traces in the project. For more information on filters, you can refer to [this guide](./filter_traces_in_application).
 
-![](../static/rules_filter.png)
+![](./static/rules_filter.png)
 
 ### (Optional) Step 3: Apply Rule to Past Runs
 
@@ -52,7 +52,7 @@ start date to apply the rule.
 
 This will start from the **Backfill From** date and apply the run rules until it is caught up with the latest runs.
 
-![](../static/rules_past_runs.png)
+![](./static/rules_past_runs.png)
 
 Note that you will have to expand the date range for logs if you wanted to look at the progress of the backfill, see [View logs for your automations](./rules#view-logs-for-your-automations) for details.
 
@@ -82,11 +82,11 @@ You can also get to logs by clicking on `Rules` in the top right hand corner of 
 Logs allow you to gain confidence that your rules are working as expected. You can now view logs that list all runs processed by a given rule for the past day. For rules that apply online evaluation scores, you can easily see the output score and navigate to the run. For rules that add runs as examples to datasets, you can view the example produced.
 If a particular rule execution has triggered an error, you can view the error message by hovering over the error icon.
 
-![Logs_Gif](../static/rules_logs.gif)
+![Logs_Gif](./static/rules_logs.gif)
 
-![Logs](../static/rules_logs.png)
+![Logs](./static/rules_logs.png)
 
 By default, rule logs only show results for runs that occurred in the last day. To see results for older runs, you can select **Last 1 day** and enter the desired date range.
 When applying a rule to past runs, the processing will start from the start date and go forward, so this would be needed to view logs while the backfill is proceeding.
 
-![](../static/rules_past_runs_logs.png)
+![](./static/rules_past_runs_logs.png)

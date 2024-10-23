@@ -19,7 +19,7 @@ on sampled runs that you can query downstream in our application. There are two 
 - Custom Code: write a python evaluator directly in LangSmith. Often used for validating structure or statistical properties of your data.
 - LLM as a Judge: use an LLM to evaluate your traces. Often used to understand higher level qualities of your output (e.g. toxicity, hallucination, etc)
 
-![](../static/automations.png)
+![](./static/automations.png)
 
 ## Configure LLM as judge evaluators
 
@@ -32,7 +32,7 @@ After entering [rules setup](./rules), you can select `LLM-as-Judge evaluator` f
 You can choose any model available in the dropdown. Currently, we support **OpenAI**, **AzureOpenAI**, and models hosted on **Fireworks**.
 In order to set the API keys to use for these invocations, click on the `Secrets & API Keys` button and add the necessary keys.
 
-![](../static/evaluator_secrets.png)
+![](./static/evaluator_secrets.png)
 
 ### Prompt template
 
@@ -60,13 +60,13 @@ When you choose a hub prompt for your online evaluator, the prompt will be locke
 
 Prompts can be crafted with any variable name you choose. To map what is passed into your evaluator prompt from your runs or experiments, use the variable mapping inputs. There's a dropdown with suggestions provided based on the schema of your recent runs.
 
-![](../static/mapping_variables.png)
+![](./static/mapping_variables.png)
 
 ### Preview
 
 Previewing the prompt will show you an example of what the formatted prompt will look like. This preview pulls the input and output of the most recent run. In the case of a dataset evaluator, the preview will also pull reference output from an example in your dataset.
 
-![](../static/prompt_preview.png)
+![](./static/prompt_preview.png)
 
 :::note
 You can configure an evaluation prompt that doesn't match the schema of your recent runs, but the dropdown suggestions and preview function won't work as expected.
