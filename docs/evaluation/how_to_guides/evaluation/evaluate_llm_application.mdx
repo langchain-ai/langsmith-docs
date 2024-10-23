@@ -243,13 +243,13 @@ The `key` will be associated with the score in the LangSmith UI.
 
 :::tip advanced use-cases
 
-- Configure more feedback fields: you can configure other fields in the dictionary as well. Please see the [feedback reference](../../reference/data_formats/feedback_data_format) for more information.
+- Configure more feedback fields: you can configure other fields in the dictionary as well. Please see the [feedback reference](/reference/data_formats/feedback_data_format) for more information.
 - Evaluate on intermediate steps: to view a more advanced example that traverses the `root_run` / `rootRun` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
 - Return multiple scores: you can return multiple scores from a single evaluator. Please check out [the example below](#return-multiple-scores) for more information.
 
 :::
 
-To learn more about the `Run` format, you can read the following [reference](../../reference/data_formats/run_data_format). However, many of the fields are not relevant nor required for writing evaluators.
+To learn more about the `Run` format, you can read the following [reference](/reference/data_formats/run_data_format). However, many of the fields are not relevant nor required for writing evaluators.
 The `root_run` / `rootRun` is always available and contains the inputs and outputs of the target task. If tracing is enabled, the `root_run` / `rootRun` will also contain child runs for each step in the pipeline.
 
 Here is an example of a very simple custom evaluator that compares the output of a model to the expected output in the dataset:
@@ -590,7 +590,7 @@ To return multiple scores, simply return a dictionary/object of the following fo
 }
 ```
 
-Each of these dictionaries can contain any or all of the [feedback fields](../../reference/data_formats/feedback_data_format); check out the linked document for more information.
+Each of these dictionaries can contain any or all of the [feedback fields](/reference/data_formats/feedback_data_format); check out the linked document for more information.
 
 Example:
 

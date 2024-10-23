@@ -14,9 +14,9 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
 
-- [Run (span) data format](../../reference/data_formats/run_data_format)
+- [Run (span) data format](/reference/data_formats/run_data_format)
 - <RegionalUrl type="api" suffix="/redoc" text="LangSmith API Reference" />
-- [LangSmith trace query syntax](../../reference/data_formats/trace_query_syntax)
+- [LangSmith trace query syntax](/reference/data_formats/trace_query_syntax)
 
 :::
 
@@ -27,11 +27,11 @@ handle large data volumes and will support automatic retries, and parallelizatio
 
 The recommended way to query runs (the span data in LangSmith traces) is to use the `list_runs` method in the SDK or `/runs/query` endpoint in the API.
 
-LangSmith stores traces in a simple format that is specified in the [Run (span) data format](../../reference/data_formats/run_data_format).
+LangSmith stores traces in a simple format that is specified in the [Run (span) data format](/reference/data_formats/run_data_format).
 
 ## Use filter arguments
 
-For simple queries, you don't have to rely on our query syntax. You can use the filter arguments specified in the [filter arguments reference](../../reference/data_formats/trace_query_syntax#filter-arguments).
+For simple queries, you don't have to rely on our query syntax. You can use the filter arguments specified in the [filter arguments reference](/reference/data_formats/trace_query_syntax#filter-arguments).
 
 :::important Prerequisites
 Initialize the client before running the below code snippets.
@@ -155,7 +155,7 @@ for await (const run of client.listRuns({
 
 ## Use filter query language
 
-For more complex queries, you can use the query language described in the [filter query language reference](../../reference/data_formats/trace_query_syntax#filter-query-language).
+For more complex queries, you can use the query language described in the [filter query language reference](/reference/data_formats/trace_query_syntax#filter-query-language).
 
 ### List all root runs in a conversational thread
 
