@@ -20,11 +20,11 @@ Being able to accurately filter runs is important for both manual inspection and
 There are two ways to create a filter.
 First, you can create a filter from the high level nav bar. By default, there is one filter applied: `IsRoot` is `true`. This restricts all runs to be top level traces.
 
-![Filtering](../static/filter.png)
+![Filtering](./static/filter.png)
 
 You can also define a filter from the `Filter Shortcuts` on the sidebar. This contains commonly used filters.
 
-![Filtering](../static/filter_shortcuts.png)
+![Filtering](./static/filter_shortcuts.png)
 
 ## Filter for intermediate runs (spans)
 
@@ -37,7 +37,7 @@ A common concept is to filter for intermediate runs which are part of a trace wh
 
 In order to do this, first set up a filter for intermediate runs (per the above section). After that, you can then add another filter rule. You can then click the `Advanced Filters` link all the way at the bottom of the filter. This will open up a new modal where you can add `Trace filters`. These filters will apply to the traces of all the parent runs of the individual runs you've already filtered for.
 
-![Filtering](../static/trace_filter.png)
+![Filtering](./static/trace_filter.png)
 
 ## Advanced: filter for runs (spans) whose child runs have some attribute
 
@@ -45,7 +45,7 @@ This is the opposite of the above. You may want to search for runs who have spec
 
 In order to do this, you can click on the `Advanced Filters` link all the way at the bottom of the filter. This will open up a new modal where you can add `Tree filters`. This will make the rule you specific apply to all child runs of the individual runs you've already filtered for.
 
-![Filtering](../static/child_runs.png)
+![Filtering](./static/child_runs.png)
 
 ## Filter based on inputs and outputs
 
@@ -57,7 +57,7 @@ You can also specify multiple matches, either by including multiple terms separa
 
 Note that keyword search is done splitting the text and finding any partial matches on the search keywords, so it is not done in specific order. We exclude common stop words from the search (from the nltk stop word list along with a few other common json keywords).
 
-![Filtering](../static/filter_full_text.png)
+![Filtering](./static/filter_full_text.png)
 
 Based on the filters above, the system will search for `python` and `tensorflow` in either inputs or outputs, and `embedding` in the inputs along with `fine` and `tune` in the outputs.
 
@@ -77,7 +77,7 @@ For example, to match the following input:
 
 Select `Filters`, `Add Filter` to bring up the filtering options. Then select `Input KV`, enter `input` as the key and enter `What is the capital of France?` as the value.
 
-![Filtering](../static/search_kv_input.png)
+![Filtering](./static/search_kv_input.png)
 
 You can also match nested keys by using dot notation to selected the nested key name. For example, to match nested keys in the output:
 
@@ -95,11 +95,11 @@ You can also match nested keys by using dot notation to selected the nested key 
 
 Select `Output KV`, enter `documents.page_content` as the key and enter `The capital of France is Paris` as the value. This will match the nested key `documents.page_content` with the specified value.
 
-![Filtering](../static/search_kv_output.png)
+![Filtering](./static/search_kv_output.png)
 
 You can add multiple key-value filters to create more complex queries. You can also use the `Filter Shortcuts` on the right side to quickly filter based on common key values pairs as shown below:
 
-![Filtering](../static/search_kv_filter_shortcut.png)
+![Filtering](./static/search_kv_filter_shortcut.png)
 
 ## Saved filters
 
@@ -109,13 +109,13 @@ You can save filters to be reused in the future. Saved filters are associated wi
 
 In the filter box, click the `Save` button after you have constructed your filter. This will bring up a dialog to specify the name and a description of the filter.
 
-![Filtering](../static/save_a_filter.png)
+![Filtering](./static/save_a_filter.png)
 
 ### Use a saved filter
 
 After saving a filter, it is available in the filter bar as a quick filter for you to use. If you have more than 3 filters saved, only 2 will be displayed while the rest are in the more menu in the same bar.
 
-![Filtering](../static/selecting_a_filter.png)
+![Filtering](./static/selecting_a_filter.png)
 
 ### Update a saved filter
 
@@ -135,7 +135,7 @@ In order to copy the filter, you can first create it in the UI. From there, you 
 
 This will give you a string in our query language, like `and(eq(is_root, true), and(eq(feedback_key, "user_score"), eq(feedback_score, 1)))` Please see [this reference](../../reference/data_formats/trace_query_syntax#filter-query-language) for more information on the query language.
 
-![Copy Filter](../static/copy_filter.png)
+![Copy Filter](./static/copy_filter.png)
 
 ## Filtering runs within the trace view
 
@@ -143,7 +143,7 @@ You can also filter runs in the trace view. This will allow you to easily sift t
 
 By default, only the runs that match the filters will be shown. To see the matched runs within the context of the trace tree, switch the view option from "Filtered Only" to "Show All" or "Most relevant".
 
-![Filtering within trace view](../static/filter_runs_in_trace_view.png)
+![Filtering within trace view](./static/filter_runs_in_trace_view.png)
 
 ## Manually specify a raw query in LangSmith query language
 
@@ -153,7 +153,7 @@ In order to do this, you can click on `Advanced filters` on the bottom. From the
 
 Note that this will add that query to the existing queries, not overwrite it.
 
-![Raw Query](../static/raw_query.png)
+![Raw Query](./static/raw_query.png)
 
 ## Use an AI Query to auto-generate a query
 
@@ -167,4 +167,4 @@ Note that this is an experimental feature and may not work for all queries.
 
 :::
 
-![AI Query](../static/ai_query.png)
+![AI Query](./static/ai_query.png)
