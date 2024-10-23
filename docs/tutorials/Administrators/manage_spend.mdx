@@ -14,8 +14,8 @@ import {
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
 
-- [Data Retention Conceptual Docs](../../concepts/usage_and_billing/data_retention_billing)
-- [Usage Limiting Conceptual Docs](../../concepts/usage_and_billing/usage_limits#side-effects-of-extended-data-retention-traces-limit)
+- [Data Retention Conceptual Docs](/administration/concepts#data-retention)
+- [Usage Limiting Conceptual Docs](/administration/concepts#usage-limit)
 
 :::
 
@@ -56,7 +56,7 @@ We see in the graph above that there are two usage metrics that LangSmith charge
 - LangSmith Traces (Extended Data Retention Upgrades).
 
 The first metric tracks all traces that you send to LangSmith. The second tracks all traces that also have our Extended 400 Day Data Retention.
-For more details, see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing). Notice that these graphs look
+For more details, see our [data retention conceptual docs](/administration/concepts#data-retention). Notice that these graphs look
 identical, which will come into play later in the tutorial.
 
 LangSmith Traces usage is measured per workspace, because workspaces often represent development environments (as in our example),
@@ -88,14 +88,14 @@ workspace. Further, the majority of spend in that workspace was on extended data
 These upgrades occur for two reasons:
 
 1. You use extended data retention tracing, meaning that, by default, your traces are retained for 400 days
-2. You use base data retention tracing, and use a feature that automatically extends the data retention of a trace ([see our Auto-Upgrade conceptual docs](../../../concepts/usage_and_billing/data_retention_billing#data-retention-auto-upgrades))
+2. You use base data retention tracing, and use a feature that automatically extends the data retention of a trace ([see our Auto-Upgrade conceptual docs](/administration/concepts#data-retention))
 
 Given that the number of total traces per day is equal to the number of extended retention traces per day, it's most likely the
 case that this org is using extended data retention tracing everywhere. As such, we start by optimizing our retention settings.
 
 ## Optimization 1: manage data retention
 
-LangSmith charges differently based on a trace's data retention (see our [data retention conceptual docs](../../concepts/usage_and_billing/data_retention_billing)),
+LangSmith charges differently based on a trace's data retention (see our [data retention conceptual docs](/administration/concepts#data-retention)),
 where short-lived traces are an order of magnitude less expensive than ones that last for a long time. In this optimization, we will
 show how to get optimal settings for data retention without sacrificing historical observability, and
 show the effect it has on our bill.
@@ -223,7 +223,7 @@ data retention upgrades. This lets us be confident that new users on the platfor
 
 :::note
 The extended data retention limit can cause features other than traces to stop working once reached. If you plan to
-use this feature, please read more about its functionality [here](../../concepts/usage_and_billing/usage_limits#side-effects-of-extended-data-retention-traces-limit).
+use this feature, please read more about its functionality [here](/administration/concepts/usage_and_billing/usage_limits#side-effects-of-extended-data-retention-traces-limit).
 :::
 
 ### Set dev/staging limits and view total spent limit across workspaces
