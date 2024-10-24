@@ -168,7 +168,7 @@
     },
     {
       "source": "/tutorials/Developers/optimize_classifier",
-      "destination": "/prompt_engineering/tutorials/swe-benchmark"
+      "destination": "/prompt_engineering/tutorials/optimize_classifier"
     }
   ],
   "builds": [
