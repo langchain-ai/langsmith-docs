@@ -1,102 +1,62 @@
-# How-to guides
+# Evaluation how-to guides
 
-Step-by-step guides that cover key tasks and operations in LangSmith.
+## Evaluation SDK & API
 
-## Evaluation
+Write evaluations to test and improve your application.
 
-Evaluate your LLM applications to measure their performance over time.
-
-- [Evaluate an LLM application](./how_to_guides/evaluation/evaluate_llm_application)
-  - [Run an evaluation](./how_to_guides/evaluation/evaluate_llm_application#run-an-evaluation)
-  - [Use custom evaluators](./how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators)
-  - [Evaluate on a particular version of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-particular-version-of-a-dataset)
-  - [Evaluate on a subset of a dataset](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-subset-of-a-dataset)
-  - [Evaluate on a dataset split](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-split)
-  - [Evaluate on a dataset with repetitions](./how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-with-repetitions)
-  - [Use a summary evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-a-summary-evaluator)
-  - [Evaluate a LangChain runnable](./how_to_guides/evaluation/evaluate_llm_application#evaluate-a-langchain-runnable)
-  - [Return multiple scores](./how_to_guides/evaluation/evaluate_llm_application#return-multiple-scores)
-- [Bind an evaluator to a dataset in the UI](./how_to_guides/evaluation/bind_evaluator_to_dataset)
-- [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
+- [Evaluate an LLM application in the SDK](./how_to_guides/evaluation/evaluate_llm_application)
+- [Define a custom evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators)
 - [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [Use LangChain off-the-shelf evaluators (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
-  - [Use question and answer (correctness) evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-question-and-answer-correctness-evaluators)
-  - [Use criteria evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-criteria-evaluators)
-  - [Use labeled criteria evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-labeled-criteria-evaluators)
-  - [Use string or embedding distance metrics](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-string-or-embedding-distance-metrics)
-  - [Use a custom LLM in off-the-shelf evaluators](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#use-a-custom-llm-in-off-the-shelf-evaluators)
-  - [Handle multiple input or output fields](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators#handle-multiple-input-or-output-fields)
-- [Compare experiment results](./how_to_guides/evaluation/compare_experiment_results)
-  - [Open the comparison view](./how_to_guides/evaluation/compare_experiment_results#open-the-comparison-view)
-  - [View regressions and improvements](./how_to_guides/evaluation/compare_experiment_results#view-regressions-and-improvements)
-  - [Filter on regressions or improvements](./how_to_guides/evaluation/compare_experiment_results#filter-on-regressions-or-improvements)
-  - [Update baseline experiment](./how_to_guides/evaluation/compare_experiment_results#update-baseline-experiment)
-  - [Select feedback key](./how_to_guides/evaluation/compare_experiment_results#select-feedback-key)
-  - [Open a trace](./how_to_guides/evaluation/compare_experiment_results#open-a-trace)
-  - [Expand detailed view](./how_to_guides/evaluation/compare_experiment_results#expand-detailed-view)
-  - [Update display settings](./how_to_guides/evaluation/compare_experiment_results#update-display-settings)
-- [Filter experiments in the UI](./how_to_guides/evaluation/filter_experiments_ui)
 - [Evaluate an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
-- [Unit test LLM applications (Python only)](./how_to_guides/evaluation/unit_testing)
-- [Run pairwise evaluations](./how_to_guides/evaluation/evaluate_pairwise)
-  - [Use the `evaluate_comparative` function](./how_to_guides/evaluation/evaluate_pairwise#use-the-evaluate_comparative-function)
-  - [Configure inputs and outputs for pairwise evaluators](./how_to_guides/evaluation/evaluate_pairwise#configure-inputs-and-outputs-for-pairwise-evaluators)
-  - [Compare two experiments with LLM-based pairwise evaluators](./how_to_guides/evaluation/evaluate_pairwise#compare-two-experiments-with-llm-based-pairwise-evaluators)
-  - [View pairwise experiments](./how_to_guides/evaluation/evaluate_pairwise#view-pairwise-experiments)
-- [Audit evaluator scores](./how_to_guides/evaluation/audit_evaluator_scores)
-  - [In the comparison view](./how_to_guides/evaluation/audit_evaluator_scores#in-the-comparison-view)
-  - [In the runs table](./how_to_guides/evaluation/audit_evaluator_scores#in-the-runs-table)
-  - [In the SDK](./how_to_guides/evaluation/audit_evaluator_scores#in-the-sdk)
-- [Create few-shot evaluators](./how_to_guides/evaluation/create_few_shot_evaluators)
-  - [Create your evaluator](./how_to_guides/evaluation/create_few_shot_evaluators#create-your-evaluator)
-  - [Make corrections](./how_to_guides/evaluation/create_few_shot_evaluators#make-corrections)
-  - [View your corrections dataset](./how_to_guides/evaluation/create_few_shot_evaluators#view-your-corrections-dataset)
-- [Fetch performance metrics for an experiment](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
+- [Run a pairwise evaluation](./how_to_guides/evaluation/evaluate_pairwise)
 - [Run evals using the API only](./how_to_guides/evaluation/run_evals_api_only)
-  - [Create a dataset](./how_to_guides/evaluation/run_evals_api_only#create-a-dataset)
-  - [Run a single experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-single-experiment)
-  - [Run a pairwise experiment](./how_to_guides/evaluation/run_evals_api_only#run-a-pairwise-experiment)
+
+## Unit testing
+Run assertions and expectations designed to quickly identify obvious bugs and regressions in your AI system, natively in your favorite testing library.
+
+- [Unit test LLM applications (Python only)](./how_to_guides/evaluation/unit_testing)
+
+## Auto-evaluation
+
+Set up auto-evaluators that LangSmith will automatically run on your experiments.
+
+- [Set up an Auto-Evaluator to run on all experiments](./how_to_guides/evaluation/bind_evaluator_to_dataset)
+- [Create few-shot evaluators](./how_to_guides/evaluation/create_few_shot_evaluators)
+
+## Online evaluation
+
+Set up evaluations to run on incoming traces to understand your application's behavior in production.
+
+- [Set up online evaluations](./how_to_guides/monitoring/online_evaluations)
+- [Create few-shot evaluators](./how_to_guides/evaluation/create_few_shot_evaluators)
+
+## Experiments
+
+Use the experiments UI & API to understand your evaluations.
+
+- [Run an evaluation in the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
+- [Compare experiments with the comparison view](./how_to_guides/evaluation/compare_experiment_results)
+- [Filter experiments](./how_to_guides/evaluation/filter_experiments_ui)
+- [View pairwise experiments](./how_to_guides/evaluation/evaluate_pairwise#view-pairwise-experiments)
+- [Fetch experiment results in the SDK](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
 - [Upload experiments run outside of LangSmith with the REST API](./how_to_guides/evaluation/upload_existing_experiments)
-  - [Request body schema](./how_to_guides/evaluation/upload_existing_experiments#request-body-schema)
-  - [Considerations](./how_to_guides/evaluation/upload_existing_experiments#considerations)
-  - [Example request](./how_to_guides/evaluation/upload_existing_experiments#example-request)
-  - [View the experiment in the UI](./how_to_guides/evaluation/upload_existing_experiments#view-the-experiment-in-the-ui)
-
-## Human feedback
-
-Collect human feedback to improve your LLM applications.
-
-- [Capture user feedback from your application to traces](./how_to_guides/human_feedback/attach_user_feedback)
-- [Set up a new feedback criteria](./how_to_guides/human_feedback/set_up_feedback_criteria)
-- [Annotate traces inline](./how_to_guides/human_feedback/annotate_traces_inline)
-- [Use annotation queues](./how_to_guides/human_feedback/annotation_queues)
-  - [Create an annotation queue](./how_to_guides/human_feedback/annotation_queues#create-an-annotation-queue)
-  - [Assign runs to an annotation queue](./how_to_guides/human_feedback/annotation_queues#assign-runs-to-an-annotation-queue)
-  - [Review runs in an annotation queue](./how_to_guides/human_feedback/annotation_queues#review-runs-in-an-annotation-queue)
 
 ## Datasets
 
-Manage datasets in LangSmith to evaluate and improve your LLM applications.
+Manage datasets in LangSmith used by your offline evaluations (as well as other downstream applications).
 
 - [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
-  - [Create a new dataset and add examples manually](./how_to_guides/datasets/manage_datasets_in_application#create-a-new-dataset-and-add-examples-manually)
-  - [Dataset schema validation](./how_to_guides/datasets/manage_datasets_in_application#dataset-schema-validation)
-  - [Add inputs and outputs from traces to datasets](./how_to_guides/datasets/manage_datasets_in_application#add-inputs-and-outputs-from-traces-to-datasets)
-  - [Upload a CSV file to create a dataset](./how_to_guides/datasets/manage_datasets_in_application#upload-a-csv-file-to-create-a-dataset)
-  - [Generate synthetic examples](./how_to_guides/datasets/manage_datasets_in_application#generate-synthetic-examples)
-  - [Export a dataset](./how_to_guides/datasets/manage_datasets_in_application#export-a-dataset)
-  - [Create and manage dataset splits](./how_to_guides/datasets/manage_datasets_in_application#create-and-manage-dataset-splits)
 - [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
-  - [Create a dataset from list of values](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-list-of-values)
-  - [Create a dataset from traces](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-traces)
-  - [Create a dataset from a CSV file](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-csv-file)
-  - [Create a dataset from a pandas DataFrame](./how_to_guides/datasets/manage_datasets_programmatically#create-a-dataset-from-a-pandas-dataframe)
-  - [Fetch datasets](./how_to_guides/datasets/manage_datasets_programmatically#fetch-datasets)
-  - [Fetch examples](./how_to_guides/datasets/manage_datasets_programmatically#fetch-examples)
-  - [Update examples](./how_to_guides/datasets/manage_datasets_programmatically#update-examples)
-  - [Bulk update examples](./how_to_guides/datasets/manage_datasets_programmatically#bulk-update-examples)
 - [Version datasets](./how_to_guides/datasets/version_datasets)
-  - [Create a new version of a dataset](./how_to_guides/datasets/version_datasets#create-a-new-version-of-a-dataset)
-  - [Tag a version](./how_to_guides/datasets/version_datasets#tag-a-version)
 - [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
-- [Index a dataset for few shot example selection](./how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection)
+
+## Annotation Queues and Human Feedback
+
+Collect feedback from subject matter experts and users to improve your LLM applications.
+
+- [Use annotation queues](./how_to_guides/human_feedback/annotation_queues)
+- [Capture user feedback from your application to traces](./how_to_guides/human_feedback/attach_user_feedback)
+- [Set up a new feedback criteria](./how_to_guides/human_feedback/set_up_feedback_criteria)
+- [Annotate traces inline](./how_to_guides/human_feedback/annotate_traces_inline)
+- [Audit and correct evaluator scores](./how_to_guides/evaluation/audit_evaluator_scores)
