@@ -2,7 +2,6 @@
 
 Step-by-step guides that cover key tasks and operations for adding observability to your LLM applications with LangSmith.
 
-
 ## Tracing configuration
 
 Set up LangSmith tracing to get visibility into your production applications.
