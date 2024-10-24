@@ -234,6 +234,10 @@ html[data-theme="dark"] {
   font-weight: 600;
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* Config search */
 .DocSearch {
   width: 250px;
