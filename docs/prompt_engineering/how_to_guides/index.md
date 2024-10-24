@@ -1,5 +1,7 @@
 # Prompt engineering how-to guides
 
+Step-by-step guides that cover key tasks and operations for doing prompt engineering LangSmith.
+
 ## Prompt hub
 
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
@@ -7,7 +9,6 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
 - [Create a prompt](./how_to_guides/prompts/create_a_prompt)
 - [Update a prompt](./how_to_guides/prompts/update_a_prompt)
 - [Manage prompts programmatically](./how_to_guides/prompts/manage_prompts_programatically)
-- [Use prompt tags](./how_to_guides/prompts/prompt_tags)
 - [LangChain Hub](./how_to_guides/prompts/langchain_hub)
 
 ## Playground
@@ -22,4 +23,4 @@ Quickly iterate on prompts and models in the LangSmith Playground.
 
 Use LangSmith datasets to serve few shot examples to your application
 
-- [Index a dataset for few shot example selection](./how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection)
+- [Index a dataset for few shot example selection](../../evaluation/how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection)

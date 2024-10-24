@@ -1,5 +1,7 @@
 # Evaluation how-to guides
 
+Step-by-step guides that cover key tasks and operations for doing evaluating and testing your applications in LangSmith.
+
 ## Evaluation SDK & API
 
 Write evaluations to test and improve your application.
@@ -28,7 +30,7 @@ Set up auto-evaluators that LangSmith will automatically run on your experiments
 
 Set up evaluations to run on incoming traces to understand your application's behavior in production.
 
-- [Set up online evaluations](./how_to_guides/monitoring/online_evaluations)
+- [Set up online evaluations](../../observability/how_to_guides/monitoring/online_evaluations)
 - [Create few-shot evaluators](./how_to_guides/evaluation/create_few_shot_evaluators)
 
 ## Experiments

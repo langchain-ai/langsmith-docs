@@ -1,4 +1,4 @@
-# How-to guides
+# Administration how-to guides
 
 Step-by-step guides that cover key tasks and operations in LangSmith.
 
