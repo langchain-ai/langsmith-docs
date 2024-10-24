@@ -90,7 +90,7 @@ Set up auto-evaluators that LangSmith will automatically run on your experiments
 - [Set up an Auto-Evaluator to run on all experiments](./how_to_guides/evaluation/bind_evaluator_to_dataset)
 - [Create few-shot evaluators](./how_to_guides/evaluation/create_few_shot_evaluators)
 
-### Online Evaluation
+### Online + Automatic Evaluation
 
 Set up evaluations to run on incoming traces to understand your application's behavior in production.
 
@@ -117,9 +117,9 @@ Manage datasets in LangSmith used by your offline evaluations (as well as other 
 - [Version datasets](./how_to_guides/datasets/version_datasets)
 - [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
 
-### Annotatio Queues and Human Feedback
+### Annotation Queues and Human Feedback
 
-Collect human feedback to improve your LLM applications.
+Collect feedback from subject matter experts and users to improve your LLM applications.
 
 - [Use annotation queues](./how_to_guides/human_feedback/annotation_queues)
 - [Capture user feedback from your application to traces](./how_to_guides/human_feedback/attach_user_feedback)
