@@ -145,7 +145,7 @@
     {
       "source": "/pricing:path*",
       "destination": "/administration/pricing"
-    }
+    },
     {
       "source": "/tutorials/Developers/observability",
       "destination": "/observability/tutorials/observability"
