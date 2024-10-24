@@ -19,6 +19,7 @@ The LangSmith application consists of several components including 5 LangSmith s
 - LangSmith Platform Backend
 - LangSmith Playground
 - LangSmith Queue
+- LangSmith ACE(Arbitrary Code Execution) Backend
 - ClickHouse
 - Postgres
 - Redis
@@ -73,3 +74,7 @@ The platform backend is an internal service that primarily handles authenticatio
 ### LangSmith Playground
 
 The playground is a service that handles forwarding requests to various LLM APIs to support the LangSmith Playground feature. This can also be used to connect to your own custom model servers.
+
+### LangSmith ACE(Arbitrary Code Execution) Backend
+
+The ACE backend is a service that handles executing arbitrary code in a secure environment. This is used to support running custom code within LangSmith.
