@@ -155,6 +155,10 @@
       "destination": "/evaluation/tutorials/rag"
     },
     {
+      "source": "/tutorials/Developers/evaluation",
+      "destination": "/evaluation/tutorials/evaluation"
+    },
+    {
       "source": "/tutorials/Developers/backtesting",
       "destination": "/evaluation/tutorials/backtesting"
     },
