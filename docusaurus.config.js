@@ -68,7 +68,7 @@ const config = {
             );
 
             sidebarItems = sidebarItems.map((subItem) => {
-              let newItem = { ...subItem };
+              const newItem = { ...subItem };
 
               // This allows breaking long sidebar labels into multiple lines
               // by inserting a zero-width space after each slash.
