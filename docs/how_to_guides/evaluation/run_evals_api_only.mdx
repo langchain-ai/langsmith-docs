@@ -77,7 +77,7 @@ resp = requests.get(
 examples = resp.json()
 ```
 
-Next, we'll define a method that will create a run for a single example.
+Next, we'll define a method that will create a run for a single example, and also evaluate that run with a feedback key and score.
 
 ```python
 os.environ["OPENAI_API_KEY"] = "sk-..."
@@ -115,6 +115,21 @@ def run_completion_on_example(example, model_name, experiment_id):
                 "end_time": datetime.utcnow().isoformat(),
             },
             headers=headers,
+        )
+        resp.raise_for_status()
+        
+    def _evaluate_run(run_id, inputs, outputs):
+        """Function to add feedback to a run."""
+        feedback = {
+            "score": 1, # We are always leaving a score of 1, but you could dynamically compute this based on the inputs/outputs
+            "run_id": str(run_id),
+            "key": "example_feedback",
+        }
+        # Visit https://api.smith.langchain.com/redoc#tag/feedback/operation/create_feedback_api_v1_feedback_post for the full API spec
+        resp = requests.post(
+            "https://api.smith.langchain.com/api/v1/feedback",
+            json=feedback,
+            headers={"x-api-key": os.environ["LANGSMITH_API_KEY"]}
         )
         resp.raise_for_status()
 
