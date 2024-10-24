@@ -1,101 +1,60 @@
-# How-to guides
+# Observability how-to guides
 
-Step-by-step guides that cover key tasks and operations in LangSmith.
+## Tracing configuration
 
-## Tracing
+Set up LangSmith tracing to get visibility into your production applications.
 
-Get started with LangSmith's tracing features to start adding observability to your LLM applications.
+### Basic configuration
 
-- [Annotate code for tracing](./how_to_guides/tracing/annotate_code)
-  - [Use `@traceable`/`traceable`](./how_to_guides/tracing/annotate_code#use-traceable--traceable)
-  - [Wrap the OpenAI API client](./how_to_guides/tracing/annotate_code#wrap-the-openai-client)
-  - [Use the RunTree API](./how_to_guides/tracing/annotate_code#use-the-runtree-api)
-  - [Use the `trace` context manager (Python only)](./how_to_guides/tracing/annotate_code#use-the-trace-context-manager-python-only)
-- [Toggle tracing on and off](./how_to_guides/tracing/toggle_tracing)
-- [Log traces to specific project](./how_to_guides/tracing/log_traces_to_project)
-  - [Set the destination project statically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-statically)
-  - [Set the destination project dynamically](./how_to_guides/tracing/log_traces_to_project#set-the-destination-project-dynamically)
+- [Set your tracing project](./how_to_guides/tracing/log_traces_to_project)
+- [Enable or disable tracing](./how_to_guides/tracing/toggle_tracing)
+- [Trace any Python or JS Code](./how_to_guides/tracing/annotate_code)
+- [Trace using the LangSmith REST API](./how_to_guides/tracing/trace_with_api)
+
+### Trace natively supported libraries
+
+- [Trace with `LangChain`](./how_to_guides/tracing/trace_with_langchain)
+- [Trace with `LangGraph`](./how_to_guides/tracing/trace_with_langgraph)
+- [Trace the OpenAI API client](./how_to_guides/tracing/annotate_code#wrap-the-openai-client)
+- [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
+- [Trace with the Vercel `AI SDK` (JS only)](./how_to_guides/tracing/trace_with_vercel_ai_sdk)
+
+### Advanced configuration
+
+- [Configure threads](./how_to_guides/monitoring/threads)
 - [Set a sampling rate for traces](./how_to_guides/tracing/sample_traces)
 - [Add metadata and tags to traces](./how_to_guides/tracing/add_metadata_tags)
 - [Implement distributed tracing](./how_to_guides/tracing/distributed_tracing)
-  - [Distributed tracing in Python](./how_to_guides/tracing/distributed_tracing#distributed-tracing-in-python)
-  - [Distributed tracing in TypeScript](./how_to_guides/tracing/distributed_tracing#distributed-tracing-in-typescript)
 - [Access the current span within a traced function](./how_to_guides/tracing/access_current_span)
 - [Log multimodal traces](./how_to_guides/tracing/log_multimodal_traces)
 - [Log retriever traces](./how_to_guides/tracing/log_retriever_trace)
-- [Log custom LLM traces](./how_to_guides/tracing/log_llm_trace)
-  - [Chat-style models](./how_to_guides/tracing/log_llm_trace#chat-style-models)
-  - [Specify model name](./how_to_guides/tracing/log_llm_trace#specify-model-name)
-  - [Stream outputs](./how_to_guides/tracing/log_llm_trace#stream-outputs)
-  - [Manually provide token counts](./how_to_guides/tracing/log_llm_trace#manually-provide-token-counts)
-  - [Instruct-style models](./how_to_guides/tracing/log_llm_trace#instruct-style-models)
+- [Log custom LLM traces / provide custom token counts](./how_to_guides/tracing/log_llm_trace)
 - [Prevent logging of sensitive data in traces](./how_to_guides/tracing/mask_inputs_outputs)
-  - [Rule-based masking of inputs and outputs](./how_to_guides/tracing/mask_inputs_outputs#rule-based-masking-of-inputs-and-outputs)
-- [Export traces](./how_to_guides/tracing/export_traces)
-  - [Use filter arguments](./how_to_guides/tracing/export_traces#use-filter-arguments)
-  - [Use filter query language](./how_to_guides/tracing/export_traces#use-filter-query-language)
+- [Trace generator functions](./how_to_guides/tracing/trace_generator_functions)
+- [Calculate token-based costs for traces](./how_to_guides/tracing/calculate_token_based_costs)
+
+## Tracing projects UI & API
+
+View and interact with your traces to debug your applications.
+
+- [Filter traces in a project](./how_to_guides/monitoring/filter_traces_in_application)
+- [Save a filter for your project](./how_to_guides/monitoring/filter_traces_in_application#saved-filters)
+- [Export traces using the SDK (low volume)](./how_to_guides/tracing/export_traces)
+- [Bulk exporting traces (high volume)](./how_to_guides/tracing/data_export)
 - [Share or unshare a trace publicly](./how_to_guides/tracing/share_trace)
 - [Compare traces](./how_to_guides/tracing/compare_traces)
-- [Trace generator functions](./how_to_guides/tracing/trace_generator_functions)
-- [Trace with `LangChain`](./how_to_guides/tracing/trace_with_langchain)
-  - [Installation](./how_to_guides/tracing/trace_with_langchain#installation)
-  - [Quick start](./how_to_guides/tracing/trace_with_langchain#quick-start)
-  - [Trace selectively](./how_to_guides/tracing/trace_with_langchain#trace-selectively)
-  - [Log to specific project](./how_to_guides/tracing/trace_with_langchain#log-to-specific-project)
-  - [Add metadata and tags to traces](./how_to_guides/tracing/trace_with_langchain#add-metadata-and-tags-to-traces)
-  - [Customize run name](./how_to_guides/tracing/trace_with_langchain#customize-run-name)
-  - [Access run (span) ID for LangChain invocations](./how_to_guides/tracing/trace_with_langchain#access-run-span-id-for-langchain-invocations)
-  - [Ensure all traces are submitted before exiting](./how_to_guides/tracing/trace_with_langchain#ensure-all-traces-are-submitted-before-exiting)
-  - [Trace without setting environment variables](./how_to_guides/tracing/trace_with_langchain#trace-without-setting-environment-variables)
-  - [Distributed tracing with LangChain (Python)](./how_to_guides/tracing/trace_with_langchain#distributed-tracing-with-langchain-python)
-  - [Interoperability between LangChain (Python) and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchain-python-and-langsmith-sdk)
-  - [Interoperability between LangChain.JS and LangSmith SDK](./how_to_guides/tracing/trace_with_langchain#interoperability-between-langchainjs-and-langsmith-sdk)
-- [Trace with `LangGraph`](./how_to_guides/tracing/trace_with_langgraph)
-  - [Interoperability between LangChain and LangGraph](./how_to_guides/tracing/trace_with_langgraph#with-langchain)
-  - [Interoperability between `@traceable`/`traceable` and LangGraph](./how_to_guides/tracing/trace_with_langgraph#without-langchain)
-- [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
-- [Trace with the Vercel `AI SDK` (JS only)](./how_to_guides/tracing/trace_with_vercel_ai_sdk)
-- [Trace without setting environment variables](./how_to_guides/tracing/trace_without_env_vars)
-- [Trace using the LangSmith REST API](./how_to_guides/tracing/trace_with_api)
-- [Calculate token-based costs for traces](./how_to_guides/tracing/calculate_token_based_costs)
-- [Bulk Exporting Traces](./how_to_guides/tracing/data_export)
+- [View threads](./how_to_guides/monitoring/threads#view-threads)
 
-## Monitoring and automations
+## Dashboards
+
+Use LangSmith custom and built-in dashboards to gain insight into your production systems.
+
+- [Create and use custom dashboards](./how_to_guides/monitoring/dashboards)
+- [Use built-in monitoring dashboards](./how_to_guides/monitoring/use_monitoring_charts)
+
+## Automations
 
 Leverage LangSmith's powerful monitoring and automations features to make sense of your production data.
 
-- [Filter traces in the application](./how_to_guides/monitoring/filter_traces_in_application)
-  - [Create a filter](./how_to_guides/monitoring/filter_traces_in_application#create-a-filter)
-  - [Filter for intermediate runs (spans)](./how_to_guides/monitoring/filter_traces_in_application#filter-for-intermediate-runs-spans)
-  - [Advanced: filter for intermediate runs (spans) on properties of the root](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-intermediate-runs-spans-on-properties-of-the-root)
-  - [Advanced: filter for runs (spans) whose child runs have some attribute](./how_to_guides/monitoring/filter_traces_in_application#advanced-filter-for-runs-spans-whose-child-runs-have-some-attribute)
-  - [Filter based on inputs and outputs](./how_to_guides/monitoring/filter_traces_in_application#filter-based-on-inputs-and-outputs)
-  - [Filter based on input / output key-value pairs](./how_to_guides/monitoring/filter_traces_in_application#filter-based-on-input--output-key-value-pairs)
-  - [Copy the filter](./how_to_guides/monitoring/filter_traces_in_application#copy-the-filter)
-  - [Manually specify a raw query in LangSmith query language](./how_to_guides/monitoring/filter_traces_in_application#manually-specify-a-raw-query-in-langsmith-query-language)
-  - [Use an AI Query to auto-generate a query](./how_to_guides/monitoring/filter_traces_in_application#use-an-ai-query-to-auto-generate-a-query)
-- [Use monitoring charts](./how_to_guides/monitoring/use_monitoring_charts)
-  - [Change the time period](./how_to_guides/monitoring/use_monitoring_charts#change-the-time-period)
-  - [Slice data by metadata or tag](./how_to_guides/monitoring/use_monitoring_charts#slice-data-by-metadata-or-tag)
-  - [Drill down into specific subsets](./how_to_guides/monitoring/use_monitoring_charts#drill-down-into-specific-subsets)
-- [Create dashboards](./how_to_guides/monitoring/dashboards)
-  - [Creating a new dashboard](./how_to_guides/monitoring/dashboards#creating-a-new-dashboard)
-  - [Adding charts to your dashboard](./how_to_guides/monitoring/dashboards#adding-charts-to-your-dashboard)
-  - [Filtering traces in your chart](./how_to_guides/monitoring/dashboards#filtering-traces-in-your-chart)
-  - [Comparing data within a chart](./how_to_guides/monitoring/dashboards#comparing-data-within-a-chart)
-  - [Chart display options](./how_to_guides/monitoring/dashboards#chart-display-options)
-  - [Saving and managing charts](./how_to_guides/monitoring/dashboards#saving-and-managing-charts)
-  - [View a chart in full screen](./how_to_guides/monitoring/dashboards#view-a-chart-in-full-screen)
-  - [User journeys](./how_to_guides/monitoring/dashboards#user-journeys)
 - [Set up automation rules](./how_to_guides/monitoring/rules)
-  - [Create a rule](./how_to_guides/monitoring/rules#create-a-rule)
-  - [View logs for your automations](./how_to_guides/monitoring/rules#view-logs-for-your-automations)
-- [Set up online evaluations](./how_to_guides/monitoring/online_evaluations)
-  - [Configure online evaluations](./how_to_guides/monitoring/online_evaluations#configure-online-evaluations)
-  - [Set API keys](./how_to_guides/monitoring/online_evaluations#set-api-keys)
 - [Set up webhook notifications for rules](./how_to_guides/monitoring/webhooks)
-  - [Webhook payload](./how_to_guides/monitoring/webhooks#webhook-payload)
-  - [Example with Modal](./how_to_guides/monitoring/webhooks#example-with-modal)
-- [Set up threads](./how_to_guides/monitoring/threads)
-  - [Group traces into threads](./how_to_guides/monitoring/threads#group-traces-into-threads)
-  - [View threads](./how_to_guides/monitoring/threads#view-threads)
