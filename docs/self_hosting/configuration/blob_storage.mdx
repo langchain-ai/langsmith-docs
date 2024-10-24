@@ -95,6 +95,10 @@ After creating your bucket and obtaining the necessary credentials, you can conf
      serviceAccount:
        annotations:
          eks.amazonaws.com/role-arn: "<role_arn>" \n
+   platformBackend: # Optional, only required if using IAM role for service account
+      serviceAccount:
+        annotations:
+          eks.amazonaws.com/role-arn: "<role_arn>" \n
    queue: # Optional, only required if using IAM role for service account
       serviceAccount:
         annotations:
