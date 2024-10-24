@@ -55,10 +55,6 @@
       "destination": "/:path*"
     },
     {
-      "source": "/evaluation/:path*",
-      "destination": "/old/evaluation/:path*"
-    },
-    {
       "source": "/monitoring/:path*",
       "destination": "/old/monitoring/:path*"
     },
@@ -93,6 +89,102 @@
     {
       "source": "/category/release-notes", 
       "destination": "/self_hosting/release_notes"
+    },
+    {
+      "source": "/how_to_guides/evaluation/:path*",
+      "destination": "/evaluation/how_to_guides/evaluation/:path*"
+    },
+    {
+      "source": "/how_to_guides/human_feedback/:path*",
+      "destination": "/evaluation/how_to_guides/human_feedback/:path*"
+    },
+    {
+      "source": "/how_to_guides/datasets/:path*",
+      "destination": "/evaluation/how_to_guides/datasets/:path*"
+    },
+    {
+      "source": "/how_to_guides/monitoring/:path*",
+      "destination": "/observability/how_to_guides/monitoring/:path*"
+    },
+    {
+      "source": "/how_to_guides/tracing/:path*",
+      "destination": "/observability/how_to_guides/tracing/:path*"
+    },
+    {
+      "source": "/how_to_guides/prompts/:path*",
+      "destination": "/prompt_engineering/how_to_guides/prompts/:path*"
+    },
+    {
+      "source": "/how_to_guides/playground/:path*",
+      "destination": "/prompt_engineering/how_to_guides/playground/:path*"
+    },
+    {
+      "source": "/how_to_guides/setup/:path*",
+      "destination": "/admin/how_to_guides/organization_management/:path*"
+    },
+    {
+      "source": "/how_to_guides",
+      "destination": "/"
+    },
+    {
+      "source": "/concepts",
+      "destination": "/"
+    },
+    {
+      "source": "/tutorials",
+      "destination": "/"
+    },
+    {
+      "source": "/concepts/admin:path*",
+      "destination": "/administration/concepts"
+    },
+    {
+      "source": "/concepts/usage_and_billing:path*",
+      "destination": "/administration/concepts"
+    },
+    {
+      "source": "/concepts/evaluation:path*",
+      "destination": "/evaluation/concepts"
+    },
+    {
+      "source": "/concepts/tracing:path*",
+      "destination": "/observability/concepts"
+    },
+    {
+      "source": "/concepts/prompts:path*",
+      "destination": "/prompt_engineering/concepts"
+    },
+    {
+      "source": "/pricing:path*",
+      "destination": "/administration/pricing"
+    },
+    {
+      "source": "/tutorials/Developers/observability",
+      "destination": "/observability/tutorials/observability"
+    },
+    {
+      "source": "/tutorials/Developers/rag",
+      "destination": "/evaluation/tutorials/rag"
+    },
+    {
+      "source": "/tutorials/Developers/evaluation",
+      "destination": "/evaluation/tutorials/evaluation"
+    },
+    {
+      "source": "/tutorials/Developers/backtesting",
+      "destination": "/evaluation/tutorials/backtesting"
+    },
+    {
+      "source": "/tutorials/Developers/agents",
+      "destination": "/evaluation/tutorials/agents"
+    },
+    {
+      "source": "/tutorials/Developers/swe-benchmark",
+      "destination": "/evaluation/tutorials/swe-benchmark"
+    },
+    {
+      "source": "/tutorials/Developers/optimize_classifier",
+      "destination": "/prompt_engineering/tutorials/optimize_classifier"
     }
   ],
   "builds": [

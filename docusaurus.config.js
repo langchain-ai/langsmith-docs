@@ -67,17 +67,23 @@ const config = {
               (i) => !(i.type === "doc" && i.id.split("/").at(-1) === "index")
             );
 
-            sidebarItems.forEach((subItem) => {
+            sidebarItems = sidebarItems.map((subItem) => {
+              const newItem = { ...subItem };
+
               // This allows breaking long sidebar labels into multiple lines
               // by inserting a zero-width space after each slash.
               if (
-                "label" in subItem &&
-                subItem.label &&
-                subItem.label.includes("/")
+                "label" in newItem &&
+                newItem.label &&
+                newItem.label.includes("/")
               ) {
                 // eslint-disable-next-line no-param-reassign
-                subItem.label = subItem.label.replace(/\//g, "/\u200B");
+                newItem.label = newItem.label.replace(/\//g, "/\u200B");
               }
+              if (args.item.className) {
+                newItem.className = args.item.className;
+              }
+              return newItem;
             });
             return sidebarItems;
           },

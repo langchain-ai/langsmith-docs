@@ -1,0 +1,45 @@
+---
+sidebar_position: 1
+---
+
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
+
+# Create an account and API key
+
+## Create an account
+
+To get started with LangSmith, you need to create an account. You can sign up for a free account <RegionalUrl text='here'/>.
+We support logging in with Google, GitHub, Discord, and email.
+
+![](./static/create_account.png)
+
+## API keys
+
+LangSmith supports two types of API keys: Service Keys and Personal Access Tokens.
+Both types of tokens can be used to authenticate requests to the LangSmith API, but they have different use cases.
+
+Read more about the differences between Service Keys and Personal Access Tokens under [admin concepts](../../concepts)
+
+## Create an API key
+
+To log traces and run evaluations with LangSmith, you will need to create an API key to authenticate your requests.
+Currently, an API key is scoped to a workspace, so you will need to create an API key for each workspace you want to use.
+
+To create either type of API key head to the <RegionalUrl text='Settings page' suffix='/settings'/>, then scroll to the **API Keys** section. Then click **Create API Key.**
+:::note
+The API key will be shown only once, so make sure to copy it and store it in a safe place.
+:::
+
+![](./static/create_api_key.png)
+
+## Configure the SDK
+
+You may set the following environment variables in addition to `LANGCHAIN_API_KEY` (or equivalently `LANGSMITH_API_KEY`).  
+These are only required if using the EU instance.
+
+:::info
+`LANGCHAIN_HUB_API_URL` is only required if using the legacy langchainhub sdk
+:::
+
+`LANGCHAIN_ENDPOINT=`<RegionalUrl type='api' link={false} />
+`LANGCHAIN_HUB_API_URL=`<RegionalUrl type='hub' link={false} />

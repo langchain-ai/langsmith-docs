@@ -1,0 +1,37 @@
+---
+sidebar_position: 2
+---
+
+# Use custom TLS certificates
+
+:::note Self-hosted enterprise only (version 0.6 and later)
+
+This feature is only available for self-hosted enterprise customers, starting from version 0.6.
+
+If you are interested in this plan, please contact sales@langchain.dev for more information.
+
+:::
+
+:::note Azure OpenAI only
+
+This feature is currently only available for the Azure OpenAI model provider. More model providers will be supported in the future.
+
+This will currently only affect model invocations through the **LangSmith Playground**, not [**Online Evaluation**](../../../observability/how_to_guides/monitoring/online_evaluations).
+The TLS certificates will apply to all Azure Deployment configurations in the playground.
+
+:::
+
+You can use custom TLS certificates to connect to model providers in the LangSmith playground. This is useful if you are using a self-signed certificate, a certificate from a custom certificate authority or mutual TLS authentication.
+
+To use custom TLS certificates, you need to set the following environment variables. See the [self hosted deployment section](/self_hosting) for more information on how to set up application configuration.
+
+- `LANGSMITH_PLAYGROUND_TLS_MODEL_PROVIDERS`: A comma-separated list of model providers that require custom TLS certificates. Note that `azure_openai` is currently the only supported model provider that supports custom TLS certificates, but more providers will be supported in the future.
+- `LANGSMITH_PLAYGROUND_TLS_CA`: The custom certificate authority (CA) certificate in PEM format. This can be a file path (for a mounted volume) or a base64-encoded string.
+- [Optional] `LANGSMITH_PLAYGROUND_TLS_KEY`: The private key in PEM format. This can be a file path (for a mounted volume) or a base64-encoded string. This is usually only necessary for mutual TLS authentication.
+- [Optional] `LANGSMITH_PLAYGROUND_TLS_CERT`: The certificate in PEM format. This can be a file path (for a mounted volume) or a base64-encoded string. This is usually only necessary for mutual TLS authentication.
+
+Once you have set these environment variables, enter the playground and select the `AzureChatOpenAI` model provider.
+
+Enter the `Deployment Name`, `Azure Endpoint`, and `API Version`, as well as model invocation parameters. Then, the playground will be able to connect to the model provider using the custom TLS certificate.
+
+![](./static/azure_playground.png)
