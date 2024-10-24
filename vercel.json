@@ -141,6 +141,10 @@
     {
       "source": "/concepts/prompts:path*",
       "destination": "/prompt_engineering/concepts"
+    },
+    {
+      "source": "/pricing:path*",
+      "destination": "/administration/pricing"
     }
   ],
   "builds": [
