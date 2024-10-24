@@ -1,40 +1,20 @@
-# Concepts
+# Conceptual Guide
 
-Explanations, clarification and discussion of key topics in LangSmith.
+This guide provides explanations of the key concepts behind LangSmith.
 
-## Admin
+We recommend that you go through at least one of the [Tutorials](../tutorials/index.md) before diving into the conceptual guide. This will provide practical context that will make it easier to understand the concepts discussed here.
 
-- [Organizations](./concepts/admin#organizations)
-- [Workspaces](./concepts/admin#workspaces)
-- [Users](./concepts/admin#users)
-- [API keys](./concepts/admin#api-keys)
-  - [Personal Access Tokens (PATs)](./concepts/admin#personal-access-tokens-pats)
-  - [Service keys](./concepts/admin#service-keys)
-- [Roles](./concepts/admin#roles)
-  - [Organization roles](./concepts/admin#organization-roles)
-  - [Workspace roles](./concepts/admin#workspace-roles)
+The conceptual guide does not cover step-by-step instructions or specific implementation examples — those are found in the [How-to guides](../how_to_guides/index.md) and [Tutorials](../tutorials/index.md). For detailed reference material, please see the API reference.
 
-## Tracing
+## Area Guides
 
-- [Runs](./concepts/tracing#runs)
-- [Traces](./concepts/tracing#traces)
-- [Projects](./concepts/tracing#projects)
-- [Feedback](./concepts/tracing#feedback)
-- [Tags](./concepts/tracing#tags)
-- [Metadata](./concepts/tracing#metadata)
+LangSmith is an all-in-one developer platform for every step of the LLM-powered application lifecycle. Its product
+offerings can be broken down into four areas, each with their own set of conceptual guides.
 
-## Evaluation
+### [Observability](./concepts/tracing)
 
-- [Datasets and examples](./concepts/evaluation#datasets-and-examples)
-- [Experiments](./concepts/evaluation#experiments)
-- [Evaluators](./concepts/evaluation#evaluators)
+### [Evaluation](./concepts/evaluation)
 
-## Prompts
+### [Prompt engineering](./concepts/prompts)
 
-- [Prompt types](./concepts/prompts#prompt-types)
-- [Template formats](./concepts/prompts#template-formats)
-
-## Usage and Billing
-
-- [Data Retention](./concepts/usage_and_billing/data_retention_billing)
-- [Usage Limits](./concepts/usage_and_billing/usage_limits)
+### [Administration](./concepts/admin)

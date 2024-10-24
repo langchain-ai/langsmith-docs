@@ -7,7 +7,7 @@ LangSmith allows you to build high-quality evaluations for your AI application. 
 - `Dataset`: These are the inputs to your application used for conducting evaluations.
 - `Evaluator`: An evaluator is a function responsible for scoring your AI application based on the provided dataset.
 
-![Summary](../static/langsmith_summary.png)
+![Summary](./static/langsmith_summary.png)
 
 ## Datasets
 
@@ -159,11 +159,11 @@ This can be the case for tasks like summarization - it may be hard to give a sum
 
 We can visualize the above ideas collectively in the below diagram. To review, `datasets` are composed of `examples` that can be curated from a variety of sources such as historical logs or user curated examples. `Evaluators` are functions that score how well your application performs on each `example` in your `dataset`. Evaluators can use different scoring functions, such as `human`, `heuristic`, `LLM-as-judge`, or `pairwise`. And if the `dataset` contains `reference` outputs, then the evaluator can compare the application output to the `reference`.
 
-![Overview](../static/langsmith_overview.png)
+![Overview](./static/langsmith_overview.png)
 
 Each time we run an evaluation, we are conducting an experiment. An experiment is a single execution of all the example inputs in your `dataset` through your `task`. Typically, we will run multiple experiments on a given `dataset`, testing different tweaks to our `task` (e.g., different prompts or LLMs). In LangSmith, you can easily view all the experiments associated with your `dataset` and track your application's performance over time. Additionally, you can compare multiple experiments in a comparison view.
 
-![Example](../static/comparing_multiple_experiments.png)
+![Example](./static/comparing_multiple_experiments.png)
 
 In the `Dataset` section above, we discussed a few ways to build datasets (e.g., from historical logs or manual curation). One common way to use these datasets is offline evaluation, which is usually conducted prior to deployment of your LLM application. Below we'll discuss a few common paradigms for offline evaluation.
 
@@ -196,7 +196,7 @@ They are also commonly done when evaluating new or different models.
 
 LangSmith's comparison view has native support for regression testing, allowing you to quickly see examples that have changed relative to the baseline (with regressions on specific examples shown in red and improvements in green):
 
-![Regression](../static/regression.png)
+![Regression](./static/regression.png)
 
 ### Back-testing
 
@@ -268,11 +268,11 @@ Below, we will discuss evaluation of a few specific, popular LLM applications.
 
 [LLM-powered autonomous agents](https://lilianweng.github.io/posts/2023-06-23-agent/) combine three components (1) Tool calling, (2) Memory, and (3) Planning. Agents [use tool calling](https://python.langchain.com/v0.1/docs/modules/agents/agent_types/tool_calling/) with planning (e.g., often via prompting) and memory (e.g., often short-term message history) to generate responses. [Tool calling](https://python.langchain.com/v0.1/docs/modules/model_io/chat/function_calling/) allows a model to respond to a given prompt by generating two things: (1) a tool to invoke and (2) the input arguments required.
 
-![Tool use](../static/tool_use.png)
+![Tool use](./static/tool_use.png)
 
 Below is a tool-calling agent in [LangGraph](https://langchain-ai.github.io/langgraph/tutorials/introduction/). The `assistant node` is an LLM that determines whether to invoke a tool based upon the input. The `tool condition` sees if a tool was selected by the `assistant node` and, if so, routes to the `tool node`. The `tool node` executes the tool and returns the output as a tool message to the `assistant node`. This loop continues until as long as the `assistant node` selects a tool. If no tool is selected, then the agent directly returns the LLM response.
 
-![Agent](../static/langgraph_agent.png)
+![Agent](./static/langgraph_agent.png)
 
 This sets up three general types of agent evaluations that users are often interested in:
 
@@ -280,7 +280,7 @@ This sets up three general types of agent evaluations that users are often inter
 - `Single step`: Evaluate any agent step in isolation (e.g., whether it selects the appropriate tool).
 - `Trajectory`: Evaluate whether the agent took the expected path (e.g., of tool calls) to arrive at the final answer.
 
-![Agent-eval](../static/agent_eval.png)
+![Agent-eval](./static/agent_eval.png)
 
 Below we will cover what these are, the components (inputs, outputs, evaluators) needed for each one, and when you should consider this.
 Note that you likely will want to do multiple (if not all!) of these types of evaluations - they are not mutually exclusive!
@@ -373,7 +373,7 @@ When evaluating RAG applications, a key consideration is whether you have (or ca
 
 `LLM-as-judge` is a commonly used evaluator for RAG because it's an effective way to evaluate factual accuracy or consistency between texts.
 
-![rag-types.png](../static/rag-types.png)
+![rag-types.png](./static/rag-types.png)
 
 When evaluating RAG applications, you have two main options:
 

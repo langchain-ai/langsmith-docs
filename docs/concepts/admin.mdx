@@ -4,7 +4,7 @@ This conceptual guide covers topics related to managing users, organizations, an
 
 ## Organizations
 
-An organization is a logical grouping of users within LangSmith with its own billing configuration. Typically, there is one organization per company. An organization can have multiple workspaces. For more details, see the [setup guide](../../how_to_guides/setup/set_up_organization.mdx).
+An organization is a logical grouping of users within LangSmith with its own billing configuration. Typically, there is one organization per company. An organization can have multiple workspaces. For more details, see the [setup guide](../how_to_guides/setup/set_up_organization.mdx).
 
 When you log in for the first time, a personal organization will be created for you automatically. If you'd like to collaborate with others, you can create a separate organization and invite your team members to join.
 There are a few important differences between your personal organization and shared organizations:
@@ -22,12 +22,12 @@ Workspaces were formerly called Tenants. Some code and APIs may still reference 
 :::
 
 A workspace is a logical grouping of users and resources within an organization. A workspace separates trust boundaries for resources and access control.
-Users may have permissions in a workspace that grant them access to the resources in that workspace, including tracing projects, datasets, annotation queues, and prompts. For more details, see the [setup guide](../../how_to_guides/setup/set_up_workspace.mdx).
+Users may have permissions in a workspace that grant them access to the resources in that workspace, including tracing projects, datasets, annotation queues, and prompts. For more details, see the [setup guide](../how_to_guides/setup/set_up_workspace.mdx).
 
 It is recommended to create a separate workspace for each team within your organization. To organize resources even further, you can use [Resource Tags](#resource-tags) to group resources within a workspace.
 
 The following image shows a sample workspace settings page:
-![Sample Workspace](../static/sample_workspace.png)
+![Sample Workspace](./static/sample_workspace.png)
 
 The following diagram explains the relationship between organizations, workspaces, and the different resources scoped to and within a workspace:<br />
 
@@ -82,7 +82,7 @@ More tags can be added as needed.
 
 LangSmith resource tags are very similar to tags in cloud services like [AWS](https://docs.aws.amazon.com/tag-editor/latest/userguide/tagging.html).
 
-![Sample Resource Tags](../static/resource_tags.png)
+![Sample Resource Tags](./static/resource_tags.png)
 
 ## Users
 
@@ -90,11 +90,11 @@ A user is a person who has access to LangSmith. Users can be members of one or m
 
 Organization members are managed in organization settings:
 
-![Sample Organization Members](../static/org_members_settings.png)
+![Sample Organization Members](./static/org_members_settings.png)
 
 And workspace members are managed in workspace settings:
 
-![Sample Workspace Members](../static/org_settings_workspaces_tab.png)
+![Sample Workspace Members](./static/org_settings_workspaces_tab.png)
 
 ## API keys
 
@@ -118,17 +118,17 @@ PATs are prefixed with `lsv2_pt_`.
 
 Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account rather than a human user. Service Keys have Admin permissions in all workspaces present at the time they were created.
 
-Service keys are preferred for API requests scoped to a workspace because they don't rely on a specific user, while PATs are preferred for [API requests scoped to an organization](../../how_to_guides/setup/manage_organization_by_api.mdx) for now.
+Service keys are preferred for API requests scoped to a workspace because they don't rely on a specific user, while PATs are preferred for [API requests scoped to an organization](../how_to_guides/setup/manage_organization_by_api.mdx) for now.
 
 Service keys are prefixed with `lsv2_sk_`.
 
 :::note
-To see how to create a service key or Personal Access Token, see the [setup guide](../../how_to_guides/setup/create_account_api_key.mdx)
+To see how to create a service key or Personal Access Token, see the [setup guide](../how_to_guides/setup/create_account_api_key.mdx)
 :::
 
 ## Organization roles
 
-Organization roles are distinct from the Enterprise feature (RBAC) below and are used in the context of multiple [workspaces](#workspaces). Your organization role determines your workspace membership characteristics and your organization-level permissions. See the [organization setup guide](../../how_to_guides/setup/set_up_organization#organization-roles) for more information.
+Organization roles are distinct from the Enterprise feature (RBAC) below and are used in the context of multiple [workspaces](#workspaces). Your organization role determines your workspace membership characteristics and your organization-level permissions. See the [organization setup guide](../how_to_guides/setup/set_up_organization#organization-roles) for more information.
 
 The organization role selected also impacts workspace membership as described here:
 
@@ -176,6 +176,6 @@ Organization admins can also create/edit custom roles with specific permissions 
 
 Roles can be managed in organization settings under the `Roles` tab:
 
-![Roles](../static/roles_tab_rbac.png)
+![Roles](./static/roles_tab_rbac.png)
 
-For more details on assigning and creating roles, see the [access control setup guide](../../how_to_guides/setup/set_up_access_control.mdx).
+For more details on assigning and creating roles, see the [access control setup guide](../how_to_guides/setup/set_up_access_control.mdx).

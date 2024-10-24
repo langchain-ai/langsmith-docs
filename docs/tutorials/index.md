@@ -1,16 +1,22 @@
 # Tutorials
 
-New to LangSmith? This is the place to start. Here, you'll find a hands-on introduction to key LangSmith workflows.
+New to LangSmith or to LLM app development in general? Read this material to quickly get up and running.
 
-## Developers
+## Observability
 
 - [Add observability to your LLM application](./tutorials/Developers/observability)
+
+## Evaluation
+
 - [Evaluate your LLM application](./tutorials/Developers/evaluation)
-- [Optimize a classifier](./tutorials/Developers/optimize_classifier)
 - [RAG Evaluations](./tutorials/Developers/rag)
 - [Backtesting](./tutorials/Developers/backtesting)
 - [Agent Evaluations](./tutorials/Developers/agents)
 
-## Administrators
+## Prompt Engineering
+
+- [Optimize a classifier](./tutorials/Developers/optimize_classifier)
+
+## Administration
 
 - [Optimize tracing spend on LangSmith](./tutorials/Administrators/manage_spend)
