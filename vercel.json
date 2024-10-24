@@ -120,7 +120,7 @@
     },
     {
       "source": "/how_to_guides/setup/:path*",
-      "destination": "/admin/how_to_guides/organization_management/:path*"
+      "destination": "/administration/how_to_guides/organization_management/:path*"
     },
     {
       "source": "/how_to_guides",
