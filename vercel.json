@@ -146,6 +146,30 @@
       "source": "/pricing:path*",
       "destination": "/administration/pricing"
     }
+    {
+      "source": "/tutorials/Developers/observability",
+      "destination": "/observability/tutorials/observability"
+    },
+    {
+      "source": "/tutorials/Developers/rag",
+      "destination": "/evaluation/tutorials/rag"
+    },
+    {
+      "source": "/tutorials/Developers/backtesting",
+      "destination": "/evaluation/tutorials/backtesting"
+    },
+    {
+      "source": "/tutorials/Developers/agents",
+      "destination": "/evaluation/tutorials/agents"
+    },
+    {
+      "source": "/tutorials/Developers/swe-benchmark",
+      "destination": "/evaluation/tutorials/swe-benchmark"
+    },
+    {
+      "source": "/tutorials/Developers/optimize_classifier",
+      "destination": "/prompt_engineering/tutorials/swe-benchmark"
+    }
   ],
   "builds": [
     {
