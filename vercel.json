@@ -123,6 +123,18 @@
       "destination": "/admin/how_to_guides/organization_management/:path*"
     },
     {
+      "source": "/how_to_guides",
+      "destination": "/"
+    },
+    {
+      "source": "/concepts",
+      "destination": "/"
+    },
+    {
+      "source": "/tutorials",
+      "destination": "/"
+    },
+    {
       "source": "/concepts/admin:path*",
       "destination": "/administration/concepts"
     },
