@@ -89,6 +89,7 @@ html[data-theme="dark"] {
 .theme-code-block.language-typescript,
 .theme-code-block.language-ts,
 .theme-code-block.language-shell,
+.theme-code-block.language-json,
 .theme-code-block.language-bash {
   position: relative; /* Ensure this is set so the ::before pseudo-element is positioned relative to this element */
   padding-left: 4px;
@@ -101,6 +102,7 @@ html[data-theme="dark"] {
 .theme-code-block.language-typescript::before,
 .theme-code-block.language-ts::before,
 .theme-code-block.language-shell::before,
+.theme-code-block.language-json::before,
 .theme-code-block.language-bash::before {
   content: "";
   position: absolute;
