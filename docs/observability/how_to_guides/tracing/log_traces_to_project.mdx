@@ -103,9 +103,9 @@ const messages = [
     {role: "system", content: "You are a helpful assistant."},
     {role: "user", content: "Hello!"}
 ];\n
-const traceableCallOpenAI = traceable(async (messages: {role: string, content: string}[]) => {
+const traceableCallOpenAI = traceable(async (messages: {role: string, content: string}[], model: string) => {
     const completion = await client.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: model,
         messages: messages,
     });
     return completion.choices[0].message.content;
