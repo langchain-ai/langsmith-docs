@@ -13,7 +13,7 @@ import {
 You can use LangSmith to trace runs from the [Vercel AI SDK](https://sdk.vercel.ai/docs/introduction) with our built-in `AISDKExporter` OpenTelemetry trace exporter. This guide will walk through an example.
 
 :::note
-The `AISDKExporter` is only available in `langsmith` JS SDK version `>=0.2.1`.
+The `AISDKExporter` class is only available in `langsmith` JS SDK version `>=0.2.1`.
 :::
 
 ## 0. Installation
@@ -155,6 +155,34 @@ await generateText({
     runId: "my-custom-run-id",
   }),
   // highlight-end
+});
+```
+
+## Custom LangSmith client
+
+To use a custom client, pass a custom insetance into the `AISDKExporter` constructor:
+
+```ts
+import { AISDKExporter } from "langsmith/vercel";
+import { Client } from "langsmith";
+
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+
+const langsmithClient = new Client({});
+
+const sdk = new NodeSDK({
+  // highlight-next-line
+  traceExporter: new AISDKExporter({ client: langsmithClient }),
+  instrumentations: [getNodeAutoInstrumentations()],
+});
+
+sdk.start();
+
+await generateText({
+  model: openai("gpt-4o-mini"),
+  prompt: "Write a vegetarian lasagna recipe for 4 people.",
+  experimental_telemetry: AISDKExporter.getSettings(),
 });
 ```
 
