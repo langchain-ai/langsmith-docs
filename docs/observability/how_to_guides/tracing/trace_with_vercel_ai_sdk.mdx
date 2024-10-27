@@ -3,25 +3,20 @@ sidebar_position: 17
 ---
 
 import { ConfigureSDKEnvironmentCodeTabs } from "@site/src/components/QuickStart";
-import { CodeTabs } from "@site/src/components/InstructionsWithCode";
+import {
+  CodeTabs,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
 
 # Trace with the Vercel AI SDK (JS/TS only)
 
-:::note beta
-This feature is currently in beta while Vercel rolls out official telemetry support.
-:::
-
-You can use LangSmith to trace runs from the [Vercel AI SDK](https://sdk.vercel.ai/docs/introduction) using
-the special `wrapAISDKModel` method. The important detail is that you must wrap the Vercel model wrapper
-rather than of the top-level `generateText` or `generateStream` calls.
-
-This guide will walk through an example.
+You can use LangSmith to trace runs from the [Vercel AI SDK](https://sdk.vercel.ai/docs/introduction) with our built-in `AISDKExporter` OpenTelemetry trace exporter. This guide will walk through an example.
 
 :::note
-The `wrapAISDKModel` method is only available in `langsmith` JS SDK version `>=0.1.40`.
+The `AISDKExporter` class is only available in `langsmith` JS SDK version `>=0.2.1`.
 :::
 
-### 0. Installation
+## 0. Installation
 
 Install the Vercel AI SDK. We use their OpenAI integration for the code snippets below, but you can use any of their
 other options as well.
@@ -33,30 +28,171 @@ other options as well.
       value: "typescript",
       label: "yarn",
       language: "bash",
-      content: `yarn add ai @ai-sdk/openai`,
+      content: `yarn add ai @ai-sdk/openai zod`,
     },
     {
       value: "npm",
       label: "npm",
       language: "bash",
-      content: `npm install ai @ai-sdk/openai`,
+      content: `npm install ai @ai-sdk/openai zod`,
     },
     {
       value: "pnpm",
       label: "pnpm",
       language: "bash",
-      content: `pnpm add ai @ai-sdk/openai`,
+      content: `pnpm add ai @ai-sdk/openai zod`,
     },
   ]}
 />
 
-### 1. Configure your environment
+## 1. Configure your environment
 
 <ConfigureSDKEnvironmentCodeTabs />
 
-### 2. Log a trace
+## 2. Log a trace
 
-Once you've set up your environment, wrap an initialized Vercel model as shown below:
+### Next.js
+
+First, create a `instrumentation.js` file in your project root. Learn more how to setup OpenTelemetry instrumentation within your Next.js app [here](https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation).
+
+```ts
+import { registerOTel } from "@vercel/otel";
+import { AISDKExporter } from "langsmith/vercel";
+
+export function register() {
+  registerOTel({
+    serviceName: "langsmith-vercel-ai-sdk-example",
+    // highlight-next-line
+    traceExporter: new AISDKExporter(),
+  });
+}
+```
+
+Afterwards, add the `experimental_telemetry` argument to your AI SDK calls that you want to trace. For convenience, we've included the `AISDKExporter.getSettings()` method which appends additional metadata for LangSmith.
+
+```ts
+import { AISDKExporter } from "langsmith/vercel";
+
+await streamText({
+  model: openai("gpt-4o-mini"),
+  prompt: "Write a vegetarian lasagna recipe for 4 people.",
+  // highlight-next-line
+  experimental_telemetry: AISDKExporter.getSettings(),
+});
+```
+
+### Node.js
+
+Add the `AISDKExporter` to the trace exporter to your OpenTelemetry setup.
+
+```ts
+import { AISDKExporter } from "langsmith/vercel";
+
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+
+const sdk = new NodeSDK({
+  // highlight-next-line
+  traceExporter: new AISDKExporter(),
+  instrumentations: [getNodeAutoInstrumentations()],
+});
+
+sdk.start();
+```
+
+Afterwards, add the `experimental_telemetry` argument to your AI SDK calls that you want to trace.
+
+:::info
+Do not forget to call `await sdk.shutdown()` before your application shuts down in order to flush any remaining traces to LangSmith.
+:::
+
+```ts
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { AISDKExporter } from "langsmith/vercel";
+
+const result = await generateText({
+  model: openai("gpt-4o-mini"),
+  prompt: "Write a vegetarian lasagna recipe for 4 people.",
+  // highlight-next-line
+  experimental_telemetry: AISDKExporter.getSettings(),
+});
+
+// highlight-next-line
+await sdk.shutdown();
+```
+
+## Customize run name
+
+You can customize the run name by passing the `runName` argument to the `AISDKExporter.getSettings()` method.
+
+```ts
+import { AISDKExporter } from "langsmith/vercel";
+
+await generateText({
+  model: openai("gpt-4o-mini"),
+  prompt: "Write a vegetarian lasagna recipe for 4 people.",
+  // highlight-start
+  experimental_telemetry: AISDKExporter.getSettings({
+    runName: "my-custom-run-name",
+  }),
+  // highlight-end
+});
+```
+
+## Customize run ID
+
+You can customize the run ID by passing the `runId` argument to the `AISDKExporter.getSettings()` method. This is especially useful if you want to know the run ID before the run has been completed.
+
+```ts
+import { AISDKExporter } from "langsmith/vercel";
+
+await generateText({
+  model: openai("gpt-4o-mini"),
+  prompt: "Write a vegetarian lasagna recipe for 4 people.",
+  // highlight-start
+  experimental_telemetry: AISDKExporter.getSettings({
+    runId: "my-custom-run-id",
+  }),
+  // highlight-end
+});
+```
+
+## Custom LangSmith client
+
+You can also pass a LangSmith client instance into the `AISDKExporter` constructor:
+
+```ts
+import { AISDKExporter } from "langsmith/vercel";
+import { Client } from "langsmith";
+
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+
+const langsmithClient = new Client({});
+
+const sdk = new NodeSDK({
+  // highlight-next-line
+  traceExporter: new AISDKExporter({ client: langsmithClient }),
+  instrumentations: [getNodeAutoInstrumentations()],
+});
+
+sdk.start();
+
+await generateText({
+  model: openai("gpt-4o-mini"),
+  prompt: "Write a vegetarian lasagna recipe for 4 people.",
+  experimental_telemetry: AISDKExporter.getSettings(),
+});
+```
+
+## `wrapAISDKModel` (deprecated)
+
+:::note
+The `wrapAISDKModel` method is deprecated and will be removed in a future release.
+:::
+
+The `wrapAISDKModel` method wraps the Vercel model wrapper and intercept model invocation to send traces to LangSmith. This method is useful if you are using an older version of LangSmith or if you are using `streamUI` / Vercel AI RSC, which currently does not support `experimental_telemetry`.
 
 ```ts
 import { wrapAISDKModel } from "langsmith/wrappers/vercel";
@@ -67,37 +203,8 @@ const vercelModel = openai("gpt-4o-mini");
 
 const modelWithTracing = wrapAISDKModel(vercelModel);
 
-const { text } = await generateText({
+await generateText({
   model: modelWithTracing,
   prompt: "Write a vegetarian lasagna recipe for 4 people.",
 });
-
-console.log(text);
 ```
-
-An example trace from running the above code [looks like this](https://smith.langchain.com/public/fbd12847-9485-43cf-a0a3-82c0b3318594/r):
-
-![Trace tree for a LangGraph run with LangChain](./static/vercel_ai_sdk_trace.png)
-
-If you are using a streaming method, LangSmith will trace chunks as a single aggregated response:
-
-```ts
-import { wrapAISDKModel } from "langsmith/wrappers/vercel";
-import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
-
-const vercelModel = openai("gpt-4o-mini");
-
-const modelWithTracing = wrapAISDKModel(vercelModel);
-
-const { textStream } = await streamText({
-  model: modelWithTracing,
-  prompt: "Write a vegetarian lasagna recipe for 4 people.",
-});
-
-for await (const chunk of textStream) {
-  ...
-}
-```
-
-An example trace from running the above code will look the same as the above one from `generateText`.
