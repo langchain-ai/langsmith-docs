@@ -1,7 +1,7 @@
 # Trace in serverless environments (JS only)
 
 :::note
-This section is relevant for those using the LangSmith SDK version 0.2.0 and higher.
+This section is relevant for those using the LangSmith JS SDK version 0.2.0 and higher.
 If you are tracing using LangChain.js or LangGraph.js in serverless environments, see [this guide](https://js.langchain.com/docs/how_to/callbacks_serverless).
 :::
 
@@ -11,6 +11,7 @@ In serverless environments where the execution context may be terminated abruptl
 To make sure this occurs, you can either:
 
 - Set an environment variable named `LANGSMITH_TRACING_BACKGROUND` to `"false"`. This will cause your traced functions to wait for tracing to complete before returning.
+  - Note that this is named differently from the [environment variable](https://js.langchain.com/docs/how_to/callbacks_serverless) in LangChain.js because LangSmith can be used without LangChain.
 - Pass a custom client into your traced runs and `await` the `client.awaitPendingTraceBatches();` method.
 
 Here's an example of using `awaitPendingTraceBatches` alongside the [`traceable`](/observability/how_to_guides/tracing/annotate_code) method:
