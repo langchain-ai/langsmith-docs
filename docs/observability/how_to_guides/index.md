@@ -34,6 +34,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Prevent logging of sensitive data in traces](./how_to_guides/tracing/mask_inputs_outputs)
 - [Trace generator functions](./how_to_guides/tracing/trace_generator_functions)
 - [Calculate token-based costs for traces](./how_to_guides/tracing/calculate_token_based_costs)
+- [Trace JS functions in serverless environments](./how_to_guides/tracing/serverless_environments)
 
 ## Tracing projects UI & API
 
