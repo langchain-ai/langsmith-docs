@@ -119,7 +119,7 @@ const traceableCallOpenAI = traceable(async (messages: {role: string, content: s
 await traceableCallOpenAI(messages, "gpt-3.5-turbo");\n
 // Create and use a RunTree object
 const rt = new RunTree({
-    runType: "llm",
+    run_type: "llm",
     name: "OpenAI Call RunTree",
     inputs: { messages },
     // highlight-next-line
