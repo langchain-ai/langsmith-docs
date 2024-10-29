@@ -2,9 +2,22 @@
 sidebar_position: 4
 ---
 
-# Use a custom OpenAI compliant model
+# Run the playground against your own AI system using an OpenAI compliant format
 
 The LangSmith playground allows you to use any model that is compliant with the OpenAI API. You can utilize your model by setting the Proxy Provider for `OpenAI` in the playground.
+
+## Deploy an OpenAI compliant model
+
+Many providers offer OpenAI compliant models. Some examples of this include:
+
+- [LiteLLM Proxy](https://github.com/BerriAI/litellm?tab=readme-ov-file#quick-start-proxy---cli)
+- [Ollama](https://ollama.com/)
+
+You can use these providers to deploy your model and get an API endpoint that is compliant with the OpenAI API.
+
+## Use the model in the LangSmith Playground
+
+Once you have deployed a model server, you can use it in the LangSmith Playground. Enter the playground and select the `Proxy Provider` inside the `OpenAI` modal.
 
 ![OpenAI Proxy Provider](./static/openai_proxy_provider.png)
 
