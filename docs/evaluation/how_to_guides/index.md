@@ -53,6 +53,7 @@ Manage datasets in LangSmith used by your offline evaluations (as well as other 
 - [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
 - [Version datasets](./how_to_guides/datasets/version_datasets)
 - [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
+- [Export filtered traces from an experiment to a dataset](./how_to_guides/datasets/export_filtered_traces_to_dataset)
 
 ## Annotation Queues and Human Feedback
 
