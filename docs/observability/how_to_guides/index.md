@@ -12,6 +12,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Enable or disable tracing](./how_to_guides/tracing/toggle_tracing)
 - [Trace any Python or JS Code](./how_to_guides/tracing/annotate_code)
 - [Trace using the LangSmith REST API](./how_to_guides/tracing/trace_with_api)
+- [Trace without environment variables](./how_to_guides/tracing/trace_without_env_vars)
 
 ### Trace natively supported libraries
 
@@ -35,6 +36,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Trace generator functions](./how_to_guides/tracing/trace_generator_functions)
 - [Calculate token-based costs for traces](./how_to_guides/tracing/calculate_token_based_costs)
 - [Trace JS functions in serverless environments](./how_to_guides/tracing/serverless_environments)
+- [Troubleshoot trace testing](./how_to_guides/tracing/nest_traces)
 
 ## Tracing projects UI & API
 
@@ -57,7 +59,8 @@ Use LangSmith custom and built-in dashboards to gain insight into your productio
 
 ## Automations
 
-Leverage LangSmith's powerful monitoring and automations features to make sense of your production data.
+Leverage LangSmith's powerful monitoring, automation, and online evaluation features to make sense of your production data.
 
 - [Set up automation rules](./how_to_guides/monitoring/rules)
 - [Set up webhook notifications for rules](./how_to_guides/monitoring/webhooks)
+- [Perform online evaluations](./how_to_guides/monitoring/online_evaluations)
