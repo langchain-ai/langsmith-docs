@@ -99,8 +99,7 @@ Evaluation requires a system to test, data to serve as test cases, and optionall
       value: "python",
       label: "Python",
       language: "python",
-      content: `from langsmith import Client
-from langsmith.evaluation import evaluate\n
+      content: `from langsmith import Client, evaluate
 client = Client()\n
 # Define dataset: these are your test cases
 dataset_name = "Sample Dataset"
@@ -133,8 +132,7 @@ experiment_results = evaluate(
     },
     typescript`
       import { Client, Run, Example } from "langsmith";
-      import { evaluate } from "langsmith/evaluation";
-      import { EvaluationResult } from "langsmith/evaluation";
+      import { EvaluationResult, evaluate } from "langsmith/evaluation";
       
       const client = new Client();
       
