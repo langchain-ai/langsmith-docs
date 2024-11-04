@@ -85,16 +85,16 @@ dataset = client.clone_public_dataset("https://smith.langchain.com/public/a63525
 # For more info on defining evaluators, see: https://docs.smith.langchain.com/evaluation/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators
 
 def is_concise_enough(root_run: Run, example: Example) -> dict:
-score = len(root_run.outputs["output"]) < 3 \* len(example.outputs["answer"])
-return {"key": "is_concise", "score": int(score)}
+    score = len(root_run.outputs["output"]) < 3 \* len(example.outputs["answer"])
+    return {"key": "is_concise", "score": int(score)}
 
 # 3. Run an evaluation
 
 evaluate(
-lambda x: x + "is a good question. I don't know the answer.",
-data=dataset.name,
-evaluators=[is_concise_enough],
-experiment_prefix="my first experiment "
+    lambda x: x + "is a good question. I don't know the answer.",
+    data=dataset.name,
+    evaluators=[is_concise_enough],
+    experiment_prefix="my first experiment "
 )
 `,
     },
@@ -114,7 +114,7 @@ const dataset = await client.clonePublicDataset(
 
 // 2. Define an evaluator
 function isConcise(rootRun: Run, example: Example): EvaluationResult {
-const score = rootRun.outputs?.outputs.length > example.outputs?.answer.length;
+const score = rootRun.outputs?.outputs.length < 3 * example.outputs?.answer.length;
 return { key: "is_concise", score: score };
 }
 
