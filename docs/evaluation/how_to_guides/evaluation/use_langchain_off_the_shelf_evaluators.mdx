@@ -201,7 +201,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts.prompt import PromptTemplate
 from langsmith.evaluation import LangChainStringEvaluator
 
-eval_llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo")
+eval_llm = ChatOpenAI(temperature=0.0, model="gpt-4o-mini")
 cot_qa_evaluator = LangChainStringEvaluator("cot_qa", config={"llm": eval_llm})
 
 evaluate(

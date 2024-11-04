@@ -54,7 +54,7 @@ def topic_classifier(
     topic: str
 ):
     return client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         temperature=0,
         messages=[
             {
@@ -198,7 +198,7 @@ def topic_classifier(
     example_string = create_example_string(examples)
 
     return client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         temperature=0,
         messages=[
             {
@@ -291,7 +291,7 @@ def topic_classifier(
     example_string = create_example_string(examples)
 
     return client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         temperature=0,
         messages=[
             {

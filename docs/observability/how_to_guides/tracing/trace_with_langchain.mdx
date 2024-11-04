@@ -241,7 +241,7 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
     ("user", "Question: {question}\\n\\nContext: {context}")
 ])
-model = ChatOpenAI(model="gpt-3.5-turbo")
+model = ChatOpenAI(model="gpt-4o-mini")
 output_parser = StrOutputParser()\n
 chain = prompt | model | output_parser\n
 question = "Can you summarize this morning's meetings?"
@@ -260,7 +260,7 @@ const prompt = ChatPromptTemplate.fromMessages([
   ["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
   ["user", "Question: {question\\n\\nContext: {context}"],
 ]);
-const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const model = new ChatOpenAI({ modelName: "gpt-4o-mini" });
 const outputParser = new StringOutputParser();\n
 const chain = prompt.pipe(model).pipe(outputParser);
 const runCollector = new RunCollectorCallbackHandler();\n
@@ -415,7 +415,7 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
     ("user", "Question: {question}\nContext: {context}")
 ])
-model = ChatOpenAI(model="gpt-3.5-turbo")
+model = ChatOpenAI(model="gpt-4o-mini")
 output_parser = StrOutputParser()
 
 chain = prompt | model | output_parser
@@ -457,7 +457,7 @@ const prompt = ChatPromptTemplate.fromMessages([
   ],
   ["user", "Question: {question}\nContext: {context}"],
 ]);
-const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const model = new ChatOpenAI({ modelName: "gpt-4o-mini" });
 const outputParser = new StringOutputParser();
 
 const chain = prompt.pipe(model).pipe(outputParser);
