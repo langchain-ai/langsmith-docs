@@ -72,6 +72,7 @@ module.exports = {
       type: "category",
       label: "Evaluation",
       items: [
+        "evaluation/index",
         {
           type: "category",
           label: "Conceptual Guide",
@@ -112,7 +113,7 @@ module.exports = {
           link: { type: "doc", id: "evaluation/tutorials/index" },
         },
       ],
-      link: { type: "doc", id: "evaluation/concepts/index" },
+      link: { type: "doc", id: "evaluation/index" },
     },
     {
       type: "category",

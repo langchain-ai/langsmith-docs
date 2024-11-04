@@ -1,0 +1,143 @@
+---
+sidebar_label: Quick start
+sidebar_position: 1
+table_of_contents: true
+---
+
+import Tabs from "@theme/Tabs";
+import CodeBlock from "@theme/CodeBlock";
+import {
+  CodeTabs,
+  PythonBlock,
+  ShellBlock,
+  TypeScriptBlock,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+import {
+  LangChainInstallationCodeTabs,
+  LangChainQuickStartCodeTabs,
+  ConfigureEnvironmentCodeTabs,
+  RunTreeQuickStartCodeTabs,
+  ConfigureSDKEnvironmentCodeTabs,
+  PythonSDKTracingCode,
+  TypeScriptSDKTracingCode,
+} from "@site/src/components/QuickStart";
+import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
+import DocCardList from "@theme/DocCardList";
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
+
+# Evaluation Quick Start
+
+This quick start will get you up and running with our evaluation SDK and Experiments UI.
+
+## 1. Install LangSmith
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "bash",
+      content: `pip install -U langsmith`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "bash",
+      content: `yarn add langsmith`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+## 2. Create an API key
+
+To create an API key head to the <RegionalUrl text='Settings page' suffix='/settings' />. Then click **Create API Key.**
+
+## 3. Set up your environment
+
+<CodeTabs
+  tabs={[
+    ShellBlock(`export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_API_KEY=<your-api-key>`),
+  ]}
+  groupId="client-language"
+/>
+
+## 4. Run your evaluation
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `from langsmith import evaluate, Client
+from langsmith.schemas import Example, Run
+
+# 1. Create and/or select your dataset
+
+client = Client()
+dataset = client.clone_public_dataset("https://smith.langchain.com/public/a63525f9-bdf2-4512-83e3-077dc9417f96/d")
+
+# 2. Define an evaluator
+
+# For more info on the evaluator format, see: https://docs.smith.langchain.com/evaluation/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators
+
+def is_concise_enough(root_run: Run, example: Example) -> dict:
+score = len(root_run.outputs["output"]) < 3 \* len(example.outputs["answer"])
+return {"key": "is_concise", "score": int(score)}
+
+# 3. Run an evaluation
+
+# For more info on evaluators, see: https://docs.smith.langchain.com/concepts/evaluation#evaluators
+
+evaluate(
+lambda x: x + "is a good question. I don't know the answer.",
+data=dataset.name,
+evaluators=[is_concise_enough],
+experiment_prefix="my first experiment "
+)
+`,
+    },
+    typescript`
+import { Client } from "langsmith";
+import { evaluate } from "langsmith/evaluation";
+import type { EvaluationResult } from "langsmith/evaluation";
+import type { Run, Example } from "langsmith/schemas";
+
+// 1. Define a dataset
+const client = new Client();
+const datasetName = "my first dataset"
+const dataset = await client.clonePublicDataset(
+"https://smith.langchain.com/public/a63525f9-bdf2-4512-83e3-077dc9417f96/d",
+{ datasetName: datasetName }
+)
+
+// 2. Define an evaluator
+function isConcise(rootRun: Run, example: Example): EvaluationResult {
+const score = rootRun.outputs?.outputs.length > example.outputs?.answer.length;
+return { key: "is_concise", score: score };
+}
+
+// 3. Run an evaluation
+// For more info on evaluators, see: https://docs.smith.langchain.com/concepts/evaluation#evaluators
+await evaluate(
+(exampleInput) => {
+return {
+answer: exampleInput.question + " Good question. I don't know the answer"
+};
+}, {
+data: datasetName,
+evaluators: [isConcise],
+experimentPrefix: "my first experiment ",
+});
+`,
+]}
+groupId="client-language"
+/>
+
+## 5. View Experiments UI
+
+Click the link printed out by your evaluation run to access the LangSmith experiments UI,
+and explore the results of your evaluation.
