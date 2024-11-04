@@ -350,7 +350,7 @@ def call_llm(prompt: str, temperature: float = 0.0, **kwargs: Any):
 def llm_chain(user_input: str, **kwargs: Any) -> str:
     """Select the text from the openai call."""
     return client.completions.create(
-        model="gpt-4o-mini-instruct", prompt=user_input, temperature=1.0, **kwargs
+        model="gpt-3.5-turbo-instruct", prompt=user_input, temperature=1.0, **kwargs
     ).choices[0].text\n\n
 @traceable(run_type="llm")
 def my_chat_model(messages: List[Dict], temperature: float = 0.0, **kwargs: Any):
