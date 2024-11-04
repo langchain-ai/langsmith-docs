@@ -122,6 +122,29 @@ const result = await generateText({
 await sdk.shutdown();
 ```
 
+### Sentry
+
+If you're using Sentry, you can attach the LangSmith trace exporter to Sentry's default OpenTelemetry instrumentation as follows:
+
+```ts
+import * as Sentry from "@sentry/node";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import { AISDKExporter } from "langsmith/vercel";
+
+const client = Sentry.init({
+  dsn: "[Sentry DSN]",
+  tracesSampleRate: 1.0,
+});
+
+// highlight-start
+client?.traceProvider?.addSpanProcessor(
+  new BatchSpanProcessor(new AISDKExporter())
+);
+// highlight-end
+```
+
+Alternatively, you can use your existing OpenTelemetry setup by setting `skipOpenTelemetrySetup: true` in your `Sentry.init()` call. In this case, we recommend following the official [Sentry OpenTelemetry Setup documentation](https://docs.sentry.io/platforms/javascript/guides/node/opentelemetry/custom-setup/).
+
 ## Customize run name
 
 You can customize the run name by passing the `runName` argument to the `AISDKExporter.getSettings()` method.
@@ -185,6 +208,16 @@ await generateText({
   experimental_telemetry: AISDKExporter.getSettings(),
 });
 ```
+
+## Debugging Exporter
+
+You can enable debug logs for the `AISDKExporter` by passing the `debug` argument to the constructor.
+
+```ts
+const traceExporter = new AISDKExporter({ debug: true });
+```
+
+Alternatively, you can set the `OTEL_LOG_LEVEL=DEBUG` environment variable to enable debug logs for the exporter as well as the rest of the OpenTelemetry stack.
 
 ## `wrapAISDKModel` (deprecated)
 
