@@ -238,19 +238,11 @@ _If you've annotated your code for tracing, you can open the trace of each row i
 
 ## Use custom evaluators
 
-At a high-level, evaluators are functions that take in a `Run` and an `Example` and return a dictionary or object with a keys `score` (numeric) and `key` (string).
-The `key` will be associated with the score in the LangSmith UI.
+At a high-level, an evaluator judges an invocation of your LLM application against a reference example, and returns an evaluation score.
 
-:::tip advanced use-cases
-
-- Configure more feedback fields: you can configure other fields in the dictionary as well. Please see the [feedback reference](/reference/data_formats/feedback_data_format) for more information.
-- Evaluate on intermediate steps: to view a more advanced example that traverses the `root_run` / `rootRun` object, please refer to [this guide](./evaluate_on_intermediate_steps) on evaluating on intermediate steps.
-- Return multiple scores: you can return multiple scores from a single evaluator. Please check out [the example below](#return-multiple-scores) for more information.
-
-:::
-
-To learn more about the `Run` format, you can read the following [reference](/reference/data_formats/run_data_format). However, many of the fields are not relevant nor required for writing evaluators.
-The `root_run` / `rootRun` is always available and contains the inputs and outputs of the target task. If tracing is enabled, the `root_run` / `rootRun` will also contain child runs for each step in the pipeline.
+In LangSmith evaluators, we represent this process as a function that takes in a [`Run`](/reference/data_formats/run_data_format)
+(representing the LLM app invocation) and an [`Example`](/reference/data_formats/example_data_format)
+(representing the data point to evaluate), and returns [`Feedback`](/reference/data_formats/feedback_data_format) (representing the evaluator's score of the LLM app invocation).
 
 Here is an example of a very simple custom evaluator that compares the output of a model to the expected output in the dataset:
 
@@ -279,6 +271,12 @@ def correct_label(root_run: Run, example: Example) -> dict:
 If the "key" field is not provided, the default key name will be the name of the evaluator function.
 
 :::
+
+:::tip advanced use-cases
+
+- **Evaluate on intermediate steps**: The `run` object comes from LangSmith tracing, so it allows you to see any traced intermediate steps of your LLM application. See [this guide](./evaluate_on_intermediate_steps) for more info on evaluating on intermediate steps.
+- **Return multiple scores**: you can return multiple scores from a single evaluator. Please check out [the example below](#return-multiple-scores) for more information.
+  :::
 
 ## Evaluate on a particular version of a dataset
 
