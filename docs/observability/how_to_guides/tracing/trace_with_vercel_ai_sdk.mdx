@@ -145,6 +145,58 @@ client?.traceProvider?.addSpanProcessor(
 
 Alternatively, you can use your existing OpenTelemetry setup by setting `skipOpenTelemetrySetup: true` in your `Sentry.init()` call. In this case, we recommend following the official [Sentry OpenTelemetry Setup documentation](https://docs.sentry.io/platforms/javascript/guides/node/opentelemetry/custom-setup/).
 
+### Cloudflare Workers
+
+To instrument AI SDK calls within Cloudflare Workers, you can use the `AISDKExporter` with `@microlabs/otel-cf-workers`. See the documentation for [`otel-cf-workers` here](https://github.com/evanderkoogh/otel-cf-workers).
+
+```ts
+import { Client } from "langsmith";
+import { instrument } from "@microlabs/otel-cf-workers";
+import { AISDKExporter } from "langsmith/vercel";
+
+import { createOpenAI } from "@ai-sdk/openai";
+import { generateText } from "ai";
+
+interface Env {
+  OPENAI_API_KEY: string;
+  LANGSMITH_TRACING_V2: string;
+  LANGSMITH_ENDPOINT: string;
+  LANGSMITH_API_KEY: string;
+}
+
+const handler = {
+  async fetch(request, env): Promise<Response> {
+    const openai = createOpenAI({ apiKey: env.OPENAI_API_KEY });
+    const model = openai("gpt-4o-mini");
+
+    const response = await generateText({
+      model,
+      prompt: "Tell me a joke",
+      experimental_telemetry: AISDKExporter.getSettings({
+        // As `process.env.LANGSMITH_TRACING_V2` is undefined in Cloudflare Workers,
+        // we need to check the environment variable directly.
+        isEnabled: env.LANGSMITH_TRACING_V2 === "true",
+      }),
+    });
+
+    return new Response(response.text);
+  },
+} satisfies ExportedHandler<Env>;
+
+export default instrument<Env, unknown, unknown>(handler, (env) => ({
+  exporter: new AISDKExporter({
+    client: new Client({
+      // Batching is handled by OTEL by default, we need to
+      // disable LangSmith batch tracing to avoid losing traces
+      autoBatchTracing: false,
+      apiKey: env.LANGSMITH_API_KEY,
+      apiUrl: env.LANGSMITH_ENDPOINT,
+    }),
+  }),
+  service: { name: "ai-sdk-service" },
+}));
+```
+
 ## Customize run name
 
 You can customize the run name by passing the `runName` argument to the `AISDKExporter.getSettings()` method.
