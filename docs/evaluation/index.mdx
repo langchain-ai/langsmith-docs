@@ -1,5 +1,5 @@
 ---
-sidebar_label: Quick start
+sidebar_label: Quick Start
 sidebar_position: 1
 table_of_contents: true
 ---
@@ -71,13 +71,13 @@ export LANGCHAIN_API_KEY=<your-api-key>`),
 from langsmith.schemas import Example, Run\n
 # 1. Create and/or select your dataset
 client = Client()
-dataset = client.clone_public_dataset("https://smith.langchain.com/public/a63525f9-bdf2-4512-83e3-077dc9417f96/d")\n\n
-# 2. Define an evaluator\n
-# For more info on defining evaluators, see: https://docs.smith.langchain.com/evaluation/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators\n
+dataset = client.clone_public_dataset("https://smith.langchain.com/public/a63525f9-bdf2-4512-83e3-077dc9417f96/d")\n
+# 2. Define an evaluator
+# For more info on defining evaluators, see: https://docs.smith.langchain.com/evaluation/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators
 def is_concise_enough(root_run: Run, example: Example) -> dict:
     score = len(root_run.outputs["output"]) < 3 \* len(example.outputs["answer"])
     return {"key": "is_concise", "score": int(score)}\n
-# 3. Run an evaluation\n
+# 3. Run an evaluation
 evaluate(
     lambda x: x + "is a good question. I don't know the answer.",
     data=dataset.name,
