@@ -1,0 +1,128 @@
+---
+sidebar_position: 14
+---
+
+# Use Prebuilt LLMEvaluator (Python only)
+
+:::tip Recommended Reading
+Before diving into this content, it might be helpful to read the following:
+
+- [LangChain evaluator reference](/reference/sdk_reference/langchain_evaluators)
+
+:::
+
+When working with applications that produce unstructured text outputs, it can be challenging to assess the quality and accuracy of those outputs without involving a human expert or another LLM.
+Many applications need to evaluate responses on common criteria such as correctness, hallucination detection, conciseness, and bias.
+To simplify and standardize this process, LangSmith provides the `LLMEvaluator` class, a versatile LLM-as-a-judge tool.
+With `LLMEvaluator`, you can create automated and customizable evaluations for your LLM outputs, giving you structured feedback on specific aspects of each response.
+
+:::tip Prerequisites
+
+Create a dataset and set up the LangSmith client in Python to follow along
+
+:::
+
+## The LLMEvaluator class
+
+The LLMEvaluator class provides an off-the-shelf abstraction for using LLM-as-a-judge evluators in your application. Some benefits to using LLMEvaluator include:
+- It's incredibly quick to get started with and iterate on
+- Makes it easy to customize the LLM judge for your specific scoring criteria
+- Uses Chain-of-Thought techniques to improve evaluation quality
+
+LLMEvaluator works by taking each example in your experiment and running an LLM with structured output on a user defined prompt asking some question about the input, output, and expected output of each example.
+The LLM is bound with structured output to respond in a JSON object with a "score" key, and optionally an "explanation" key.
+Note that while the "explanation" key is optional, forcing the LLM to provide an explanation can improve performance as it is a form of Chain-of-Thought prompting, and it is
+highly recommended to do so. 
+
+You can configure both what explanation is provided and also what score is returned. Let's start by explaining the different scoring configuration options.
+
+### Score configuration
+
+You can configure the score of your feedback to either be continuous or categorical. Here is how to do each of those:
+
+#### Continuous
+
+A continuous score can be helpful for evaluating something along a spectrum such as verbosity, creativity, or fluency to name a few.
+To define a continuous evaluator score, use the following code:
+
+```python
+from langsmith.llm_evaluator import ContinuousScoreConfig
+
+score_config=ContinuousScoreConfig(
+    key="conciseness", # the feedback key
+    description="The concicesness of the response from 0 to 10, with 0 being the most verbose possible and 1 being an answer with no superfluous words.", # the description of the "score" key in the structured output provided to the LLM
+    min=0, # defaults to 0
+    max=10, # defaults to 1
+)
+```
+
+#### Categorical
+
+A categorical score can be used to evaluate things such as whether the output contains any hallucinations, or if the output contains the same semantic meaning as the expected answer. 
+To define a categorical evaluator score, use the following code:
+
+```python
+from langsmith.llm_evaluator import CategoricalScoreConfig
+
+score_config=CategoricalScoreConfig(
+    key="correctness", # the feedback key
+    description="Whether or not the answer is correct based on the expected output, Y if correct, N if incorrect.", # the description of the "score" key in the structured output provided to the LLM
+    choices=["Y","N"] # the allowed values for the LLM judge to return
+)
+```
+
+### Explanation calibration
+
+If you want to include an explanation along with your score, you need to pass in `include_explanation=True` to your score config.
+You can additionally pass in the `explanation_desription` param to instruct the LLM on how to construct it's explanation. Below is a code example:
+
+```python
+from langsmith.llm_evaluator import CategoricalScoreConfig
+
+score_config=CategoricalScoreConfig(
+    key="bias", # the feedback key
+    description="Whether or not the answer is biased.", # the description of the "score" key in the structured output provided to the LLM
+    choices=["BIASED","NOT BIASED"] # the allowed values for the LLM judge to return,
+    include_explanation=True, # defaults to False
+    explanation_description="What bias, if any, was displayed in the answer"
+)
+```
+
+## Using LLMEvaluator with evaluate/aevaluate
+
+Putting it all together, you can use the following code to evaluate question/answer pairs to see if the LLM application produced an answer that matches the expected answer:
+
+
+```python
+from langchain_openai import ChatOpenAI
+from langsmith.evaluation import evaluate
+model = ChatOpenAI(name="gpt-4o-mini")
+client = Client()
+
+evaluator = LLMEvaluator(
+    prompt_template="Is the response correct? Compare it only to the expected response, don't compare it to any of your existing knowledge.\n<response>\n{content}\n</response>\n\n<expected>\n{expected}\n</expected>",
+    score_config=CategoricalScoreConfig(
+        key="correctness",
+        choices=[0, 1],
+        description="Whether the response is correct. 1 for yes, 0 for no.",
+        include_explanation=True,
+        explanation_description="Why specifically the answer is correct or incorrect."
+    ),
+    map_variables= lambda run, example: {"content":run.outputs['answer'].content, "expected": example.outputs['answer']}, # map variables is a function of the target run and the example
+    model_name="gpt-4o-mini", # defaults to gpt-4o
+    model_provider="openai" # defaults to openai
+)
+
+# The target function acts on the input of each example (i.e. example.inputs)
+def target(input):
+    return {"answer": model.invoke(input['question'])}
+
+evaluate(
+    target,
+    data="llmevaluator-testing", # the name of the dataset to evaluate on
+    evaluators=[evaluator],
+    client=client
+)
+```
+
+In this case we want to ask whether the AI generated content `run.outputs['answer'].content` matches the expected answer `example.outputs['answer']`. 
