@@ -49,7 +49,7 @@ def chat_pipeline(question: str):
         { "role": "user", "content": f"Question: {question}\nContext: {context}"}
     ]
     chat_completion = client.chat.completions.create(
-        model="gpt-3.5-turbo", messages=messages
+        model="gpt-4o-mini", messages=messages
     )
     return chat_completion.choices[0].message.content\n
 # highlight-next-line
@@ -87,7 +87,7 @@ with tracing_context(enabled=True):
                 const context = await tool(question);
                 
                 const completion = await openai.chat.completions.create({
-                    model: "gpt-3.5-turbo",
+                    model: "gpt-4o-mini",
                     messages: [
                         { role: "system" as const, content: "You are a helpful assistant. Please respond to the user's request only based on the given context." },
                         { role: "user" as const, content: \`Question: \${question}\\nContext: \${context}\`}

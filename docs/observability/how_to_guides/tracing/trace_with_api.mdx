@@ -77,7 +77,7 @@ post_run(child_run_id, "OpenAI Call", "llm", {"messages": messages}, parent_run_
 
 # Generate a completion
 client = openai.Client()
-chat_completion = client.chat.completions.create(model="gpt-3.5-turbo", messages=messages)
+chat_completion = client.chat.completions.create(model="gpt-4o-mini", messages=messages)
 
 # End runs
 patch_run(child_run_id, chat_completion.dict())

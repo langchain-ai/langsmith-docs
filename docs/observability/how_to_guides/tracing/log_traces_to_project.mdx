@@ -51,7 +51,7 @@ messages = [
     project_name="My Project"
 )
 def call_openai(
-    messages: list[dict], model: str = "gpt-3.5-turbo"
+    messages: list[dict], model: str = "gpt-4o-mini"
 ) -> str:
     return client.chat.completions.create(
         model=model,
@@ -72,7 +72,7 @@ call_openai(
 from langsmith import wrappers
 wrapped_client = wrappers.wrap_openai(client)
 wrapped_client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4o-mini",
     messages=messages,
     # highlight-next-line
     langsmith_extra={"project_name": "My Project"},
@@ -87,7 +87,7 @@ rt = RunTree(
     project_name="My Project"
 )
 chat_completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4o-mini",
     messages=messages,
 )
 # End and submit the run
@@ -116,7 +116,7 @@ const traceableCallOpenAI = traceable(async (messages: {role: string, content: s
     project_name: "My Project"
 });
 // Call the traceable function
-await traceableCallOpenAI(messages, "gpt-3.5-turbo");\n
+await traceableCallOpenAI(messages, "gpt-4o-mini");\n
 // Create and use a RunTree object
 const rt = new RunTree({
     runType: "llm",

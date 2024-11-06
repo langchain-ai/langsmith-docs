@@ -38,7 +38,7 @@ langsmith_client = Client(
 )\n
 # The trace produced will have its metadata present, but the inputs will be hidden
 openai_client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4o-mini",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": "Hello!"},
@@ -47,7 +47,7 @@ openai_client.chat.completions.create(
 )\n
 # The trace produced will not have hidden inputs and outputs
 openai_client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4o-mini",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": "Hello!"},
@@ -66,7 +66,7 @@ const filteredOAIClient = wrapOpenAI(new OpenAI(), {
     client: langsmithClient,
 });
 await filteredOAIClient.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o-mini",
     messages: [
       { role: "system", content: "You are a helpful assistant." },
       { role: "user", content: "Hello!" },
@@ -75,7 +75,7 @@ await filteredOAIClient.chat.completions.create({
 const openaiClient = wrapOpenAI(new OpenAI());
 // The trace produced will not have hidden inputs and outputs
 await openaiClient.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o-mini",
     messages: [
       { role: "system", content: "You are a helpful assistant." },
       { role: "user", content: "Hello!" },

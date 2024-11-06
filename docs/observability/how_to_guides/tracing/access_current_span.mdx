@@ -47,7 +47,7 @@ def invoke_llm(messages):
     print(f"invoke_llm Trace Id: {run.trace_id}")
     print(f"invoke_llm Parent Run Id: {run.parent_run.id}")
     return openai.chat.completions.create(
-        messages=messages, model="gpt-3.5-turbo", temperature=0
+        messages=messages, model="gpt-4o-mini", temperature=0
     )\n
 @traceable
 def parse_output(response):
@@ -98,7 +98,7 @@ const invokeLLM = traceable(
         console.log("invokeLLM Trace ID", run.trace_id)
         console.log("invokeLLM Parent Run ID", run.parent_run.id)
         return openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o-mini",
             messages: messages,
             temperature: 0,
         });

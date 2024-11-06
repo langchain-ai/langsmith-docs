@@ -61,7 +61,7 @@ To understand how to annotate your code for tracing, please refer to [this guide
               {"role": "user", "content": text},
           ]
           result = openai.chat.completions.create(
-              messages=messages, model="gpt-3.5-turbo", temperature=0
+              messages=messages, model="gpt-4o-mini", temperature=0
           )
           return result.choices[0].message.content
       `,
@@ -82,7 +82,7 @@ To understand how to annotate your code for tracing, please refer to [this guide
               },
               { role: "user", content: text },
             ],
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o-mini",
             temperature: 0,
           });
           

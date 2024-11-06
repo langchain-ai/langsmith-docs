@@ -40,7 +40,7 @@ def generate_wiki_search(question):
         {"role": "system", "content": "Generate a search query to pass into wikipedia to answer the user's question. Return only the search query and nothing more. This will passed in directly to the wikipedia search engine."},
         {"role": "user", "content": question}
     ]
-    result = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo", temperature=0)
+    result = openai.chat.completions.create(messages=messages, model="gpt-4o-mini", temperature=0)
     return result.choices[0].message.content\n
 @traceable(run_type="retriever")
 def retrieve(query):
@@ -63,7 +63,7 @@ def generate_answer(question, context):
         {"role": "system", "content": f"Answer the user's question based ONLY on the content below:\\n\\n{context}"},
         {"role": "user", "content": question}
     ]
-    result = openai.chat.completions.create(messages=messages, model="gpt-3.5-turbo", temperature=0)
+    result = openai.chat.completions.create(messages=messages, model="gpt-4o-mini", temperature=0)
     return result.choices[0].message.content\n
 @traceable
 def rag_pipeline(question):
@@ -92,7 +92,7 @@ def rag_pipeline(question):
         ];
         
         const chatCompletion = await openai.chat.completions.create({
-          model: "gpt-3.5-turbo",
+          model: "gpt-4o-mini",
           messages: messages,
           temperature: 0,
         });
@@ -141,7 +141,7 @@ def rag_pipeline(question):
         ];
       
         const chatCompletion = await openai.chat.completions.create({
-          model: "gpt-3.5-turbo",
+          model: "gpt-4o-mini",
           messages: messages,
           temperature: 0,
         });
@@ -258,7 +258,7 @@ def hallucination(root_run: Run, example: Example) -> dict:
         """Binary score for hallucination present in generation answer."""\n
         binary_score: int = Field(description="Answer is grounded in the facts, 1 or 0")\n
     # LLM with function call
-    llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     structured_llm_grader = llm.with_structured_output(GradeHallucinations)\n
     # Prompt
     system = """You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts. \\n
@@ -332,7 +332,7 @@ def hallucination(root_run: Run, example: Example) -> dict:
         ]);
         
         const llm = new ChatOpenAI({
-          model: "gpt-3.5-turbo-0125",
+          model: "gpt-4o-mini",
           temperature: 0,
         }).withStructuredOutput(
           z

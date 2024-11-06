@@ -285,7 +285,7 @@ def call_model(state: State):
     messages = state["messages"]
     # Calling the wrapped client will automatically infer the correct tracing context
     response = wrapped_client.chat.completions.create(
-        messages=messages, model="gpt-3.5-turbo", tools=[tool_schema]
+        messages=messages, model="gpt-4o-mini", tools=[tool_schema]
     )
     raw_tool_calls = response.choices[0].message.tool_calls
     tool_calls = [tool_call.to_dict() for tool_call in raw_tool_calls] if raw_tool_calls else []
