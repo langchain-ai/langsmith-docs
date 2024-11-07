@@ -2,127 +2,282 @@
 sidebar_position: 14
 ---
 
+import {
+  CodeTabs,
+  typescript,
+  python,
+} from "@site/src/components/InstructionsWithCode";
+
 # Use Prebuilt LLMEvaluator (Python only)
 
-:::tip Recommended Reading
-Before diving into this content, it might be helpful to read the following:
+LangSmith provides LLMEvaluator - a prebuilt LLM-as-judge evaluator that you can use to assess the quality of your application across a host of common categories
+(hallucination, conciseness, bias, etc). The LLMEvaluator class is designed to both work off the shelf by default, and be customizable to your specific needs.
 
-- [LangChain evaluator reference](/reference/sdk_reference/langchain_evaluators)
+## Using LLMEvaluator to evaluate your application
 
+### Create a dataset
+
+For the code in the rest of this how-to we will be using [this public dataset](https://smith.langchain.com/public/9138f009-dff1-4188-bd7b-ee9f9c005ac2/d).
+If you wish to follow along with your own dataset, feel free to - LLMEvaluator is highly versatile, no matter the form of your dataset.
+The code below shows how to clone the public dataset:
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith import Client
+      from langchain_openai import ChatOpenAI
+
+      dataset_name = "llm-evaluator-testing"
+      client = Client()
+      dataset = client.clone_public_dataset(
+        "https://smith.langchain.com/public/9138f009-dff1-4188-bd7b-ee9f9c005ac2/d",
+        dataset_name=dataset_name
+      )
+    `,
+    typescript`
+      import { Client } from "langsmith";
+      
+      const datasetName = "llm-evaluator-testing"
+      const client = new Client();
+      await client.clonePublicDataset(
+        "https://smith.langchain.com/public/9138f009-dff1-4188-bd7b-ee9f9c005ac2/d",
+        { datatsetName: datasetName }
+      );
+    `,
+  ]}
+/>
+
+Each one of the examples in the dataset we have has the following structure:
+
+![](../evaluation/static/llm_evaluator_example.png)
+
+### Select metrics
+
+In this how-to we will be analyzing hallucination as well as concisesness, you should select the metrics that best correlate with business outcomes for your application.
+
+We will first define the metric for conciseness, which will be a categorical metric based on whether the answer was too short, too long, or just right.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation.llm_evaluator import CategoricalScoreConfig
+      
+      concicesness_score_config=CategoricalScoreConfig(
+        # the feedback key that will show up in LangSmith
+        key="conciseness",
+        # the choices for the LLM judge to select when scoring each example
+        choices=["TOO BRIEF", "EXCESSIVELY LONG", "CONCISE"],
+        # the description provided to the LLM judge for how to select which choice
+        description="TOO BRIEF if the answer is too short, EXCESSIVELY LONG if the answer is too long, and CONCISE if the answer is the right length",
+        # the key in the structured output provided to the LLM judge
+        reasoning_key="reasoning",
+        # the description provided to the LLM judge for the reasoning key in the structured output
+        reasoning_description="Which information was hallucinated (if any), if none explain how all the information in the answer was contained in the documents.",
+      )
+    `,
+    typescript`
+      import { CategoricalScoreConfig } from "langsmith/evaluation/llm_evaluator";
+      
+      const concisenessScoreConfig = new CategoricalScoreConfig({
+        // the feedback key that will show up in LangSmith
+        key: "conciseness",
+        // the choices for the LLM judge to select when scoring each example
+        choices: ["TOO BRIEF", "EXCESSIVELY LONG", "CONCISE"],
+        // the description provided to the LLM judge for how to select which choice
+        description: "TOO BRIEF if the answer is too short, EXCESSIVELY LONG if the answer is too long, and CONCISE if the answer is the right length",
+        // the key in the structured output provided to the LLM judge
+        reasoningKey: "reasoning", 
+        // the description provided to the LLM judge for the reasoning key in the structured output
+        reasoningDescription: "Which information was hallucinated (if any), if none explain how all the information in the answer was contained in the documents.",
+      });
+    `,
+  ]}
+/>
+
+Now, let's define our metric for hallucination, which we will measure on a continuous scale.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation.llm_evaluator import ContinuousScoreConfig
+      
+      hallucination_score_config=ContinuousScoreConfig(
+        # the feedback key that will show up in LangSmith
+        key="hallucination",
+        # the minimum value the LLM judge can return - defaults to 0
+        min=0,
+        # the maximum value the LLM judge can return - defaults to 1
+        max=100,
+        # the description provided in the structured output object to the LLM judge for how to select which choice
+        description="What percent of the facts stated in the answer were hallucinated (i.e not contained in the documents), 0 if none were hallucinated, 100 if they were all hallucinated.",
+        # the key in the structured output provided to the LLM judge
+        reasoning_key="explanation",
+        # the description provided in the structured output object to the LLM judge for the reasoning key in the structured output
+        reasoning_description="Explain what facts (if any) were hallucinated, if none were explain where in the documents each fact is found.",
+      )
+    `,
+    typescript`
+      import { ContinuousScoreConfig } from "langsmith/evaluation/llm_evaluator";
+      
+      const hallucinationScoreConfig = new ContinuousScoreConfig({
+        // the feedback key that will show up in LangSmith
+        key: "hallucination",
+        // the minimum value the LLM judge can return - defaults to 0
+        min: 0,
+        // the maximum value the LLM judge can return - defaults to 1
+        max: 100,
+        // the description provided in the structured output object to the LLM judge for how to select which choice
+        description: "What percent of the facts stated in the answer were hallucinated (i.e not contained in the documents), 0 if none were hallucinated, 100 if they were all hallucinated.",
+        // the key in the structured output provided to the LLM judge
+        reasoningKey: "explanation", 
+        // the description provided in the structured output object to the LLM judge for the reasoning key in the structured output
+        reasoningDescription: "Explain what facts (if any) were hallucinated, if none were explain where in the documents each fact is found.",
+      });
+    `,
+  ]}
+/>
+
+:::info
+Note that in both of these cases, we provided a reasoning key. While this is optional, forcing the LLM judge to reason through
+it's answer is a form of Chain-of-Thought prompting and will improve response quality.
 :::
 
-When working with applications that produce unstructured text outputs, it can be challenging to assess the quality and accuracy of those outputs without involving a human expert or another LLM.
-Many applications need to evaluate responses on common criteria such as correctness, hallucination detection, conciseness, and bias.
-To simplify and standardize this process, LangSmith provides the `LLMEvaluator` class, a versatile LLM-as-a-judge tool.
-With `LLMEvaluator`, you can create automated and customizable evaluations for your LLM outputs, giving you structured feedback on specific aspects of each response.
+### Construct your LLMEvaluator
 
-:::tip Prerequisites
+Now that we have defined our metrics and score configurations for each of those metrics we can define our evaluators:
 
-Create a dataset and set up the LangSmith client in Python to follow along
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation.llm_evaluator import LLMEvaluator
+      
+      hallucination_evaluator = LLMEvaluator(
+        # The prompt for your model (can be a list of messages as well as a string)
+        prompt_template="What percent of this response: {response} is hallucinated, given these source documents {documents}",
+        score_config=hallucination_score_config,
+        # The mapping from your experiment run and example to the prompt template
+        map_variables=lambda run, example: {"response": run.outputs['answer'].content,"documents": '/n'.join(example.inputs['documents'])}
+      )
+      
+      conciseness_evaluator = LLMEvaluator(
+        # The prompt for your model (can be a list of messages as well as a string)
+        prompt_template="How concise is this answer: {answer} compared to this expected answer {expected_answer}",
+        score_config=concicesness_score_config,
+        # The mapping from your experiment run and example to the prompt template
+        map_variables=lambda run, example: {"answer": run.outputs['answer'].content,"expected_answer": example.outputs['answer']}
+      )
+    `,
+    typescript`
+      import { LLMEvaluator } from "langsmith/evaluation/llm_evaluator";
+      import { Run, Example } from "langsmith/schemas"
+      
+      const hallucinationEvaluator = await LLMEvaluator.create({
+        // The prompt for your model (can be a list of messages as well as a string)
+        promptTemplate: "What percent of this response: {response} is hallucinated, given these source documents {documents}",
+        scoreConfig: hallucinationScoreConfig,
+        // The mapping from your experiment run and example to the prompt template
+        mapVariables: (run: Run, example?: Example) => ({
+          response: run.outputs?.["answer"].content ?? "",
+          documents: example?.inputs?.["documents"].join('/n') ?? "",
+        }),
+      });
+      
+      const concisenessEvaluator = await LLMEvaluator.create({
+        // The prompt for your model (can be a list of messages as well as a string)
+        promptTemplate: "How concise is this answer: {answer} compared to this expected answer {expected_answer}",
+        scoreConfig: concisenessScoreConfig,
+        // The mapping from your experiment run and example to the prompt template
+        mapVariables: (run: Run, example?: Example) => ({
+          answer: run.outputs?.["answer"].content ?? "",
+          expected_answer: example?.outputs?.["answer"] ?? "",
+        }),
+      });
+    `,
+  ]}
+/>
 
+:::info
+The score configuration defines the JSON object the LLM judge will use to produce structured output, the prompt template is the prompt sent to your model.
 :::
 
-## The LLMEvaluator class
+### Run your evaluation
 
-The LLMEvaluator class provides an off-the-shelf abstraction for using LLM-as-a-judge evluators in your application. Some benefits to using LLMEvaluator include:
-- It's incredibly quick to get started with and iterate on
-- Makes it easy to customize the LLM judge for your specific scoring criteria
-- Uses Chain-of-Thought techniques to improve evaluation quality
+Now we are ready to run an experiment with our evluators:
 
-LLMEvaluator works by taking each example in your experiment and running an LLM with structured output on a user defined prompt asking some question about the input, output, and expected output of each example.
-The LLM is bound with structured output to respond in a JSON object with a "score" key, and optionally an "explanation" key.
-Note that while the "explanation" key is optional, forcing the LLM to provide an explanation can improve performance as it is a form of Chain-of-Thought prompting, and it is
-highly recommended to do so. 
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith import evaluate, Client
 
-You can configure both what explanation is provided and also what score is returned. Let's start by explaining the different scoring configuration options.
+      # Initialize the model and client
+      model = ChatOpenAI(name="gpt-4o-mini")
+      client = Client()
 
-### Score configuration
+      # Define the target function - this is just a placeholder for your real LLM application
+      def target(example):
+        separator = "\\n"
+        return {"answer": model.invoke(f"Answer this question in a few sentences, {example['question']} using these documents {separator.join(example['documents'])}")}
 
-You can configure the score of your feedback to either be continuous or categorical. Here is how to do each of those:
+      # Run the evaluation
+      evaluate(
+        target,
+        data="llm-evaluator-testing",
+        evaluators=[hallucination_evaluator, conciseness_evaluator],
+        client=client
+      )
+    `,
+    typescript`
+      import { ChatOpenAI } from "@langchain/openai";
+      import { Client } from "langsmith";
+      import { evaluate } from "langsmith/evaluation"
+      import { Example } from "langsmith/schemas"
 
-#### Continuous
+      // Initialize the model and client
+      const model = new ChatOpenAI({
+        modelName: "gpt-4o-mini",
+      });
 
-A continuous score can be helpful for evaluating something along a spectrum such as verbosity, creativity, or fluency to name a few.
-To define a continuous evaluator score, use the following code:
+      const client = new Client();
 
-```python
-from langsmith.llm_evaluator import ContinuousScoreConfig
+      // Define the target function - this is just a placeholder for your real LLM application
+      const target = async (example: Example) => {
+        const separator = '\\n';
+        const response = await model.invoke(
+          "Answer this question in a few sentences, " + example.question + " using these documents " + example.documents.join(separator)
+        );
+        return { answer: response };
+      };
 
-score_config=ContinuousScoreConfig(
-    key="conciseness", # the feedback key
-    description="The concicesness of the response from 0 to 10, with 0 being the most verbose possible and 1 being an answer with no superfluous words.", # the description of the "score" key in the structured output provided to the LLM
-    min=0, # defaults to 0
-    max=10, # defaults to 1
-)
-```
+      // Run the evaluation
+      await evaluate(
+        target,
+        {
+          data: "llm-evaluator-testing",
+          evaluators: [hallucinationEvaluator, concisenessEvaluator],
+          client: client,
+        }
+      );
+    `,
+  ]}
+/>
 
-#### Categorical
+### Use LangSmith to view the results
 
-A categorical score can be used to evaluate things such as whether the output contains any hallucinations, or if the output contains the same semantic meaning as the expected answer. 
-To define a categorical evaluator score, use the following code:
+You can view the experiment by navigating to the experiments tab in your dataset. You should see a page that looks like this:
 
-```python
-from langsmith.llm_evaluator import CategoricalScoreConfig
+![](../evaluation/static/llm_evaluator_experiments_view.png)
 
-score_config=CategoricalScoreConfig(
-    key="correctness", # the feedback key
-    description="Whether or not the answer is correct based on the expected output, Y if correct, N if incorrect.", # the description of the "score" key in the structured output provided to the LLM
-    choices=["Y","N"] # the allowed values for the LLM judge to return
-)
-```
+You can then click into your experiment to see the results of individual examples:
 
-### Explanation calibration
+![](../evaluation/static/llm_evaluator_row_view.png)
 
-If you want to include an explanation along with your score, you need to pass in `include_explanation=True` to your score config.
-You can additionally pass in the `explanation_desription` param to instruct the LLM on how to construct it's explanation. Below is a code example:
+When you click on an individual feedback key on an example, and then click the `Evaluate` button it will take you to a trace view where you can see exactly how the `LLMEvaluator` ran:
 
-```python
-from langsmith.llm_evaluator import CategoricalScoreConfig
+![](../evaluation/static/llm_evaluator_feedback_key.png)
 
-score_config=CategoricalScoreConfig(
-    key="bias", # the feedback key
-    description="Whether or not the answer is biased.", # the description of the "score" key in the structured output provided to the LLM
-    choices=["BIASED","NOT BIASED"] # the allowed values for the LLM judge to return,
-    include_explanation=True, # defaults to False
-    explanation_description="What bias, if any, was displayed in the answer"
-)
-```
-
-## Using LLMEvaluator with evaluate/aevaluate
-
-Putting it all together, you can use the following code to evaluate question/answer pairs to see if the LLM application produced an answer that matches the expected answer:
-
-
-```python
-from langchain_openai import ChatOpenAI
-from langsmith.evaluation import evaluate
-model = ChatOpenAI(name="gpt-4o-mini")
-client = Client()
-
-evaluator = LLMEvaluator(
-    prompt_template="Is the response correct? Compare it only to the expected response, don't compare it to any of your existing knowledge.\n<response>\n{content}\n</response>\n\n<expected>\n{expected}\n</expected>",
-    score_config=CategoricalScoreConfig(
-        key="correctness",
-        choices=[0, 1],
-        description="Whether the response is correct. 1 for yes, 0 for no.",
-        include_explanation=True,
-        explanation_description="Why specifically the answer is correct or incorrect."
-    ),
-    map_variables= lambda run, example: {"content":run.outputs['answer'].content, "expected": example.outputs['answer']}, # map variables is a function of the target run and the example
-    model_name="gpt-4o-mini", # defaults to gpt-4o
-    model_provider="openai" # defaults to openai
-)
-
-# The target function acts on the input of each example (i.e. example.inputs)
-def target(input):
-    return {"answer": model.invoke(input['question'])}
-
-evaluate(
-    target,
-    data="llmevaluator-testing", # the name of the dataset to evaluate on
-    evaluators=[evaluator],
-    client=client
-)
-```
-
-In this case we want to ask whether the AI generated content `run.outputs['answer'].content` matches the expected answer `example.outputs['answer']`. 
+![](../evaluation/static/llm_evaluator_trace.png)
