@@ -79,7 +79,7 @@ def is_concise_enough(root_run: Run, example: Example) -> dict:
     return {"key": "is_concise", "score": int(score)}\n
 # 3. Run an evaluation
 evaluate(
-    lambda x: x + "is a good question. I don't know the answer.",
+    lambda x: x["question"] + "is a good question. I don't know the answer.",
     data=dataset.name,
     evaluators=[is_concise_enough],
     experiment_prefix="my first experiment "
