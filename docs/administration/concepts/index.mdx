@@ -102,13 +102,9 @@ And workspace members are managed in workspace settings:
 
 ### API keys
 
-:::danger Dropping support August 15, 2024
-We will be dropping support for API keys on August 15, 2024 in favor of personal access tokens (PATs) and service keys. We recommend using PATs and service keys for all new integrations. API keys prefixed with `ls__` will NO LONGER work after August 15, 2024.
+:::danger Legacy Keys deprecated as of October 22, 2024
+We ended support for legacy API keys prefixed with `ls__` on October 22, 2024 in favor of personal access tokens (PATs) and service keys. We require using PATs and service keys for all new integrations. API keys prefixed with `ls__` will no longer work as of October 22, 2024.
 :::
-
-API keys are used to authenticate requests to the LangSmith API. They are created by users and scoped to a workspace. This means that all requests made with an API key will be associated with the workspace that the key was created in. The API key will have the ability to create, read, update, delete all resources within that workspace.
-
-API keys are prefixed with `ls__`. These keys will also show up in the UI under the service keys tab.
 
 #### Personal Access Tokens (PATs)
 
