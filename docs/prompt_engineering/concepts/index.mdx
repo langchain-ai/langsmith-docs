@@ -2,33 +2,25 @@
 
 ## What is a prompt?
 
-A prompt sets the stage for the model. It provides the context that will inform how the model behaves. You can think
-of the prompt like an audience member at a one man improv show shouting out what character the actor should play next. Telling the 
-improv actor to be a pirate instead of a supreme court judge won't change the actor's fundamental acting skills or techniques, but
-it will change how they apply those techniques, and in turn what the audience member watches on stage. 
-Similarly, you can prompt an LLM to speak like a pirate instead of asking it to speak like a supreme court 
-judge and you will notice a stark difference in the responses. The prompt has no impact on the underlying model weights,
-it simply guides the model to select the right words. Without prompting, the model is drawing words to output from a wide-ranging probability
-ditribution, prompting narrows this distribution to the words you or your user wants to see.
+A prompt sets the stage for the model, like an audience member at an improv show directing the actor's next performance - it guides the model's
+behavior without changing its underlying capabilities. Just as telling an actor to "be a pirate" determines how they act,
+a prompt provides instructions, examples, and context that shape how the model responds. A prompt is typically a system message
+or list of messages, containing specific instructions ("you are an exert at coding" ), as well as information from external
+data (such as few shot examples from an existing dataset).
+
+DIAGRAM
 
 ## Why is prompt engineering important?
 
-By selecting the correct prompt you can improve alignment between model outputs and your desired results. Going back to
-the improv example, if you had a specific pirate in mind you can provide more specific instructions to get the actor to 
-behave as you would like. For example, instead of asking them to be a pirate, you could ask them to be an English pirate
-in the Indian Ocean in the mid-18th century. In a similar vien, by providing specific instructions you can get LLMs to
-behave in more specific manners that are best suited for your application.
+Prompt engineering is important because it allows you to change the way the model behaves. It also allows you to iterate
 
 ### Prompt engineering v.s Fine-tuning
 
-It is important to note how this is different to fine-tuning, another popular method for extracting optimal responses
-from your LLM. If you think of prompting as the audience member shouting out a role for the actor to play next, you can
-think of fine-tuning as hiring an acting coach to teach the actor certain techniques. The acting coach is
-fundamentally changing the methods the actor can use, just as fine-tuning fundamentally changes the weights of the LLM.
-Fine tuning can be helpful if you have task data that most LLMs weren't trained on (medical imagery for example) but it is 
-a risky endeavor because it is a time consuming and costly process. On the other hand, while it doesn't afford you the same
-control over the underlying mechanisms of the model, prompt engineering is quick and easy to iterate on, and for most 
-use cases is more than sufficient for extracting your desired outputs.
+Prompt engineering and fine-tuning both aim to improve model performance on a specific task in different ways.
+Fine-tuning changes model weights by training a base model on new data, while prompt engineering provides
+instructions for the model at inference time. Each approach has different pros and cons:
+
+DIAGRAM
 
 ## How is good prompt engineering done?
 
@@ -38,17 +30,11 @@ constitutes prompt engineering success.
 
 ### Iteration
 
-State of the art LLMs allow you to pass in thousands (millions for certain models) of words in a prompt, and many times the best
-prompts require using a large portion of that allowance. Writing thousands of words by hand is tedious and time consuming, but by asking
-an LLM to write those words you can save a massive amount of time. This is what we had in mind with the prompt canvas - a 
-tool that allows you to converse with and give an LLM control over improving your prompt. Instead of having to make all
-the changes to your prompt manually, you can offload the busy work to an LLM. 
+Iterating quickly is important in prompt-engineering, because finding the right prompt is rarely a fast and simple 
+process. LangSmith provides the playground for you to quickly edit and test different prompts against eachother so you 
+can make quick changes that you know are benefitial:
 
-Here's an example showing how we can use the prompt canvas to iterate on a prompt for an LLM that is supposed to XXXXXX - INSERT EXAMPLE
-
-:::note Learn More
-To learn about all the features of the prompt canvas, check out this (XXXXXX link needed) page to learn more.
-:::
+INSERT GIF
 
 ### Testing
 
@@ -65,7 +51,7 @@ Otherwise you can overfit to irrelevant data.
 Without leaving the page where you edit your prompts, you can run experiments over your test data and compare the results of those experiments
 with previous prompts - giving you concrete evidence of how your prompt is impacting performance. Below is a gif showing h
 
-XXXXXX - ADD EXAMPLE OF RUNNING A TEST
+XXXXXX - ADD EXAMPLE OF RUNNING A TEST ()
 
 :::note Learn More
 To learn about how to set up more in depth testing with LangSmith, read through our [how-to guides](https://docs.smith.langchain.com/evaluation/how_to_guides)
@@ -74,11 +60,21 @@ or get started with [the quick-start](https://docs.smith.langchain.com/evaluatio
 
 ### Collaboration
 
-Lastly, after iterating and testing, sharing is a critical step. A prompt written by one person is valuable, but like 
-any good idea getting other perspectives is always a good thing. This is why LangSmith designed the prompt hub to allow
-sharing prompts and their histories with other team members. By allowing each team member the ability to work on the
-same prompt, LangSmith takes advantage of the fact that the sum of mutlitple pieces is much larger than any individual one.
+Collaboration on your prompts is helpful when you are working on an LLM application with a team. LangSmith 
+uses prompt versioning to make it easy for multiple people to make edits to the same prompt. You can pull a prompt 
 
 :::note Learn More
 Learn about all the prompt hub has to offer in [these how-tos](https://docs.smith.langchain.com/prompt_engineering/how_to_guides#prompt-hub)
+:::
+
+### Prompt Canvas
+
+The prompt canvas allows you to build a prompt with the help of an LLM writing assistant. Writing
+long prompts can be tedious if done by hand, and the canvas makes that easier with the help of an LLM
+that can help write your prompt with your guidance.
+
+Here's an example showing how we can use the prompt canvas to iterate on a prompt:
+
+:::note Learn More
+To learn about all the features of the prompt canvas, check out this (XXXXXX link needed) page to learn more.
 :::
