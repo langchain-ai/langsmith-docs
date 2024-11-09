@@ -1,113 +1,84 @@
 # Concepts
 
-Writing good prompts is key to getting the best performance out of your applications. LangSmith provides ways to create, test, and manage prompts.
+## What is a prompt?
 
-## Prompt types
+A prompt sets the stage for the model. It provides the context that will inform how the model behaves. You can think
+of the prompt like an audience member at a one man improv show shouting out what character the actor should play next. Telling the 
+improv actor to be a pirate instead of a supreme court judge won't change the actor's fundamental acting skills or techniques, but
+it will change how they apply those techniques, and in turn what the audience member watches on stage. 
+Similarly, you can prompt an LLM to speak like a pirate instead of asking it to speak like a supreme court 
+judge and you will notice a stark difference in the responses. The prompt has no impact on the underlying model weights,
+it simply guides the model to select the right words. Without prompting, the model is drawing words to output from a wide-ranging probability
+ditribution, prompting narrows this distribution to the words you or your user wants to see.
 
-We support three types of prompt templates:
+## Why is prompt engineering important?
 
-1. **StringPromptTemplate**
-2. **ChatPromptTemplate**
-3. **StructuredPromptTemplate**
+By selecting the correct prompt you can improve alignment between model outputs and your desired results. Going back to
+the improv example, if you had a specific pirate in mind you can provide more specific instructions to get the actor to 
+behave as you would like. For example, instead of asking them to be a pirate, you could ask them to be an English pirate
+in the Indian Ocean in the mid-18th century. In a similar vien, by providing specific instructions you can get LLMs to
+behave in more specific manners that are best suited for your application.
 
-For detailed information about these templates, please refer to the [LangChain documentation](https://python.langchain.com/v0.2/docs/concepts/#prompt-templates). In LangSmith, you can create prompts using the Playground. From the prompt view in the Playground, you can select either "Chat-style prompt" or "Instruct-style prompt" to get started.
+### Prompt engineering v.s Fine-tuning
 
-#### Chat-style prompt
+It is important to note how this is different to fine-tuning, another popular method for extracting optimal responses
+from your LLM. If you think of prompting as the audience member shouting out a role for the actor to play next, you can
+think of fine-tuning as hiring an acting coach to teach the actor certain techniques. The acting coach is
+fundamentally changing the methods the actor can use, just as fine-tuning fundamentally changes the weights of the LLM.
+Fine tuning can be helpful if you have task data that most LLMs weren't trained on (medical imagery for example) but it is 
+a risky endeavor because it is a time consuming and costly process. On the other hand, while it doesn't afford you the same
+control over the underlying mechanisms of the model, prompt engineering is quick and easy to iterate on, and for most 
+use cases is more than sufficient for extracting your desired outputs.
 
-Chat prompts are used for chat-style models that accept a list of messages as an input and respond with an assistant message. A chat-style prompt is represented in LangSmith as a `ChatPromptTemplate`, which can contain multiple messages, each with prompt variables. You can also specify an output schema which is represented in LangSmith as a `StructuredPromptTemplate`.
+## How is good prompt engineering done?
 
-#### Instruct-style prompt
+We believe that succesful prompt engineering involves rapid iteration, rock-solid testing, and team wide collaboration. 
+We have designed the prompt engineering experience in LangSmith to be tailored to these three pillars of what we believe
+constitutes prompt engineering success.
 
-An instruct-style prompt is represented as a `StringPromptTemplate` that gets formatted to a single string input for your model.
+### Iteration
 
-## Template formats
+State of the art LLMs allow you to pass in thousands (millions for certain models) of words in a prompt, and many times the best
+prompts require using a large portion of that allowance. Writing thousands of words by hand is tedious and time consuming, but by asking
+an LLM to write those words you can save a massive amount of time. This is what we had in mind with the prompt canvas - a 
+tool that allows you to converse with and give an LLM control over improving your prompt. Instead of having to make all
+the changes to your prompt manually, you can offload the busy work to an LLM. 
 
-We support two types of template formats: `f-string` and `mustache`. You can switch between these formats when editing prompts in the Playground.
+Here's an example showing how we can use the prompt canvas to iterate on a prompt for an LLM that is supposed to XXXXXX - INSERT EXAMPLE
 
-### F-string
-
-F-strings are a Python-specific string formatting method that allows you to embed expressions inside string literals, using curly braces `{}`.
-Here's an example of an f-string template:
-
-```python
-Hello, {name}!
-```
-
-### Mustache
-
-Mustache is a template syntax that allows you to embed variables inside double curly braces `{{}}`.
-
-:::note Note
-Please see the [Mustache documentation](https://mustache.github.io/mustache.5.html) for more detailed information on how to use Mustache templates.
+:::note Learn More
+To learn about all the features of the prompt canvas, check out this (XXXXXX link needed) page to learn more.
 :::
 
-Here's an example of a mustache template:
+### Testing
 
-```json
-Hello, {{name}}!
-```
+After drafting up a prompt (with or without the help of the prompt canvas), testing is a vital next step. Writing prompts
+is useless without quantifying their improvement on model performance. LangSmith integrates a testing suite directly 
+into the prompt playground, allowing you test on single examples as well as over entire datasets. 
 
-Mustache is more robust than f-strings since it supports more complex logic. You can use conditionals, loops, and access nested keys in mustache templates.
+:::warning Testing pitfalls
+Testing results can only be trusted insofar as the data you are testing over is reliable.
+Make sure you curate datasets to test your prompt over that are representative of the real world inputs your model will encounter.
+Otherwise you can overfit to irrelevant data.
+:::
 
-#### Conditional
+Without leaving the page where you edit your prompts, you can run experiments over your test data and compare the results of those experiments
+with previous prompts - giving you concrete evidence of how your prompt is impacting performance. Below is a gif showing h
 
-```json
-Hello, {{#name}}{{name}}{{/name}}{{^name}}world{{/name}}!
-```
+XXXXXX - ADD EXAMPLE OF RUNNING A TEST
 
-The template will output "Hello, Bob!" if "Bob" is provided as the `name` variable, and "Hello, world!" if the `name` variable is not provided.
+:::note Learn More
+To learn about how to set up more in depth testing with LangSmith, read through our [how-to guides](https://docs.smith.langchain.com/evaluation/how_to_guides)
+or get started with [the quick-start](https://docs.smith.langchain.com/evaluation/how_to_guides).
+:::
 
-#### Loop
+### Collaboration
 
-```json
-{{#names}}{{name}}{{/names}}
-```
+Lastly, after iterating and testing, sharing is a critical step. A prompt written by one person is valuable, but like 
+any good idea getting other perspectives is always a good thing. This is why LangSmith designed the prompt hub to allow
+sharing prompts and their histories with other team members. By allowing each team member the ability to work on the
+same prompt, LangSmith takes advantage of the fact that the sum of mutlitple pieces is much larger than any individual one.
 
-input:
-
-```json
-{
-  "names": [{ "name": "Alice" }, { "name": "Bob" }, { "name": "Charlie" }]
-}
-```
-
-output: "AliceBobCharlie"
-
-#### Loop with nesting
-
-```json
-{{#people}}{{name}} is {{age}} years old. {{/people}}
-```
-
-input:
-
-```json
-{
-  "people": [
-    { "name": "Alice", "age": 30 },
-    { "name": "Bob", "age": 25 },
-    { "name": "Charlie", "age": 35 }
-  ]
-}
-```
-
-output: "Alice is 30 years old. Bob is 25 years old. Charlie is 35 years old."
-
-#### Dot notation
-
-```json
-{{person.name}} is {{person.age}} years old.
-```
-
-input:
-
-```json
-{
-  "person": {
-    "name": "Alice",
-    "age": 30
-  }
-}
-```
-
-output: "Alice is 30 years old."
+:::note Learn More
+Learn about all the prompt hub has to offer in [these how-tos](https://docs.smith.langchain.com/prompt_engineering/how_to_guides#prompt-hub)
+:::
