@@ -1,80 +1,81 @@
 # Concepts
 
-## What is a prompt?
+Prompt engineering is one the core pillars of LangSmith.
+While traditional software application are built by writing code, AI applications often involve a good amount of writing prompts.
+We aim to make this as easy possible by providing a set of tools designed to enable and facilitate prompt engineering.
+
+## Why prompt engineering?
 
 A prompt sets the stage for the model, like an audience member at an improv show directing the actor's next performance - it guides the model's
 behavior without changing its underlying capabilities. Just as telling an actor to "be a pirate" determines how they act,
-a prompt provides instructions, examples, and context that shape how the model responds. A prompt is typically a system message
-or list of messages, containing specific instructions ("you are an exert at coding" ), as well as information from external
-data (such as few shot examples from an existing dataset).
+a prompt provides instructions, examples, and context that shape how the model responds.
 
-DIAGRAM
+Prompt engineering is important because it allows you to change the way the model behaves.
+While there are other ways to change the model's behavior (like fine-tuning), prompt engineering is usually the simplest to get started with
+and often provides the highest ROI.
 
-## Why is prompt engineering important?
+We often see that prompt engineering is multi-disciplinary.
+Sometimes the best prompt engineer is not the software engineer who is building the application, but rather the product manager
+or another domain expert.
+It is important to have the proper tooling and infrastructure to support this cross-disciplinary building.
 
-Prompt engineering is important because it allows you to change the way the model behaves. It also allows you to iterate
+## Prompts vs Prompt Templates
 
-### Prompt engineering v.s Fine-tuning
+Although we often use these terms interchangably, it is important to understand the difference between "prompts" and "prompt templates".
 
-Prompt engineering and fine-tuning both aim to improve model performance on a specific task in different ways.
-Fine-tuning changes model weights by training a base model on new data, while prompt engineering provides
-instructions for the model at inference time. Each approach has different pros and cons:
+Prompts refer to the messages that are passed into the language model.
 
-DIAGRAM
+Prompt Templates refer to a way of formatting information to get that prompt
 
-## How is good prompt engineering done?
+[image]
 
-We believe that succesful prompt engineering involves rapid iteration, rock-solid testing, and team wide collaboration. 
-We have designed the prompt engineering experience in LangSmith to be tailored to these three pillars of what we believe
-constitutes prompt engineering success.
+## Prompts in LangSmith
 
-### Iteration
+You can store and version prompts templates in LangSmith.
+There are few key aspects of a prompt template to understand.
 
-Iterating quickly is important in prompt-engineering, because finding the right prompt is rarely a fast and simple 
-process. LangSmith provides the playground for you to quickly edit and test different prompts against eachother so you 
-can make quick changes that you know are benefitial:
+### Messages vs Instruction
+Single string vs messages
+### F-string vs mustache
+Ways to format prompts
+### Tools
+What are tools
+### Structured Output
+What is structured output
 
-INSERT GIF
+### Model
+Optionally, you can store a model configuration alongside a prompt template.
 
-### Testing
+## Prompt Versioning
 
-After drafting up a prompt (with or without the help of the prompt canvas), testing is a vital next step. Writing prompts
-is useless without quantifying their improvement on model performance. LangSmith integrates a testing suite directly 
-into the prompt playground, allowing you test on single examples as well as over entire datasets. 
+Why should I use
 
-:::warning Testing pitfalls
-Testing results can only be trusted insofar as the data you are testing over is reliable.
-Make sure you curate datasets to test your prompt over that are representative of the real world inputs your model will encounter.
-Otherwise you can overfit to irrelevant data.
-:::
+### Revisions
+### Tags
 
-Without leaving the page where you edit your prompts, you can run experiments over your test data and compare the results of those experiments
-with previous prompts - giving you concrete evidence of how your prompt is impacting performance. Below is a gif showing h
+## Prompt Playground
 
-XXXXXX - ADD EXAMPLE OF RUNNING A TEST ()
+How to get into
+How to use: pass in data for the specified variables
+How to change model
+How to save
 
-:::note Learn More
-To learn about how to set up more in depth testing with LangSmith, read through our [how-to guides](https://docs.smith.langchain.com/evaluation/how_to_guides)
-or get started with [the quick-start](https://docs.smith.langchain.com/evaluation/how_to_guides).
-:::
+## Testing multiple prompts
 
-### Collaboration
+How to add a second and third prompt to the prompt playground
 
-Collaboration on your prompts is helpful when you are working on an LLM application with a team. LangSmith 
-uses prompt versioning to make it easy for multiple people to make edits to the same prompt. You can pull a prompt 
+## Testing over a dataset
 
-:::note Learn More
-Learn about all the prompt hub has to offer in [these how-tos](https://docs.smith.langchain.com/prompt_engineering/how_to_guides#prompt-hub)
-:::
+How to test over a dataset
+Viewing the results as an experiment
 
-### Prompt Canvas
+## Prompt Canvas
 
-The prompt canvas allows you to build a prompt with the help of an LLM writing assistant. Writing
-long prompts can be tedious if done by hand, and the canvas makes that easier with the help of an LLM
-that can help write your prompt with your guidance.
-
-Here's an example showing how we can use the prompt canvas to iterate on a prompt:
-
-:::note Learn More
-To learn about all the features of the prompt canvas, check out this (XXXXXX link needed) page to learn more.
-:::
+Why prompt canvas
+How to enter prompt canvas
+### How to use: chat sidebar
+### How to use: write directly
+### Quick actions
+### Custom quick actions
+### Diffing
+### Saving an using
