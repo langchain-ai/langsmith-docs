@@ -13,7 +13,7 @@ Write evaluations to test and improve your application.
 - [Evaluate an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
 - [Run a pairwise evaluation](./how_to_guides/evaluation/evaluate_pairwise)
 - [Run evals using the API only](./how_to_guides/evaluation/run_evals_api_only)
-- [Use prebuilt LLM-as-a-judge evaluators](./how_to_guides/evaluation/use_prebuilt_llm_evaluator)
+- [Define LLM-as-a-judge evaluators](./how_to_guides/evaluation/use_llm_evaluator_interface)
 
 ## Unit testing
 

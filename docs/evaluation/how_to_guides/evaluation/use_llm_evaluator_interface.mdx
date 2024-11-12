@@ -8,15 +8,185 @@ import {
   python,
 } from "@site/src/components/InstructionsWithCode";
 
-# Use Prebuilt LLMEvaluator (Python only)
+# Define LLM-as-a-judge evaluators
 
-LangSmith provides LLMEvaluator - a prebuilt LLM-as-judge evaluator that you can use to assess the quality of your application across a host of common categories
+LangSmith provides LLMEvaluator - an interface for creating LLM-as-judge evaluators that you can use to assess the quality of your application across a host of common categories
 (hallucination, conciseness, bias, etc). The LLMEvaluator class is designed to both work off the shelf by default, and be customizable to your specific needs.
 
 ## Using LLMEvaluator to evaluate your application
 
+### Select metrics
+
+In this how-to we will be analyzing hallucination as well as concisesness, you should select the metrics that best correlate with business outcomes for your application.
+
+We will first define the metric for conciseness, which will be a categorical metric based on whether the answer was too short, too long, or just right.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation.llm_evaluator import CategoricalScoreConfig
+      
+      concicesness_score_config=CategoricalScoreConfig(
+        # the feedback key that will show up in LangSmith
+        key="conciseness",
+        # the choices for the LLM judge to select when scoring each example
+        choices=["TOO BRIEF", "EXCESSIVELY LONG", "CONCISE"],
+        # the description provided to the LLM judge for how to select which choice
+        description="TOO BRIEF if the answer is too short, EXCESSIVELY LONG if the answer is too long, "
+                    "and CONCISE if the answer is the right length",
+      )
+    `,
+    typescript`
+      import { CategoricalScoreConfig } from "langsmith/evaluation/llm_evaluator";
+      
+      const concisenessScoreConfig = new CategoricalScoreConfig({
+        // the feedback key that will show up in LangSmith
+        key: "conciseness",
+        // the choices for the LLM judge to select when scoring each example
+        choices: ["TOO BRIEF", "EXCESSIVELY LONG", "CONCISE"],
+        // the description provided to the LLM judge for how to select which choice
+        description: "TOO BRIEF if the answer is too short, EXCESSIVELY LONG if the answer is too long, "
+                     "and CONCISE if the answer is the right length",
+      });
+    `,
+  ]}
+/>
+
+Now, let's define our metric for hallucination, which we will measure on a continuous scale.
+In this case we will also pass a reasoning key to force the LLM judge to use Chain-of-Thought reasoning.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation.llm_evaluator import ContinuousScoreConfig
+      
+      hallucination_score_config=ContinuousScoreConfig(
+        # the feedback key that will show up in LangSmith
+        key="hallucination",
+        # the minimum value the LLM judge can return - defaults to 0
+        min=0,
+        # the maximum value the LLM judge can return - defaults to 1
+        max=100,
+        # the description provided in the structured output object to the LLM judge for how to select which choice
+        description="What percent of the facts stated in the answer were hallucinated (i.e not contained in the documents), "
+                    "0 if none were hallucinated, 100 if they were all hallucinated.",
+        # the key in the structured output provided to the LLM judge
+        reasoning_key="explanation",
+        # the description provided in the structured output object to the LLM judge for the reasoning key in the structured output
+        # if reasoning_key is provided, it defaults to "Think step-by-step about what the correct score should be."
+        reasoning_description="Explain what facts (if any) were hallucinated, "
+                              "if none were explain where in the documents each fact is found.",
+      )
+    `,
+    typescript`
+      import { ContinuousScoreConfig } from "langsmith/evaluation/llm_evaluator";
+      
+      const hallucinationScoreConfig = new ContinuousScoreConfig({
+        // the feedback key that will show up in LangSmith
+        key: "hallucination",
+        // the minimum value the LLM judge can return - defaults to 0
+        min: 0,
+        // the maximum value the LLM judge can return - defaults to 1
+        max: 100,
+        // the description provided in the structured output object to the LLM judge for how to select which choice
+        description: "What percent of the facts stated in the answer were hallucinated (i.e not contained in the documents), "
+                     "0 if none were hallucinated, 100 if they were all hallucinated.",
+        // the key in the structured output provided to the LLM judge
+        reasoningKey: "explanation", 
+        // the description provided in the structured output object to the LLM judge for the reasoning key in the structured output
+        // if reasoningKey is provided, it defaults to "Think step-by-step about what the correct score should be."
+        reasoningDescription: "Explain what facts (if any) were hallucinated, "
+                              "if none were explain where in the documents each fact is found.",
+      });
+    `,
+  ]}
+/>
+
+:::info
+While providing a reasoning key is optional, forcing the LLM judge to reason through
+it's answer is a form of Chain-of-Thought prompting and will improve response quality.
+:::
+
+### Construct your LLMEvaluator
+
+Now that we have defined our metrics and score configurations for each of those metrics we can define our evaluators:
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation.llm_evaluator import LLMEvaluator
+      
+      hallucination_evaluator = LLMEvaluator(
+        # The prompt for your model (can be a list of messages as well as a string)
+        prompt_template="What percent of this response: {response} is hallucinated, "
+                        "given these source documents {documents}",
+        score_config=hallucination_score_config,
+        # The mapping from your experiment run and example to the prompt template
+        map_variables=lambda run, example: {"response": run.outputs['answer'].content,"documents": '/n'.join(example.inputs['documents'])}
+      )
+      
+      conciseness_evaluator = LLMEvaluator(
+        # The prompt for your model (can be a list of messages as well as a string)
+        prompt_template=[
+            ("system", "How concise is this answer: {answer} compared to this expected answer {expected_answer}")
+            # could add other messages here, for example AI/user interactions for few shot prompting
+        ]
+        score_config=concicesness_score_config,
+        # The mapping from your experiment run and example to the prompt template
+        map_variables=lambda run, example: {"answer": run.outputs['answer'].content,"expected_answer": example.outputs['answer']}
+      )
+    `,
+    typescript`
+      import { LLMEvaluator } from "langsmith/evaluation/llm_evaluator";
+      import { Run, Example } from "langsmith/schemas"
+      import { ChatOpenAI } from "@langchain/openai"
+      
+      // Can use any LangChain chat model you want
+      const chatModel = new ChatOpenAI({ model: "gpt-4" });
+      
+      const hallucinationEvaluator = await LLMEvaluator.create({
+        // The prompt for your model (can be a list of messages as well as a string)
+        promptTemplate: "What percent of this response: {response} is hallucinated, "
+                        "given these source documents {documents}",
+        scoreConfig: hallucinationScoreConfig,
+        // The chat model to use
+        chatModel: chatModel,
+        // The mapping from your experiment run and example to the prompt template
+        mapVariables: (run: Run, example?: Example) => ({
+          response: run.outputs?.["answer"].content ?? "",
+          documents: example?.inputs?.["documents"].join('/n') ?? "",
+        }),
+      });
+      
+      const concisenessEvaluator = await LLMEvaluator.create({
+        // The prompt for your model (can be a list of messages as well as a string)
+        promptTemplate: [
+            ["system", "How concise is this answer: {answer} compared to this expected answer {expected_answer}"]
+            // could add other messages here, for example AI/user interactions for few shot prompting
+        ],
+        scoreConfig: concisenessScoreConfig,
+        // The chat model to use
+        chatModel: chatModel,
+        // The mapping from your experiment run and example to the prompt template
+        mapVariables: (run: Run, example?: Example) => ({
+          answer: run.outputs?.["answer"].content ?? "",
+          expected_answer: example?.outputs?.["answer"] ?? "",
+        }),
+      });
+    `,
+  ]}
+/>
+
+:::info
+The score configuration defines the JSON object the LLM judge will use to produce structured output, the prompt template is the prompt sent to your model.
+:::
+
 ### Create a dataset
 
+Now that we have defined our metrics and evaluators, we can actually run an experiment on a dataset.
 For the code in the rest of this how-to we will be using [this public dataset](https://smith.langchain.com/public/9138f009-dff1-4188-bd7b-ee9f9c005ac2/d).
 If you wish to follow along with your own dataset, feel free to - LLMEvaluator is highly versatile, no matter the form of your dataset.
 The code below shows how to clone the public dataset:
@@ -51,158 +221,6 @@ The code below shows how to clone the public dataset:
 Each one of the examples in the dataset we have has the following structure:
 
 ![](../evaluation/static/llm_evaluator_example.png)
-
-### Select metrics
-
-In this how-to we will be analyzing hallucination as well as concisesness, you should select the metrics that best correlate with business outcomes for your application.
-
-We will first define the metric for conciseness, which will be a categorical metric based on whether the answer was too short, too long, or just right.
-
-<CodeTabs
-  groupId="client-language"
-  tabs={[
-    python`
-      from langsmith.evaluation.llm_evaluator import CategoricalScoreConfig
-      
-      concicesness_score_config=CategoricalScoreConfig(
-        # the feedback key that will show up in LangSmith
-        key="conciseness",
-        # the choices for the LLM judge to select when scoring each example
-        choices=["TOO BRIEF", "EXCESSIVELY LONG", "CONCISE"],
-        # the description provided to the LLM judge for how to select which choice
-        description="TOO BRIEF if the answer is too short, EXCESSIVELY LONG if the answer is too long, and CONCISE if the answer is the right length",
-        # the key in the structured output provided to the LLM judge
-        reasoning_key="reasoning",
-        # the description provided to the LLM judge for the reasoning key in the structured output
-        reasoning_description="Which information was hallucinated (if any), if none explain how all the information in the answer was contained in the documents.",
-      )
-    `,
-    typescript`
-      import { CategoricalScoreConfig } from "langsmith/evaluation/llm_evaluator";
-      
-      const concisenessScoreConfig = new CategoricalScoreConfig({
-        // the feedback key that will show up in LangSmith
-        key: "conciseness",
-        // the choices for the LLM judge to select when scoring each example
-        choices: ["TOO BRIEF", "EXCESSIVELY LONG", "CONCISE"],
-        // the description provided to the LLM judge for how to select which choice
-        description: "TOO BRIEF if the answer is too short, EXCESSIVELY LONG if the answer is too long, and CONCISE if the answer is the right length",
-        // the key in the structured output provided to the LLM judge
-        reasoningKey: "reasoning", 
-        // the description provided to the LLM judge for the reasoning key in the structured output
-        reasoningDescription: "Which information was hallucinated (if any), if none explain how all the information in the answer was contained in the documents.",
-      });
-    `,
-  ]}
-/>
-
-Now, let's define our metric for hallucination, which we will measure on a continuous scale.
-
-<CodeTabs
-  groupId="client-language"
-  tabs={[
-    python`
-      from langsmith.evaluation.llm_evaluator import ContinuousScoreConfig
-      
-      hallucination_score_config=ContinuousScoreConfig(
-        # the feedback key that will show up in LangSmith
-        key="hallucination",
-        # the minimum value the LLM judge can return - defaults to 0
-        min=0,
-        # the maximum value the LLM judge can return - defaults to 1
-        max=100,
-        # the description provided in the structured output object to the LLM judge for how to select which choice
-        description="What percent of the facts stated in the answer were hallucinated (i.e not contained in the documents), 0 if none were hallucinated, 100 if they were all hallucinated.",
-        # the key in the structured output provided to the LLM judge
-        reasoning_key="explanation",
-        # the description provided in the structured output object to the LLM judge for the reasoning key in the structured output
-        reasoning_description="Explain what facts (if any) were hallucinated, if none were explain where in the documents each fact is found.",
-      )
-    `,
-    typescript`
-      import { ContinuousScoreConfig } from "langsmith/evaluation/llm_evaluator";
-      
-      const hallucinationScoreConfig = new ContinuousScoreConfig({
-        // the feedback key that will show up in LangSmith
-        key: "hallucination",
-        // the minimum value the LLM judge can return - defaults to 0
-        min: 0,
-        // the maximum value the LLM judge can return - defaults to 1
-        max: 100,
-        // the description provided in the structured output object to the LLM judge for how to select which choice
-        description: "What percent of the facts stated in the answer were hallucinated (i.e not contained in the documents), 0 if none were hallucinated, 100 if they were all hallucinated.",
-        // the key in the structured output provided to the LLM judge
-        reasoningKey: "explanation", 
-        // the description provided in the structured output object to the LLM judge for the reasoning key in the structured output
-        reasoningDescription: "Explain what facts (if any) were hallucinated, if none were explain where in the documents each fact is found.",
-      });
-    `,
-  ]}
-/>
-
-:::info
-Note that in both of these cases, we provided a reasoning key. While this is optional, forcing the LLM judge to reason through
-it's answer is a form of Chain-of-Thought prompting and will improve response quality.
-:::
-
-### Construct your LLMEvaluator
-
-Now that we have defined our metrics and score configurations for each of those metrics we can define our evaluators:
-
-<CodeTabs
-  groupId="client-language"
-  tabs={[
-    python`
-      from langsmith.evaluation.llm_evaluator import LLMEvaluator
-      
-      hallucination_evaluator = LLMEvaluator(
-        # The prompt for your model (can be a list of messages as well as a string)
-        prompt_template="What percent of this response: {response} is hallucinated, given these source documents {documents}",
-        score_config=hallucination_score_config,
-        # The mapping from your experiment run and example to the prompt template
-        map_variables=lambda run, example: {"response": run.outputs['answer'].content,"documents": '/n'.join(example.inputs['documents'])}
-      )
-      
-      conciseness_evaluator = LLMEvaluator(
-        # The prompt for your model (can be a list of messages as well as a string)
-        prompt_template="How concise is this answer: {answer} compared to this expected answer {expected_answer}",
-        score_config=concicesness_score_config,
-        # The mapping from your experiment run and example to the prompt template
-        map_variables=lambda run, example: {"answer": run.outputs['answer'].content,"expected_answer": example.outputs['answer']}
-      )
-    `,
-    typescript`
-      import { LLMEvaluator } from "langsmith/evaluation/llm_evaluator";
-      import { Run, Example } from "langsmith/schemas"
-      
-      const hallucinationEvaluator = await LLMEvaluator.create({
-        // The prompt for your model (can be a list of messages as well as a string)
-        promptTemplate: "What percent of this response: {response} is hallucinated, given these source documents {documents}",
-        scoreConfig: hallucinationScoreConfig,
-        // The mapping from your experiment run and example to the prompt template
-        mapVariables: (run: Run, example?: Example) => ({
-          response: run.outputs?.["answer"].content ?? "",
-          documents: example?.inputs?.["documents"].join('/n') ?? "",
-        }),
-      });
-      
-      const concisenessEvaluator = await LLMEvaluator.create({
-        // The prompt for your model (can be a list of messages as well as a string)
-        promptTemplate: "How concise is this answer: {answer} compared to this expected answer {expected_answer}",
-        scoreConfig: concisenessScoreConfig,
-        // The mapping from your experiment run and example to the prompt template
-        mapVariables: (run: Run, example?: Example) => ({
-          answer: run.outputs?.["answer"].content ?? "",
-          expected_answer: example?.outputs?.["answer"] ?? "",
-        }),
-      });
-    `,
-  ]}
-/>
-
-:::info
-The score configuration defines the JSON object the LLM judge will use to produce structured output, the prompt template is the prompt sent to your model.
-:::
 
 ### Run your evaluation
 
@@ -281,3 +299,9 @@ When you click on an individual feedback key on an example, and then click the `
 ![](../evaluation/static/llm_evaluator_feedback_key.png)
 
 ![](../evaluation/static/llm_evaluator_trace.png)
+
+## Alternatives
+
+`LLMEvaluator` is not the only way you can create LLM-as-a-judge evaluators. You can also [create custom evaluators](./evaluate_llm_application#use-custom-evaluators)
+in code that give you more fine grained control over how your LLM judge operates. In addition, you can create
+LLM-as-a-judge evaluators [directly from the UI](./bind_evaluator_to_dataset#llm-as-judge-evaluators).
