@@ -28,17 +28,20 @@ Prompts refer to the messages that are passed into the language model.
 Prompt Templates refer to a way of formatting information to get that prompt to hold the information that you want. Prompt templates
 can include variables for few shot examples, outside context, or any other external data that is needed in your prompt.
 
-[image]
+![](./static/prompt_vs_prompt_template.png)
 
 ## Prompts in LangSmith
 
 You can store and version prompts templates in LangSmith.
 There are few key aspects of a prompt template to understand.
 
-### Messages vs Instruction
+### Chat vs Completion
 
-A message can be an instruction (passed as a single string) or a list of messages. Passing a list of messages
-can help the model learn neccessary context, but is not always needed if the task is straightforward enough.
+There are two different types of prompts: `chat` style prompts and `completion` style prompts.
+
+Chat style prompts are a **list of messages**. This is the prompting style supported by most model APIs these days, and so this should generally be preferred.
+
+Completion style prompts are just a string. This is an older style of prompting, and so mostly exists for legacy reasons.
 
 ### F-string vs mustache
 
@@ -68,45 +71,45 @@ and JSON schema of arguments used to call the tool.
 ### Structured Output
 
 Structured output is a feature of most state of the art LLMs, wherein instead of producing raw text as output they
-stick to a specified schema.
+stick to a specified schema. This may or may not use [Tools](#tools) under the hood.
+
+:::tip Structured Output vs Tools
+Structured outputs are similar to tools, but different in a few key ways. With tools, the LLM choose which tool to call (or may choose not to call any); with structured output, the LLM **always** responds in this format. With tools, the LLM may select **multiple** tools; with structured output, only one response is generate.
+:::
 
 ### Model
 
-Optionally, you can store a model configuration alongside a prompt template. Saving the right model settings alongside
-the right prompt is the best way to improve the performance of your LLM application.
+Optionally, you can store a model configuration alongside a prompt template. This includes the name of the model and any other parameters (temperature, etc).
 
 ## Prompt Versioning
 
 Verisioning is a key part of iterating and collaborating on your different prompts.
 
-### Revisions
+### Commits
+
+Every time you save a new version of a prompt, it is saved with a new commit.
+You can view old commit, allowing you to easily see previous prompt versions in case you need to revert to previous functionality.
+You can access a specific commit of the prompt in the SDK by specifying a commit alongside the prompt name.
+
 ### Tags
+
+You may want to tag prompt commits with a human-readable tag so that you can refer to it even as new commits are added. Common use cases include tagging a prompt with `dev` or `prod` tags. This allows you to track which versions of prompts are used where.
 
 ## Prompt Playground
 
-The prompt playground makes the process of iterating and testing your prompts seamless. You can enter the playground from the sidebar:
+The prompt playground makes the process of iterating and testing your prompts seamless. You can enter the playground from the sidebar or directly from a saved prompt.
 
-![](./static/enter_the_playground.gif)
+In the playground you can:
 
-How to use: pass in data for the specified variables
+- Change the model being used
+- Change prompt template being used
+- Change the output schema
+- Change the tools available
+- Enter the input variables to run through the prompt template
+- Run the prompt through the model
+- Observe the outputs
 
-GIF/SCREENSHOT
 
-You can change the model easily in the playground:
-
-![](./static/change_model_in_playground.gif)
-
-In addition, you can provide your model with different tools that it can call:
-
-![](./static/add_tools_playground.gif)
-
-You can also add strctured output so your model behaves in a more constrained manner:
-
-![](./static/add_structured_output_playground.gif)
-
-Once you have crafted the perfect prompt, you can save it to the hub for all your teammates to see and work with:
-
-![](./static/save_prompt_in_playground.gif)
 
 ## Testing multiple prompts
 
@@ -121,9 +124,8 @@ are streamed back as well as how many repitions there are in the test.
 
 ![](./static/test_over_dataset_in_playground.gif)
 
-You can click on the "View Experiment" button to dive deeper into the results of the test:
+You can click on the "View Experiment" button to dive deeper into the results of the test.
 
-![](./static/view_experiment_results_playground.gif)
 
 ## Prompt Canvas
 
@@ -133,18 +135,16 @@ You can enter the promp canvas by clicking the glowing wand over any message in 
 
 ![](./static/prompt_canvas_open.gif)
 
-### How to use: chat sidebar
+### Chat sidebar
 
-You can use the chat sidebar to ask questions about your prompt. While chatting, the agent won't make any edits
-to the prompt itself unless asked to do so:
-
-![](./static/prompt_canvas_chat_window.gif)
-
-### How to use: write directly
-
-When asked for a rewrite a new version of the prompt will be streamed back, with an explanation in the chat sidebar:
+You can use the chat sidebar to ask questions about your prompt, or to give instructions in natural language to the LLM for how to rewrite your prompt.
 
 ![](./static/prompt_canvas_rewrite.gif)
+
+### Write directly
+
+You can also edit the prompt directly - you don't **need** to use the LLM. This is useful if you know what edits you want to make and just want to make them directly
+
 
 ### Quick actions
 
