@@ -37,6 +37,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Calculate token-based costs for traces](./how_to_guides/tracing/calculate_token_based_costs)
 - [Trace JS functions in serverless environments](./how_to_guides/tracing/serverless_environments)
 - [Troubleshoot trace testing](./how_to_guides/tracing/nest_traces)
+- [Upload files with traces](./how_to_guides/tracing/upload_files_with_traces)
 
 ## Tracing projects UI & API
 
