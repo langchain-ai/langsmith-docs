@@ -74,11 +74,11 @@ Once you have a provisioned service account, you will need to generate a [`HMAC 
 ### Azure Blob Storage
 
 To authenticate with [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs), you will need to use one of the following methods
-and set the blob storage [container](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction#containers) to use:
+and set the blob storage [container](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction#containers) (listed in order of precedence):
 
-1. Environment variables, Workload identity, or managed identity supported by [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication?tabs=bash#2-authenticate-with-azure). This is the default authentication method when the environment variables for the options below are not present.
 1. [Storage account and access key](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage)
 1. [Connection string](https://learn.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string)
+1. Environment variables, Workload identity, or managed identity supported by [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication?tabs=bash#2-authenticate-with-azure). This is the default authentication method when configuration for either option above is not present.
 
 :::note
 Some deployments may need further customization of the connection configuration using a Service URL Override instead of the default service URL (`https://<storage_account_name>.blob.core.windows.net/`). For example, this override is necessary in order to use a different blob storage domain (e.g. government or china).
@@ -105,7 +105,7 @@ After creating your bucket and obtaining the necessary credentials, you can conf
       apiURL: "Your connection url"
       accessKey: "Your access key" # Optional. Only required if using S3 access key and secret key
       accessKeySecret: "Your access key secret" # Optional. Only required if using access key and secret key
-      # The following blob storage configuration values are for Azure and require blobStorage.engine = "Azure"
+      # The following blob storage configuration values are for Azure and require blobStorage.engine = "Azure". Omit otherwise.
       azureStorageAccountName: "Your storage account name" # Optional. Only required if using storage account and access key.
       azureStorageAccountKey: "Your storage account access key" # Optional. Only required if using storage account and access key.
       azureStorageContainerName: "your-container-name" # Required
