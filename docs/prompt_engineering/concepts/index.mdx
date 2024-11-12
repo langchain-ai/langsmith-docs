@@ -25,7 +25,8 @@ Although we often use these terms interchangably, it is important to understand 
 
 Prompts refer to the messages that are passed into the language model.
 
-Prompt Templates refer to a way of formatting information to get that prompt
+Prompt Templates refer to a way of formatting information to get that prompt to hold the information that you want. Prompt templates
+can include variables for few shot examples, outside context, or any other external data that is needed in your prompt.
 
 [image]
 
@@ -35,50 +36,81 @@ You can store and version prompts templates in LangSmith.
 There are few key aspects of a prompt template to understand.
 
 ### Messages vs Instruction
-Single string vs messages
+
+A message can be an instruction (passed as a single string) or a list of messages. Passing a list of messages
+can help the model learn neccessary context, but is not always needed if the task is straightforward enough.
+
 ### F-string vs mustache
-Ways to format prompts
+
+You can format your prompt with input variables using either [f-string](https://realpython.com/python-f-strings/) or [mustache](https://mustache.github.io/mustache.5.html) format. Here is an example prompt
+with f-string format:
+
+```python
+Hello, {name}!
+```
+
+And here is one with mustache:
+
+```python
+Hello, {{name}}!
+```
+
+:::tip Mustache format
+Mustache format gives your more flexbility around conditional variables, loops, and nested keys.
+Read [the documentation](https://mustache.github.io/mustache.5.html)
+:::
+
 ### Tools
-What are tools
+
+Tools are interfaces the LLM can use to interact with the outside world. Tools consist of a name, description, 
+and JSON schema of arguments used to call the tool.
+
 ### Structured Output
-What is structured output
+
+Structured output is a feature of most state of the art LLMs, wherein instead of producing raw text as output they
+stick to a specified schema.
 
 ### Model
-Optionally, you can store a model configuration alongside a prompt template.
+
+Optionally, you can store a model configuration alongside a prompt template. Saving the right model settings alongside
+the right prompt is the best way to improve the performance of your LLM application.
 
 ## Prompt Versioning
 
-Why should I use
+Verisioning is a key part of iterating and collaborating on your different prompts.
 
 ### Revisions
 ### Tags
 
 ## Prompt Playground
 
-You can enter the playground from the sidebar:
+The prompt playground makes the process of iterating and testing your prompts seamless. You can enter the playground from the sidebar:
 
 ![](./static/enter_the_playground.gif)
 
 How to use: pass in data for the specified variables
-How to change the model
+
+GIF/SCREENSHOT
+
+You can change the model easily in the playground:
 
 ![](./static/change_model_in_playground.gif)
 
-How to add tools
+In addition, you can provide your model with different tools that it can call:
 
 ![](./static/add_tools_playground.gif)
 
-How to add structured output
+You can also add strctured output so your model behaves in a more constrained manner:
 
 ![](./static/add_structured_output_playground.gif)
 
-How to save
+Once you have crafted the perfect prompt, you can save it to the hub for all your teammates to see and work with:
 
 ![](./static/save_prompt_in_playground.gif)
 
 ## Testing multiple prompts
 
-You can add more prompts to your playground to easily compare outputs:
+You can add more prompts to your playground to easily compare outputs and decide which version is better:
 
 ![](./static/add_prompt_to_playground.gif)
 
@@ -95,7 +127,8 @@ You can click on the "View Experiment" button to dive deeper into the results of
 
 ## Prompt Canvas
 
-Why prompt canvas
+The prompt canvas makes it easy to edit a prompt with the help of an LLM. This allows you to iterate
+faster on long prompts and also makes it easier to make overarching stylisting or tonal changes to your prompt.
 You can enter the promp canvas by clicking the glowing wand over any message in your prompt:
 
 ![](./static/prompt_canvas_open.gif)
@@ -123,7 +156,7 @@ There are quick actions to change the reading level or length of the prompt with
 
 You can also save your own custom quick actions, for ease of use across all the prompts you are working on in LangSmith:
 
-![](./static/prompt_canvas_custom_quick_actions.gif)
+![](./static/prompt_canvas_custom_quick_action.gif)
 
 ### Diffing
 
