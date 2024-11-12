@@ -130,7 +130,7 @@ Each \`Attachment\` requires:
 - \`ArrayBuffer\`: Represents fixed-length binary data, which can be converted to \`Uint8Array\` as needed.\n
   Wrap your function with \`traceable\` and include your attachments within the \`extractAttachments\` option.
 
-In the TypeScript SDK, the \`extractAttachments\` function is an optional parameter in the \`traceable\` configuration that allows you to define which parts of your function’s input should be treated as attachments, specifying their MIME types and data. This function is called whenever you invoke the traceable-wrapped function, and it enables you to extract binary data (e.g., images, audio files) from your inputs and log them alongside other trace data.
+In the TypeScript SDK, the \`extractAttachments\` function is an optional parameter in the \`traceable\` configuration. When the traceable-wrapped function is invoked, it extracts binary data (e.g., images, audio files) from your inputs and logs them alongside other trace data, specifying their MIME types.
 
 \`\`\`
 type AttachmentData = Uint8Array | ArrayBuffer;
