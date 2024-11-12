@@ -79,7 +79,6 @@ and set the blob storage [container](https://learn.microsoft.com/en-us/azure/sto
 1. Environment variables, Workload identity, or managed identity supported by [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication?tabs=bash#2-authenticate-with-azure). This is the default authentication method when the environment variables for the options below are not present.
 1. [Storage account and access key](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage)
 1. [Connection string](https://learn.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string)
-1. [Shared access signature](https://learn.microsoft.com/en-us/azure/storage/common/storage-sas-overview)
 
 :::note
 Some deployments may need further customization of the connection configuration using a Service URL Override instead of the default service URL (`https://<storage_account_name>.blob.core.windows.net/`). For example, this override is necessary in order to use a different blob storage domain (e.g. government or china).
@@ -111,17 +110,16 @@ After creating your bucket and obtaining the necessary credentials, you can conf
       azureStorageAccountKey: "Your storage account access key" # Optional. Only required if using storage account and access key.
       azureStorageContainerName: "your-container-name" # Required
       azureStorageConnectionString: "" # Optional.
-      azureStorageSASToken: "" # Optional.
       azureStorageServiceUrlOverride: "" # Optional \n
-   backend: # Optional, only required if using IAM role for service account
+   backend: # Optional, only required if using IAM role for service account on AWS
      serviceAccount:
        annotations:
          eks.amazonaws.com/role-arn: "<role_arn>" \n
-   platformBackend: # Optional, only required if using IAM role for service account
+   platformBackend: # Optional, only required if using IAM role for service account on AWS
       serviceAccount:
         annotations:
           eks.amazonaws.com/role-arn: "<role_arn>" \n
-   queue: # Optional, only required if using IAM role for service account
+   queue: # Optional, only required if using IAM role for service account on AWS
       serviceAccount:
         annotations:
           eks.amazonaws.com/role-arn: "<role_arn>"
@@ -138,8 +136,7 @@ AZURE_STORAGE_ACCOUNT_NAME=your-storage-account-name # Optional. Only required i
 AZURE_STORAGE_ACCOUNT_KEY=your-storage-account-key # Optional. Only required if using storage account and access key.
 AZURE_STORAGE_CONTAINER_NAME=your-container-name # Required for using Azure blob storage. Change to your desired container name
 AZURE_STORAGE_CONNECTION_STRING=BlobEndpoint=https://storagesample.blob.core.windows.net;SharedAccessSignature=signature; # Optional.
-AZURE_STORAGE_SAS_TOKEN=your-sas-token # Optional
-AzureStorageServiceUrlOverride=https://your.override.domain.net # Optional
+AZURE_STORAGE_SERVICE_URL_OVERRIDE=https://your.override.domain.net # Optional
 `
     ),
   ]}
