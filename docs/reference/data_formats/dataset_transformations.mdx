@@ -3,92 +3,97 @@
 LangSmith allows you to attach transformations to fields in your dataset's schema that apply
 to your data before it is added to your dataset, whether that be from UI, API, or run rules.
 
-Coupled with [LangSmith's custom JSON schema types](./dataset_json_types), these allow you to do easy 
+Coupled with [LangSmith's custom JSON schema types](./dataset_json_types), these allow you to do easy
 preprocessing of your data before saving it into your datasets.
 
 ## Transformation types
 
-| Transformation Type            | Target Types       | Functionality                                                                                                                                                                                                                       |
-|--------------------------------|--------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| remove_system_messages         | Array[Message]      | Filters a list of messages to remove any system messages.                                                                                                                                                                           |
-| convert_to_openai_message      | Message <br></br> Array[Message]                | Converts any incoming data from LangChain's internal serialization format to OpenAI's standard message format using langchain's [convert_to_openai_messages](https://python.langchain.com/api_reference/core/messages/langchain_core.messages.utils.convert_to_openai_messages.html). <br></br><br></br> If the target field is marked as required, and no matching message is found upon entry, it will attempt to extract a message (or list of messages) from several well-known LangSmith tracing formats (e.g., any traced LangChain [BaseChatModel](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html) run or traced run from the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client)), and remove the original key containing the message. |
-| extract_tools_from_run         | Array[Tool] <br></br><br></br> Only available on top level fields in the inputs dictionary.  | Will extract tool definitions from a run's invocation parameters if present. This is useful because LangChain chat models trace tool definitions to the `extra.invocation_params` field of the run rather than inputs.
-| convert_to_openai_tool         | Array[Tool]        | Converts any incoming data into OpenAI standard tool formats here using langchain's [convert_to_openai_tool](https://python.langchain.com/api_reference/core/utils/langchain_core.utils.function_calling.convert_to_openai_tool.html)
-| remove_extra_fields            | Object             | Removes any field not defined in the schema for this target object.                                                                                                                                                                  |
+| Transformation Type       | Target Types                                                                                | Functionality                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| remove_system_messages    | Array[Message]                                                                              | Filters a list of messages to remove any system messages.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| convert_to_openai_message | Message <br></br> Array[Message]                                                            | Converts any incoming data from LangChain's internal serialization format to OpenAI's standard message format using langchain's [convert_to_openai_messages](https://python.langchain.com/api_reference/core/messages/langchain_core.messages.utils.convert_to_openai_messages.html). <br></br><br></br> If the target field is marked as required, and no matching message is found upon entry, it will attempt to extract a message (or list of messages) from several well-known LangSmith tracing formats (e.g., any traced LangChain [BaseChatModel](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html) run or traced run from the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client)), and remove the original key containing the message. |
+| extract_tools_from_run    | Array[Tool] <br></br><br></br> Only available on top level fields in the inputs dictionary. | Will extract tool definitions from a run's invocation parameters if present. This is useful because LangChain chat models trace tool definitions to the `extra.invocation_params` field of the run rather than inputs.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| convert_to_openai_tool    | Array[Tool]                                                                                 | Converts any incoming data into OpenAI standard tool formats here using langchain's [convert_to_openai_tool](https://python.langchain.com/api_reference/core/utils/langchain_core.utils.function_calling.convert_to_openai_tool.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| remove_extra_fields       | Object                                                                                      | Removes any field not defined in the schema for this target object.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
-## LLM run collection schema 
-LangSmith offers a prebuilt schema that you can easily apply to your datasets to collect LLM runs effectively. 
+## LLM run collection schema
+
+LangSmith offers a prebuilt schema that you can easily apply to your datasets to collect LLM runs effectively.
 
 ### Compatibility
-The LLM run collection schema is built to collect data from LangChain 
-[BaseChatModel](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html) 
-runs or traced run from the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client). 
+
+The LLM run collection schema is built to collect data from LangChain
+[BaseChatModel](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html)
+runs or traced run from the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client).
 
 Please reach out to support@langchain.dev if you have an LLM run you are tracing that is not compatible and we can extend support.
 
 ### Input Schema
+
 ```json
 {
-    "type": "object",
-    "properties": {
-        "messages": {
-            "type": "array",
-            "items": {
-                "$ref": "https://api.smith.langchain.com/public/schemas/v1/message.json"
-            },
-        },
-        "tools": {
-            "type": "array",
-            "items": {
-                "$ref": "https://api.smith.langchain.com/public/schemas/v1/tooldef.json"
-            },
-        },
+  "type": "object",
+  "properties": {
+    "messages": {
+      "type": "array",
+      "items": {
+        "$ref": "https://api.smith.langchain.com/public/schemas/v1/message.json"
+      }
     },
-    "required": ["messages"],
+    "tools": {
+      "type": "array",
+      "items": {
+        "$ref": "https://api.smith.langchain.com/public/schemas/v1/tooldef.json"
+      }
+    }
+  },
+  "required": ["messages"]
 }
 ```
 
 ### Output Schema
+
 ```json
 {
-    "type": "object",
-    "properties": {
-        "message": {
-            "$ref": "https://api.smith.langchain.com/public/schemas/v1/message.json"
-        },
-    },
-    "required": ["message"],
+  "type": "object",
+  "properties": {
+    "message": {
+      "$ref": "https://api.smith.langchain.com/public/schemas/v1/message.json"
+    }
+  },
+  "required": ["message"]
 }
 ```
 
 ### Transformations
 
 And the transformations look as follows:
+
 ```json
 [
-    {
-        "path": ["inputs"],
-        "transformation_type": "remove_extra_fields",
-    },
-    {
-        "path": ["inputs", "messages"],
-        "transformation_type": "convert_to_openai_message",
-    },
-    {
-        "path": ["inputs", "tools"],
-        "transformation_type": "convert_to_openai_tool",
-    },
-    {
-        "path": ["inputs", "tools"],
-        "transformation_type": "extract_tools_from_run",
-    },
-    {
-        "path": ["outputs"],
-        "transformation_type": "remove_extra_fields",
-    },
-    {
-        "path": ["outputs", "message"],
-        "transformation_type": "convert_to_openai_message",
-    },
+  {
+    "path": ["inputs"],
+    "transformation_type": "remove_extra_fields"
+  },
+  {
+    "path": ["inputs", "messages"],
+    "transformation_type": "convert_to_openai_message"
+  },
+  {
+    "path": ["inputs", "tools"],
+    "transformation_type": "convert_to_openai_tool"
+  },
+  {
+    "path": ["inputs", "tools"],
+    "transformation_type": "extract_tools_from_run"
+  },
+  {
+    "path": ["outputs"],
+    "transformation_type": "remove_extra_fields"
+  },
+  {
+    "path": ["outputs", "message"],
+    "transformation_type": "convert_to_openai_message"
+  }
 ]
 ```
