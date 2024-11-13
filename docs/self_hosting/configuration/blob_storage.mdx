@@ -58,7 +58,7 @@ This will look something like the following:
 
 Once you have the correct policy, there are two ways to authenticate with Amazon S3:
 
-1. [**IAM Role for Service Account**](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html): You can create an IAM role for your LangSmith instance and attach the policy to that role. You can then provide the role to LangSmith. This is the recommended way to authenticate with Amazon S3 in production.
+1. [**(Recommended) IAM Role for Service Account**](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html): You can create an IAM role for your LangSmith instance and attach the policy to that role. You can then provide the role to LangSmith. This is the recommended way to authenticate with Amazon S3 in production.
    1. You will need to create an IAM role with the policy attached.
    1. You will need to allow LangSmith service accounts to assume the role. The `langsmith-queue`, `langsmith-backend`, and `langsmith-platform-backend` service accounts will need to be able to assume the role.
       :::warning Service Account Names
@@ -83,7 +83,8 @@ to grant LangSmith workloads permission to access your [container](https://learn
 
 1. [Storage account and access key](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage)
 1. [Connection string](https://learn.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string)
-1. Environment variables, [Workload identity](https://azure.github.io/azure-workload-identity/docs/introduction.html), or managed identity supported by [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication?tabs=bash#2-authenticate-with-azure). This is the default authentication method when configuration for either option above is not present.
+1. [Workload identity](https://azure.github.io/azure-workload-identity/docs/introduction.html) (recommended), managed identity, or environment variables supported by [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication?tabs=bash#2-authenticate-with-azure).
+   This is the default authentication method when configuration for either option above is not present.
    1. To use workload identity, add the label `azure.workload.identity/use: true` to the `queue`, `backend`, and `platform-backend` deployments. Additionally, add the `azure.workload.identity/client-id` annotation to the corresponding service accounts, which should be an existing Azure AD Application's client ID or user-assigned managed identity's client ID.
       See [Azure's documentation](https://azure.github.io/azure-workload-identity/docs/topics/service-account-labels-and-annotations.html) for additional details.
 
