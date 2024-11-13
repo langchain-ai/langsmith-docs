@@ -11,7 +11,7 @@ Before diving into this content, it might be helpful to read the following:
 
 :::
 
-The easiest way to interact with datasets is directly in the LangSmith app. Here, you can create and edit datasets and example.
+The easiest way to interact with datasets is directly in the LangSmith app. Here, you can create and edit datasets and examples.
 
 
 
@@ -23,21 +23,20 @@ getting started:
 TODO: INSERT IMAGE WHEN COPY FINAL
 
 * **Create from CSV:** Drag and drop your CSV into LangSmith and your data will be imported automatically. Each row will correspond to a new dataset example.
-* **Create from scratch:** If you prefer to upload data from the SDK or manually, you can instead set up your dataset before seeding any data. 
+* **Create from scratch:** You can also create a dataset first and add examples later.
 
    LangSmith datasets store arbitrary JSON objects. We recommend (but do not require) that you define a schema for your dataset.
    Dataset schemas are defined with standard [JSON schema](https://json-schema.org/), with the addition of a few [custom types](/reference/data_formats/dataset_json_types) 
-   that make it easier to define commonly used LLM data primitives like messages and tool definitions.
+   that make it easier to type common primitives like messages and tools.
 
-   As part of your schema definition, certain fields allow you to click `+ Transformations` which enable common
-   preprocessing on your data to occur when you add examples to your dataset, such as converting LangSmith traces 
-   into standard openAI message formats, or dropping fields that aren't defined in your schema. For the full list 
-   of available transformations, see [our reference](/reference/data_formats/dataset_transformations)
+  Certain fields have a `+ Transformations` option. 
+  Transformations are preprocessing steps that, if enabled, update your examples when you add them to the dataset.
+  For example the `convert to OpenAI messages` transformation will convert message-like objects, like LangChain messages, to OpenAI message format.
+  For the full list of available transformations, see [our reference](/reference/data_formats/dataset_transformations).
 
 * **Create from template**: If you plan to collect production traces in your dataset from LangChain 
-[ChatModels](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html) 
-or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client), we offer a prebuilt schema and transformation that makes it easy to
-collect these runs in format that is easy to use downstream. This is entirely customizable, and does not lock your dataset into a set format. 
+[ChatModels](https://python.langchain.com/docs/concepts/chat_models/) 
+or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client), we offer a prebuilt schema and transformation that stores examples in a format that is easy to use downstream. You can also customize the template settings to match your use case.
 
    Please see the [dataset transformations reference](/reference/data_formats/dataset_transformations) for more information. 
    
@@ -76,7 +75,7 @@ the run before adding it to the dataset.
 
 ![](./static/confirmation.png)
 
-### Set up an automation to add a subset of all runs in a tracing project to a dataset
+### Automatically add runs to a dataset
 
 You can use [run rules](../../../observability/how_to_guides/monitoring/rules) to automatically add traces to a dataset based on certain conditions. For example, you could add all traces that have a certain tag to a dataset.
 
@@ -90,7 +89,7 @@ or hit the hot key `D` to add the run to it.
 
 ![](./static/add_to_dataset_from_aq.png)
 
-As with adding directly from the run details page, any modifications you make to the run in your annotation queue will carry over to 
+Any modifications you make to the run in your annotation queue will carry over to 
 the dataset, and all metadata associated with the run will also be copied.
 
 ### Add runs directly via the Datasets UI
@@ -100,7 +99,7 @@ JSON inline
 
 ### Add synthetic examples created by an LLM via the Datasets UI
 
-If you have a schema defined on your dataset, when clicking `+ Example` as in the previous section, you can decide to generate examples instead of manually input them. 
+If you have a schema defined on your dataset, when you click `+ Example` you'll see an option to `Generate examples`. This will use an LLM to create synthetic examples.
 
 You have to do the following:
 
