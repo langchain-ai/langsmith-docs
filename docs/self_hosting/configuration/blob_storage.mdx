@@ -15,7 +15,8 @@ By default, LangSmith stores run inputs, outputs, and errors in ClickHouse. In a
 ## Requirements
 
 :::note
-Azure blob storage is available in Beta on Helm chart versions 0.8.9 and greater.
+Azure blob storage is available in Beta on Helm chart versions 0.8.9 and greater.  
+While in Beta, [deleting trace projects](../../observability/concepts/index.mdx#deleting-traces-from-langsmith) is not supported.
 :::
 
 - Access to a valid blob storage service
@@ -63,7 +64,7 @@ Once you have the correct policy, there are two ways to authenticate with Amazon
       :::warning Service Account Names
       The service account names will be different if you are using a custom release name. You can find the service account names by running `kubectl get serviceaccounts` in your cluster.
       :::
-   1. You will need to provide the role ARN to LangSmith. You can do this by adding the `eks.amazonaws.com/role-arn: "<role_arn>"` annotation to the `langsmith-queue` and `langsmith-backend` services in your Helm Chart installation.
+   1. You will need to provide the role ARN to LangSmith. You can do this by adding the `eks.amazonaws.com/role-arn: "<role_arn>"` annotation to the `queue`, `backend`, and `platform-backend` services in your Helm Chart installation.
 1. [**Access Key and Secret Key**](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html): You can provide LangSmith with an access key and secret key. This is the simplest way to authenticate with Amazon S3. However, it is not recommended for production use as it is less secure.
    1. You will need to create a user with the policy attached. Then you can provision an access key and secret key for that user.
 
@@ -82,7 +83,9 @@ and set the blob storage [container](https://learn.microsoft.com/en-us/azure/sto
 
 1. [Storage account and access key](https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage)
 1. [Connection string](https://learn.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string)
-1. Environment variables, Workload identity, or managed identity supported by [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication?tabs=bash#2-authenticate-with-azure). This is the default authentication method when configuration for either option above is not present.
+1. Environment variables, [Workload identity](https://azure.github.io/azure-workload-identity/docs/introduction.html), or managed identity supported by [`DefaultAzureCredential`](https://learn.microsoft.com/en-us/azure/developer/go/azure-sdk-authentication?tabs=bash#2-authenticate-with-azure). This is the default authentication method when configuration for either option above is not present.
+   1. To use workload identity, add the label `azure.workload.identity/use: true` to the `queue`, `backend`, and `platform-backend` deployments. Additionally, add the `azure.workload.identity/client-id` annotation to the corresponding service accounts, which should be an existing Azure AD Application's client ID or user-assigned managed identity's client ID.
+      See [Azure's documentation](https://azure.github.io/azure-workload-identity/docs/topics/service-account-labels-and-annotations.html) for additional details.
 
 :::note
 Some deployments may need further customization of the connection configuration using a Service URL Override instead of the default service URL (`https://<storage_account_name>.blob.core.windows.net/`). For example, this override is necessary in order to use a different blob storage domain (e.g. government or china).
@@ -115,18 +118,30 @@ After creating your bucket and obtaining the necessary credentials, you can conf
       azureStorageContainerName: "your-container-name" # Required
       azureStorageConnectionString: "" # Optional.
       azureStorageServiceUrlOverride: "" # Optional \n
-   backend: # Optional, only required if using IAM role for service account on AWS
+   backend: # Optional, only required if using IAM role for service account on AWS or workload identity on AKS
+     deployment:  # Azure only
+       labels:
+         azure.workload.identity/use: true
      serviceAccount:
        annotations:
-         eks.amazonaws.com/role-arn: "<role_arn>" \n
-   platformBackend: # Optional, only required if using IAM role for service account on AWS
-      serviceAccount:
-        annotations:
-          eks.amazonaws.com/role-arn: "<role_arn>" \n
-   queue: # Optional, only required if using IAM role for service account on AWS
-      serviceAccount:
-        annotations:
-          eks.amazonaws.com/role-arn: "<role_arn>"
+         azure.workload.identity/client-id: "<client_id>" # Azure only
+         eks.amazonaws.com/role-arn: "<role_arn>" # AWS only \n
+   platformBackend: # Optional, only required if using IAM role for service account on AWS or workload identity on AKS
+     deployment:  # Azure only
+       labels:
+         azure.workload.identity/use: true
+     serviceAccount:
+       annotations:
+         azure.workload.identity/client-id: "<client_id>" # Azure only
+         eks.amazonaws.com/role-arn: "<role_arn>" # AWS only \n
+   queue: # Optional, only required if using IAM role for service account on AWS or workload identity on AKS
+     deployment:  # Azure only
+       labels:
+         azure.workload.identity/use: true
+     serviceAccount:
+       annotations:
+         azure.workload.identity/client-id: "<client_id>" # Azure only
+         eks.amazonaws.com/role-arn: "<role_arn>" # AWS only
       `),
     DockerBlock(
       `# In your .env file
