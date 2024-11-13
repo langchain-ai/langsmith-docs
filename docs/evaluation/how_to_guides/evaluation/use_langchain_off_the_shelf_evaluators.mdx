@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# Use LangChain off-the-shelf evaluators (Python only)
+# How to use off-the-shelf evaluators (Python only)
 
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
@@ -25,7 +25,7 @@ from langsmith import Client
 
 client = Client()
 
-# Create a dataset
+ Create a dataset
 examples = [
     ("Ankush", "Hello Ankush"),
     ("Harrison", "Hello Harrison"),
@@ -164,7 +164,7 @@ To measure the similarity between a predicted string and a reference, you can us
 - The `"embedding_distance"` evaluator computes the distance between the text embeddings of the prediction and reference
 
 ```python
-# !pip install rapidfuzz
+ !pip install rapidfuzz
 from langsmith.evaluation import LangChainStringEvaluator, evaluate
 
 string_distance_evaluator = LangChainStringEvaluator(

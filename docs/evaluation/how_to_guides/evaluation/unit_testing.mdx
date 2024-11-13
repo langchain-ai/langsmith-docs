@@ -2,7 +2,7 @@
 sidebar_position: 7
 ---
 
-# Test LLM applications (Python only)
+# How to unit test applications (Python only)
 
 LangSmith functional tests are assertions and expectations designed to **quickly** identify obvious bugs and regressions in your AI system. Relative to evaluations, tests typically are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases.
 We recommend using LangSmith to track any unit tests, end-to-end integration tests, or other specific assertions that touch an LLM or other non-deterministic part of your AI system.
@@ -18,7 +18,7 @@ To write a LangSmith functional test, decorate your test function with `@unit`.
 If you want to track the full nested trace of the system or component being tested, you can mark those functions with `@traceable`. For example:
 
 ```python
-# my_app/main.py
+ my_app/main.py
 from langsmith import traceable
 
 @traceable # Optional
@@ -31,7 +31,7 @@ def generate_sql(user_query):
 Then define your test:
 
 ```python tests/test_my_app.py
-# tests/test_my_app.py
+ tests/test_my_app.py
 from langsmith import unit
 from my_app.main import generate_sql
 
@@ -78,8 +78,8 @@ def user_query():
 def expected_sql():
     return "SELECT * FROM customers"
 
-# output_keys indicate which test arguments to save as 'outputs' in the dataset (Optional)
-# Otherwise, all arguments are saved as 'inputs'
+ output_keys indicate which test arguments to save as 'outputs' in the dataset (Optional)
+ Otherwise, all arguments are saved as 'inputs'
 @unit(output_keys=["expected_sql"])
 def test_sql_generation_with_fixture(user_query, expected_sql):
     sql = generate_sql(user_query)

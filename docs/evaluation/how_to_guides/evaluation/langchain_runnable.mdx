@@ -1,0 +1,76 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to evaluate a LangChain runnable
+
+You can configure a `LangChain` runnable to be evaluated by passing `runnable.invoke` it to the `evaluate` method in Python, or just the `runnable` in TypeScript.
+
+First, define your `LangChain` runnable:
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langchain_openai import ChatOpenAI
+      from langchain_core.prompts import ChatPromptTemplate
+      from langchain_core.output_parsers import StrOutputParser
+      
+      prompt = ChatPromptTemplate.from_messages([
+        ("system", "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't."),
+        ("user", "{text}")
+      ])
+      chat_model = ChatOpenAI()
+      output_parser = StrOutputParser()
+      
+      chain = prompt | chat_model | output_parser
+    `,
+    typescript`
+      import { ChatOpenAI } from "@langchain/openai";
+      import { ChatPromptTemplate } from "@langchain/core/prompts";
+      import { StringOutputParser } from "@langchain/core/output_parsers";
+      
+      const prompt = ChatPromptTemplate.fromMessages([
+        ["system", "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't."],
+        ["user", "{text}"]
+      ]);
+      const chatModel = new ChatOpenAI();
+      const outputParser = new StringOutputParser();
+      
+      const chain = prompt.pipe(chatModel).pipe(outputParser);
+    `,
+  ]}
+/>
+
+Then, pass the `runnable.invoke` method to the `evaluate` method. Note that the input variables of the runnable must match the keys of the example inputs.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith.evaluation import evaluate
+      
+      results = evaluate(
+          chain.invoke,
+          data=dataset_name,
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate(chain, {
+        data: datasetName,
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>
+
+The runnable is traced appropriately for each output.
+
+![](../evaluation/static/runnable_eval.png)

@@ -1,63 +1,85 @@
 # Evaluation how-to guides
 
-Step-by-step guides that cover key tasks and operations for doing evaluating and testing your applications in LangSmith.
+These guides answer “How do I….?” format questions. 
+They are goal-oriented and concrete, and are meant to help you complete a specific task. 
+For conceptual explanations see the [Conceptual guide](./concepts). 
+For end-to-end walkthroughs see [Tutorials](./tutorials). 
+For comprehensive descriptions of every class and function see the [API Reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
 
-## Evaluation SDK & API
+## Offline evaluation
 
-Write evaluations to test and improve your application.
+Evaluate and improve your application.
 
-- [Evaluate an LLM application in the SDK](./how_to_guides/evaluation/evaluate_llm_application)
-- [Define a custom evaluator](./how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators)
-- [Evaluate on intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
-- [Use LangChain off-the-shelf evaluators (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
-- [Evaluate an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
-- [Run a pairwise evaluation](./how_to_guides/evaluation/evaluate_pairwise)
-- [Run evals using the API only](./how_to_guides/evaluation/run_evals_api_only)
+### Run an evaluation
+- [Run an evaluation using the SDK](./how_to_guides/evaluation/evaluate_llm_application)
+- [Run an evaluation asynchronously](./how_to_guides/evaluation/async)
+- [Run an evaluation comparing two experiments](./how_to_guides/evaluation/evaluate_pairwise)
+- [Run an evaluation of a LangChain / LangGraph object](./how_to_guides/evaluation/langchain_runnable)
+- [Run an evaluation of an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
+- [Run an evaluation using the REST API](./how_to_guides/evaluation/run_evals_api_only)
+- [Run an evaluation in the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
+
+### Define an evaluator
+- [Define a custom evaluator](./how_to_guides/evaluation/custom_evaluator)
+- [Use an off-the-shelf evaluator (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
+- [Evaluate aggregate experiment results](./how_to_guides/evaluation/summary)
+- [Evaluate intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
+- [Return multiple metrics in one evaluator](./how_to_guides/evaluation/multiple_scores)
+- [Return categorical and continuous metrics](./how_to_guides/evaluation/metric_type)
+- [Check your evaluator setup](./how_to_guides/evaluation/check_evaluator)
+
+### Configure the data
+- [Evaluate on a split / filtered view of a dataset](./how_to_guides/evaluation/dataset_subset)
+- [Evaluate on a specific dataset version](./how_to_guides/evaluation/dataset_version)
+
+### Configure an evaluation job
+- [Evaluate with repetitions](./how_to_guides/evaluation/repetition)
+- [Run a large evaluation job](./how_to_guides/evaluation/large_job)
+- [Handle rate limiting](./how_to_guides/evaluation/rate_limiting)
 
 ## Unit testing
 
-Run assertions and expectations designed to quickly identify obvious bugs and regressions in your AI system, natively in your favorite testing library.
+Unit test your system to identify bugs and regressions.
 
-- [Unit test LLM applications (Python only)](./how_to_guides/evaluation/unit_testing)
-
-## Auto-evaluation
-
-Set up auto-evaluators that LangSmith will automatically run on your experiments.
-
-- [Set up an Auto-Evaluator to run on all experiments](./how_to_guides/evaluation/bind_evaluator_to_dataset)
-- [Create few-shot evaluators](./how_to_guides/evaluation/create_few_shot_evaluators)
+- [Unit test applications (Python only)](./how_to_guides/evaluation/unit_testing)
 
 ## Online evaluation
 
-Set up evaluations to run on incoming traces to understand your application's behavior in production.
+Evaluate and monitor your system's live performance on production data.
 
-- [Set up online evaluations](../../observability/how_to_guides/monitoring/online_evaluations)
-- [Create few-shot evaluators](./how_to_guides/evaluation/create_few_shot_evaluators)
+- [Set up an online evaluator](../../observability/how_to_guides/monitoring/online_evaluations)
+- [Create a few-shot evaluator](./how_to_guides/evaluation/create_few_shot_evaluators)
 
-## Experiments
+## Automatic evaluation
 
-Use the experiments UI & API to understand your evaluations.
+Set up evaluators that automatically run for all experiments against a dataset.
 
-- [Run an evaluation in the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
+- [Set up an auto-evaluator](./how_to_guides/evaluation/bind_evaluator_to_dataset)
+- [Create a few-shot evaluator](./how_to_guides/evaluation/create_few_shot_evaluators)
+
+## Analyzing experiment results
+
+Use the UI & API to understand your experiment results.
+
 - [Compare experiments with the comparison view](./how_to_guides/evaluation/compare_experiment_results)
 - [Filter experiments](./how_to_guides/evaluation/filter_experiments_ui)
 - [View pairwise experiments](./how_to_guides/evaluation/evaluate_pairwise#view-pairwise-experiments)
 - [Fetch experiment results in the SDK](./how_to_guides/evaluation/fetch_perf_metrics_experiment)
 - [Upload experiments run outside of LangSmith with the REST API](./how_to_guides/evaluation/upload_existing_experiments)
 
-## Datasets
+## Dataset management
 
-Manage datasets in LangSmith used by your offline evaluations (as well as other downstream applications).
+Manage datasets in LangSmith used by your evaluations.
 
-- [Manage datasets in the application](./how_to_guides/datasets/manage_datasets_in_application)
+- [Manage datasets from the UI](./how_to_guides/datasets/manage_datasets_in_application)
 - [Manage datasets programmatically](./how_to_guides/datasets/manage_datasets_programmatically)
 - [Version datasets](./how_to_guides/datasets/version_datasets)
 - [Share or unshare a dataset publicly](./how_to_guides/datasets/share_dataset)
 - [Export filtered traces from an experiment to a dataset](./how_to_guides/datasets/export_filtered_traces_to_dataset)
 
-## Annotation Queues and Human Feedback
+## Annotation queues and human feedback
 
-Collect feedback from subject matter experts and users to improve your LLM applications.
+Collect feedback from subject matter experts and users to improve your applications.
 
 - [Use annotation queues](./how_to_guides/human_feedback/annotation_queues)
 - [Capture user feedback from your application to traces](./how_to_guides/human_feedback/attach_user_feedback)
