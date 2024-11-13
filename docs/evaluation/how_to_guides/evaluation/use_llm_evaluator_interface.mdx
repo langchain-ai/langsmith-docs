@@ -10,14 +10,14 @@ import {
 
 # Define LLM-as-a-judge evaluators
 
-LangSmith provides LLMEvaluator - an interface for creating LLM-as-judge evaluators that you can use to assess the quality of your application across a host of common categories
-(hallucination, conciseness, bias, etc). The LLMEvaluator class is designed to both work off the shelf by default, and be customizable to your specific needs.
+LangSmith provides `LLMEvaluator` - an interface for creating LLM-as-judge evaluators that you can use to assess the quality of your application across a host of common categories
+(hallucination, conciseness, bias, etc). The `LLMEvaluator` class is designed to both work off the shelf by default, and be customizable to your specific needs.
 
-## Using LLMEvaluator to evaluate your application
+## Using `LLMEvaluator` to evaluate your application
 
 ### Select metrics
 
-In this how-to we will be analyzing hallucination as well as concisesness, you should select the metrics that best correlate with business outcomes for your application.
+In this how-to we will be analyzing hallucination as well as concisesness, but you should select the metrics that best correlate with business outcomes for your application.
 
 We will first define the metric for conciseness, which will be a categorical metric based on whether the answer was too short, too long, or just right.
 
@@ -109,7 +109,7 @@ While providing a reasoning key is optional, forcing the LLM judge to reason thr
 it's answer is a form of Chain-of-Thought prompting and will improve response quality.
 :::
 
-### Construct your LLMEvaluator
+### Construct your `LLMEvaluator`
 
 Now that we have defined our metrics and score configurations for each of those metrics we can define our evaluators:
 
@@ -188,7 +188,7 @@ The score configuration defines the JSON object the LLM judge will use to produc
 
 Now that we have defined our metrics and evaluators, we can actually run an experiment on a dataset.
 For the code in the rest of this how-to we will be using [this public dataset](https://smith.langchain.com/public/9138f009-dff1-4188-bd7b-ee9f9c005ac2/d).
-If you wish to follow along with your own dataset, feel free to - LLMEvaluator is highly versatile, no matter the form of your dataset.
+If you wish to follow along with your own dataset, feel free to - `LLMEvaluator` is highly versatile, no matter the form of your dataset.
 The code below shows how to clone the public dataset:
 
 <CodeTabs
