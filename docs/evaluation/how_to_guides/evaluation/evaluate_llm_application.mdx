@@ -93,7 +93,7 @@ Now we need a [Dataset](../../concepts#datasets) to evaluate our application on.
     python`
       from langsmith import Client
       
-      client = Client()
+      ls_client = Client()
       
       labeled_texts = [
           ("Shut up, idiot", "Toxic"),
@@ -105,11 +105,11 @@ Now we need a [Dataset](../../concepts#datasets) to evaluate our application on.
       ]
       
       dataset_name = "Toxic Queries"
-      dataset = client.create_dataset(dataset_name=dataset_name)
+      dataset = ls_client.create_dataset(dataset_name=dataset_name)
       inputs, outputs = zip(
           *[({"text": text}, {"label": label}) for text, label in labeled_texts]
       )
-      client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+      ls_client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
     `,
     typescript`
       import { Client } from "langsmith";
@@ -154,11 +154,8 @@ Since we have labels for this task, our evaluator can directly check if the actu
   groupId="client-language"
   tabs={[
     python`
-      from langsmith.schemas import Example, Run
-
-      def correct(root_run: Run, example: Example) -> dict:
-          score = root_run.outputs.get("output") == example.outputs.get("label")
-          return {"score": int(score)}
+      def correct(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
+          return outputs["output"] == reference_outputs["label"]
     `,
     typescript`
       import type { EvaluationResult } from "langsmith/evaluation";
@@ -232,7 +229,6 @@ _If you've annotated your code for tracing, you can open the trace of each row i
   tabs={[
     python`
       from langsmith import Client, evaluate, traceable, wrappers
-      from langsmith.schemas import Example, Run
       from openai import OpenAI
       
       # Step 1. Define an application
@@ -255,7 +251,7 @@ _If you've annotated your code for tracing, you can open the trace of each row i
           return result.choices[0].message.content
       
       # Step 2. Create a dataset
-      client = Client()
+      ls_client = Client()
       
       labeled_texts = [
           ("Shut up, idiot", "Toxic"),
@@ -267,16 +263,15 @@ _If you've annotated your code for tracing, you can open the trace of each row i
       ]
       
       dataset_name = "Toxic Queries"
-      dataset = client.create_dataset(dataset_name=dataset_name)
+      dataset = ls_client.create_dataset(dataset_name=dataset_name)
       inputs, outputs = zip(
           *[({"text": text}, {"label": label}) for text, label in labeled_texts]
       )
-      client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+      ls_client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
 
       # Step 3. Define an evaluator
-      def correct(root_run: Run, example: Example) -> dict:
-          score = root_run.outputs.get("output") == example.outputs.get("label")
-          return {"score": int(score)}
+      def correct(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
+          return outputs["output"] == reference_outputs["label"]
 
       # Step 4. Run the evaluation
       results = evaluate(
