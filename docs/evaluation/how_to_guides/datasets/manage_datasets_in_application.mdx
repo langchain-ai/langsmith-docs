@@ -15,33 +15,36 @@ The easiest way to interact with datasets is directly in the LangSmith app. Here
 
 ## Set up your dataset
 
-To create a dataset, head to the Datasets & Experiments page in LangSmith, and click `+ Dataset`. You'll have 3 options for
+To create a dataset, head to the Datasets & Experiments page in LangSmith, and click `+ Dataset`. You'll have 2 options for
 getting started:
 
-TODO: INSERT IMAGE WHEN COPY FINAL
+### Option 1: Create from CSV
 
-- **Create from CSV:** Drag and drop your CSV into LangSmith and your data will be imported automatically. Each row will correspond to a new dataset example.
-- **Create from scratch:** You can also create a dataset first and add examples later.
+Select a name and description for the dataset, and then confirm that the inferred input and output columns are correct.
 
-  LangSmith datasets store arbitrary JSON objects. We recommend (but do not require) that you define a schema for your dataset.
-  Dataset schemas are defined with standard [JSON schema](https://json-schema.org/), with the addition of a few [custom types](/reference/data_formats/dataset_json_types)
-  that make it easier to type common primitives like messages and tools.
+![Confirm Columns](./static/select_columns.png)
 
-  Certain fields have a `+ Transformations` option.
-  Transformations are preprocessing steps that, if enabled, update your examples when you add them to the dataset.
-  For example the `convert to OpenAI messages` transformation will convert message-like objects, like LangChain messages, to OpenAI message format.
-  For the full list of available transformations, see [our reference](/reference/data_formats/dataset_transformations).
+### Option 2: Create empty Dataset
 
-- **Create from template**: If you plan to collect production traces in your dataset from LangChain
-  [ChatModels](https://python.langchain.com/docs/concepts/chat_models/)
-  or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client), we offer a prebuilt schema and transformation that stores examples in a format that is easy to use downstream. You can also customize the template settings to match your use case.
+#### Set up a schema
 
-  Please see the [dataset transformations reference](/reference/data_formats/dataset_transformations) for more information.
+LangSmith datasets store arbitrary JSON objects. We recommend (but do not require) that you define a schema for your dataset.
+Dataset schemas are defined with standard [JSON schema](https://json-schema.org/), with the addition of a few [prebuilt types](/reference/data_formats/dataset_json_types)
+that make it easier to type common primitives like messages and tools.
 
-  :::note
-  Users who keep their prompt in their system message often prefer to add the `Remove System Messages` transformation to
-  their dataset in addition to the default ones added by the template. This prevents the Sytem prompt, which is often
-  what people want to evaluate, from entering the dataset.
+Certain fields in your schema have a `+ Transformations` option.
+Transformations are preprocessing steps that, if enabled, update your examples when you add them to the dataset.
+For example the `convert to OpenAI messages` transformation will convert message-like objects, like LangChain messages, to OpenAI message format.
+
+For the full list of available transformations, see [our reference](/reference/data_formats/dataset_transformations).
+
+:::note
+If you plan to collect production traces in your dataset from LangChain
+[ChatModels](https://python.langchain.com/docs/concepts/chat_models/)
+or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client), we offer a prebuilt schema and transformation that stores examples in a format that is easy to use downstream. You can also customize the template settings to match your use case.
+
+Please see the [dataset transformations reference](/reference/data_formats/dataset_transformations) for more information.
+:::
 
 ## Add runs to your dataset in the UI
 
