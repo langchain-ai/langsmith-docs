@@ -41,7 +41,7 @@ For the full list of available transformations, see [our reference](/reference/e
 :::note
 If you plan to collect production traces in your dataset from LangChain
 [ChatModels](https://python.langchain.com/docs/concepts/chat_models/)
-or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client), we offer a prebuilt schema and transformation that stores examples in a format that is easy to use downstream. You can also customize the template settings to match your use case.
+or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client), we offer a prebuilt Chat Model schema that converts messages and tools into industry standard openai formats that can be used downstream with any model for testing. You can also customize the template settings to match your use case.
 
 Please see the [dataset transformations reference](/reference/evaluation/dataset_transformations) for more information.
 :::
