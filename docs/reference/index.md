@@ -12,6 +12,10 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 
 - <RegionalUrl type='api' suffix='/redoc' text='LangSmith API Reference' />
 
+## Evaluation
+
+- [Dataset Transformations](./reference/evaluation/dataset_transformations)
+
 ## SDK reference
 
 - [Python SDK Reference](https://langsmith-sdk.readthedocs.io/en/latest/)
@@ -33,5 +37,6 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 - [Trace query syntax](./reference/data_formats/trace_query_syntax)
   - [Filter arguments](./reference/data_formats/trace_query_syntax#filter-arguments)
   - [Filter query language](./reference/data_formats/trace_query_syntax#filter-query-language)
+- [Dataset prebuilt json types](./reference/data_formats/dataset_json_types)
 
 ## Authentication and authorization
