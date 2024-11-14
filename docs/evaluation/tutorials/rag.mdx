@@ -245,7 +245,7 @@ Now, we kick off evaluation:
 - `answer_evaluator`: Passes RAG chain answer, question, and ground truth answer to an evaluator
 
 ```python
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 
 experiment_results = evaluate(
     predict_rag_answer,
@@ -414,7 +414,7 @@ https://youtu.be/yx3JMAaNggQ?feature=shared
 
 ```python
 from langsmith.schemas import Example, Run
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 
 def document_relevance_grader(root_run: Run, example: Example) -> dict:
     """

@@ -20,7 +20,7 @@ Simply use `list_examples` / `listExamples` to fetch examples from a particular 
   groupId="client-language"
   tabs={[
     python`
-      from langsmith.evaluation import evaluate
+      from langsmith import evaluate
       
       results = evaluate(
           lambda inputs: label_text(inputs["text"]),

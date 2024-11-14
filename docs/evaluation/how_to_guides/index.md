@@ -4,14 +4,14 @@ These guides answer “How do I….?” format questions.
 They are goal-oriented and concrete, and are meant to help you complete a specific task. 
 For conceptual explanations see the [Conceptual guide](./concepts). 
 For end-to-end walkthroughs see [Tutorials](./tutorials). 
-For comprehensive descriptions of every class and function see the [API Reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
+For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
 
 ## Offline evaluation
 
 Evaluate and improve your application.
 
 ### Run an evaluation
-- [Run an evaluation using the SDK](./how_to_guides/evaluation/evaluate_llm_application)
+- [Run an evaluation](./how_to_guides/evaluation/evaluate_llm_application)
 - [Run an evaluation asynchronously](./how_to_guides/evaluation/async)
 - [Run an evaluation comparing two experiments](./how_to_guides/evaluation/evaluate_pairwise)
 - [Run an evaluation of a LangChain / LangGraph object](./how_to_guides/evaluation/langchain_runnable)

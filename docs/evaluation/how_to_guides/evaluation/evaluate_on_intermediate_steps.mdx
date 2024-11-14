@@ -364,7 +364,7 @@ Finally, we'll run `evaluate` with the custom evaluators defined above.
 <CodeTabs
   tabs={[
     python`
-      from langsmith.evaluation import evaluate
+      from langsmith import evaluate
       
       experiment_results = evaluate(
           lambda inputs: rag_pipeline(inputs["input"]),

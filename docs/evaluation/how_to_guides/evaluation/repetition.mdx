@@ -15,7 +15,7 @@ noise in systems prone to high variability, such as agents.
   groupId="client-language"
   tabs={[
     python`
-      from langsmith.evaluation import evaluate
+      from langsmith import evaluate
       
       results = evaluate(
           lambda inputs: label_text(inputs["text"]),

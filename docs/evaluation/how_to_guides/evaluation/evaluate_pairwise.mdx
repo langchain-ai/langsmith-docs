@@ -77,7 +77,7 @@ The prompt asks the LLM to decide which is better between two AI assistant respo
 <CodeTabs
   tabs={[
     python`
-      from langsmith.evaluation import evaluate_comparative
+      from langsmith import evaluate_comparative
       from langchain import hub
       from langchain_openai import ChatOpenAI
       from langsmith.schemas import Run, Example

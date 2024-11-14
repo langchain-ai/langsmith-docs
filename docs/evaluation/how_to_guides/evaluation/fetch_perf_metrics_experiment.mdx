@@ -131,7 +131,7 @@ Next, we will create an experiment, retrieve the experiment name from the result
 dataset_name = "HelloDataset"\n
 def foo_label(root_run: Run, example: Example) -> dict:
     return {"score": 1, "key": "foo"}\n
-from langsmith.evaluation import evaluate\n
+from langsmith import evaluate\n
 results = evaluate(
     lambda inputs: "Hello " + inputs["input"],
     data=dataset_name,

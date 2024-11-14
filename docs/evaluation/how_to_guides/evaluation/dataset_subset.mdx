@@ -25,7 +25,7 @@ One common workflow is to fetch examples that have a certain metadata key-value 
   groupId="client-language"
   tabs={[
     python`
-      from langsmith.evaluation import evaluate
+      from langsmith import evaluate
       
       results = evaluate(
           lambda inputs: label_text(inputs["text"]),
@@ -58,7 +58,7 @@ You can use the `list_examples` / `listExamples` method to evaluate on one or mu
   groupId="client-language"
   tabs={[
     python`
-      from langsmith.evaluation import evaluate
+      from langsmith import evaluate
       
       results = evaluate(
           lambda inputs: label_text(inputs["text"]),
