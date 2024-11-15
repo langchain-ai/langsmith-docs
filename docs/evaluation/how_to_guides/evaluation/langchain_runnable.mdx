@@ -34,7 +34,7 @@ First, install all the required packages
   groupId="client-language"
 />
 
-Now define your chain:
+Now define your chain
 
 <CodeTabs
   groupId="client-language"
@@ -44,14 +44,18 @@ Now define your chain:
         from langchain_core.prompts import ChatPromptTemplate
         from langchain_core.output_parsers import StrOutputParser
 
-        instructions = """Please review the user query below and determine if it contains any form of \\
-toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it \\
-does, and 'Not toxic' if it doesn't."""
-        prompt = ChatPromptTemplate([("system", instructions), ("user", "{text}")])
-        llm = init_chat_model("gpt-4o")
-        output_parser = StrOutputParser()
+        instructions = (
+            "Please review the user query below and determine if it contains any form "
+            "of toxic behavior, such as insults, threats, or highly negative comments. "
+            "Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't."
+        )
 
-        chain = prompt | llm | output_parser
+        prompt = ChatPromptTemplate(
+            [("system", instructions), ("user", "{text}")],
+        )
+        llm = init_chat_model("gpt-4o")
+
+        chain = prompt | llm | StrOutputParser()
     `,
     typescript`
       import { ChatOpenAI } from "@langchain/openai";
@@ -76,19 +80,30 @@ Then pass the chain to the `evaluate()` method. Note that the input variables of
   groupId="client-language"
   tabs={[
     python`
-      from langsmith import evaluate, Client
-      
-      client = Client()
-      dataset = client.clone_public_dataset(
-        "https://smith.langchain.com/public/3d6831e6-1680-4c88-94df-618c8e01fc55/d"
-      )
-      
-      results = evaluate(
-          chain,
-          data=dataset_name,
-          evaluators=[correct_label],
-          experiment_prefix="Toxic Queries",
-      )
+        from langsmith import evaluate, Client
+
+        client = Client()
+
+        # Clone a dataset of texts with toxicity labels.
+        # Each example input has a "text" key and each output has a "label" key.
+        dataset = client.clone_public_dataset(
+            "https://smith.langchain.com/public/3d6831e6-1680-4c88-94df-618c8e01fc55/d"
+        )
+        
+        def correct(outputs: dict, reference_outputs: dict) -> bool:
+            # Since our chain outputs a string not a dict, this string
+            # gets stored under the default "output" key in the outputs dict:
+            actual = outputs["output"] 
+            expected = reference_outputs["label"]
+
+            assert actual == expected
+
+        results = evaluate(
+            chain,
+            data=dataset,
+            evaluators=[correct],
+            experiment_prefix="gpt-4o, baseline",
+        )
     `,
     typescript`
       import { evaluate } from "langsmith/evaluation";
