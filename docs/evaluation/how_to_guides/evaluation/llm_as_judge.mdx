@@ -13,7 +13,8 @@ import {
 :::
 
 LLM applications can be difficult to evaluate because often they're generating conversational text for which there's no single "right" answer.
-An imperfect but valuable way to evaluate such applications is to use a second LLM to judge the outputs of the first.
+An imperfect but valuable way to evaluate such applications is to use a second LLM to judge the outputs of the first. 
+This can be especially useful if a smaller model is used in the application and a larger, better model is used for evaluation.
 
 ## Custom evaluator via SDK
 
@@ -35,7 +36,6 @@ For maximal control of evaluator logic, we can write a custom evaluator and run 
         """Use an LLM to judge if the reasoning and the answer are consistent."""
 
         instructions = """\\
-
 Given the following question, answer, and reasoning, determine if the reasoning \\
 for the answer is logically valid and consistent with question and the answer.\\
 """
@@ -45,6 +45,7 @@ for the answer is logically valid and consistent with question and the answer.\\
 
         msg = f"Question: {inputs['question']}\\nAnswer: {outputs['answer']}\\nReasoning: {outputs['reasoning']}"
         response = oai_client.beta.chat.completions.parse(
+          model="gpt-4o",
           messages=[{"role": "system", "content": instructions,}, {"role": "user", "content": msg}],
           response_format=Response
         )
