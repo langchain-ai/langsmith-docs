@@ -6,8 +6,6 @@ import {
   CodeTabs,
   python,
   typescript,
-  PythonBlock,
-  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 
 # How to run an evaluation
@@ -21,14 +19,11 @@ import {
 
 :::
 
-In this guide we'll go over how to evaluate an application using the LangSmith SDKs.
+In this guide we'll go over how to evaluate an application using the [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) method in the LangSmith SDK.
 
 ## Step 1: Define an application
 
 First we need an application to evaluate. Let's create a simple toxicity classifier for this example.
-
-We've optionally enabled tracing to capture the inputs and outputs of each step in the pipeline.
-To understand how to annotate your code for tracing, please refer to [this guide](../../../observability/how_to_guides/tracing/annotate_code).
 
 <CodeTabs
   groupId="client-language"
@@ -83,9 +78,12 @@ To understand how to annotate your code for tracing, please refer to [this guide
   ]}
 />
 
+We've optionally enabled tracing to capture the inputs and outputs of each step in the pipeline.
+To understand how to annotate your code for tracing, please refer to [this guide](../../../observability/how_to_guides/tracing/annotate_code).
+
 ## Step 2: Create or select a dataset
 
-Now we need a [Dataset](../../concepts#datasets) to evaluate our application on. Our dataset will contain labeled [examples](../../concepts#examples) of toxic and non-toxic text.
+We need a [Dataset](../../concepts#datasets) to evaluate our application on. Our dataset will contain labeled [examples](../../concepts#examples) of toxic and non-toxic text.
 
 <CodeTabs
   groupId="client-language"
@@ -147,7 +145,7 @@ See [here](../../how_to_guides#dataset-management) for more on dataset managemen
 
 ## Step 3. Define an evaluator
 
-[Evaluators](../../concepts#evaluators) are functions for scoring your application's outputs. They take in the example inputs, actual outputs, and, when present, the reference (example) outputs.
+[Evaluators](../../concepts#evaluators) are functions for scoring your application's outputs. They take in the example inputs, actual outputs, and, when present, the reference outputs.
 Since we have labels for this task, our evaluator can directly check if the actual outputs match the reference outputs.
 
 <CodeTabs
@@ -161,7 +159,6 @@ Since we have labels for this task, our evaluator can directly check if the actu
       import type { EvaluationResult } from "langsmith/evaluation";
       import type { Run, Example } from "langsmith/schemas";
       
-      // Row-level evaluator
       function correct(rootRun: Run, example: Example): EvaluationResult {
         const score = rootRun.outputs?.outputs === example.outputs?.output;
         return { key: "correct", score };
@@ -192,7 +189,7 @@ The key arguments are:
           toxicity_classifier,
           data=dataset_name,
           evaluators=[correct],
-          experiment_prefix="gpt-4o-mini, simple",  # optional, experiment name prefix
+          experiment_prefix="gpt-4o-mini, baseline",  # optional, experiment name prefix
           description="Testing the baseline system.",  # optional, experiment description
       )
     `,
@@ -202,8 +199,7 @@ The key arguments are:
       await evaluate((inputs) => toxicityClassifier(inputs["input"]), {
         data: datasetName,
         evaluators: [correct],
-        experimentPrefix: gpt-4o-mini, simple",  # optional, experiment name prefix
-
+        experimentPrefix: "gpt-4o-mini, baseline",  // optional, experiment name prefix
       });
     `,
   ]}
@@ -347,7 +343,7 @@ _If you've annotated your code for tracing, you can open the trace of each row i
       await evaluate((inputs) => toxicityClassifier(inputs["input"]), {
         data: datasetName,
         evaluators: [correct],
-        experimentPrefix: gpt-4o-mini, simple",  # optional, experiment name prefix
+        experimentPrefix: "gpt-4o-mini, simple",  // optional, experiment name prefix
 
       });
       `,

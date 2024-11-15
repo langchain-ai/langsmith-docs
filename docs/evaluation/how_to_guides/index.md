@@ -16,12 +16,14 @@ Evaluate and improve your application.
 - [Run an evaluation comparing two experiments](./how_to_guides/evaluation/evaluate_pairwise)
 - [Run an evaluation of a LangChain / LangGraph object](./how_to_guides/evaluation/langchain_runnable)
 - [Run an evaluation of an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
-- [Run an evaluation using the REST API](./how_to_guides/evaluation/run_evals_api_only)
-- [Run an evaluation in the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
+- [Run an evaluation via the REST API](./how_to_guides/evaluation/run_evals_api_only)
+- [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 
 ### Define an evaluator
 - [Define a custom evaluator](./how_to_guides/evaluation/custom_evaluator)
-- [Use an off-the-shelf evaluator (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
+- [Define an LLM-as-a-judge evaluator](./how_to_guides/evaluation/llm_as_judge)
+- [Use an off-the-shelf evaluator via the SDK (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
+- [Use an off-the-shelf evaluator via the UI](./how_to_guides/evaluation/builtin_evaluators)
 - [Evaluate aggregate experiment results](./how_to_guides/evaluation/summary)
 - [Evaluate intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [Return multiple metrics in one evaluator](./how_to_guides/evaluation/multiple_scores)
