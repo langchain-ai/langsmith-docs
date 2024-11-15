@@ -1,0 +1,60 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to run an evaluation asynchronously
+
+We can run evaluations asynchronously via the SDK using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html), which accepts all of the same arguments as the [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) but expects the application function to be asynchronous.
+
+:::note
+
+This guide is only relevant when using the Python SDK. In JS/TypeScript the `evaluate()` function is already async. You can see how to use it [here](../../how_to_guides/evaluate_llm_application).
+
+:::
+
+## Using `aevaluate()`
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith import aevaluate, wrappers
+      from openai import AsyncOpenAI
+      # Assumes you've installed pydantic.
+      from pydantic import BaseModel
+      
+      oai_client = wrappers.wrap_openai(AsyncOpenAI())
+        
+      async def researcher_app(inputs: dict) -> str:
+        instructions = """You are an excellent researcher. Given a high-level research idea, \\
+list 5 concrete questions that should be investigated to determine if the idea is a worthwhile \\
+one to pursue."""
+          
+        response = await oai_client.beta.chat.completions.parse(
+          messages=[
+              {"role": "system", "content": instructions}, 
+              {"role": "user", "content": inputs["idea"]},
+            ], 
+        )
+        return response.choices[0].message.content
+
+      results = aevaluate(
+        researcher_app,
+        data="dataset_name",
+        evaluators=[correct, concision, valid_reasoning]
+      )
+    `,
+    typescript`
+      import type { EvaluationResult } from "langsmith/evaluation";
+      import type { Run, Example } from "langsmith/schemas";
+
+      function correct(rootRun: Run, example: Example): EvaluationResult {
+        const score = rootRun.outputs?.outputs === example.outputs?.output;
+        return { key: "correct", score };
+      }
+    `,
+
+]}
+/>

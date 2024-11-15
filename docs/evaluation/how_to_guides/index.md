@@ -1,9 +1,9 @@
 # Evaluation how-to guides
 
-These guides answer “How do I….?” format questions. 
-They are goal-oriented and concrete, and are meant to help you complete a specific task. 
-For conceptual explanations see the [Conceptual guide](./concepts). 
-For end-to-end walkthroughs see [Tutorials](./tutorials). 
+These guides answer “How do I….?” format questions.
+They are goal-oriented and concrete, and are meant to help you complete a specific task.
+For conceptual explanations see the [Conceptual guide](./concepts).
+For end-to-end walkthroughs see [Tutorials](./tutorials).
 For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
 
 ## Offline evaluation
@@ -11,15 +11,18 @@ For comprehensive descriptions of every class and function see the [API referenc
 Evaluate and improve your application.
 
 ### Run an evaluation
+
 - [Run an evaluation](./how_to_guides/evaluation/evaluate_llm_application)
 - [Run an evaluation asynchronously](./how_to_guides/evaluation/async)
 - [Run an evaluation comparing two experiments](./how_to_guides/evaluation/evaluate_pairwise)
-- [Run an evaluation of a LangChain / LangGraph object](./how_to_guides/evaluation/langchain_runnable)
+- [Run an evaluation of a LangChain chain](./how_to_guides/evaluation/langchain_runnable)
+- [Run an evaluation of a LangGraph graph](./how_to_guides/evaluation/langgraph)
 - [Run an evaluation of an existing experiment](./how_to_guides/evaluation/evaluate_existing_experiment)
 - [Run an evaluation via the REST API](./how_to_guides/evaluation/run_evals_api_only)
 - [Run an evaluation from the prompt playground](./how_to_guides/evaluation/run_evaluation_from_prompt_playground)
 
 ### Define an evaluator
+
 - [Define a custom evaluator](./how_to_guides/evaluation/custom_evaluator)
 - [Define an LLM-as-a-judge evaluator](./how_to_guides/evaluation/llm_as_judge)
 - [Use an off-the-shelf evaluator via the SDK (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
@@ -31,10 +34,12 @@ Evaluate and improve your application.
 - [Check your evaluator setup](./how_to_guides/evaluation/check_evaluator)
 
 ### Configure the data
+
 - [Evaluate on a split / filtered view of a dataset](./how_to_guides/evaluation/dataset_subset)
 - [Evaluate on a specific dataset version](./how_to_guides/evaluation/dataset_version)
 
 ### Configure an evaluation job
+
 - [Evaluate with repetitions](./how_to_guides/evaluation/repetition)
 - [Run a large evaluation job](./how_to_guides/evaluation/large_job)
 - [Handle rate limiting](./how_to_guides/evaluation/rate_limiting)

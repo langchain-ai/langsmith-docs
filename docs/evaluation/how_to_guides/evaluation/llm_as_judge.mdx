@@ -1,0 +1,77 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to define an LLM-as-a-judge evaluator
+
+:::info Key concepts
+
+- [LLM-as-a-judge evaluator](../../concepts#llm-as-judge)
+
+:::
+
+LLM applications can be difficult to evaluate because often they're generating conversational text for which there's no single "right" answer.
+An imperfect but valuable way to evaluate such applications is to use a second LLM to judge the outputs of the first.
+
+## Custom evaluator via SDK
+
+For maximal control of evaluator logic, we can write a custom evaluator and run it using the SDK.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith import evaluate, traceable, wrappers
+      from openai import OpenAI
+      # Assumes you've installed pydantic
+      from pydantic import BaseModel
+      
+      # Optionally wrap the OpenAI client to trace all model calls.
+      oai_client = wrappers.wrap_openai(OpenAI())
+        
+      def valid_reasoning(inputs: dict, outputs: dict) -> bool:
+        """Use an LLM to judge if the reasoning and the answer are consistent."""
+
+        instructions = """\\
+
+Given the following question, answer, and reasoning, determine if the reasoning \\
+for the answer is logically valid and consistent with question and the answer.\\
+"""
+
+        class Response(BaseModel):
+          reasoning_is_valid: bool
+
+        msg = f"Question: {inputs['question']}\\nAnswer: {outputs['answer']}\\nReasoning: {outputs['reasoning']}"
+        response = oai_client.beta.chat.completions.parse(
+          messages=[{"role": "system", "content": instructions,}, {"role": "user", "content": msg}],
+          response_format=Response
+        )
+        return response.choices[0].messages.parsed.reasoning_is_valid
+
+      # Optionally add the 'traceable' decorator to trace the inputs/outputs of this function.
+      @traceable
+      def dummy_app(inputs: dict) -> dict:
+        return {"answer": "hmm i'm not sure", "reasoning": "i didn't understand the question"}
+
+      results = evaluate(
+        dummy_app,
+        data="dataset_name",
+        evaluators=[valid_reasoning]
+      )
+    `,
+    typescript`
+      import type { EvaluationResult } from "langsmith/evaluation";
+      import type { Run, Example } from "langsmith/schemas";
+
+    `,
+
+]}
+/>
+
+See [here](../../how_to_guides/custom_evaluator) for more on how to write a custom evaluator.
+
+## Builtin evaluator via the UI
+
+## Prebuilt evaluator via LangChain
