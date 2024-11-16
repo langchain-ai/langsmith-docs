@@ -91,6 +91,7 @@ export LANGCHAIN_API_KEY=<your-api-key>`),
         evaluators=[is_concise],
         experiment_prefix="my first experiment "
     )
+
 `,
     typescript`import { Client } from "langsmith";
 import { evaluate } from "langsmith/evaluation";
@@ -120,8 +121,8 @@ data: datasetName,
 evaluators: [isConcise],
 experimentPrefix: "my first experiment ",
 });`,
-  ]}
-  groupId="client-language"
+]}
+groupId="client-language"
 />
 
 ## 5. View Experiments UI

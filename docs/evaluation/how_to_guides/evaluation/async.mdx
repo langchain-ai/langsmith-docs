@@ -6,11 +6,15 @@ import {
 
 # How to run an evaluation asynchronously
 
-We can run evaluations asynchronously via the SDK using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html), which accepts all of the same arguments as the [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) but expects the application function to be asynchronous.
+We can run evaluations asynchronously via the SDK using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html),
+which accepts all of the same arguments as [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) but expects the application function to be asynchronous.
+You can learn more about how to use the `evaluate()` function [here](../../how_to_guides/evaluation/evaluate_llm_application).
 
-:::note
+:::info Python only
 
-This guide is only relevant when using the Python SDK. In JS/TypeScript the `evaluate()` function is already async. You can see how to use it [here](../../how_to_guides/evaluation/evaluate_llm_application).
+This guide is only relevant when using the Python SDK.
+In JS/TypeScript the `evaluate()` function is already async.
+You can see how to use it [here](../../how_to_guides/evaluation/evaluate_llm_application).
 
 :::
 
@@ -20,34 +24,42 @@ This guide is only relevant when using the Python SDK. In JS/TypeScript the `eva
   groupId="client-language"
   tabs={[
     python`
-        from langsmith import aevaluate, wrappers
+        from langsmith import aevaluate, wrappers, Client
         from openai import AsyncOpenAI
 
         # Optionally wrap the OpenAI client to trace all model calls.
         oai_client = wrappers.wrap_openai(AsyncOpenAI())
 
+        # Optionally add the 'traceable' decorator to trace the inputs/outputs of this function.
         @traceable
         async def researcher_app(inputs: dict) -> str:
             instructions = """You are an excellent researcher. Given a high-level research idea, \\
+
 list 5 concrete questions that should be investigated to determine if the idea is worth pursuing."""
-                
+
             response = await oai_client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": instructions}, 
+                    {"role": "system", "content": instructions},
                     {"role": "user", "content": inputs["idea"]},
-                ], 
+                ],
             )
             return response.choices[0].message.content
 
-        # Optionally add the 'traceable' decorator to trace the inputs/outputs of this function.
-        @traceable
-        async def 
+        # Evaluator functions can be sync or async
+        def concise(inputs: dict, output: dict) -> bool:
+            return len(output["output"]) < 3 * len(inputs["idea"])
+
+        ls_client = Client()
+        # TODO
+        dataset = ...
 
         results = aevaluate(
             researcher_app,
-            data="dataset_name",
-            evaluators=[correct, concision, valid_reasoning]
+            data=dataset,
+            evaluators=[concise],
+            max_concurrency=2,  # Optional, no max by default
+            experiment_prefix="gpt-4o-mini, baseline"  # Optional, random by default
         )
     `,
     typescript`
@@ -55,5 +67,11 @@ list 5 concrete questions that should be investigated to determine if the idea i
       import type { Run, Example } from "langsmith/schemas";
 
     `,
+
 ]}
 />
+
+## Related
+
+- [Run an evaluation (synchronously)](../../how_to_guides/evaluation/evaluate_llm_application)
+- [Run a large evaluation job](../../how_to_guides/evaluation/large_job): Learn about the key `aevaluate()` parameters to configure when running large evaluation jobs.

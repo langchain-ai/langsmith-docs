@@ -8,7 +8,7 @@ import {
 
 `langchain` [Runnable](https://python.langchain.com/docs/concepts/runnables/) objects (such as chat models, retrievers, chains, etc.) can be passed directly into `evaluate()` / `aevaluate()`.
 
-:::info 
+:::info
 
 `langchain` refers to the [Python](https://python.langchain.com) and [TypeScript](https://js.langchain.com) OSS frameworks for building LLM applications.
 
@@ -61,17 +61,18 @@ Now define your chain
       import { ChatOpenAI } from "@langchain/openai";
       import { ChatPromptTemplate } from "@langchain/core/prompts";
       import { StringOutputParser } from "@langchain/core/output_parsers";
-      
+
       const prompt = ChatPromptTemplate.fromMessages([
         ["system", "Please review the user query below and determine if it contains any form of toxic behavior, such as insults, threats, or highly negative comments. Respond with 'Toxic' if it does, and 'Not toxic' if it doesn't."],
         ["user", "{text}"]
       ]);
       const chatModel = new ChatOpenAI();
       const outputParser = new StringOutputParser();
-      
+
       const chain = prompt.pipe(chatModel).pipe(outputParser);
     `,
-  ]}
+
+]}
 />
 
 Then pass the chain to the `evaluate()` method. Note that the input variables of the chain must match the keys of the example inputs. In this case, the example inputs should have the form `{"text": "..."}`.
@@ -89,11 +90,11 @@ Then pass the chain to the `evaluate()` method. Note that the input variables of
         dataset = client.clone_public_dataset(
             "https://smith.langchain.com/public/3d6831e6-1680-4c88-94df-618c8e01fc55/d"
         )
-        
+
         def correct(outputs: dict, reference_outputs: dict) -> bool:
             # Since our chain outputs a string not a dict, this string
             # gets stored under the default "output" key in the outputs dict:
-            actual = outputs["output"] 
+            actual = outputs["output"]
             expected = reference_outputs["label"]
 
             assert actual == expected
@@ -107,14 +108,15 @@ Then pass the chain to the `evaluate()` method. Note that the input variables of
     `,
     typescript`
       import { evaluate } from "langsmith/evaluation";
-      
+
       await evaluate(chain, {
         data: datasetName,
         evaluators: [correctLabel],
         experimentPrefix: "Toxic Queries",
       });
     `,
-  ]}
+
+]}
 />
 
 The runnable is traced appropriately for each output.
