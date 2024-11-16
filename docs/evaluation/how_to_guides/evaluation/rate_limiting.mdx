@@ -1,0 +1,46 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to handle model rate limits
+
+A common issue when running large enough evaluation jobs with high enough concurrency is running into third-party rate limit errors, usually from model providers.
+
+## Using `langchain`
+
+If you're using `langchain` ChatModels in your application or evaluators you can add rate limiters to your model(s) that will space out the frequency with which requests are made to the model provider API, so that you don't hit the model provider rate limits.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+        from langchain.chat_models import init_chat_model
+        from langchain_core.rate_limiters import InMemoryRateLimiter
+
+        rate_limiter = InMemoryRateLimiter(
+            requests_per_second=0.1,  # <-- Super slow! We can only make a request once every 10 seconds!!
+            check_every_n_seconds=0.1,  # Wake up every 100 ms to check whether allowed to make a request,
+            max_bucket_size=10,  # Controls the maximum burst size.
+        )
+
+        llm = init_chat_model("gpt-4o", rate_limiter=rate_limiter)
+
+        def app(inputs: dict) -> dict:
+            ...
+    `,
+    typescript`
+      ...
+    `,
+
+]}
+/>
+
+See the `langchain` documentation for more on how to configure rate limiters: [Python](https://python.langchain.com/docs/how_to/chat_model_rate_limiting/), [JS]().
+
+## Limiting `max_concurrency`
+
+## Related
+
+- See [here](../../how_to_guides/evaluation/large_job) for more guidance on how to run large evaluation jobs efficiently.

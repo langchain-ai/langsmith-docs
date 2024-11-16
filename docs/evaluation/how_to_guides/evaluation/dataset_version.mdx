@@ -21,10 +21,12 @@ Simply use `list_examples` / `listExamples` to fetch examples from a particular 
   tabs={[
     python`
       from langsmith import evaluate
+        
+      latest_data=client.list_examples(dataset_name=toxic_dataset_name, as_of="latest")
       
       results = evaluate(
           lambda inputs: label_text(inputs["text"]),
-          data=client.list_examples(dataset_name=toxic_dataset_name, as_of="latest"),
+          data=latest_data,
           evaluators=[correct_label],
           experiment_prefix="Toxic Queries",
       )

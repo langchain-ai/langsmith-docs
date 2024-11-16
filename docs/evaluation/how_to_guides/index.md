@@ -30,7 +30,7 @@ Evaluate and improve your application.
 - [Evaluate aggregate experiment results](./how_to_guides/evaluation/summary)
 - [Evaluate intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [Return multiple metrics in one evaluator](./how_to_guides/evaluation/multiple_scores)
-- [Return categorical and continuous metrics](./how_to_guides/evaluation/metric_type)
+- [Return categorical vs numerical metrics](./how_to_guides/evaluation/metric_type)
 - [Check your evaluator setup](./how_to_guides/evaluation/check_evaluator)
 
 ### Configure the data
@@ -42,7 +42,7 @@ Evaluate and improve your application.
 
 - [Evaluate with repetitions](./how_to_guides/evaluation/repetition)
 - [Run a large evaluation job](./how_to_guides/evaluation/large_job)
-- [Handle rate limiting](./how_to_guides/evaluation/rate_limiting)
+- [Handle model rate limits](./how_to_guides/evaluation/rate_limiting)
 
 ## Unit testing
 
