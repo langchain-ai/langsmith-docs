@@ -10,11 +10,13 @@ import {
 
 :::info
 
-`langchain` refers to the [Python](https://python.langchain.com) and [TypeScript](https://js.langchain.com) OSS frameworks for building LLM applications.
+`langchain` refers to the [Python](https://python.langchain.com) and [JS/TS](https://js.langchain.com) OSS frameworks for building LLM applications.
 
 :::
 
-First, install all the required packages
+## Setup
+
+Let's define a simple chain to evaluate. First, install all the required packages:
 
 <CodeTabs
   tabs={[
@@ -34,7 +36,7 @@ First, install all the required packages
   groupId="client-language"
 />
 
-Now define your chain
+Now define a chain:
 
 <CodeTabs
   groupId="client-language"
@@ -75,7 +77,9 @@ Now define your chain
 ]}
 />
 
-Then pass the chain to the `evaluate()` method. Note that the input variables of the chain must match the keys of the example inputs. In this case, the example inputs should have the form `{"text": "..."}`.
+## Evaluate
+
+To evaluate our chain we can pass it directly to the `evaluate()` / `aevaluate()` method. Note that the input variables of the chain must match the keys of the example inputs. In this case, the example inputs should have the form `{"text": "..."}`.
 
 <CodeTabs
   groupId="client-language"
@@ -111,7 +115,7 @@ Then pass the chain to the `evaluate()` method. Note that the input variables of
 
       await evaluate(chain, {
         data: datasetName,
-        evaluators: [correctLabel],
+        evaluators: [correct],
         experimentPrefix: "Toxic Queries",
       });
     `,

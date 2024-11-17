@@ -8,7 +8,7 @@ For comprehensive descriptions of every class and function see the [API referenc
 
 ## Offline evaluation
 
-Evaluate and improve your application.
+Evaluate and improve your application before deploying it.
 
 ### Run an evaluation
 
@@ -33,7 +33,7 @@ Evaluate and improve your application.
 - [Return categorical vs numerical metrics](./how_to_guides/evaluation/metric_type)
 - [Check your evaluator setup](./how_to_guides/evaluation/check_evaluator)
 
-### Configure the data
+### Configure the evaluation data
 
 - [Evaluate on a split / filtered view of a dataset](./how_to_guides/evaluation/dataset_subset)
 - [Evaluate on a specific dataset version](./how_to_guides/evaluation/dataset_version)
