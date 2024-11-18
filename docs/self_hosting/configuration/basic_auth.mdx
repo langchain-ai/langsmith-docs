@@ -39,14 +39,14 @@ Changing the JWT secret will log out your users
   basicAuth:
     enabled: true
     initialOrgAdminEmail: \<YOUR EMAIL ADDRESS\>
-    initialOrgAdminPassword: \<PASSWORD\>
+    initialOrgAdminPassword: \<PASSWORD\> # Must be at least 12 characters long and have at least one lowercase, uppercase, and symbol
     jwtSecret: \<SECRET\>`),
     DockerBlock(
       `# In your .env file
 AUTH_TYPE=mixed
 BASIC_AUTH_ENABLED=true
 INITIAL_ORG_ADMIN_EMAIL=\<YOUR EMAIL ADDRESS\>
-INITIAL_ORG_ADMIN_PASSWORD=\<PASSWORD\>
+INITIAL_ORG_ADMIN_PASSWORD=\<PASSWORD\> # Must be at least 12 characters long and have at least one lowercase, uppercase, and symbol
 BASIC_AUTH_JWT_SECRET=\<SECRET\>`
     ),
   ]}
