@@ -15,7 +15,7 @@ Once configured, you will see a login screen like this:
 
 ## With Client Secret (Recommended) {#with-secret}
 
-For providers that do _not_ support `Authorization Code with PKCE`, LangSmith Self-Hosted supports the `Autorization Code` flow with `Client Secret`.
+By default, LangSmith Self-Hosted supports the `Authorization Code` flow with `Client Secret`.
 In this version of the flow, your client secret is stored security in the LangSmith platform (not on the frontend) and used for authentication and establishing auth sessions.
 
 ### Requirements
@@ -27,9 +27,10 @@ In order to upgrade, simply remove the basic auth configuration and add the requ
 
 :::warning
 LangSmith does not support moving from SSO to basic auth mode in self-hosted at the moment.
+We also do not support moving from OAuth Mode with client secret to OAuth mode without a client secret and vice versa.
 :::
 
-- Your IdP must support the `Authorization Code` flow _without_ PKCE.
+- Your IdP must support the `Authorization Code` flow with `Client Secret`.
 - Your IdP must support using an external discovery/issuer URL. We will use this to fetch the necessary routes and keys for your IdP.
 - You must provide the `OIDC`, `email`, and `profile` scopes to LangSmith. We use these to fetch the necessary user information and email for your users.
 - You will need to set the callback URL in your IdP to `http://<host>/api/v1/oauth/custom-oidc/callback`, where host is the domain or IP you have provisioned for your LangSmith instance. This is where your IdP will redirect the user after they have authenticated.
