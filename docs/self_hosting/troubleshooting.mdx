@@ -57,3 +57,34 @@ In Docker, you will need to increase the size of the ClickHouse volume. To achie
 1. Stop your instance of LangSmith. `docker compose down`
 1. If using bind mount, you will need to increase the size of the mount point.
 1. If using a docker `volume`, you will need to allocate more space to the volume/docker.
+
+### CrashLoopBackOff (Kubernetes)
+
+This error occurs when one of the services in your deployment is crashing repeatedly. You can check the logs of the service to determine the cause of the crash.
+
+`kubectl get pods -n <namespace>`
+
+You should see a pod in the `CrashLoopBackOff` state.
+
+You can describe the pod to see the reason for the crash:
+
+`kubectl describe pod <pod-name> -n <namespace>`
+
+There are a few common reasons for this error:
+
+#### Out of memory
+
+If the pod is running out of memory, you will need to increase the memory limit for the pod. You can do this by editing the deployment and increasing the `resources.limits.memory` value.
+
+
+####
+
+You can check the logs of the pod by running:
+
+`kubectl logs <pod-name> -n <namespace>`
+
+It is also common for these pods to restart if the health check fails. You can check the health of the pod by running:
+
+`kubectl describe pod <pod-name> -n <namespace>`
+
+Under the `Events` section, you should see the reason for the restart.
