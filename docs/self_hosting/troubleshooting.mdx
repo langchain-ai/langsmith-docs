@@ -57,3 +57,27 @@ In Docker, you will need to increase the size of the ClickHouse volume. To achie
 1. Stop your instance of LangSmith. `docker compose down`
 1. If using bind mount, you will need to increase the size of the mount point.
 1. If using a docker `volume`, you will need to allocate more space to the volume/docker.
+
+### _error: Dirty database version <X>. Fix and force version._
+
+This error occurs when the ClickHouse database is in an inconsistent state with our migrations. You will need to reset to an earlier database version and then rerun your upgrade/migrations.
+
+#### Kubernetes
+
+1. Force migration to an earlier version, where version = dirty version - 1.
+
+```bash
+kubectl exec -it deployments/langsmith-backend -- bash -c 'migrate -source "file://clickhouse/migrations" -database "clickhouse://$CLICKHOUSE_HOST:$CLICKHOUSE_NATIVE_PORT?username=$CLICKHOUSE_USER&password=$CLICKHOUSE_PASSWORD&database=$CLICKHOUSE_DB&x-multi-statement=true&x-migrations-table-engine=MergeTree&secure=$CLICKHOUSE_TLS" force <version>'
+```
+
+1. Rerun your upgrade/migrations.
+
+#### Docker
+
+1. Force migration to an earlier version, where version = dirty version - 1.
+
+```bash
+docker compose exec langchain-backend migrate -source "file://clickhouse/migrations" -database "clickhouse://$CLICKHOUSE_HOST:$CLICKHOUSE_NATIVE_PORT?username=$CLICKHOUSE_USER&password=$CLICKHOUSE_PASSWORD&database=$CLICKHOUSE_DB&x-multi-statement=true&x-migrations-table-engine=MergeTree&secure=$CLICKHOUSE_TLS" force <version>
+```
+
+1. Rerun your upgrade/migrations.
