@@ -70,12 +70,18 @@ Ensure you have the following tools/items ready. Some items are marked optional:
 ## Configure your Helm Charts:
 
 1. Create a new file called `langsmith_config.yaml` with the configuration options from the previous step.
-1. At a minimum, you will need to set the following configuration options:
+1. At a minimum, you will need to set the following configuration options (using basic auth):
 
    ```yaml
    config:
      langsmithLicenseKey: "<your license key>"
      apiKeySalt: "<your api key salt>"
+     authType: mixed
+     basicAuth:
+       enabled: true
+       initialOrgAdminEmail: "admin@langchain.dev" # Change this to your admin email address
+       initialOrgAdminPassword: "secure-password" # Must be at least 12 characters long and have at least one lowercase, uppercase, and symbol
+       jwtSecret: <your jwt salt>
    ```
 
 ## Deploying to Kubernetes:
