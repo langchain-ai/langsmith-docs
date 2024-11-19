@@ -19,6 +19,7 @@ Quickly iterate on prompts and models in the LangSmith Playground.
 - [Run the playground against an OpenAI-compliant model provider/proxy](./how_to_guides/playground/custom_openai_compliant_model)
 - [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)
 - [Save settings configuration](./how_to_guides/playground/save_model_configuration)
+- [How to use the Prompt Canvas](./how_to_guides/playground/prompt_canvas)
 
 ## Few shot prompting
 
