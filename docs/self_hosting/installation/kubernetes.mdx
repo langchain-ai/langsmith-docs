@@ -34,6 +34,7 @@ Ensure you have the following tools/items ready. Some items are marked optional:
    1. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
       - We will be using a PostgreSQL database, Redis, and ClickHouse for storing traces. These services require persistent storage.
       - If using PVs in your cluster, we highly recommend setting up backups in a production environment.
+      - **We strongly encourage using a storage class backed by SSDs for better performance. We recommend 7000 IOPS and 1000 MiB/s throughput.**
 
    ```bash
    kubectl get storageclass
