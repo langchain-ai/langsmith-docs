@@ -1,0 +1,103 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# Evaluate an LLM application with attachments
+
+Attachments allow you to associate large files with your examples. This allows you to evaluate RAG applications
+over large internal documents, benchmark image analysis tools, etc.
+
+## Create a dataset with attachments
+
+To create a dataset with attachments, you need to use the `upsert_examples_multipart` method of the LangSmith client:
+
+```python
+from langsmith.client import Client
+from langsmith.schemas import ExampleUpsertWithAttachments
+
+# Pass in your api key directly, or define it in the LANGCHAIN_API_KEY environment variable
+langchain_client = Client(api_key="...")
+
+dataset = langchain_client.create_dataset(
+    dataset_name="attachment-test-dataset",
+    description="Test dataset for evals with attachments",
+)
+
+# Define the example
+example = ExampleUpsertWithAttachments(
+    dataset_id=dataset.id,
+    inputs={"question": "What were the cumulative earnings earned from online orders in the midwest during Q2?"},
+    outputs={"answer": "$123456"},
+    attachments={
+        # Each attachments is just a name with a mime type and the bytes content of the file
+        "pdf": ("application/pdf", Path("./foo_earnings.pdf").read_bytes()),
+        # We can pass multiple attachments (of different types!), as long as they have different names
+        "pptx": ("application/pptx", Path("./foo_earnings.pptx").read_bytes()),
+    },
+)
+
+# Upsert the examples
+langchain_client.upsert_examples_multipart(upserts=[example])
+```
+
+## Define a target function with attachments
+
+Now that we have a dataset that includes examples with attachments, we can define a target function to run our LLM application with the attachments.
+The target function must have two positional arguments, the first must be called `inputs` and the second must be called `attachments`.
+
+```python
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage
+
+model = ChatOpenAI(model="gpt-4o-mini")
+
+def pdf_to_image_bytes(pdf_bytes, image_format='PNG'):
+    pdf_document = fitz.open(stream=pdf_bytes, filetype="pdf")
+    images = []
+    for page in pdf_document:
+        pix = page.get_pixmap()
+        img_bytes = BytesIO()
+        pix.pil_save(img_bytes, format=image_format)
+        # Encode the bytes in base64
+        base64_bytes = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
+        images.append(base64_bytes)
+    pdf_document.close()
+    return images
+
+
+def target(inputs, attachments):
+    system_message = SystemMessage(
+        content="The images are of the pdf that the question is referencing. Use the images to generate your answer."
+    )
+    # The attachment tuple returned contains the S3 url first and then a reader of the bytes
+    pdf_s3_url, pdf_reader = attachments['pdf']
+    images = pdf_to_image_bytes(pdf_reader.read())
+    human_message = HumanMessage(
+        content=[
+            {"type": "text", "text": inputs["question"]},
+        ] + [{"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image}"}} for image in images],
+    )
+    messages = [system_message, human_message]
+    return {"answer": model.invoke(messages).content}
+```
+
+## Run an evaluation
+
+We can then run an evaluation as usual, by passing in the target function to the `evaluate` method:
+
+```python
+# We can optionally define an evaluator to use
+def evaluator(run, example):
+    score = int(str(example.outputs["answer"]) in run.outputs["answer"])
+    return {"key": "correctness", "score": score}
+
+evaluate(
+    target,
+    data="attachment-test-dataset",
+    client=langchain_client,
+)
+```
