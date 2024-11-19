@@ -22,7 +22,8 @@ In this version of the flow, your client secret is stored security in the LangSm
 
 :::note
 You may upgrade a [basic auth](./basic_auth.mdx) installation to this mode, but not a [none auth](/reference/authentication_authorization/authentication_methods.mdx#none) installation.
-In order to upgrade, simply remove the basic auth configuration and add the required configuration parameters as shown below. Users may then login via OAuth _only_.
+In order to upgrade, simply remove the basic auth configuration and add the required configuration parameters as shown below. Users may then login via OAuth _only_.  
+**In order to maintain access post-upgrade, you must have access to login via OAuth using an email address that previously logged in via basic auth.**
 :::
 
 :::warning
