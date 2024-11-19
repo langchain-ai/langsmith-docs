@@ -303,23 +303,18 @@ Microsoft Presidio is a data protection and de-identification SDK. The implement
 
 ```python
 import openai
-from dotenv import load_dotenv
 from langsmith import Client
 from langsmith.wrappers import wrap_openai
 from langchain_experimental.data_anonymizer import PresidioAnonymizer
 
-
-load_dotenv()
-
 anonymizer = PresidioAnonymizer()
 
-def recursive_anonymize(data, data_type: str, depth=10):
+def recursive_anonymize(data, depth=10):
     """
     Recursively traverse the data structure and anonymize sensitive information.
 
     Args:
         data (any): The input data to be anonymized.
-        data_type (str): A label indicating whether the data is 'Inputs' or 'Outputs'.
         depth (int): The current recursion depth to prevent excessive recursion.
 
     Returns:
@@ -331,13 +326,13 @@ def recursive_anonymize(data, data_type: str, depth=10):
     if isinstance(data, dict):
         anonymized_dict = {}
         for k, v in data.items():
-            anonymized_value = recursive_anonymize(v, data_type, depth - 1)
+            anonymized_value = recursive_anonymize(v, depth - 1)
             anonymized_dict[k] = anonymized_value
         return anonymized_dict
     elif isinstance(data, list):
         anonymized_list = []
         for item in data:
-            anonymized_item = recursive_anonymize(item, data_type, depth - 1)
+            anonymized_item = recursive_anonymize(item, depth - 1)
             anonymized_list.append(anonymized_item)
         return anonymized_list
     elif isinstance(data, str):
@@ -346,40 +341,15 @@ def recursive_anonymize(data, data_type: str, depth=10):
     else:
         return data
 
-def hide_inputs(inputs: dict) -> dict:
-    """
-    Anonymize and print the inputs before hiding.
-
-    Args:
-        inputs (dict): The original input data.
-
-    Returns:
-        dict: The anonymized input data.
-    """
-    return recursive_anonymize(inputs, "Inputs")
-
-
-def hide_outputs(outputs: dict) -> dict:
-    """
-    Anonymize and print the outputs before hiding.
-
-    Args:
-        outputs (dict): The original output data.
-
-    Returns:
-        dict: The anonymized output data.
-    """
-    return recursive_anonymize(outputs, "Outputs")
-
 # wrap the openai client
 openai_client = wrap_openai(openai.Client())
 
 # initialize the langsmith client with the anonymization functions
 langsmith_client = Client(
-  hide_inputs=hide_inputs, hide_outputs=hide_outputs
+  hide_inputs=recursive_anonymize, hide_outputs=recursive_anonymize
 )
 
-# The trace produced will have its metadata present, but the inputs will be hidden
+# The trace produced will have its metadata present, but the inputs and outputs will be anonymized
 response_with_anonymization = openai_client.chat.completions.create(
   model="gpt-4o-mini",
   messages=[
@@ -389,7 +359,7 @@ response_with_anonymization = openai_client.chat.completions.create(
   langsmith_extra={"client": langsmith_client},
 )
 
-# The trace produced will not have hidden inputs and outputs
+# The trace produced will not have anonymized inputs and outputs
 response_without_anonymization = openai_client.chat.completions.create(
   model="gpt-4o-mini",
   messages=[
@@ -413,11 +383,8 @@ Comprehend is a natural language processing service that can detect personally i
 # need to set up aws credentials, install boto3, and install langsmith
 import openai
 import boto3
-from dotenv import load_dotenv
 from langsmith import Client
 from langsmith.wrappers import wrap_openai
-
-load_dotenv()
 
 comprehend = boto3.client('comprehend', region_name='us-east-1')
 
@@ -468,13 +435,12 @@ def detect_pii(text):
         print(f"Error detecting PII: {e}")
         return []
 
-def recursive_anonymize(data, data_type: str, depth=10):
+def recursive_anonymize(data, depth=10):
     """
     Recursively traverse the data structure and anonymize sensitive information.
 
     Args:
         data (any): The input data to be anonymized.
-        data_type (str): A label indicating whether the data is 'Inputs' or 'Outputs'.
         depth (int): The current recursion depth to prevent excessive recursion.
 
     Returns:
@@ -486,13 +452,13 @@ def recursive_anonymize(data, data_type: str, depth=10):
     if isinstance(data, dict):
         anonymized_dict = {}
         for k, v in data.items():
-            anonymized_value = recursive_anonymize(v, data_type, depth - 1)
+            anonymized_value = recursive_anonymize(v, depth - 1)
             anonymized_dict[k] = anonymized_value
         return anonymized_dict
     elif isinstance(data, list):
         anonymized_list = []
         for item in data:
-            anonymized_item = recursive_anonymize(item, data_type, depth - 1)
+            anonymized_item = recursive_anonymize(item, depth - 1)
             anonymized_list.append(anonymized_item)
         return anonymized_list
     elif isinstance(data, str):
@@ -502,40 +468,15 @@ def recursive_anonymize(data, data_type: str, depth=10):
     else:
         return data
 
-def hide_inputs(inputs: dict) -> dict:
-    """
-    Anonymize and print the inputs before hiding.
-
-    Args:
-        inputs (dict): The original input data.
-
-    Returns:
-        dict: The anonymized input data.
-    """
-    return recursive_anonymize(inputs, "Inputs")
-
-
-def hide_outputs(outputs: dict) -> dict:
-    """
-    Anonymize and print the outputs before hiding.
-
-    Args:
-        outputs (dict): The original output data.
-
-    Returns:
-        dict: The anonymized output data.
-    """
-    return recursive_anonymize(outputs, "Outputs")
-
 # wrap the openai client
 openai_client = wrap_openai(openai.Client())
 
 # initialize the langsmith client with the anonymization functions
 langsmith_client = Client(
-  hide_inputs=hide_inputs, hide_outputs=hide_outputs
+  hide_inputs=recursive_anonymize, hide_outputs=recursive_anonymize
 )
 
-# The trace produced will have its metadata present, but the inputs will be hidden
+# The trace produced will have its metadata present, but the inputs and outputs will be anonymized
 response_with_anonymization = openai_client.chat.completions.create(
   model="gpt-4o-mini",
   messages=[
@@ -545,7 +486,7 @@ response_with_anonymization = openai_client.chat.completions.create(
   langsmith_extra={"client": langsmith_client},
 )
 
-# The trace produced will not have hidden inputs and outputs
+# The trace produced will not have anonymized inputs and outputs
 response_without_anonymization = openai_client.chat.completions.create(
   model="gpt-4o-mini",
   messages=[
@@ -568,11 +509,8 @@ If you would prefer to not use an external anonymizer, you can use regex to mask
 ```python
 import re
 import openai
-from dotenv import load_dotenv
 from langsmith import Client
 from langsmith.wrappers import wrap_openai
-
-load_dotenv()
 
 # Define regex patterns for various PII
 SSN_PATTERN = re.compile(r'\b\d{3}-\d{2}-\d{4}\b')
@@ -603,13 +541,12 @@ def regex_anonymize(text):
     text = FULL_NAME_PATTERN.sub('[REDACTED NAME]', text)
     return text
 
-def recursive_anonymize(data, data_type: str, depth=10):
+def recursive_anonymize(data, depth=10):
     """
     Recursively traverse the data structure and anonymize sensitive information.
 
     Args:
         data (any): The input data to be anonymized.
-        data_type (str): A label indicating whether the data is 'Inputs' or 'Outputs'.
         depth (int): The current recursion depth to prevent excessive recursion.
 
     Returns:
@@ -621,13 +558,13 @@ def recursive_anonymize(data, data_type: str, depth=10):
     if isinstance(data, dict):
         anonymized_dict = {}
         for k, v in data.items():
-            anonymized_value = recursive_anonymize(v, data_type, depth - 1)
+            anonymized_value = recursive_anonymize(v, depth - 1)
             anonymized_dict[k] = anonymized_value
         return anonymized_dict
     elif isinstance(data, list):
         anonymized_list = []
         for item in data:
-            anonymized_item = recursive_anonymize(item, data_type, depth - 1)
+            anonymized_item = recursive_anonymize(item, depth - 1)
             anonymized_list.append(anonymized_item)
         return anonymized_list
     elif isinstance(data, str):
@@ -636,39 +573,15 @@ def recursive_anonymize(data, data_type: str, depth=10):
     else:
         return data
 
-def hide_inputs(inputs: dict) -> dict:
-    """
-    Anonymize the inputs before hiding.
-
-    Args:
-        inputs (dict): The original input data.
-
-    Returns:
-        dict: The anonymized input data.
-    """
-    return recursive_anonymize(inputs, "Inputs")
-
-def hide_outputs(outputs: dict) -> dict:
-    """
-    Anonymize the outputs before hiding.
-
-    Args:
-        outputs (dict): The original output data.
-
-    Returns:
-        dict: The anonymized output data.
-    """
-    return recursive_anonymize(outputs, "Outputs")
-
 # Wrap the OpenAI client
 openai_client = wrap_openai(openai.Client())
 
 # Initialize the LangSmith client with the anonymization functions
 langsmith_client = Client(
-    hide_inputs=hide_inputs, hide_outputs=hide_outputs
+    hide_inputs=recursive_anonymize, hide_outputs=recursive_anonymize
 )
 
-# The trace produced will have its metadata present, but the inputs will be hidden
+# The trace produced will have its metadata present, but the inputs and outputs will be anonymized
 response_with_anonymization = openai_client.chat.completions.create(
     model="gpt-4o-mini",
     messages=[
@@ -678,7 +591,7 @@ response_with_anonymization = openai_client.chat.completions.create(
     langsmith_extra={"client": langsmith_client},
 )
 
-# The trace produced will not have hidden inputs and outputs
+# The trace produced will not have anonymized inputs and outputs
 response_without_anonymization = openai_client.chat.completions.create(
     model="gpt-4o-mini",
     messages=[
