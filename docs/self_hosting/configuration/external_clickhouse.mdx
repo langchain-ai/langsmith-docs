@@ -33,13 +33,17 @@ Additionally, sensitive information can be configured to be not stored in Clickh
 
 - A provisioned ClickHouse instance that your LangSmith application will have network access to (see above for options).
 - A user with admin access to the ClickHouse database. This user will be used to create the necessary tables, indexes, and views.
-- We only support standalone ClickHouse (not clustered or replicated) or ClickHouse Cloud.
+- We support both standalone ClickHouse and externally managed clustered deployments. For clustered deployments, ensure all nodes are running the same version. Note that clustered setups are not supported with LangSmith-managed ClickHouse installations.
 - We only support ClickHouse versions >= 23.9. Use of ClickHouse versions >= 24.2 requires LangSmith v0.6 or later. See the [LangSmith release notes](../release_notes) for more information.
 
 ## LangSmith-managed ClickHouse
 
 - If using LangSmith-managed ClickHouse, you will need to set up a VPC peering connection between the LangSmith VPC and the ClickHouse VPC. Please reach out to [support@langchain.dev](mailto:support@langchain.dev) for more information.
 - You will also need to set up Blob Storage. You can read more about Blob Storage in the [Blob Storage documentation](/self_hosting/configuration/blob_storage).
+
+:::note
+ClickHouse installations managed by LangSmith use a SharedMerge engine, which automatically clusters them and separates compute from storage.
+:::
 
 ## Parameters
 
@@ -51,6 +55,7 @@ You will need to provide several parameters to your LangSmith installation to co
 - Database: The name of the ClickHouse database that LangSmith should use
 - Username: The username to use to connect to the ClickHouse database
 - Password: The password to use to connect to the ClickHouse database
+- Cluster (Optional): The name of the ClickHouse cluster if using an external Clickhouse cluster. When set, LangSmith will run migrations on the cluster and replicate data across instances.
 
 ## Configuration
 
@@ -69,6 +74,7 @@ With these parameters in hand, you can configure your LangSmith instance to use 
       password: "password"
       database: "default"
       tls: false
+      cluster: "my_cluster_name"  # Optional: Set this if using an external Clickhouse cluster
     `),
     DockerBlock(
       `# In your .env file
@@ -79,9 +85,22 @@ CLICKHOUSE_PORT=8123 # Change to your Clickhouse port if needed
 CLICKHOUSE_TLS=false # Change to true if you are using TLS to connect to Clickhouse. Otherwise, leave it as is
 CLICKHOUSE_PASSWORD=password # Change to your Clickhouse password if needed
 CLICKHOUSE_NATIVE_PORT=9000 # Change to your Clickhouse native port if needed
+CLICKHOUSE_CLUSTER=my_cluster_name # Optional: Set this if using an external Clickhouse cluster
 `
     ),
   ]}
 />
 
 Once configured, you should be able to reinstall your LangSmith instance. If everything is configured correctly, your LangSmith instance should now be using your external ClickHouse database.
+
+:::note
+Important considerations for clustered deployments:
+
+- Clustered setups must be configured on a fresh schema - existing standalone ClickHouse instances cannot be converted to clustered mode.
+- Clustering is only supported with externally managed ClickHouse deployments. It is not compatible with LangSmith-managed ClickHouse installations as these do not include required ZooKeeper configurations.
+- When using a clustered deployment, LangSmith will automatically:
+  - Run database migrations across all nodes in the cluster
+  - Configure tables for data replication across the cluster
+
+Note that while data is replicated across nodes, LangSmith does not configure distributed tables or handle query routing - queries will be directed to the specified host. You will need to handle any load balancing or query distribution at the infrastructure level if desired.
+:::
