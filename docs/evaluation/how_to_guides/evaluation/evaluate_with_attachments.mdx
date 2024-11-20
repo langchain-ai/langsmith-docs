@@ -30,7 +30,8 @@ When a file path is passed, LangSmith will stream the file content directly from
 
 ```python
 from langsmith import Client
-from langsmith.schemas import ExampleUpsertWithAttachments
+from langsmith.schemas import ExampleUpsertWithAttachments, Attachment
+from pathlib import Path
 
 # Define the LANGCHAIN_API_KEY environment variable with your api key
 langsmith_client = Client()
@@ -52,6 +53,8 @@ example = ExampleUpsertWithAttachments(
         "my_pptx": ("application/pptx", Path("./foo_earnings.pptx").read_bytes()),
         # We can also pass in the file path directly. This is recommended for large files, as it avoids loading the entire file into memory
         "my_txt": ("text/plain", Path("./foo_earnings.txt")),
+        # We can also explicitly define an Attachment object if we want
+        "my_img": Attachment(mime_type="image/png", data=Path("./foo_earnings.img").read_bytes())
     },
 )
 
@@ -104,12 +107,16 @@ def pdf_qa(inputs, attachments):
     )
     # The attachment tuple returned contains the presigned url first and then a reader of the bytes
     # Either can be used to read the bytes of the file
-    pdf_signed_url, pdf_reader = attachments['pdf']
-    images = pdf_to_image_bytes(pdf_reader.read())
+    pdf_signed_url, pdf_reader = attachments['my_pdf']
+    pdf_images = pdf_to_image_bytes(pdf_reader.read())
+    image_signed_url, image_reader = attachments['my_image']
     human_message = HumanMessage(
         content=[
             {"type": "text", "text": inputs["question"]},
-        ] + [{"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image}"}} for image in images],
+        ] + [{"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image}"}} for image in pdf_images],
+        # Certain providers also allow you to just pass in the URL for certain files
+        # instead of having to convert to a base64 string first
+        + [{"type": "image_url", "image_url": {"url": image_signed_url}}]
     )
     messages = [system_message, human_message]
     return {"answer": model.invoke(messages).content}
@@ -129,5 +136,19 @@ evaluate(
     target=pdf_qa,
     data="attachment-test-dataset",
     client=langsmith_client,
+)
+```
+
+We could also use the asynchronous `aevaluate` method if we wanted to:
+
+```python
+async def atarget(inputs, attachments):
+    # Do some async thing ...
+    return {"answer": "my-answer"}
+    
+await aevaluate(
+    target=atarget,
+    data="attachment-test-dataset",
+    client=langsmith_client
 )
 ```
