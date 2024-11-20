@@ -299,7 +299,7 @@ You can combine rule-based masking with various anonymizers to scrub sensitive i
 
 ### Regex
 
-If you would prefer to not use an external anonymizer, you can use regex to mask inputs and outputs. The implementation below uses regex to mask email addresses, phone numbers, full names, credit card numbers, and SSNs.
+You can use regex to mask inputs and outputs before they are sent to LangSmith. The implementation below masks email addresses, phone numbers, full names, credit card numbers, and SSNs.
 
 ```python
 import re
@@ -493,7 +493,7 @@ The non-anonymized run will look like this in LangSmith:
 
 ### Amazon Comprehend
 
-Comprehend is a natural language processing service that can detect personally identifiable information. The implementation below uses Comprehend to redact personally identifiable information from inputs and outputs before they are sent to LangSmith. For up to date information, please refer to Comprehend's [official documentation](https://docs.aws.amazon.com/comprehend/latest/APIReference/API_DetectPiiEntities.html).
+Comprehend is a natural language processing service that can detect personally identifiable information. The implementation below uses Comprehend to anonymize inputs and outputs before they are sent to LangSmith. For up to date information, please refer to Comprehend's [official documentation](https://docs.aws.amazon.com/comprehend/latest/APIReference/API_DetectPiiEntities.html).
 
 To use Comprehend, install [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html):
 
