@@ -4,15 +4,30 @@ import {
 
 # Evaluate applications with large file inputs
 
-Attachments allow you to associate large files with your examples. This allows you to evaluate RAG applications
-over large internal documents, benchmark image analysis tools, etc.
+In addition to supporting [file attachments with traces](../../../observability/how_to_guides/tracing/upload_files_with_traces), LangSmith supports arbitrary file attachments with your examples, which you can consume when you run experiments.
+
+:::tip Using separate attachments outside of inputs/outputs
+When dealing with large files, it's recommended to upload them as attachments rather than embedding them in your JSON inputs or outputs via base64 encoding.
+
+Attachments are more efficient because base64 encoding increases data size, leading to slower uploads and downloads.
+This also avoid potential performance bottlenecks with parsing large JSON payloads.
+
+Finally, attachments are more user-friendly in the LangSmith UI, as they are rendered as files with previews, rather than as base64-encoded strings.
+:::
 
 ## Create a dataset with attachments
 
-Attachments allow you to host large files outside of your inputs/outputs, which means faster loading times as well
-as nicer rendering of files in the LangSmith UI. You can think of it like attaching a file to an email instead 
-of copy pasting the entire contents into your email body.
-To create a dataset with attachments, you need to use the `upsert_examples_multipart` method of the LangSmith client:
+### SDK
+To create a dataset with attachments using the SDK, you need to use the `upsert_examples_multipart` method of the LangSmith client.
+This method allows you to pass in a list of examples with attachments.
+
+Each attachment is represented as a dictionary, mapping the attachment name to a tuple containing the MIME type and the file content.
+The file content can be either a path to the file or the bytes content of the file.
+
+:::note Working with large files
+It is typically recommended to pass in the file path directly for large files, as reading the file content into memory can be inefficient.
+When a file path is passed, LangSmith will stream the file content directly from the path, rather than loading the entire file into memory.
+:::
 
 ```python
 from langsmith import Client
@@ -33,11 +48,11 @@ example = ExampleUpsertWithAttachments(
     outputs={"answer": "$123456"},
     attachments={
         # Each attachments is just a name with a mime type and the path or bytes content of the file
-        "pdf": ("application/pdf", Path("./foo_earnings.pdf").read_bytes()),
+        "my_pdf": ("application/pdf", Path("./foo_earnings.pdf").read_bytes()),
         # We can pass multiple attachments (of different types!), as long as they have different names
-        "pptx": ("application/pptx", Path("./foo_earnings.pptx").read_bytes()),
-        # Can also just pass in the path
-        "txt": ("text/plain", Path("./foo_earnings.txt")),
+        "my_pptx": ("application/pptx", Path("./foo_earnings.pptx").read_bytes()),
+        # We can also pass in the file path directly. This is recommended for large files, as it avoids loading the entire file into memory
+        "my_txt": ("text/plain", Path("./foo_earnings.txt")),
     },
 )
 
@@ -45,10 +60,22 @@ example = ExampleUpsertWithAttachments(
 langsmith_client.upsert_examples_multipart(upserts=[example])
 ```
 
+Once you upload examples with attachments, you can view them in the LangSmith UI. Each attachment will be rendered as a file with a preview, making it easy to inspect the contents.
+![](./static/attachments_with_examples.png)
+
+
 ## Define a target function with attachments
 
-Now that we have a dataset that includes examples with attachments, we can define a target function to run our LLM application with the attachments.
-The target function must have two positional arguments, the first must be called `inputs` and the second must be called `attachments`.
+Now that we have a dataset that includes examples with attachments, we can define a target function to run our LLM application on these examples.
+The target function must have two positional arguments in order to consume the attachments associated with the example, the first must be called `inputs` and the second must be called `attachments`.
+
+* The `inputs` argument is a dictionary that contains the input data for the example, excluding the attachments.
+* The `attachments` argument is a dictionary that maps the attachment name to a tuple containing a presigned url and a reader of the bytes content of the file. Either can be used to read the bytes of the file:
+    ```
+    {
+        "attachment_name": (presigned_url, reader)
+    }
+    ```
 
 ```python
 from langchain_openai import ChatOpenAI
@@ -77,8 +104,9 @@ def pdf_qa(inputs, attachments):
     system_message = SystemMessage(
         content="The images are of the pdf that the question is referencing. Use the images to generate your answer."
     )
-    # The attachment tuple returned contains the S3 url first and then a reader of the bytes
-    pdf_s3_url, pdf_reader = attachments['pdf']
+    # The attachment tuple returned contains the presigned url first and then a reader of the bytes
+    # Either can be used to read the bytes of the file
+    pdf_signed_url, pdf_reader = attachments['pdf']
     images = pdf_to_image_bytes(pdf_reader.read())
     human_message = HumanMessage(
         content=[
