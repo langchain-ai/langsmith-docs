@@ -324,15 +324,11 @@ def regex_anonymize(text):
     Returns:
         str: The anonymized text.
     """
-    # Replace SSNs with a placeholder
+    # Replace sensitive information with placeholders
     text = SSN_PATTERN.sub('[REDACTED SSN]', text)
-    # Replace credit card numbers with a placeholder
     text = CREDIT_CARD_PATTERN.sub('[REDACTED CREDIT CARD]', text)
-    # Replace email addresses with a placeholder
     text = EMAIL_PATTERN.sub('[REDACTED EMAIL]', text)
-    # Replace phone numbers with a placeholder
     text = PHONE_PATTERN.sub('[REDACTED PHONE]', text)
-    # Replace full names with a placeholder
     text = FULL_NAME_PATTERN.sub('[REDACTED NAME]', text)
     return text
 
