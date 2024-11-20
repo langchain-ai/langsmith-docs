@@ -402,13 +402,23 @@ The non-anonymized run will look like this in LangSmith:
 
 Microsoft Presidio is a data protection and de-identification SDK. The implementation below uses Presidio to anonymize inputs and outputs before they are sent to LangSmith. For up to date information, please refer to Presidio's [official documentation](https://microsoft.github.io/presidio/).
 
+To use Presidio and its spaCy model, install the following:
+
+```bash
+pip install presidio-analyzer
+pip install presidio-anonymizer
+python -m spacy download en_core_web_lg
+```
+
 ```python
 import openai
 from langsmith import Client
 from langsmith.wrappers import wrap_openai
-from langchain_experimental.data_anonymizer import PresidioAnonymizer
+from presidio_anonymizer import AnonymizerEngine
+from presidio_analyzer import AnalyzerEngine
 
-anonymizer = PresidioAnonymizer()
+anonymizer = AnonymizerEngine()
+analyzer = AnalyzerEngine()
 
 def recursive_anonymize(data, depth=10):
     """
@@ -437,7 +447,12 @@ def recursive_anonymize(data, depth=10):
             anonymized_list.append(anonymized_item)
         return anonymized_list
     elif isinstance(data, str):
-        anonymized_data = anonymizer.anonymize(data)
+        results = analyzer.analyze(
+            text=data,
+            entities=["PERSON", "PHONE_NUMBER", "EMAIL_ADDRESS", "US_SSN"],
+            language='en'
+        )
+        anonymized_data = anonymizer.anonymize(text=data, analyzer_results=results)
         return anonymized_data
     else:
         return data
@@ -480,8 +495,15 @@ The non-anonymized run will look like this in LangSmith:
 
 Comprehend is a natural language processing service that can detect personally identifiable information. The implementation below uses Comprehend to redact personally identifiable information from inputs and outputs before they are sent to LangSmith. For up to date information, please refer to Comprehend's [official documentation](https://docs.aws.amazon.com/comprehend/latest/APIReference/API_DetectPiiEntities.html).
 
+To use Comprehend, install [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html):
+
+```bash
+pip install boto3
+```
+
+You will also need to set up credentials in AWS and authenticate using the AWS CLI. Follow the instructions [here](https://docs.aws.amazon.com/comprehend/latest/dg/setting-up.html).
+
 ```python
-# need to set up aws credentials, install boto3, and install langsmith
 import openai
 import boto3
 from langsmith import Client
