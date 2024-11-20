@@ -139,13 +139,13 @@ evaluate(
 )
 ```
 
-We could also use the asynchronous `aevaluate` method if we wanted to:
+LangSmith also supports using the asynchronous version of the `evaluate` method, `aevaluate`, to run evaluations asynchronously:
 
 ```python
 async def atarget(inputs, attachments):
-    # Do some async thing ...
+    # Run an asynchronous operation
     return {"answer": "my-answer"}
-    
+
 await aevaluate(
     target=atarget,
     data="attachment-test-dataset",
