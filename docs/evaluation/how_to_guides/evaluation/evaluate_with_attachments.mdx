@@ -1,6 +1,4 @@
-import {
-  python,
-} from "@site/src/components/InstructionsWithCode";
+import { python } from "@site/src/components/InstructionsWithCode";
 
 # Evaluate applications with large file inputs
 
@@ -18,6 +16,7 @@ Finally, attachments are more user-friendly in the LangSmith UI, as they are ren
 ## Create a dataset with attachments
 
 ### SDK
+
 To create a dataset with attachments using the SDK, you need to use the `upsert_examples_multipart` method of the LangSmith client.
 This method allows you to pass in a list of examples with attachments.
 
@@ -63,19 +62,18 @@ langsmith_client.upsert_examples_multipart(upserts=[example])
 Once you upload examples with attachments, you can view them in the LangSmith UI. Each attachment will be rendered as a file with a preview, making it easy to inspect the contents.
 ![](./static/attachments_with_examples.png)
 
-
 ## Define a target function with attachments
 
 Now that we have a dataset that includes examples with attachments, we can define a target function to run our LLM application on these examples.
 The target function must have two positional arguments in order to consume the attachments associated with the example, the first must be called `inputs` and the second must be called `attachments`.
 
-* The `inputs` argument is a dictionary that contains the input data for the example, excluding the attachments.
-* The `attachments` argument is a dictionary that maps the attachment name to a tuple containing a presigned url and a reader of the bytes content of the file. Either can be used to read the bytes of the file:
-    ```
-    {
-        "attachment_name": (presigned_url, reader)
-    }
-    ```
+- The `inputs` argument is a dictionary that contains the input data for the example, excluding the attachments.
+- The `attachments` argument is a dictionary that maps the attachment name to a tuple containing a presigned url and a reader of the bytes content of the file. Either can be used to read the bytes of the file:
+  ```
+  {
+      "attachment_name": (presigned_url, reader)
+  }
+  ```
 
 ```python
 from langchain_openai import ChatOpenAI
