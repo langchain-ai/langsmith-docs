@@ -25,6 +25,7 @@ Evaluate and improve your application before deploying it.
 
 - [Define a custom evaluator](./how_to_guides/evaluation/custom_evaluator)
 - [Define an LLM-as-a-judge evaluator](./how_to_guides/evaluation/llm_as_judge)
+- [Define a pairwise evaluator](./how_to_guides/evaluation/evaluate_pairwise)
 - [Use an off-the-shelf evaluator via the SDK (Python only)](./how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators)
 - [Use an off-the-shelf evaluator via the UI](./how_to_guides/evaluation/builtin_evaluators)
 - [Evaluate aggregate experiment results](./how_to_guides/evaluation/summary)

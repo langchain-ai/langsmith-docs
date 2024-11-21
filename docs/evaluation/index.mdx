@@ -8,24 +8,11 @@ import {
   CodeTabs,
   python,
   typescript,
-  PythonBlock,
   ShellBlock,
-  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
-import {
-  LangChainInstallationCodeTabs,
-  LangChainQuickStartCodeTabs,
-  ConfigureEnvironmentCodeTabs,
-  RunTreeQuickStartCodeTabs,
-  ConfigureSDKEnvironmentCodeTabs,
-  PythonSDKTracingCode,
-  TypeScriptSDKTracingCode,
-} from "@site/src/components/QuickStart";
-import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
-import DocCardList from "@theme/DocCardList";
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
-# Evaluation Quick Start
+# Evaluation quick start
 
 This quick start will get you up and running with our evaluation SDK and Experiments UI.
 
@@ -82,12 +69,12 @@ export LANGCHAIN_API_KEY=<your-api-key>`),
 
     # 3. Define the interface to your app
     def chatbot(inputs: dict) -> dict:
-        return {"answer": inputs["question"] + "is a good question. I don't know the answer."}
+        return {"answer": inputs["question"] + " is a good question. I don't know the answer."}
 
     # 4. Run an evaluation
     evaluate(
         chatbot,
-        data=dataset.name,
+        data=dataset,
         evaluators=[is_concise],
         experiment_prefix="my first experiment "
     )
@@ -127,5 +114,13 @@ groupId="client-language"
 
 ## 5. View Experiments UI
 
-Click the link printed out by your evaluation run to access the LangSmith experiments UI,
-and explore the results of your evaluation.
+Click the link printed out by your evaluation run to access the LangSmith Experiments UI, and explore the results of your evaluation.
+
+![](./how_to_guides/evaluation/static/view_experiment.gif)
+
+## Next steps
+
+For conceptual explanations see the [Conceptual guide](./evaluation/concepts).
+See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
+For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
+For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).

@@ -1,4 +1,4 @@
-# Concepts
+# Evaluation concepts
 
 The pace of AI application development is often rate-limited by high-quality evaluations because there is a paradox of choice. Developers often wonder how to engineer their prompt or which LLM best balances accuracy, latency, and cost. High quality evaluations can help you rapidly answer these types of questions with confidence.
 
@@ -130,7 +130,8 @@ See documentation on our workflow to audit and manually correct evaluator scores
 
 ### Pairwise
 
-Pairwise evaluators pick the better of two task outputs based upon some criteria.
+Pairwise evaluators allow you to compare the outputs of two versions of an application.
+Think [LMSYS Chatbot Arena](https://chat.lmsys.org/) - this is the same concept, but applied to AI applications more generally, not just models!
 This can use either a heuristic ("which response is longer"), an LLM (with a specific pairwise prompt), or human (asking them to manually annotate examples).
 
 **When should you use pairwise evaluation?** Pairwise evaluation is helpful when it is difficult to directly score an LLM output, but easier to compare two outputs.
