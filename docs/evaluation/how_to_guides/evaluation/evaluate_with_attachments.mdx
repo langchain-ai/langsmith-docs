@@ -65,6 +65,11 @@ langsmith_client.upsert_examples_multipart(upserts=[example])
 Once you upload examples with attachments, you can view them in the LangSmith UI. Each attachment will be rendered as a file with a preview, making it easy to inspect the contents.
 ![](./static/attachments_with_examples.png)
 
+### From existing runs
+
+You can also add examples with attachments from existing runs that contain attachments.
+To do learn how to do so you can read [this guide](./../datasets/manage_datasets_in_application#add-runs-from-the-tracing-project-ui).
+
 ## Define a target function with attachments
 
 Now that we have a dataset that includes examples with attachments, we can define a target function to run our LLM application on these examples.
