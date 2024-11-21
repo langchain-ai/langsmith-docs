@@ -401,6 +401,7 @@ def presidio_anonymize(data):
         message['content'] = anonymized_result.text
     return data
 
+# wrap the openai client
 openai_client = wrap_openai(openai.Client())
 
 # initialize the langsmith client with the anonymization functions
@@ -489,7 +490,6 @@ def redact_pii_entities(text, entities):
 
     return redacted_text
 
-# Function to detect PII using AWS Comprehend
 def detect_pii(text):
     """
     Detect PII entities in the given text using AWS Comprehend.
