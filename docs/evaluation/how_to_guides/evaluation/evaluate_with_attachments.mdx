@@ -127,11 +127,6 @@ def pdf_qa(inputs, attachments):
 We can then run an evaluation as usual, by passing in the target function to the `evaluate` method:
 
 ```python
-# We can optionally define an evaluator to use
-def evaluator(outputs: dict, reference_outputs: dict):
-    score = int(str(outputs["answer"]) in reference_outputs["answer"])
-    return {"key": "correctness", "score": score}
-
 evaluate(
     target=pdf_qa,
     data="attachment-test-dataset",
@@ -150,5 +145,68 @@ await aevaluate(
     target=atarget,
     data="attachment-test-dataset",
     client=langsmith_client
+)
+```
+
+### Use attachments in your evaluator
+
+In addition to using attachments inside of your target function, you can also use them inside of your evaluators as follows:
+
+```python
+from pydantic import BaseModel, Field
+
+class Hallucination(BaseModel):
+    """Hallucination detection"""
+    reason: str = Field(description="Why you believe there was oor wasn't hallucination")
+    hallucination: int = Field(ge=0, le=1, description="1 if hallucination detected, 0 if not")
+
+
+def hallucination_evaluator(outputs: dict, attachments: dict):
+    image_signed_url, image_reader = attachments['my_image']
+    message = HumanMessage(
+        content = [
+            {"type": "text", "text": f"Does this description: {} of the following image contain any hallucinations?"},
+            {"type": "image_url", "image_url": {"url": image_signed_url}}
+        ]
+    )
+    hallucination_model = model.with_structured_output(Hallucination)
+    return {"key": "hallincation", "score": hallucination_model.invoke(message).hallucination }
+
+evaluate(
+    target=pdf_qa,
+    data="attachment-test-dataset",
+    evaluators=[hallucination_evaluator]
+    client=langsmith_client,
+)
+```
+
+We can also do this asynchronously:
+
+
+```python
+from pydantic import BaseModel, Field
+
+class Hallucination(BaseModel):
+    """Hallucination detection"""
+    reason: str = Field(description="Why you believe there was oor wasn't hallucination")
+    hallucination: int = Field(ge=0, le=1, description="1 if hallucination detected, 0 if not")
+
+
+async def ahallucination_evaluator(outputs: dict, attachments: dict):
+    image_signed_url, image_reader = attachments['my_image']
+    message = HumanMessage(
+        content = [
+            {"type": "text", "text": f"Does this description: {} of the following image contain any hallucinations?"},
+            {"type": "image_url", "image_url": {"url": image_signed_url}}
+        ]
+    )
+    hallucination_model = model.with_structured_output(Hallucination)
+    return {"key": "hallincation", "score": hallucination_model.invoke(message).hallucination }
+
+await aevaluate(
+    target=atarget,
+    data="attachment-test-dataset",
+    evaluators=[ahallucination_evaluator]
+    client=langsmith_client,
 )
 ```
