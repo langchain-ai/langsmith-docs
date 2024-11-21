@@ -298,7 +298,6 @@ def recursive_anonymize(data, depth=10):
     else:
         return data
 
-# Wrap the OpenAI client
 openai_client = wrap_openai(openai.Client())
 
 # Initialize the LangSmith client with the anonymization functions
