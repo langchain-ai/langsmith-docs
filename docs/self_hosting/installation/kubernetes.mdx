@@ -34,6 +34,7 @@ Ensure you have the following tools/items ready. Some items are marked optional:
    1. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
       - We will be using a PostgreSQL database, Redis, and ClickHouse for storing traces. These services require persistent storage.
       - If using PVs in your cluster, we highly recommend setting up backups in a production environment.
+      - **We strongly encourage using a storage class backed by SSDs for better performance. We recommend 7000 IOPS and 1000 MiB/s throughput.**
 
    ```bash
    kubectl get storageclass
@@ -70,12 +71,18 @@ Ensure you have the following tools/items ready. Some items are marked optional:
 ## Configure your Helm Charts:
 
 1. Create a new file called `langsmith_config.yaml` with the configuration options from the previous step.
-1. At a minimum, you will need to set the following configuration options:
+1. At a minimum, you will need to set the following configuration options (using basic auth):
 
    ```yaml
    config:
      langsmithLicenseKey: "<your license key>"
      apiKeySalt: "<your api key salt>"
+     authType: mixed
+     basicAuth:
+       enabled: true
+       initialOrgAdminEmail: "admin@langchain.dev" # Change this to your admin email address
+       initialOrgAdminPassword: "secure-password" # Must be at least 12 characters long and have at least one lowercase, uppercase, and symbol
+       jwtSecret: <your jwt salt>
    ```
 
 ## Deploying to Kubernetes:

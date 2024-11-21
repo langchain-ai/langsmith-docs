@@ -92,7 +92,7 @@ chat_completion = client.chat.completions.create(
 )
 # End and submit the run
 rt.end(outputs=chat_completion)
-rt.postRun()
+rt.post()
 `),
     TypeScriptBlock(`import OpenAI from "openai";
 import { traceable } from "langsmith/traceable";

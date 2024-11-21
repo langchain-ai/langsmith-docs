@@ -1,5 +1,5 @@
 ---
-sidebar_label: Quick start
+sidebar_label: Quick Start
 sidebar_position: 1
 table_of_contents: true
 ---
@@ -27,7 +27,7 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Get started with LangSmith
 
-**LangSmith** is a platform for building production-grade LLM applications. It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence. Use of LangChain is not necessary - LangSmith works on its own!
+**LangSmith** is a platform for building production-grade LLM applications. It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence. Use of [LangChain's open source frameworks](https://python.langchain.com) is not necessary - LangSmith works on its own!
 
 ## 1. Install LangSmith
 
@@ -59,14 +59,14 @@ To create an API key head to the <RegionalUrl text='Settings page' suffix='/sett
 
 ## 4. Log your first trace
 
-:::tip Tracing to LangSmith for LangChain users
-There is no need to use the LangSmith SDK directly if your application is built entirely on LangChain (either Python and JS).
+:::tip LangSmith + LangChain OSS
+You don't need to use the LangSmith SDK directly if your application is built on [LangChain](https://python.langchain.com)/[LangGraph](https://langchain-ai.github.io/langgraph/) (either Python and JS).
 
-We've outlined a tracing guide specifically for LangChain users [here](./observability/how_to_guides/tracing/trace_with_langchain).
+See the how-to guide for tracing with LangChain [here](./observability/how_to_guides/tracing/trace_with_langchain).
 :::
 
 We provide multiple ways to log traces to LangSmith. Below, we'll highlight
-how to use `traceable`. See more on the [Annotate code for tracing](./observability/how_to_guides/tracing/annotate_code) page.
+how to use `traceable()`. See more on the [Annotate code for tracing](./observability/how_to_guides/tracing/annotate_code) page.
 
 <CodeTabs
   tabs={[
@@ -87,7 +87,7 @@ how to use `traceable`. See more on the [Annotate code for tracing](./observabil
 />
 
 - View a [sample output trace](https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r).
-- Learn more about tracing in the [how-to guides](./observability/how_to_guides/index.md).
+- Learn more about tracing in the observability [tutorials](./observability/tutorials), [conceptual guide](./observability/concepts) and [how-to guides](./observability/how_to_guides/index.md).
 
 ## 5. Run your first evaluation
 
@@ -180,4 +180,6 @@ experiment_results = evaluate(
   groupId="client-language"
 />
 
-- Learn more about evaluation in the [how-to guides](./evaluation/how_to_guides/index.md).
+- Click the link printed out by your evaluation run to access the LangSmith experiments UI,
+  and explore the results of your evaluation.
+- Learn more about evaluation in the [tutorials](./evaluation/tutorials), [conceptual guide](./evaluation/concepts), and [how-to guides](./evaluation/how_to_guides/index.md).
