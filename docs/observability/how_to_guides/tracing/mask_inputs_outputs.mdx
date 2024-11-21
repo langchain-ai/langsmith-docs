@@ -374,11 +374,21 @@ def presidio_anonymize(data):
     Returns:
         any: The anonymized data.
     """
-    if not isinstance(data, dict) or ('messages' not in data and 'message' not in data):
+    if not (
+    'messages' in data or
+    (
+        'choices' in data and
+        isinstance(data['choices'], list) and
+        data['choices'] and
+        'message' in data['choices'][0]
+    )
+):
         return data
-
-    messages = data.get('messages') or data.get('message')
-    for message in messages:
+    if 'messages' in data:
+        message_list = data['messages']
+    else:
+        message_list = [data['choices'][0]['message']]
+    for message in message_list:
         results = analyzer.analyze(
             text=message['content'],
             entities=["PERSON", "PHONE_NUMBER", "EMAIL_ADDRESS", "US_SSN"],
@@ -511,16 +521,21 @@ def comprehend_anonymize(data):
     Returns:
         any: The anonymized data.
     """
-    if not isinstance(data, dict) or ('messages' not in data and 'message' not in data):
+    if not (
+    'messages' in data or
+    (
+        'choices' in data and
+        isinstance(data['choices'], list) and
+        data['choices'] and
+        'message' in data['choices'][0]
+    )
+):
         return data
-
-    messages = data.get('messages') or data.get('message')
-
-    # Ensure messages is a list for consistent processing
-    if isinstance(messages, dict):
-        messages = [messages]
-
-    for message in messages:
+    if 'messages' in data:
+        message_list = data['messages']
+    else:
+        message_list = [data['choices'][0]['message']]
+    for message in message_list:
         content = message.get('content', '')
         entities = detect_pii(content)
         if entities:
