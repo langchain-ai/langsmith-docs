@@ -388,13 +388,14 @@ def presidio_anonymize(data):
     else:
         message_list = [data['choices'][0]['message']]
     for message in message_list:
+        content = message.get('content', '')
         results = analyzer.analyze(
-            text=message['content'],
+            text=content,
             entities=["PERSON", "PHONE_NUMBER", "EMAIL_ADDRESS", "US_SSN"],
             language='en'
         )
         anonymized_result = anonymizer.anonymize(
-            text=message['content'],
+            text=content,
             analyzer_results=results
         )
         message['content'] = anonymized_result.text
