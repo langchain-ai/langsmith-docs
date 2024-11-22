@@ -6,6 +6,12 @@ import {
 
 # How to run an evaluation asynchronously
 
+:::info Key concepts
+
+[Evaluations](../../concepts#applying-evaluations) | [Evaluators](../../concepts#evaluators) | [Datasets](../../concepts#datasets) | [Experiments](../../concepts#experiments)
+
+:::
+
 We can run evaluations asynchronously via the SDK using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html),
 which accepts all of the same arguments as [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) but expects the application function to be asynchronous.
 You can learn more about how to use the `evaluate()` function [here](../../how_to_guides/evaluation/evaluate_llm_application).
@@ -13,12 +19,12 @@ You can learn more about how to use the `evaluate()` function [here](../../how_t
 :::info Python only
 
 This guide is only relevant when using the Python SDK.
-In JS/TypeScript the `evaluate()` function is already async.
+In JS/TS the `evaluate()` function is already async.
 You can see how to use it [here](../../how_to_guides/evaluation/evaluate_llm_application).
 
 :::
 
-## Using `aevaluate()`
+## Use `aevaluate()`
 
 <CodeTabs
   groupId="client-language"

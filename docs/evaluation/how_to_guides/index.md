@@ -42,7 +42,6 @@ Evaluate and improve your application before deploying it.
 ### Configure an evaluation job
 
 - [Evaluate with repetitions](./how_to_guides/evaluation/repetition)
-- [Run a large evaluation job](./how_to_guides/evaluation/large_job)
 - [Handle model rate limits](./how_to_guides/evaluation/rate_limiting)
 
 ## Unit testing

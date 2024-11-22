@@ -85,7 +85,7 @@ To evaluate our chain we can pass it directly to the `evaluate()` / `aevaluate()
   groupId="client-language"
   tabs={[
     python`
-        from langsmith import evaluate, Client
+        from langsmith import aevaluate, Client
 
         client = Client()
 
@@ -103,7 +103,7 @@ To evaluate our chain we can pass it directly to the `evaluate()` / `aevaluate()
 
             assert actual == expected
 
-        results = evaluate(
+        results = await aevaluate(
             chain,
             data=dataset,
             evaluators=[correct],
@@ -126,3 +126,7 @@ To evaluate our chain we can pass it directly to the `evaluate()` / `aevaluate()
 The runnable is traced appropriately for each output.
 
 ![](../evaluation/static/runnable_eval.png)
+
+## Related
+
+- [How to evaluate a `langgraph` graph](../evaluation/langgraph)

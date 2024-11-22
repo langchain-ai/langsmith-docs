@@ -12,14 +12,19 @@ import {
 
 :::info Key concepts
 
-- [Evaluations](../../concepts#applying-evaluations)
-- [Evaluators](../../concepts#evaluators)
-- [Datasets](../../concepts#datasets)
-- [Experiments](../../concepts#experiments)
+[Evaluations](../../concepts#applying-evaluations) | [Evaluators](../../concepts#evaluators) | [Datasets](../../concepts#datasets) | [Experiments](../../concepts#experiments)
 
 :::
 
 In this guide we'll go over how to evaluate an application using the [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) method in the LangSmith SDK.
+
+:::tip
+
+For larger evaluation jobs in Python we recommend using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html), the asynchronous version of `evaluate()`.
+It is still worthwhile to read this guide first, as the two have nearly identical interfaces,
+and then read the how-to guide on [running an evaluation asynchronously](../../how_to_guides/evaluation/async).
+
+:::
 
 ## Define an application
 
