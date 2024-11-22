@@ -181,7 +181,15 @@ And a simple evaluator:
 
 ### Run evaluations
 
-Now we can run our evaluations and explore the results:
+Now we can run our evaluations and explore the results.
+We'll just need to wrap our graph function so that it can take inputs in the format they're stored on our example:
+
+:::note Evaluating with async nodes
+
+If all of your graph nodes are defined as sync functions then you can use `evaluate` or `aevaluate`.
+If any of you nodes are defined as async, you'll need to use `aevaluate`
+
+:::
 
 <CodeTabs
   groupId="client-language"
@@ -189,8 +197,15 @@ Now we can run our evaluations and explore the results:
     python`
     from langsmith import aevaluate
 
+    def example_to_state(inputs: dict) -> dict:
+      return {"messages": [{"role": "user", "content": "inputs['question']"}]}
+
+    # We use LCEL declarative syntax here.
+    # Remember that langgraph graphs are also langchain runnables.
+    target = example_to_state | app
+
     experiment_results = aevaluate(
-        app,
+        target,
         data="weather agent",
         evaluators=[correct],
         max_concurrency=4,  # optional
@@ -205,9 +220,99 @@ Now we can run our evaluations and explore the results:
 ]}
 />
 
-## Evaluating individual nodes
-
 ## Evaluating intermediate steps
+
+Often it is valuable to evaluate not only the final output of an agent but also the intermediate steps it has taken.
+What's nice about `langgraph` is that the output of a graph is a state object that often already carries information about the intermediate steps taken.
+Usually we can evaluate whatever we're interested in just by looking at the messages in our state.
+For example, we can look at the messages to assert that the model invoked the 'search' tool upon as a first step.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+
+    def right_tool(outputs: dict) -> bool:
+        tool_calls = outputs["messages"][1].tool_calls
+        return bool(tool_calls and tool_calls[0]["name"] == "search")
+
+    experiment_results = aevaluate(
+        target,
+        data="weather agent",
+        evaluators=[correct, right_tool],
+        max_concurrency=4,  # optional
+        experiment_prefix="claude-3.5-baseline",  # optional
+    )
+    `,
+    typescript`
+        // ToDo
+    `,
+
+]}
+/>
+
+If we need access to information about intermediate steps that isn't in state, we can look at the Run object. This contains the full traces for all node inputs and outputs:
+
+:::tip Custom evaluators
+
+See more about what arguments you can pass to custom evaluators in this [how-to guide](../evaluation/custom_evaluator).
+
+:::
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+    from langsmith.schemas import Run, Example
+
+    def right_tool_from_run(run: Run, example: Example) -> dict:
+        # Get documents and answer
+        first_model_run = next(run for run in root_run.child_runs if run.name == "agent")
+        tool_calls = first_model_run.outputs["messages"][-1].tool_calls
+        right_tool = bool(tool_calls and tool_calls[0]["name"] == "search")
+        return {"key": "right_tool", "value": right_tool}
+
+    experiment_results = aevaluate(
+        target,
+        data="weather agent",
+        evaluators=[correct, right_tool_from_run],
+        max_concurrency=4,  # optional
+        experiment_prefix="claude-3.5-baseline",  # optional
+    )
+    `,
+    typescript`
+        // ToDo
+    `,
+
+]}
+/>
+
+## Running and evaluating individual nodes
+
+Sometimes you want to evaluate a single node directly to save time and costs. `langgraph` makes it easy to do this.
+In this case we can even continue using the evaluators we've been using.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+    
+    node_target = example_to_state | app.nodes["agent"]
+
+    node_experiment_results = aevaluate(
+        node_target,
+        data="weather agent",
+        evaluators=[right_tool_from_run],
+        max_concurrency=4,  # optional
+        experiment_prefix="claude-3.5-model-node",  # optional
+    )
+    `,
+    typescript`
+        // ToDo
+    `,
+
+]}
+/>
 
 ## Related
 
@@ -313,10 +418,45 @@ Now we can run our evaluations and explore the results:
 
     # Define evaluators
 
+    async def correct(outputs: dict, reference_outputs: dict) -> bool:
+        instructions = (
+            "Given an actual answer and an expected answer, determine whether"
+            " the actual answer contains all of the information in the"
+            " expected answer. Respond with 'CORRECT' if the actual answer"
+            " does contain all of the expected information and 'INCORRECT'"
+            " otherwise. Do not include anything else in your response."
+        )
+        # Our graph outputs a State dictionary, which in this case means
+        # we'll have a 'messages' key and the final message should
+        # be our actual answer.
+        actual_answer = outputs["messages"][-1].content
+        expected_answer = reference_outputs["answer"]
+        user_msg = (
+            f"ACTUAL ANSWER: {actual_answer}"
+            f"\\n\\nEXPECTED ANSWER: {expected_answer}"
+        )
+        response = await judge_llm.ainvoke(
+            [
+                {"role": "system", "content": instructions},
+                {"role": "user", "content": user_msg}
+            ]
+        )
+        return response.content.upper() == "CORRECT"
+
+
+    def right_tool(outputs: dict) -> bool:
+        tool_calls = outputs["messages"][1].tool_calls
+        return bool(tool_calls and tool_calls[0]["name"] == "search")
 
     # Run evaluation
 
-    # Explore results
+    experiment_results = aevaluate(
+        target,
+        data="weather agent",
+        evaluators=[correct, right_tool],
+        max_concurrency=4,  # optional
+        experiment_prefix="claude-3.5-baseline",  # optional
+    )
 
 `,
     typescript`
