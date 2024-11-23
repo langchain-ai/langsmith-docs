@@ -1,8 +1,4 @@
-import {
-  CodeTabs,
-  python,
-  typescript,
-} from "@site/src/components/InstructionsWithCode";
+import { CodeTabs, python } from "@site/src/components/InstructionsWithCode";
 
 # How to run an evaluation asynchronously
 
@@ -29,7 +25,7 @@ You can see how to use it [here](../../how_to_guides/evaluation/evaluate_llm_app
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
+    python({caption: "Requires `langsmith>=0.1.145`"})`
         from langsmith import aevaluate, wrappers, Client
         from openai import AsyncOpenAI
 
@@ -57,21 +53,21 @@ list 5 concrete questions that should be investigated to determine if the idea i
             return len(output["output"]) < 3 * len(inputs["idea"])
 
         ls_client = Client()
-        # TODO
-        dataset = ...
 
-        results = aevaluate(
+        examples = ["universal basic income", "nuclear fusion", "hyperloop", "nuclear powered rockets"]
+        dataset = ls_client.create_dataset("research ideas")
+        ls_client.create_examples(
+            dataset_name=dataset.name,
+            inputs=[{"idea": e} for e in examples,
+        )
+
+        results = await aevaluate(
             researcher_app,
             data=dataset,
             evaluators=[concise],
             max_concurrency=2,  # Optional, no max by default
-            experiment_prefix="gpt-4o-mini, baseline"  # Optional, random by default
+            experiment_prefix="gpt-4o-mini-baseline"  # Optional, random by default
         )
-    `,
-    typescript`
-      import type { EvaluationResult } from "langsmith/evaluation";
-      import type { Run, Example } from "langsmith/schemas";
-
     `,
 
 ]}

@@ -12,7 +12,7 @@ import {
 
 :::info Key concepts
 
-[Evaluations](../../concepts#applying-evaluations) | [Evaluators](../../concepts#evaluators) | [Datasets](../../concepts#datasets) | [Experiments](../../concepts#experiments)
+[Evaluations](../../concepts#applying-evaluations) | [Evaluators](../../concepts#evaluators) | [Datasets](../../concepts#datasets)
 
 :::
 
@@ -232,7 +232,7 @@ _If you've annotated your code for tracing, you can open the trace of each row i
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
+    python({caption: "Requires `langsmith>=0.1.145`"})`
       from langsmith import Client, evaluate, traceable, wrappers
       from openai import OpenAI
       

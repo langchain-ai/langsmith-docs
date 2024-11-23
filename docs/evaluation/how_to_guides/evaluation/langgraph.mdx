@@ -204,7 +204,7 @@ If any of you nodes are defined as async, you'll need to use `aevaluate`
     # Remember that langgraph graphs are also langchain runnables.
     target = example_to_state | app
 
-    experiment_results = aevaluate(
+    experiment_results = await aevaluate(
         target,
         data="weather agent",
         evaluators=[correct],
@@ -236,7 +236,7 @@ For example, we can look at the messages to assert that the model invoked the 's
         tool_calls = outputs["messages"][1].tool_calls
         return bool(tool_calls and tool_calls[0]["name"] == "search")
 
-    experiment_results = aevaluate(
+    experiment_results = await aevaluate(
         target,
         data="weather agent",
         evaluators=[correct, right_tool],
@@ -272,7 +272,7 @@ See more about what arguments you can pass to custom evaluators in this [how-to 
         right_tool = bool(tool_calls and tool_calls[0]["name"] == "search")
         return {"key": "right_tool", "value": right_tool}
 
-    experiment_results = aevaluate(
+    experiment_results = await aevaluate(
         target,
         data="weather agent",
         evaluators=[correct, right_tool_from_run],
@@ -299,7 +299,7 @@ In this case we can even continue using the evaluators we've been using.
     
     node_target = example_to_state | app.nodes["agent"]
 
-    node_experiment_results = aevaluate(
+    node_experiment_results = await aevaluate(
         node_target,
         data="weather agent",
         evaluators=[right_tool_from_run],
@@ -450,7 +450,7 @@ In this case we can even continue using the evaluators we've been using.
 
     # Run evaluation
 
-    experiment_results = aevaluate(
+    experiment_results = await aevaluate(
         target,
         data="weather agent",
         evaluators=[correct, right_tool],

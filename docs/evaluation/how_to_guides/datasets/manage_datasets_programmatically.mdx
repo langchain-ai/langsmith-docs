@@ -382,9 +382,9 @@ Additionally, you can also chain multiple filters together using the `and` opera
   tabs={[
     PythonBlock(
       `examples = client.list_examples(
-                dataset_name=dataset_name,
-                filter='and(not(has(metadata, \\'{"foo": "bar"}\\')), exists(metadata, "tenant_id"))'
-            )`
+    dataset_name=dataset_name,
+    filter='and(not(has(metadata, \\'{"foo": "bar"}\\')), exists(metadata, "tenant_id"))'
+)`
     ),
     TypeScriptBlock(
       `const examples = await client.listExamples({datasetName: datasetName, filter: 'and(not(has(metadata, \\'{"foo": "bar"}\\')), exists(metadata, "tenant_id"))'});`
