@@ -460,7 +460,7 @@ See the full overview of single step evaluation in our [conceptual guide](https:
 
 :::
 
-We can check a specific tool call using [a custom evaluator](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators):
+We can check a specific tool call using [a custom evaluator](https://docs.smith.langchain.com/how_to_guides/evaluation/custom_evaluator):
 
 - Here, we just invoke the assistant, `assistant_runnable`, with a prompt and check if the resulting tool call is as expected.
 - Here, we are using a specialized agent where the tools are hard-coded (rather than passed with the dataset input).
@@ -507,7 +507,7 @@ experiment_results = evaluate(
 
 ### Trajectory
 
-We can check a trajectory of tool calls using [custom evaluators](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators):
+We can check a trajectory of tool calls using [custom evaluators](https://docs.smith.langchain.com/how_to_guides/evaluation/custom_evaluator):
 
 - Here, we just invoke the agent, `graph.invoke`, with a prompt.
 - Here, we are using a specialized agent where the tools are hard-coded (rather than passed with the dataset input).

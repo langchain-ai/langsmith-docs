@@ -31,7 +31,6 @@ Evaluate and improve your application before deploying it.
 - [Evaluate intermediate steps](./how_to_guides/evaluation/evaluate_on_intermediate_steps)
 - [Return multiple metrics in one evaluator](./how_to_guides/evaluation/multiple_scores)
 - [Return categorical vs numerical metrics](./how_to_guides/evaluation/metric_type)
-- [Check your evaluator setup](./how_to_guides/evaluation/check_evaluator)
 
 ### Configure the evaluation data
 
