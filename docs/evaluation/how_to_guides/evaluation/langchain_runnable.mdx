@@ -6,13 +6,14 @@ import {
 
 # How to evaluate a `langchain` runnable
 
-`langchain` [Runnable](https://python.langchain.com/docs/concepts/runnables/) objects (such as chat models, retrievers, chains, etc.) can be passed directly into `evaluate()` / `aevaluate()`.
+:::info Key concepts
 
-:::info
-
-`langchain` refers to the [Python](https://python.langchain.com) and [JS/TS](https://js.langchain.com) OSS frameworks for building LLM applications.
+- `langchain`: [Python](https://python.langchain.com) and [JS/TS](https://js.langchain.com)
+- Runnable: [Python](https://python.langchain.com/docs/concepts/runnables/) and [JS/TS](https://js.langchain.com/docs/concepts/runnables/)
 
 :::
+
+`langchain` [Runnable](https://python.langchain.com/docs/concepts/runnables/) objects (such as chat models, retrievers, chains, etc.) can be passed directly into `evaluate()` / `aevaluate()`.
 
 ## Setup
 
@@ -101,7 +102,7 @@ To evaluate our chain we can pass it directly to the `evaluate()` / `aevaluate()
             actual = outputs["output"]
             expected = reference_outputs["label"]
 
-            assert actual == expected
+            return actual == expected
 
         results = await aevaluate(
             chain,
@@ -112,11 +113,17 @@ To evaluate our chain we can pass it directly to the `evaluate()` / `aevaluate()
     `,
     typescript`
       import { evaluate } from "langsmith/evaluation";
+      import { Client } from "langsmith";
+
+      const langsmith = new Client();
+      const dataset = await client.clonePublicDataset(
+        "https://smith.langchain.com/public/3d6831e6-1680-4c88-94df-618c8e01fc55/d"
+      )
 
       await evaluate(chain, {
-        data: datasetName,
+        data: dataset.name,
         evaluators: [correct],
-        experimentPrefix: "Toxic Queries",
+        experimentPrefix: "gpt-4o, ba
       });
     `,
 

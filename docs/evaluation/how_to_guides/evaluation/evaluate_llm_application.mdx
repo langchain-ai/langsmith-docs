@@ -160,7 +160,7 @@ Since we have labels for this task, our evaluator can directly check if the actu
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
+    python({ caption: "Requires `langsmith>=0.1.145`" })`
       def correct(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
           return outputs["output"] == reference_outputs["label"]
     `,
@@ -169,7 +169,7 @@ Since we have labels for this task, our evaluator can directly check if the actu
       import type { Run, Example } from "langsmith/schemas";
       
       function correct(rootRun: Run, example: Example): EvaluationResult {
-        const score = rootRun.outputs?.outputs === example.outputs?.output;
+        const score = rootRun.outputs?.output === example.outputs?.outputs;
         return { key: "correct", score };
       }
     `,

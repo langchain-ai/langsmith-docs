@@ -93,10 +93,6 @@ Lets construct a simple ReACT agent to start:
     app = workflow.compile()
 
 `,
-    typescript`
-// ToDo
-`,
-
 ]}
 />
 
@@ -129,10 +125,6 @@ Let's create a simple dataset of questions and expected responses:
         outputs=[{"answers": a} for a in answers],
     )
     `,
-    typescript`
-    // ToDo
-    `,
-
 ]}
 />
 
@@ -172,9 +164,6 @@ And a simple evaluator:
         )
         return response.content.upper() == "CORRECT"
     `,
-    typescript`
-        // ToDo
-    `,
 
 ]}
 />
@@ -213,9 +202,6 @@ If any of you nodes are defined as async, you'll need to use `aevaluate`
     )
 
     `,
-    typescript`
-        // ToDo
-    `,
 
 ]}
 />
@@ -243,9 +229,6 @@ For example, we can look at the messages to assert that the model invoked the 's
         max_concurrency=4,  # optional
         experiment_prefix="claude-3.5-baseline",  # optional
     )
-    `,
-    typescript`
-        // ToDo
     `,
 
 ]}
@@ -280,9 +263,6 @@ See more about what arguments you can pass to custom evaluators in this [how-to 
         experiment_prefix="claude-3.5-baseline",  # optional
     )
     `,
-    typescript`
-        // ToDo
-    `,
 
 ]}
 />
@@ -306,9 +286,6 @@ In this case we can even continue using the evaluators we've been using.
         max_concurrency=4,  # optional
         experiment_prefix="claude-3.5-model-node",  # optional
     )
-    `,
-    typescript`
-        // ToDo
     `,
 
 ]}
@@ -458,9 +435,6 @@ In this case we can even continue using the evaluators we've been using.
         experiment_prefix="claude-3.5-baseline",  # optional
     )
 
-`,
-    typescript`
-// ToDo
 `,
 
 ]}
