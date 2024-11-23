@@ -40,8 +40,8 @@ These functions can be passed directly into [evaluate()](https://langsmith-sdk.r
       import type { EvaluationResult } from "langsmith/evaluation";
       import type { Run, Example } from "langsmith/schemas";
 
-      function correct(rootRun: Run, example: Example): EvaluationResult {
-        const score = rootRun.outputs?.output === example.outputs?.output;
+      function correct(run: Run, example: Example): EvaluationResult {
+        const score = run.outputs?.output === example.outputs?.output;
         return { key: "correct", score };
       }
     `,

@@ -6,22 +6,16 @@ import {
 
 # How to return categorical vs numerical metrics
 
-:::info Key concepts
-
-- Metrics
-
-:::
-
 LangSmith supports both categorical and numerical metrics, and you can return either when writing a [custom evaluator](../../how_to_guides/evaluation/custom_evaluator).
 
 For an evaluator result to be logged as a numerical metric, it must returned as:
 
-- an `int`, `float`, or `bool`
+- (Python only) an `int`, `float`, or `bool`
 - a dict of the form `{"key": "metric_name", "score": int | float | bool}`
 
 For an evaluator result to be logged as a categorical metric, it must be returned as:
 
-- a `str`
+- (Python only) a `str`
 - a dict of the form `{"key": "metric_name", "value": str | int | float | bool}`
 
 Here are some examples:
@@ -58,15 +52,14 @@ Here are some examples:
     })`
       import type { Run, Example } from "langsmith/schemas";
 
-      function multipleScores(rootRun: Run, example: Example) {
+      function numericalMetric(run: Run, example: Example) {
         // Your evaluation logic here
-        return {
-            results: [
-                { key: "precision", score: 0.8 },
-                { key: "recall", score: 0.9 },
-                { key: "f1", score: 0.85 },
-            ],
-        };
+        return { key: "numerical_metric", score: 0.8};
+      }
+
+      function categoricalMetric(run: Run, example: Example) {
+        // Your evaluation logic here
+        return { key: "categorical_metric", value: "english"};
       }
     `,
 
