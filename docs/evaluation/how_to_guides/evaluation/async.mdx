@@ -65,8 +65,9 @@ list 5 concrete questions that should be investigated to determine if the idea i
             researcher_app,
             data=dataset,
             evaluators=[concise],
-            max_concurrency=2,  # Optional, no max by default
-            experiment_prefix="gpt-4o-mini-baseline"  # Optional, random by default
+            # Optional, no max_concurrency by default but it is recommended to set one.
+            max_concurrency=2,
+            experiment_prefix="gpt-4o-mini-baseline"  # Optional, random by default.
         )
     `,
 
@@ -76,3 +77,4 @@ list 5 concrete questions that should be investigated to determine if the idea i
 ## Related
 
 - [Run an evaluation (synchronously)](../../how_to_guides/evaluation/evaluate_llm_application)
+- [Handle model rate limits](./how_to_guides/evaluation/rate_limiting)

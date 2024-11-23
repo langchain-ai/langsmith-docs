@@ -345,7 +345,7 @@ _If you've annotated your code for tracing, you can open the trace of each row i
 
       // Row-level evaluator
       function correct(rootRun: Run, example: Example): EvaluationResult {
-        const score = rootRun.outputs?.outputs === example.outputs?.output;
+        const score = rootRun.outputs?.output === example.outputs?.outputs;
         return { key: "correct", score };
       }
 
