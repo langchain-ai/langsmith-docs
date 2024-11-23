@@ -8,24 +8,11 @@ import {
   CodeTabs,
   python,
   typescript,
-  PythonBlock,
   ShellBlock,
-  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
-import {
-  LangChainInstallationCodeTabs,
-  LangChainQuickStartCodeTabs,
-  ConfigureEnvironmentCodeTabs,
-  RunTreeQuickStartCodeTabs,
-  ConfigureSDKEnvironmentCodeTabs,
-  PythonSDKTracingCode,
-  TypeScriptSDKTracingCode,
-} from "@site/src/components/QuickStart";
-import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
-import DocCardList from "@theme/DocCardList";
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
-# Evaluation Quick Start
+# Evaluation quick start
 
 This quick start will get you up and running with our evaluation SDK and Experiments UI.
 
@@ -67,25 +54,33 @@ export LANGCHAIN_API_KEY=<your-api-key>`),
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import evaluate, Client
-from langsmith.schemas import Example, Run\n
-# 1. Create and/or select your dataset
-client = Client()
-dataset = client.clone_public_dataset("https://smith.langchain.com/public/a63525f9-bdf2-4512-83e3-077dc9417f96/d")\n
-# 2. Define an evaluator
-# For more info on defining evaluators, see: https://docs.smith.langchain.com/evaluation/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators
-def is_concise_enough(root_run: Run, example: Example) -> dict:
-    score = len(root_run.outputs["output"]) < 3 \* len(example.outputs["answer"])
-    return {"key": "is_concise", "score": int(score)}\n
-# 3. Run an evaluation
-evaluate(
-    lambda x: x["question"] + "is a good question. I don't know the answer.",
-    data=dataset.name,
-    evaluators=[is_concise_enough],
-    experiment_prefix="my first experiment "
-)
-`),
-    TypeScriptBlock(`import { Client } from "langsmith";
+    python({caption: "Requires `langsmith>=0.1.145`"})`
+    from langsmith import evaluate, Client
+
+    # 1. Create and/or select your dataset
+    client = Client()
+    dataset = client.clone_public_dataset(
+        "https://smith.langchain.com/public/a63525f9-bdf2-4512-83e3-077dc9417f96/d"
+    )
+
+    # 2. Define an evaluator
+    def is_concise(outputs: dict, reference_outputs: dict) -> bool:
+        return len(outputs["answer"]) < (3 * len(reference_outputs["answer"]))
+
+    # 3. Define the interface to your app
+    def chatbot(inputs: dict) -> dict:
+        return {"answer": inputs["question"] + " is a good question. I don't know the answer."}
+
+    # 4. Run an evaluation
+    evaluate(
+        chatbot,
+        data=dataset,
+        evaluators=[is_concise],
+        experiment_prefix="my first experiment "
+    )
+
+`,
+    typescript`import { Client } from "langsmith";
 import { evaluate } from "langsmith/evaluation";
 import type { EvaluationResult } from "langsmith/evaluation";
 import type { Run, Example } from "langsmith/schemas";\n
@@ -112,12 +107,20 @@ answer: exampleInput.question + " Good question. I don't know the answer"
 data: datasetName,
 evaluators: [isConcise],
 experimentPrefix: "my first experiment ",
-});`),
-  ]}
-  groupId="client-language"
+});`,
+]}
+groupId="client-language"
 />
 
 ## 5. View Experiments UI
 
-Click the link printed out by your evaluation run to access the LangSmith experiments UI,
-and explore the results of your evaluation.
+Click the link printed out by your evaluation run to access the LangSmith Experiments UI, and explore the results of your evaluation.
+
+![](./how_to_guides/evaluation/static/view_experiment.gif)
+
+## Next steps
+
+For conceptual explanations see the [Conceptual guide](./evaluation/concepts).
+See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
+For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
+For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).

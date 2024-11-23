@@ -2,7 +2,7 @@
 sidebar_position: 6
 ---
 
-# Evaluate an existing experiment
+# How to evaluate an existing experiment
 
 :::note
 Currently, `evaluate_existing` is only supported in the Python SDK.
@@ -12,7 +12,7 @@ If you have already run an experiment and want to add additional evaluation metr
 can apply any evaluators to the experiment using the `evaluate_existing` method.
 
 ```python
-from langsmith.evaluation import evaluate_existing
+from langsmith import evaluate_existing
 
 def always_half(run, example):
     return {"score": 0.5}
@@ -26,7 +26,7 @@ evaluate_existing(experiment_name, evaluators=[always_half])
 Suppose you are evaluating a semantic router. You may first run an experiment:
 
 ```python
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 def semantic_router(inputs: dict):
     return {"class": 1}
 
@@ -43,7 +43,7 @@ Later, you realize you want to add precision and recall summary metrics. The `ev
 you can add both instance-level `evaluator`'s and aggregate `summary_evaluator`'s.
 
 ```python
-from langsmith.evaluation import evaluate_existing
+from langsmith import evaluate_existing
 
 def precision(runs: list, examples: list):
     true_positives = sum([1 for run, example in zip(runs, examples) if run.outputs["class"] == example.outputs["label"]])

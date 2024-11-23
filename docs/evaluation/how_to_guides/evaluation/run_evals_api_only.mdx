@@ -9,7 +9,7 @@ import {
 } from "@site/src/components/InstructionsWithCode";
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
-# Run evals with the REST API
+# How to use the REST API
 
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
@@ -40,7 +40,7 @@ from uuid import uuid4
 
 client = Client()
 
-# Create a dataset
+#  Create a dataset
 examples = [
     ("Shut up, idiot", "Toxic"),
     ("You're a wonderful person", "Not toxic"),
@@ -63,8 +63,8 @@ client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
 First, pull all of the examples you'd want to use in your experiment.
 
 ```python
-# Pick a dataset id. In this case, we are using the dataset we created above.
-# Spec: https://api.smith.langchain.com/redoc#tag/examples/operation/delete_example_api_v1_examples__example_id__delete
+#  Pick a dataset id. In this case, we are using the dataset we created above.
+#  Spec: https://api.smith.langchain.com/redoc#tag/examples/operation/delete_example_api_v1_examples__example_id__delete
 dataset_id = dataset.id
 params = { "dataset": dataset_id }
 
@@ -152,9 +152,9 @@ def run_completion_on_example(example, model_name, experiment_id):
 We are going to run completions on all examples using two models: gpt-3.5-turbo and gpt-4o-mini.
 
 ```python
-# Create a new experiment using the /sessions endpoint
-# An experiment is a collection of runs with a reference to the dataset used
-# Spec: https://api.smith.langchain.com/redoc#tag/tracer-sessions/operation/create_tracer_session_api_v1_sessions_post
+#  Create a new experiment using the /sessions endpoint
+#  An experiment is a collection of runs with a reference to the dataset used
+#  Spec: https://api.smith.langchain.com/redoc#tag/tracer-sessions/operation/create_tracer_session_api_v1_sessions_post
 
 model_names = ("gpt-3.5-turbo", "gpt-4o-mini")
 experiment_ids = []
@@ -194,8 +194,8 @@ Next, we'll demonstrate how to run a pairwise experiment. In a pairwise experime
 For more information, check out [this guide](../evaluation/evaluate_pairwise).
 
 ```python
-# A comparative experiment allows you to provide a preferential ranking on the outputs of two or more experiments
-# Spec: https://api.smith.langchain.com/redoc#tag/datasets/operation/create_comparative_experiment_api_v1_datasets_comparative_post
+#  A comparative experiment allows you to provide a preferential ranking on the outputs of two or more experiments
+#  Spec: https://api.smith.langchain.com/redoc#tag/datasets/operation/create_comparative_experiment_api_v1_datasets_comparative_post
 resp = requests.post(
     "https://api.smith.langchain.com/api/v1/datasets/comparative",
     json={
@@ -213,9 +213,9 @@ resp = requests.post(
 comparative_experiment = resp.json()
 comparative_experiment_id = comparative_experiment["id"]
 
-# You can iterate over the runs in the experiments belonging to the comparative experiment and preferentially rank the outputs
+#  You can iterate over the runs in the experiments belonging to the comparative experiment and preferentially rank the outputs
 
-# Fetch the comparative experiment
+#  Fetch the comparative experiment
 resp = requests.get(
     f"https://api.smith.langchain.com/api/v1/datasets/{str(dataset_id)}/comparative",
     params={"id": comparative_experiment_id},
@@ -228,7 +228,7 @@ experiment_ids = [info["id"] for info in comparative_experiment["experiments_inf
 from collections import defaultdict
 example_id_to_runs_map = defaultdict(list)
 
-# Spec: https://api.smith.langchain.com/redoc#tag/run/operation/query_runs_api_v1_runs_query_post
+#  Spec: https://api.smith.langchain.com/redoc#tag/run/operation/query_runs_api_v1_runs_query_post
 runs = requests.post(
     f"https://api.smith.langchain.com/api/v1/runs/query",
     headers={"x-api-key": os.environ["LANGSMITH_API_KEY"]},

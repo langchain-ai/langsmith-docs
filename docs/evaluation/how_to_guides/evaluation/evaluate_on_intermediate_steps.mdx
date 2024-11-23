@@ -10,7 +10,7 @@ import {
   typescript,
 } from "@site/src/components/InstructionsWithCode";
 
-# Evaluate on intermediate steps
+# How to evaluate intermediate steps
 
 While, in many scenarios, it is sufficient to evaluate the final output of your task, in some cases you might want to evaluate the intermediate steps of your pipeline.
 
@@ -364,7 +364,7 @@ Finally, we'll run `evaluate` with the custom evaluators defined above.
 <CodeTabs
   tabs={[
     python`
-      from langsmith.evaluation import evaluate
+      from langsmith import evaluate
       
       experiment_results = evaluate(
           lambda inputs: rag_pipeline(inputs["input"]),
@@ -388,3 +388,7 @@ Finally, we'll run `evaluate` with the custom evaluators defined above.
 
 The experiment will contain the results of the evaluation, including the scores and comments from the evaluators:
 ![](../evaluation/static/evaluation_intermediate_experiment.png)
+
+## Related
+
+- [Evaluate a `langgraph` graph](../evaluation/langgraph)

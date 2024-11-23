@@ -250,7 +250,7 @@ def langsmith_app_1(inputs):
     output = my_app_1(inputs["question"])
     return {"output": output}
 
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 
 experiment_results = evaluate(
     langsmith_app_1, # Your AI system
@@ -288,7 +288,7 @@ def langsmith_app_2(inputs):
     output = my_app_2(inputs["question"])
     return {"output": output}
 
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 
 experiment_results = evaluate(
     langsmith_app_2, # Your AI system

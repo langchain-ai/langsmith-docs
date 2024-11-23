@@ -135,7 +135,7 @@ Now we have the dataset and prod runs saved as an experiment.
 Let's run inference on our new system to compare.
 
 ```python
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 
 def predict(example_input: dict):
     # The dataset includes serialized messages that we

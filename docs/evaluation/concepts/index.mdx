@@ -1,4 +1,4 @@
-# Concepts
+# Evaluation concepts
 
 The pace of AI application development is often rate-limited by high-quality evaluations because there is a paradox of choice. Developers often wonder how to engineer their prompt or which LLM best balances accuracy, latency, and cost. High quality evaluations can help you rapidly answer these types of questions with confidence.
 
@@ -130,7 +130,8 @@ See documentation on our workflow to audit and manually correct evaluator scores
 
 ### Pairwise
 
-Pairwise evaluators pick the better of two task outputs based upon some criteria.
+Pairwise evaluators allow you to compare the outputs of two versions of an application.
+Think [LMSYS Chatbot Arena](https://chat.lmsys.org/) - this is the same concept, but applied to AI applications more generally, not just models!
 This can use either a heuristic ("which response is longer"), an LLM (with a specific pairwise prompt), or human (asking them to manually annotate examples).
 
 **When should you use pairwise evaluation?** Pairwise evaluation is helpful when it is difficult to directly score an LLM output, but easier to compare two outputs.
@@ -224,7 +225,7 @@ LangSmith evaluations are kicked off using a single function, `evaluate`, which 
 
 :::tip
 
-See documentation on using `evaluate` [here](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#step-4-run-the-evaluation-and-view-the-results).
+See documentation on using `evaluate` [here](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application).
 
 :::
 
@@ -235,7 +236,7 @@ One of the most common questions when evaluating AI applications is: how can I b
 :::tip
 
 - See the [video on `Repetitions` in our LangSmith Evaluation series](https://youtu.be/Pvz24JdzzF8)
-- See our documentation on [`Repetitions`](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-dataset-with-repetitions)
+- See our documentation on [`Repetitions`](https://docs.smith.langchain.com/how_to_guides/evaluation/repetition)
 
 :::
 
@@ -433,7 +434,7 @@ Classification / Tagging applies a label to a given input (e.g., for toxicity de
 
 A central consideration for Classification / Tagging evaluation is whether you have a dataset with `reference` labels or not. If not, users frequently want to define an evaluator that uses criteria to apply label (e.g., toxicity, etc) to an input (e.g., text, user-question, etc). However, if ground truth class labels are provided, then the evaluation objective is focused on scoring a Classification / Tagging chain relative to the ground truth class label (e.g., using metrics such as precision, recall, etc).
 
-If ground truth reference labels are provided, then it's common to simply define a [custom heuristic evaluator](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators) to compare ground truth labels to the chain output. However, it is increasingly common given the emergence of LLMs simply use `LLM-as-judge` to perform the Classification / Tagging of an input based upon specified criteria (without a ground truth reference).
+If ground truth reference labels are provided, then it's common to simply define a [custom heuristic evaluator](https://docs.smith.langchain.com/how_to_guides/evaluation/custom_evaluator) to compare ground truth labels to the chain output. However, it is increasingly common given the emergence of LLMs simply use `LLM-as-judge` to perform the Classification / Tagging of an input based upon specified criteria (without a ground truth reference).
 
 `Online` or `Offline` evaluation is feasible when using `LLM-as-judge` with the `Reference-free` prompt used. In particular, this is well suited to `Online` evaluation when a user wants to tag / classify application input (e.g., for toxicity, etc).
 

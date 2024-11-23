@@ -1,0 +1,47 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to evaluate on a specific dataset version
+
+:::tip Recommended reading
+
+Before diving into this content, it might be helpful to read the [guide on versioning datasets](../datasets/version_datasets).
+Additionally, it might be helpful to read the [guide on fetching examples](../datasets/manage_datasets_programmatically#fetch-examples).
+
+:::
+
+You can take advantage of the fact that `evaluate` allows passing in an iterable of examples to evaluate on a particular version of a dataset.
+Simply use `list_examples` / `listExamples` to fetch examples from a particular version tag using `as_of` / `asOf`.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith import evaluate
+        
+      latest_data=client.list_examples(dataset_name=toxic_dataset_name, as_of="latest")
+      
+      results = evaluate(
+          lambda inputs: label_text(inputs["text"]),
+          data=latest_data,
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate((inputs) => labelText(inputs["input"]), {
+        data: langsmith.listExamples({
+          datasetName: datasetName,
+          asOf: "latest",
+        }),
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+      });
+    `,
+  ]}
+/>

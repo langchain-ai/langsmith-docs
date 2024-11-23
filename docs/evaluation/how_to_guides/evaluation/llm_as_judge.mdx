@@ -1,0 +1,79 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to define an LLM-as-a-judge evaluator
+
+:::info Key concepts
+
+- [LLM-as-a-judge evaluator](../../concepts#llm-as-judge)
+
+:::
+
+LLM applications can be difficult to evaluate because often they're generating conversational text for which there's no single "right" answer.
+An imperfect but valuable way to evaluate such applications is to use a second LLM to judge the outputs of the first.
+This can be especially useful if a smaller model is used in the application and a larger, better model is used for evaluation.
+
+## Custom evaluator via SDK
+
+For maximal control of evaluator logic, we can write a custom evaluator and run it using the SDK.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python({caption: "Requires `langsmith>=0.1.145`"})`
+      from langsmith import evaluate, traceable, wrappers, Client
+      from openai import OpenAI
+      # Assumes you've installed pydantic
+      from pydantic import BaseModel
+      
+      # Optionally wrap the OpenAI client to trace all model calls.
+      oai_client = wrappers.wrap_openai(OpenAI())
+        
+      def valid_reasoning(inputs: dict, outputs: dict) -> bool:
+        """Use an LLM to judge if the reasoning and the answer are consistent."""
+
+        instructions = """\\
+
+Given the following question, answer, and reasoning, determine if the reasoning \\
+for the answer is logically valid and consistent with question and the answer.\\
+"""
+
+        class Response(BaseModel):
+          reasoning_is_valid: bool
+
+        msg = f"Question: {inputs['question']}\\nAnswer: {outputs['answer']}\\nReasoning: {outputs['reasoning']}"
+        response = oai_client.beta.chat.completions.parse(
+          model="gpt-4o",
+          messages=[{"role": "system", "content": instructions,}, {"role": "user", "content": msg}],
+          response_format=Response
+        )
+        return response.choices[0].message.parsed.reasoning_is_valid
+
+      # Optionally add the 'traceable' decorator to trace the inputs/outputs of this function.
+      @traceable
+      def dummy_app(inputs: dict) -> dict:
+        return {"answer": "hmm i'm not sure", "reasoning": "i didn't understand the question"}
+
+      ls_client = Client()
+      questions = ["how will the universe end", "are we alone"]
+      dataset = ls_client.create_dataset("big questions")
+      ls_client.create_examples(dataset_id=dataset.id, inputs=[{"question": q} for q in questions])
+
+      results = evaluate(
+        dummy_app,
+        data=dataset,
+        evaluators=[valid_reasoning]
+      )
+    `,
+
+]}
+/>
+
+See [here](../../how_to_guides/evaluation/custom_evaluator) for more on how to write a custom evaluator.
+
+## Prebuilt evaluator via `langchain`
+
+See [here](../../how_to_guides/evaluation/use_langchain_off_the_shelf_evaluators) for how to use prebuilt evaluators from `langchain`.
