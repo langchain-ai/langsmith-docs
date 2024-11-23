@@ -23,8 +23,8 @@ For maximal control of evaluator logic, we can write a custom evaluator and run 
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
-      from langsmith import evaluate, traceable, wrappers
+    python({caption: "Requires `langsmith>=0.1.145`"})`
+      from langsmith import evaluate, traceable, wrappers, Client
       from openai import OpenAI
       # Assumes you've installed pydantic
       from pydantic import BaseModel
@@ -50,33 +50,29 @@ for the answer is logically valid and consistent with question and the answer.\\
           messages=[{"role": "system", "content": instructions,}, {"role": "user", "content": msg}],
           response_format=Response
         )
-        return response.choices[0].messages.parsed.reasoning_is_valid
+        return response.choices[0].message.parsed.reasoning_is_valid
 
       # Optionally add the 'traceable' decorator to trace the inputs/outputs of this function.
       @traceable
       def dummy_app(inputs: dict) -> dict:
         return {"answer": "hmm i'm not sure", "reasoning": "i didn't understand the question"}
 
+      ls_client = Client()
+      questions = ["how will the universe end", "are we alone"]
+      dataset = ls_client.create_dataset("big questions")
+      ls_client.create_examples(dataset_id=dataset.id, inputs=[{"question": q} for q in questions])
+
       results = evaluate(
         dummy_app,
-        data="dataset_name",
+        data=dataset,
         evaluators=[valid_reasoning]
       )
-    `,
-    typescript`
-      import type { EvaluationResult } from "langsmith/evaluation";
-      import type { Run, Example } from "langsmith/schemas";
-
     `,
 
 ]}
 />
 
 See [here](../../how_to_guides/evaluation/custom_evaluator) for more on how to write a custom evaluator.
-
-## Builtin evaluator via the UI
-
-See [here](../../how_to_guides/evaluation/builtin_evaluators) for how to use LangSmith's builtin evaluators.
 
 ## Prebuilt evaluator via `langchain`
 
