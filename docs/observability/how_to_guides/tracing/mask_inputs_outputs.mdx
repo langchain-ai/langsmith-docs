@@ -88,7 +88,83 @@ await openaiClient.chat.completions.create({
 
 ## Rule-based masking of inputs and outputs
 
-To mask specific data in inputs and outputs, you can use the `hide_inputs` and `hide_outputs` parameters when instantiating the client. These parameters allow you to anonymize inputs and outputs by either applying a list of regex patterns with replacement values or using a custom function.
+:::info
+This feature is available in the following LangSmith SDK versions:
+
+- Python: 0.1.81 and above
+- TypeScript: 0.1.33 and above
+
+:::
+
+To mask specific data in inputs and outputs, you can use the `create_anonymizer` / `createAnonymizer` function and pass the newly created anonymizer when instantiating the client. The anonymizer can be either constructed from a list of regex patterns and the replacement values or from a function that accepts and returns a string value.
+
+The anonymizer will be skipped for inputs if `LANGCHAIN_HIDE_INPUTS = true`. Same applies for outputs if `LANGCHAIN_HIDE_OUTPUTS = true`.
+
+However, if inputs or outputs are to be sent to client, the `anonymizer` method will take precedence over functions found in `hide_inputs` and `hide_outputs`. By default, the `create_anonymizer` will only look at maximum of 10 nesting levels deep, which can be configured via the `max_depth` parameter.
+
+<CodeTabs
+  tabs={[
+    python`
+        from langsmith.anonymizer import create_anonymizer
+        from langsmith import Client, traceable
+        import re
+        
+        # create anonymizer from list of regex patterns and replacement values
+        anonymizer = create_anonymizer([
+            { "pattern": r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", "replace": "<email-address>" },
+            { "pattern": r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}", "replace": "<UUID>" }
+        ])
+        
+        # or create anonymizer from a function
+        email_pattern = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
+        uuid_pattern = re.compile(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+
+        anonymizer = create_anonymizer(
+            lambda text: email_pattern.sub("<email-address>", uuid_pattern.sub("<UUID>", text))
+        )
+
+        client = Client(anonymizer=anonymizer)
+
+        @traceable(client=client)
+        def main(inputs: dict) -> dict:
+            ...
+        `,
+    typescript`
+        import { createAnonymizer } from "langsmith/anonymizer"
+        import { traceable } from "langsmith/traceable"
+        import { Client } from "langsmith"
+
+        // create anonymizer from list of regex patterns and replacement values
+        const anonymizer = createAnonymizer([
+            { pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, replace: "<email>" },
+            { pattern: /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/g, replace: "<uuid>" }
+        ])
+
+        // or create anonymizer from a function
+        const anonymizer = createAnonymizer((value) => value.replace("...", "<value>"))
+
+        const client = new Client({ anonymizer })
+
+        const main = traceable(async (inputs: any) => {
+            // ...
+        }, { client })
+    `,
+
+]}
+groupId="client-language"
+/>
+
+Please note, that using the anonymizer might incur a performance hit with complex regular expressions or large payloads, as the anonymizer serializes the payload to JSON before processing.
+
+:::note
+
+Improving the performance of `anonymizer` API is on our roadmap! If you are encountering performance issues, please contact us at support@langchain.dev.
+
+:::
+
+![](./static/hide_inputs_outputs.png)
+
+Older versions of LangSmith SDKs can use the `hide_inputs` and `hide_outputs` parameters to achieve the same effect. You can also use these parameters to process the inputs and outputs more efficiently as well.
 
 <CodeTabs
   tabs={[
@@ -373,22 +449,16 @@ def presidio_anonymize(data):
     Returns:
         any: The anonymized data.
     """
-    if not (
-    'messages' in data or
-    (
-        'choices' in data and
-        isinstance(data['choices'], list) and
-        data['choices'] and
-        'message' in data['choices'][0]
+    message_list = (
+        data.get('messages') or [data.get('choices', [{}])[0].get('message')]
     )
-):
+    if not message_list or not all(isinstance(msg, dict) and msg for msg in message_list):
         return data
-    if 'messages' in data:
-        message_list = data['messages']
-    else:
-        message_list = [data['choices'][0]['message']]
     for message in message_list:
         content = message.get('content', '')
+        if not content.strip():
+            print("Empty content detected. Skipping anonymization.")
+            continue
         results = analyzer.analyze(
             text=content,
             entities=["PERSON", "PHONE_NUMBER", "EMAIL_ADDRESS", "US_SSN"],
@@ -520,22 +590,16 @@ def comprehend_anonymize(data):
     Returns:
         any: The anonymized data.
     """
-    if not (
-    'messages' in data or
-    (
-        'choices' in data and
-        isinstance(data['choices'], list) and
-        data['choices'] and
-        'message' in data['choices'][0]
+    message_list = (
+        data.get('messages') or [data.get('choices', [{}])[0].get('message')]
     )
-):
+    if not message_list or not all(isinstance(msg, dict) and msg for msg in message_list):
         return data
-    if 'messages' in data:
-        message_list = data['messages']
-    else:
-        message_list = [data['choices'][0]['message']]
     for message in message_list:
         content = message.get('content', '')
+        if not content.strip():
+            print("Empty content detected. Skipping anonymization.")
+            continue
         entities = detect_pii(content)
         if entities:
             anonymized_text = redact_pii_entities(content, entities)
