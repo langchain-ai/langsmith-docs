@@ -136,7 +136,7 @@ And a simple evaluator:
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
+    python({caption: "Requires `langsmith>=0.1.145`"})`
 
     judge_llm = init_chat_model("gpt-4o")
 
@@ -184,7 +184,7 @@ If any of you nodes are defined as async, you'll need to use `aevaluate`
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
+    python({caption: "Requires `langsmith>=0.1.145`"})`
     from langsmith import aevaluate
 
     def example_to_state(inputs: dict) -> dict:
@@ -217,7 +217,7 @@ For example, we can look at the messages to assert that the model invoked the 's
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
+    python({caption: "Requires `langsmith>=0.1.145`"})`
 
     def right_tool(outputs: dict) -> bool:
         tool_calls = outputs["messages"][1].tool_calls

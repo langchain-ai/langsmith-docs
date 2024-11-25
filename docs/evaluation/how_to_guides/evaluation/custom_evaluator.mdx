@@ -20,7 +20,7 @@ These functions can be passed directly into [evaluate()](https://langsmith-sdk.r
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
+    python({caption: "Requires `langsmith>=0.1.145`"})`
         from langsmith import evaluate
 
         def correct(outputs: dict, reference_outputs: dict) -> bool:
