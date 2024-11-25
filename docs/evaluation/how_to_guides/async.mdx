@@ -4,19 +4,19 @@ import { CodeTabs, python } from "@site/src/components/InstructionsWithCode";
 
 :::info Key concepts
 
-[Evaluations](../../concepts#applying-evaluations) | [Evaluators](../../concepts#evaluators) | [Datasets](../../concepts#datasets) | [Experiments](../../concepts#experiments)
+[Evaluations](../concepts#applying-evaluations) | [Evaluators](../concepts#evaluators) | [Datasets](../concepts#datasets) | [Experiments](../concepts#experiments)
 
 :::
 
-We can run evaluations asynchronously via the SDK using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html),
-which accepts all of the same arguments as [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) but expects the application function to be asynchronous.
-You can learn more about how to use the `evaluate()` function [here](../../how_to_guides/evaluate_llm_application).
+We can run evaluations asynchronously via the SDK using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/late./langsmith.evaluation._arunner.aevaluate.html),
+which accepts all of the same arguments as [evaluate()](https://langsmith-sdk.readthedocs.io/en/late./langsmith.evaluation._runner.evaluate.html) but expects the application function to be asynchronous.
+You can learn more about how to use the `evaluate()` function [here](./evaluate_llm_application).
 
 :::info Python only
 
 This guide is only relevant when using the Python SDK.
 In JS/TS the `evaluate()` function is already async.
-You can see how to use it [here](../../how_to_guides/evaluate_llm_application).
+You can see how to use it [here](./evaluate_llm_application).
 
 :::
 
@@ -76,5 +76,5 @@ list 5 concrete questions that should be investigated to determine if the idea i
 
 ## Related
 
-- [Run an evaluation (synchronously)](../../how_to_guides/evaluate_llm_application)
-- [Handle model rate limits](../../how_to_guides/rate_limiting)
+- [Run an evaluation (synchronously)](./evaluate_llm_application)
+- [Handle model rate limits](./rate_limiting)

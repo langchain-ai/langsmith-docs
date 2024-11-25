@@ -8,12 +8,12 @@ import {
 
 :::info Key concepts
 
-- [Evaluators](../../concepts#evaluators)
+- [Evaluators](../concepts#evaluators)
 
 :::
 
 Custom evaluators are just functions that take a dataset example and the resulting application output, and return one or more metrics.
-These functions can be passed directly into [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) / [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html).
+These functions can be passed directly into [evaluate()](https://langsmith-sdk.readthedocs.io/en/late./langsmith.evaluation._runner.evaluate.html) / [aevaluate()](https://langsmith-sdk.readthedocs.io/en/late./langsmith.evaluation._arunner.aevaluate.html).
 
 ## Basic example
 
@@ -138,5 +138,5 @@ answer is logically valid and consistent with question and the answer."""
 
 ## Related
 
-- [Evaluate aggregate experiment results](../../how_to_guides/summary): Define summary evaluators, which compute metrics for an entire experiment.
-- [Run an evaluation comparing two experiments](../../how_to_guides/evaluate_pairwise): Define pairwise evaluators, which compute metrics by comparing two (or more) experiments against each other.
+- [Evaluate aggregate experiment results](./summary): Define summary evaluators, which compute metrics for an entire experiment.
+- [Run an evaluation comparing two experiments](./evaluate_pairwise): Define pairwise evaluators, which compute metrics by comparing two (or more) experiments against each other.

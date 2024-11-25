@@ -12,17 +12,17 @@ import {
 
 :::info Key concepts
 
-[Evaluations](../../concepts#applying-evaluations) | [Evaluators](../../concepts#evaluators) | [Datasets](../../concepts#datasets)
+[Evaluations](../concepts#applying-evaluations) | [Evaluators](../concepts#evaluators) | [Datasets](../concepts#datasets)
 
 :::
 
-In this guide we'll go over how to evaluate an application using the [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) method in the LangSmith SDK.
+In this guide we'll go over how to evaluate an application using the [evaluate()](https://langsmith-sdk.readthedocs.io/en/late./langsmith.evaluation._runner.evaluate.html) method in the LangSmith SDK.
 
 :::tip
 
-For larger evaluation jobs in Python we recommend using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html), the asynchronous version of `evaluate()`.
+For larger evaluation jobs in Python we recommend using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/late./langsmith.evaluation._arunner.aevaluate.html), the asynchronous version of `evaluate()`.
 It is still worthwhile to read this guide first, as the two have nearly identical interfaces,
-and then read the how-to guide on [running an evaluation asynchronously](../../how_to_guides/async).
+and then read the how-to guide on [running an evaluation asynchronously](./async).
 
 :::
 
@@ -92,7 +92,7 @@ To understand how to annotate your code for tracing, please refer to [this guide
 
 ## Create or select a dataset
 
-We need a [Dataset](../../concepts#datasets) to evaluate our application on. Our dataset will contain labeled [examples](../../concepts#examples) of toxic and non-toxic text.
+We need a [Dataset](../concepts#datasets) to evaluate our application on. Our dataset will contain labeled [examples](../concepts#examples) of toxic and non-toxic text.
 
 <CodeTabs
   groupId="client-language"
@@ -150,11 +150,11 @@ We need a [Dataset](../../concepts#datasets) to evaluate our application on. Our
   ]}
 />
 
-See [here](../../how_to_guides#dataset-management) for more on dataset management.
+See [here](.#dataset-management) for more on dataset management.
 
 ## Define an evaluator
 
-[Evaluators](../../concepts#evaluators) are functions for scoring your application's outputs. They take in the example inputs, actual outputs, and, when present, the reference outputs.
+[Evaluators](../concepts#evaluators) are functions for scoring your application's outputs. They take in the example inputs, actual outputs, and, when present, the reference outputs.
 Since we have labels for this task, our evaluator can directly check if the actual outputs match the reference outputs.
 
 <CodeTabs
@@ -176,11 +176,11 @@ Since we have labels for this task, our evaluator can directly check if the actu
   ]}
 />
 
-See [here](../../how_to_guides#define-an-evaluator) for more on how to define evaluators.
+See [here](.#define-an-evaluator) for more on how to define evaluators.
 
 ## Run the evaluation
 
-We'll use the [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) / [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html) methods to run the evaluation.
+We'll use the [evaluate()](https://langsmith-sdk.readthedocs.io/en/late./langsmith.evaluation._runner.evaluate.html) / [aevaluate()](https://langsmith-sdk.readthedocs.io/en/late./langsmith.evaluation._arunner.aevaluate.html) methods to run the evaluation.
 
 The key arguments are:
 
@@ -214,11 +214,11 @@ The key arguments are:
   ]}
 />
 
-See [here](../../how_to_guides#run-an-evaluation) for other ways to kick off evaluations and [here](../../how_to_guides#configure-an-evaluation-job) for how to configure evaluation jobs.
+See [here](.#run-an-evaluation) for other ways to kick off evaluations and [here](.#configure-an-evaluation-job) for how to configure evaluation jobs.
 
 ## Explore the results
 
-Each invocation of `evaluate()` creates an [Experiment](../../concepts#experiments) which can be viewed in the LangSmith UI or queried via the SDK.
+Each invocation of `evaluate()` creates an [Experiment](../concepts#experiments) which can be viewed in the LangSmith UI or queried via the SDK.
 Evaluation scores are stored against each actual output as feedback.
 
 _If you've annotated your code for tracing, you can open the trace of each row in a side panel view._
@@ -364,6 +364,6 @@ _If you've annotated your code for tracing, you can open the trace of each row i
 
 ## Related
 
-- [Run an evaluation asynchronously](../../how_to_guides/async)
-- [Run an evaluation via the REST API](../../how_to_guides/run_evals_api_only)
-- [Run an evaluation from the prompt playground](../../how_to_guides/run_evaluation_from_prompt_playground)
+- [Run an evaluation asynchronously](./async)
+- [Run an evaluation via the REST API](./run_evals_api_only)
+- [Run an evaluation from the prompt playground](./run_evaluation_from_prompt_playground)
