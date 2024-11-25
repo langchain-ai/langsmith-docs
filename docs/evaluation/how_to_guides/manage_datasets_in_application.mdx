@@ -36,14 +36,14 @@ Certain fields in your schema have a `+ Transformations` option.
 Transformations are preprocessing steps that, if enabled, update your examples when you add them to the dataset.
 For example the `convert to OpenAI messages` transformation will convert message-like objects, like LangChain messages, to OpenAI message format.
 
-For the full list of available transformations, see [our reference](/referen./dataset_transformations).
+For the full list of available transformations, see [our reference](/reference/evaluation/dataset_transformations).
 
 :::note
 If you plan to collect production traces in your dataset from LangChain
 [ChatModels](https://python.langchain.com/docs/concepts/chat_models/)
 or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client), we offer a prebuilt Chat Model schema that converts messages and tools into industry standard openai formats that can be used downstream with any model for testing. You can also customize the template settings to match your use case.
 
-Please see the [dataset transformations reference](/referen./dataset_transformations) for more information.
+Please see the [dataset transformations reference](/reference/evaluation/dataset_transformations) for more information.
 :::
 
 ## Add runs to your dataset in the UI
