@@ -398,3 +398,10 @@ may take a minute or two before the new limits apply.
 ### Related content
 
 - Tutorial on how to [optimize spend](./tutorials/manage_spend)
+
+## Best Practices
+
+### Environment separation
+
+Use resource tags to organize resources by environment (e.g. `dev`, `staging`, `prod`). We will be releasing attribute based access control (ABAC) in the near future, which will enable fine-grained permissions based on resource tags.
+We recommend the use of workspaces when you need strict isolation of resources (e.g. different teams who legally cannot see each other's data).
