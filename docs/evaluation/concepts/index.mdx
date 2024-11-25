@@ -66,7 +66,7 @@ When setting up your evaluation, you may want to partition your dataset into dif
 To learn more about creating dataset splits in LangSmith:
 
 - See our video on [`dataset splits`](https://youtu.be/FQMn_FQV-fI?feature=shared) in the LangSmith Evaluation series.
-- See our documentation [here](https://docs.smith.langchain.com/how_to_guides/datasets/manage_datasets_in_application#create-and-manage-dataset-splits).
+- See our documentation [here](../how_to_guides/manage_datasets_in_application#create-and-manage-dataset-splits).
 
 :::
 
@@ -105,7 +105,7 @@ Heuristic evaluators are hard-coded functions that perform computations to deter
 For some tasks, like code generation, custom heuristic evaluation (e.g., import and code execution-evaluation) are often extremely useful and superior to other evaluations (e.g., LLM-as-judge, discussed below).
 
 - Watch the [`Custom evaluator` video in our LangSmith Evaluation series](https://www.youtube.com/watch?v=w31v_kFvcNw) for a comprehensive overview.
-- Read our [documentation](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_on_intermediate_steps#3-define-your-custom-evaluators) on custom evaluators.
+- Read our [documentation](../how_to_guides/custom_evaluator) on custom evaluators.
 - See our [blog](https://blog.langchain.dev/code-execution-with-langgraph/) using custom evaluators for code generation.
 
 :::
@@ -124,7 +124,7 @@ With LLM-as-judge evaluators, it is important to carefully review the resulting 
 
 :::tip
 
-See documentation on our workflow to audit and manually correct evaluator scores [here](https://docs.smith.langchain.com/how_to_guides/evaluation/audit_evaluator_scores).
+See documentation on our workflow to audit and manually correct evaluator scores [here](../how_to_guides/audit_evaluator_scores).
 
 :::
 
@@ -225,7 +225,7 @@ LangSmith evaluations are kicked off using a single function, `evaluate`, which 
 
 :::tip
 
-See documentation on using `evaluate` [here](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application).
+See documentation on using `evaluate` [here](../how_to_guides/evaluate_llm_application).
 
 :::
 
@@ -236,7 +236,7 @@ One of the most common questions when evaluating AI applications is: how can I b
 :::tip
 
 - See the [video on `Repetitions` in our LangSmith Evaluation series](https://youtu.be/Pvz24JdzzF8)
-- See our documentation on [`Repetitions`](https://docs.smith.langchain.com/how_to_guides/evaluation/repetition)
+- See our documentation on [`Repetitions`](../how_to_guides/repetition)
 
 :::
 
@@ -281,7 +281,7 @@ However, there are several downsides to this type of evaluation. First, it usual
 
 :::tip
 
-See our tutorial on [evaluating agent response](https://docs.smith.langchain.com/tutorials/Developers/agents#response-evaluation).
+See our tutorial on [evaluating agent response](../tutorials/agents).
 
 :::
 
@@ -299,7 +299,7 @@ There are several benefits to this type of evaluation. It allows you to evaluate
 
 :::tip
 
-See our tutorial on [evaluating a single step of an agent](https://docs.smith.langchain.com/tutorials/Developers/agents#single-step-evaluation).
+See our tutorial on [evaluating a single step of an agent](../tutorials/agents#single-step-evaluation).
 
 :::
 
@@ -319,7 +319,7 @@ However, none of these approaches evaluate the input to the tools; they only foc
 
 :::tip
 
-See our tutorial on [evaluating agent trajectory](https://docs.smith.langchain.com/tutorials/Developers/agents#trajectory).
+See our tutorial on [evaluating agent trajectory](../tutorials/agents#trajectory).
 
 :::
 
@@ -434,7 +434,7 @@ Classification / Tagging applies a label to a given input (e.g., for toxicity de
 
 A central consideration for Classification / Tagging evaluation is whether you have a dataset with `reference` labels or not. If not, users frequently want to define an evaluator that uses criteria to apply label (e.g., toxicity, etc) to an input (e.g., text, user-question, etc). However, if ground truth class labels are provided, then the evaluation objective is focused on scoring a Classification / Tagging chain relative to the ground truth class label (e.g., using metrics such as precision, recall, etc).
 
-If ground truth reference labels are provided, then it's common to simply define a [custom heuristic evaluator](https://docs.smith.langchain.com/how_to_guides/evaluation/custom_evaluator) to compare ground truth labels to the chain output. However, it is increasingly common given the emergence of LLMs simply use `LLM-as-judge` to perform the Classification / Tagging of an input based upon specified criteria (without a ground truth reference).
+If ground truth reference labels are provided, then it's common to simply define a [custom heuristic evaluator](../how_to_guides/custom_evaluator) to compare ground truth labels to the chain output. However, it is increasingly common given the emergence of LLMs simply use `LLM-as-judge` to perform the Classification / Tagging of an input based upon specified criteria (without a ground truth reference).
 
 `Online` or `Offline` evaluation is feasible when using `LLM-as-judge` with the `Reference-free` prompt used. In particular, this is well suited to `Online` evaluation when a user wants to tag / classify application input (e.g., for toxicity, etc).
 
