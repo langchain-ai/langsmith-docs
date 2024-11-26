@@ -13,7 +13,7 @@ import {
 
 :::info Key concepts
 
-- [Pairwise evaluations](../../concepts#pairwise)
+- [Pairwise evaluations](../concepts#pairwise)
 
 :::
 
@@ -22,7 +22,7 @@ This allows you to score the outputs from multiple experiments against each othe
 Think [LMSYS Chatbot Arena](https://chat.lmsys.org/) - this is the same concept!
 To do this, use the [evaluate_comparative](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate_comparative.html) / `evaluateComparative` function with two existing experiments.
 
-If you haven't already created experiments to compare, check out our [quick start](https://docs.smith.langchain.com/#5-run-your-first-evaluation) or oue [how-to guide](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application) to get started with evaluations.
+If you haven't already created experiments to compare, check out our [quick start](../) or our [how-to guide](./evaluate_llm_application) to get started with evaluations.
 
 ## `evaluate_comparative` args
 
@@ -240,12 +240,12 @@ In the Python example below, we are pulling [this structured prompt](https://smi
 
 Navigate to the "Pairwise Experiments" tab from the dataset page:
 
-![Pairwise Experiments Tab](../evaluation/static/pairwise_from_dataset.png)
+![Pairwise Experiments Tab](./static/pairwise_from_dataset.png)
 
 Click on a pairwise experiment that you would like to inspect, and you will be brought to the Comparison View:
 
-![Pairwise Comparison View](../evaluation/static/pairwise_comparison_view.png)
+![Pairwise Comparison View](./static/pairwise_comparison_view.png)
 
 You may filter to runs where the first experiment was better or vice versa by clicking the thumbs up/thumbs down buttons in the table header:
 
-![Pairwise Filtering](../evaluation/static/filter_pairwise.png)
+![Pairwise Filtering](./static/filter_pairwise.png)

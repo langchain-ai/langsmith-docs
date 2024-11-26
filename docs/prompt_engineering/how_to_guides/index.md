@@ -24,4 +24,4 @@ Quickly iterate on prompts and models in the LangSmith Playground.
 
 Use LangSmith datasets to serve few shot examples to your application
 
-- [Index a dataset for few shot example selection](../../evaluation/how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection)
+- [Index a dataset for few shot example selection](../../evaluation/how_to_guides/index_datasets_for_dynamic_few_shot_example_selection)
