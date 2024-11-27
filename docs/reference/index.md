@@ -14,7 +14,7 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 
 ### SDK
 
-- [Python SDK Reference](/api_reference)
+- [Python SDK Reference](https://langsmith-docs-git-bagatur-rfcbuiltinsdkref-langchain.vercel.app/api_reference)
 - [LangChain off-the-shelf evaluators (Python only)](./reference/sdk_reference/langchain_evaluators)
 
 ### Common data types
