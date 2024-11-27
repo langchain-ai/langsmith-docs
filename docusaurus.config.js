@@ -144,7 +144,7 @@ const config = {
               },
               {
                 label: 'Python',
-                to: 'https://langsmith-docs-git-bagatur-rfcbuiltinsdkref-langchain.vercel.app/reference/python',
+                to: '/reference/python',
               },
             ],
           },
