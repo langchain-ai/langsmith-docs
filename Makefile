@@ -22,3 +22,4 @@ vercel-build: install-vercel-deps build-api-ref
 	mv langsmith-sdk/python/docs/_build/html/* static/api_reference/
 	rm -rf langsmith-sdk
 	NODE_OPTIONS="--max-old-space-size=5000" yarn run docusaurus build
+
