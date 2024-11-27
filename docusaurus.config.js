@@ -134,9 +134,19 @@ const config = {
             position: "right",
           },
           {
-            href: "https://api.smith.langchain.com/redoc",
-            label: "Go to API Docs",
-            position: "left",
+            type: 'dropdown',
+            label: 'API Reference',
+            position: 'left',
+            items: [
+              {
+                label: 'REST',
+                href: 'https://api.smith.langchain.com/redoc',
+              },
+              {
+                label: 'Python',
+                to: 'https://langsmith-docs-git-bagatur-rfcbuiltinsdkref-langchain.vercel.app/reference/python',
+              },
+            ],
           },
         ],
       },
