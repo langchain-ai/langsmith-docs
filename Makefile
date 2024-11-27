@@ -12,7 +12,7 @@ build-api-ref:
 	$(PYTHON) -m pip install --upgrade uv
 	cd langsmith-sdk && ../$(PYTHON) -m uv pip install -r python/docs/requirements.txt
 	$(PYTHON) langsmith-sdk/python/docs/create_api_rst.py
-	cd langsmith-sdk/python/docs && make html
+	$(PYTHON) -m sphinx -T -E -b html -d langsmith-sdk/python/docs/_build/doctrees -c langsmith-sdk/python/docs langsmith-sdk/python/docs langsmith-sdk/python/docs/_build/html -j auto
 	$(PYTHON) langsmith-sdk/python/docs/scripts/custom_formatter.py langsmith-sdk/docs/_build/html/
 	cp langsmith-sdk/python/docs/_build/html/{reference,index}.html
 
