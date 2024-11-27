@@ -204,7 +204,7 @@
     },
     {
         "source": "/reference/python(/?)",
-        "destimation": "/reference/python/reference"
+        "destination": "/reference/python/reference"
     }
   ],
   "builds": [
