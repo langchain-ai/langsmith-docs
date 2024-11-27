@@ -8,7 +8,7 @@ build-api-ref:
 	git clone -b bagatur/update_py_api_ref --depth=1 https://github.com/langchain-ai/langsmith-sdk.git
 	cd langsmith-sdk/python
 	python3 -m venv .venv
-	source .venv/bin/activate
+	. .venv/bin/activate
 	$(PYTHON) -m pip install --upgrade pip
 	$(PYTHON) -m pip install --upgrade uv
 	$(PYTHON) -m uv pip install -r docs/requirements.txt
