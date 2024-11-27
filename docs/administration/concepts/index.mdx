@@ -180,8 +180,9 @@ For more details on assigning and creating roles, see the [access control setup 
 
 ### Environment Separation
 
-Use [resource tags](#resource-tags) to organize resources by environment (e.g. `dev`, `staging`, `prod`). We will be releasing attribute based access control (ABAC) in the near future, which will enable fine-grained permissions based on resource tags.
-We recommend the use of workspaces when you need strict isolation of resources (e.g. different teams who legally cannot see each other's data).
+Use [resource tags](#resource-tags) to organize resources by environment using the default tag key `Environment` and different values for the environment (e.g. `dev`, `staging`, `prod`). This tagging structure will allow you to organize your tracing projects today and easily enforce
+permissions when we release attribute based access control (ABAC). ABAC on the resource tag will provide a fine-grained way to restrict access to production tracing projects, for example. We do not recommend that you use Workspaces for environment separation as you cannot share resources
+across Workspaces. If you would like to promote a prompt from `staging` to `prod`, we recommend you use prompt tags instead. See [docs](../prompt_engineering/concepts#tags) for more information.
 
 ## Usage and Billing
 
