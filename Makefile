@@ -11,9 +11,10 @@ build-api-ref:
 	. .venv/bin/activate
 	$(PYTHON) -m pip install --upgrade pip
 	$(PYTHON) -m pip install --upgrade uv
+	ls
 	$(PYTHON) -m uv pip install -r docs/requirements.txt
 	$(PYTHON) docs/create_api_rst.py
-	cd docs && make html
+	cd docs && make html && cd ..
 	$(PYTHON) docs/scripts/custom_formatter.py docs/_build/html/
 	cp docs/_build/html/{reference,index}.html
 
