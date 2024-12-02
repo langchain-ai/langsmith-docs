@@ -30,7 +30,7 @@ When a file path is passed, LangSmith will stream the file content directly from
 
 ```python
 from langsmith import Client
-from langsmith.schemas import ExampleUpsertWithAttachments, Attachment
+from langsmith.schemas import ExampleUploadWithAttachments, Attachment
 from pathlib import Path
 
 # Define the LANGCHAIN_API_KEY environment variable with your api key
@@ -42,7 +42,7 @@ dataset = langsmith_client.create_dataset(
 )
 
 # Define the example
-example = ExampleUpsertWithAttachments(
+example = ExampleUploadWithAttachments(
     dataset_id=dataset.id,
     inputs={"question": "What were the cumulative earnings earned from online orders in the midwest during Q2?"},
     outputs={"answer": "$123456"},
@@ -59,7 +59,7 @@ example = ExampleUpsertWithAttachments(
 )
 
 # Upsert the examples
-langsmith_client.upsert_examples_multipart(upserts=[example])
+langsmith_client.upload_examples_multipart(uploads=[example])
 ```
 
 Once you upload examples with attachments, you can view them in the LangSmith UI. Each attachment will be rendered as a file with a preview, making it easy to inspect the contents.
@@ -70,7 +70,18 @@ Once you upload examples with attachments, you can view them in the LangSmith UI
 You can also add examples with attachments from existing runs that contain attachments.
 To do learn how to do so you can read [this guide](./../datasets/manage_datasets_in_application#add-runs-from-the-tracing-project-ui).
 
-## Define a target function with attachments
+### From the LangSmith UI
+
+You can also add examples with attachments from the LangSmith UI. You can do so by clicking the `+ Example` button in the `Examples` tab of the dataset UI.
+You can then upload the attachments that you want by using the "Upload Files" button:
+
+![](./static/create_example_with_attachments.png)
+
+## Running evaluations with attachments
+
+Once you have a dataset with attachments, you can run evaluations with attachments as follows:
+
+### Define a target function with attachments
 
 Now that we have a dataset that includes examples with attachments, we can define a target function to run our LLM application on these examples.
 The target function must have two positional arguments in order to consume the attachments associated with the example, the first must be called `inputs` and the second must be called `attachments`.
@@ -127,33 +138,7 @@ def pdf_qa(inputs, attachments):
     return {"answer": model.invoke(messages).content}
 ```
 
-## Run an evaluation
-
-We can then run an evaluation as usual, by passing in the target function to the `evaluate` method:
-
-```python
-evaluate(
-    target=pdf_qa,
-    data="attachment-test-dataset",
-    client=langsmith_client,
-)
-```
-
-LangSmith also supports using the asynchronous version of the `evaluate` method, `aevaluate`, to run evaluations asynchronously:
-
-```python
-async def atarget(inputs, attachments):
-    # Run an asynchronous operation
-    return {"answer": "my-answer"}
-
-await aevaluate(
-    target=atarget,
-    data="attachment-test-dataset",
-    client=langsmith_client
-)
-```
-
-### Use attachments in your evaluator
+### Define custom evaluators with attachments
 
 In addition to using attachments inside of your target function, you can also use them inside of your evaluators as follows:
 
@@ -215,3 +200,7 @@ await aevaluate(
     client=langsmith_client,
 )
 ```
+
+## Managing datasets with attachments
+
+TODO: FILL THIS OUT ONCE UPDATE ENDPOINTS EXIST
