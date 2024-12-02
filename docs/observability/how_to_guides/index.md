@@ -38,6 +38,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Trace JS functions in serverless environments](./how_to_guides/tracing/serverless_environments)
 - [Troubleshoot trace testing](./how_to_guides/tracing/nest_traces)
 - [Upload files with traces](./how_to_guides/tracing/upload_files_with_traces)
+- [Print out logs from the LangSmith package (Python Only)](./how_to_guides/tracing/output_detailed_logs)
 
 ## Tracing projects UI & API
 

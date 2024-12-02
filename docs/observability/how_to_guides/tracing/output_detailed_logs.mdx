@@ -1,0 +1,48 @@
+import {
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to print out logs from the langsmith python package
+
+The LangSmith package uses python's built in [`logging`](https://docs.python.org/3/library/logging.html) mechanism to output logs
+about its behavior to standard output.
+
+## Ensure logging is configured
+
+If logging is not currently configured for your python environment, you'll need to explicitly turn it on as follows:
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    PythonBlock(`
+import logging
+# Note: this will affect _all_ packages that use python's built-in logging mechanism, 
+#       so may increase your log volume. Pick the right log level for your use case.
+logging.basicConfig(level=logging.WARNING)
+    `),
+  ]}
+/>
+
+## Increase the logger's verbosity
+
+When debugging an issue, it's helpful to increase logs to a higher level verbosity so more info is
+outputted to the console. You can set the level to `INFO` or `DEBUG` to get more logs as follows:
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    PythonBlock(`
+import langsmith
+import logging
+
+# Loggers are hierarchical, so setting the log level on "langsmith" will
+
+# set it on all modules inside the "langsmith" package
+
+langsmith_logger = logging.getLogger("langsmith")
+langsmith_logger.setLevel(level=logging.DEBUG)
+`),
+]}
+/>
