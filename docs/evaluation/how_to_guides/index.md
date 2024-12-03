@@ -17,7 +17,7 @@ Evaluate and improve your application before deploying it.
 - [Run an evaluation comparing two experiments](./how_to_guides/evaluate_pairwise)
 - [Evaluate a `langchain` runnable](./how_to_guides/langchain_runnable)
 - [Evaluate a `langgraph` graph](./how_to_guides/langgraph)
-- [Run an evaluation of an existing experiment](./how_to_guides/evaluate_existing_experiment)
+- [Evaluate an existing experiment (Python only)](./how_to_guides/evaluate_existing_experiment)
 - [Run an evaluation via the REST API](./how_to_guides/run_evals_api_only)
 - [Run an evaluation from the UI](./how_to_guides/run_evaluation_from_prompt_playground)
 
