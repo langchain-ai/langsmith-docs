@@ -21,6 +21,11 @@
 module.exports = {
   // By default, Docusaurus generates a sidebar from the docs folder structure
   sidebar: [
+    {
+        type: 'html',
+        value: 'For Developers',
+        className: 'menu__list-item--category',
+    },
     "index",
     {
       type: "category",
@@ -163,6 +168,15 @@ module.exports = {
     },
     "langgraph_cloud",
     {
+        type: 'html',
+        value: '<hr class="dropdown-separator" style="margin-top: 0.5rem; margin-bottom: 0.5rem">',
+    },
+    {
+        type: 'html',
+        value: 'For Admins',
+        className: 'menu__list-item--category',
+    },
+    {
       type: "category",
       label: "Administration",
       items: [
@@ -205,7 +219,6 @@ module.exports = {
           ],
           link: { type: "doc", id: "administration/tutorials/index" },
         },
-        "administration/pricing",
       ],
       link: { type: "doc", id: "administration/concepts/index" },
     },
@@ -221,6 +234,11 @@ module.exports = {
         },
       ],
       link: { type: "doc", id: "self_hosting/index" },
+    },
+    "administration/pricing",
+    {
+        type: 'html',
+        value: '<hr class="dropdown-separator" style="margin-top: 0.5rem; margin-bottom: 0.5rem">',
     },
     {
       type: "category",
