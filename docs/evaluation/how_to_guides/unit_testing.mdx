@@ -78,8 +78,8 @@ def user_query():
 def expected_sql():
     return "SELECT * FROM customers"
 
- output_keys indicate which test arguments to save as 'outputs' in the dataset (Optional)
- Otherwise, all arguments are saved as 'inputs'
+# output_keys indicate which test arguments to save as 'outputs' in the dataset (Optional)
+# Otherwise, all arguments are saved as 'inputs'
 @unit(output_keys=["expected_sql"])
 def test_sql_generation_with_fixture(user_query, expected_sql):
     sql = generate_sql(user_query)
@@ -91,7 +91,7 @@ def test_sql_generation_with_fixture(user_query, expected_sql):
 Parametrizing tests lets you run the same assertions across multiple sets of inputs. Use `pytest`'s `parametrize` decorator to achieve this. For example:
 
 ```python
-@unit
+@unit(output_keys=["expected_sql"])
 @pytest.mark.parametrize(
     "user_query, expected_sql",
     [
@@ -125,7 +125,7 @@ This will log the binary "expectation" score to the experiment results, addition
 `expect` also provides "fuzzy match" methods. For example:
 
 ```python
-@unit
+@unit(output_keys=["expectation"])
 @pytest.mark.parametrize(
     "query, expectation",
     [

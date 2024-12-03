@@ -12,7 +12,9 @@ import {
 
 You can use the Python and TypeScript SDK to manage datasets programmatically. This includes creating, updating, and deleting datasets, as well as adding examples to them.
 
-## Create a dataset from list of values
+## Create a dataset
+
+### Create a dataset from list of values
 
 The most flexible way to make a dataset using the client is by creating examples from a list of inputs and optional outputs. Below is an example.
 
@@ -81,7 +83,7 @@ await client.createExamples({
   groupId="client-language"
 />
 
-## Create a dataset from traces
+### Create a dataset from traces
 
 To create datasets from the runs (spans) of your traces, you can use the same approach.
 For **many** more examples of how to fetch and filter runs, see the [export traces](../../../observability/how_to_guides/tracing/export_traces) guide.
@@ -137,7 +139,7 @@ await client.createExamples({
   groupId="client-language"
 />
 
-## Create a dataset from a CSV file
+### Create a dataset from a CSV file
 
 In this section, we will demonstrate how you can create a dataset by uploading a CSV file.
 
@@ -176,7 +178,7 @@ const dataset = await client.uploadCsv({
   groupId="client-language"
 />
 
-## Create a dataset from pandas DataFrame (Python only)
+### Create a dataset from pandas DataFrame (Python only)
 
 The python client offers an additional convenience method to upload a dataset from a pandas dataframe.
 
@@ -395,6 +397,8 @@ Additionally, you can also chain multiple filters together using the `and` opera
 
 ## Update examples
 
+### Update single example
+
 You can programmatically update examples from LangSmith using the `update_example`/`updateExample` method in the Python and TypeScript SDKs. Below is an example.
 
 <CodeTabs
@@ -420,7 +424,7 @@ You can programmatically update examples from LangSmith using the `update_exampl
   groupId="client-language"
 />
 
-## Bulk update examples
+### Bulk update examples
 
 You can also programmatically update multiple examples in a single request with the `update_examples`/`updateExamples` method in the Python and TypeScript SDKs. Below is an example.
 
