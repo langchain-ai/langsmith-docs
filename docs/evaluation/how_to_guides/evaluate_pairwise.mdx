@@ -27,7 +27,7 @@ If you haven't already created experiments to compare, check out our [quick star
 ## `evaluate_comparative` args
 
 :::note
-Pairwise evaluations require `langsmith` SDK Python version `>=0.1.145` or JS version `>=0.1.24`.
+Pairwise evaluations require `langsmith` SDK Python version `>=0.2.0` or JS version `>=0.1.24`.
 :::
 
 At its simplest, `evaluate_comparative` / `evaluateComparative` function takes the following arguments:
@@ -101,7 +101,7 @@ In the Python example below, we are pulling [this structured prompt](https://smi
 
 <CodeTabs
   tabs={[
-    python({caption: "Requires `langsmith>=0.1.145`"})`
+    python({caption: "Requires `langsmith>=0.2.0`"})`
       from langchain import hub
       from langchain.chat_models import init_chat_model
       from langsmith import evaluate_comparative

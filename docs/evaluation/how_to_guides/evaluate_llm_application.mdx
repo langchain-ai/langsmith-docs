@@ -160,7 +160,7 @@ Since we have labels for this task, our evaluator can directly check if the actu
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({ caption: "Requires `langsmith>=0.1.145`" })`
+    python({ caption: "Requires `langsmith>=0.2.0`" })`
       def correct(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
           return outputs["output"] == reference_outputs["label"]
     `,
@@ -191,7 +191,7 @@ The key arguments are:
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({ caption: "Requires `langsmith>=0.1.145`" })`
+    python({ caption: "Requires `langsmith>=0.2.0`" })`
       from langsmith import evaluate
       
       results = evaluate(
@@ -232,7 +232,7 @@ _If you've annotated your code for tracing, you can open the trace of each row i
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({caption: "Requires `langsmith>=0.1.145`"})`
+    python({caption: "Requires `langsmith>=0.2.0`"})`
       from langsmith import Client, evaluate, traceable, wrappers
       from openai import OpenAI
       
