@@ -6,17 +6,17 @@ import {
 
 # How to print detailed logs (Python SDK)
 
-The LangSmith package uses python's built in [`logging`](https://docs.python.org/3/library/logging.html) mechanism to output logs
+The LangSmith package uses Python's built in [`logging`](https://docs.python.org/3/library/logging.html) mechanism to output logs
 about its behavior to standard output.
 
 ## Ensure logging is configured
 
 :::note
-By default, jupyter notebooks send logs to standard error instead of standard output, which means your
+By default, Jupyter notebooks send logs to standard error instead of standard output, which means your
 logs will not show up in your notebook cell output unless you configure logging as we do below.
 :::
 
-If logging is not currently configured to send logs to standard output for your python environment, you'll need to explicitly turn it on as follows:
+If logging is not currently configured to send logs to standard output for your Python environment, you'll need to explicitly turn it on as follows:
 
 <CodeTabs
   groupId="client-language"
