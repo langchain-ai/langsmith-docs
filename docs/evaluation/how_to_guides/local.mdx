@@ -9,7 +9,7 @@ This feature is still in beta.
 :::
 
 Sometimes it is helpful to run an evaluation locally without uploading any results to LangSmith.
-For example, if you're quickly iterating on a prompt and want to smoke test it on a few examples, or if you're validating out that your target and evaluator functions are all defined correctly, you may not want to record these evaluations.
+For example, if you're quickly iterating on a prompt and want to smoke test it on a few examples, or if you're validating that your target and evaluator functions are defined correctly, you may not want to record these evaluations.
 
 You can do this by using the LangSmith Python SDK and passing `upload_results=False` to `evaluate()` / `aevaluate()`.
 
@@ -18,7 +18,7 @@ This includes not just the experiment results but also the application and evalu
 
 ## Example
 
-Let's take a look at an example
+Let's take a look at an example:
 
 <CodeTabs
   tabs={[
@@ -53,16 +53,16 @@ Let's take a look at an example
     # 5. Analyze results locally
     results = list(experiment)
 
-    # check if is_concise returned False
+    # Check if 'is_concise' returned False.
     failed = [r for r in results if not r["evaluation_results"]["results"][0].score]
 
-    # explore the failed inputs and outputs
+    # Explore the failed inputs and outputs.
     for r in failed:
         print(r["example"].inputs)
         print(r["run"].outputs)
 
-    # explore the results as a Pandas DataFrame
-    # must have 'pandas' installed.
+    # Explore the results as a Pandas DataFrame.
+    # Must have 'pandas' installed.
     df = experiment.to_pandas()
     df[["inputs.question", "outputs.answer", "reference.answer", "feedback.is_concise"]]
     `,
@@ -85,4 +85,7 @@ groupId="client-language"
 groupId="client-language"
 />
 
-## Related
+|     | inputs.question                           | outputs.answer                                                                         | reference.answer           | feedback.is_concise |
+| --: | :---------------------------------------- | :------------------------------------------------------------------------------------- | :------------------------- | :------------------ |
+|   0 | What is the largest mammal?               | What is the largest mammal? is a good question. I don't know the answer.               | The blue whale             | False               |
+|   1 | What do mammals and birds have in common? | What do mammals and birds have in common? is a good question. I don't know the answer. | They are both warm-blooded | False               |
