@@ -41,6 +41,7 @@ Evaluate and improve your application before deploying it.
 
 - [Evaluate with repetitions](./how_to_guides/repetition)
 - [Handle model rate limits](./how_to_guides/rate_limiting)
+- [Print detailed logs (Python only)](../../observability/how_to_guides/tracing/output_detailed_logs)
 
 ## Unit testing
 
