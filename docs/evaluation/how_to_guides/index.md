@@ -1,6 +1,6 @@
 # Evaluation how-to guides
 
-These guides answer “How do I….?” format questions.
+These guides answer “How do I…?” format questions.
 They are goal-oriented and concrete, and are meant to help you complete a specific task.
 For conceptual explanations see the [Conceptual guide](./concepts).
 For end-to-end walkthroughs see [Tutorials](./tutorials).
@@ -78,10 +78,15 @@ Use the UI & API to understand your experiment results.
 
 Manage datasets in LangSmith used by your evaluations.
 
-- [Manage datasets from the UI](./how_to_guides/manage_datasets_in_application)
-- [Manage datasets programmatically](./how_to_guides/manage_datasets_programmatically)
-- [Version datasets](./how_to_guides/version_datasets)
-- [Share or unshare a dataset publicly](./how_to_guides/share_dataset)
+- [Create a dataset from the UI](./how_to_guides/manage_datasets_in_application#set-up-your-dataset)
+- [Export a dataset from the UI](./how_to_guides/manage_datasets_in_application#export-a-dataset)
+- [Create a dataset split from the UI](./how_to_guides/manage_datasets_in_application#create-and-manage-dataset-splits)
+- [Filter examples from the UI](./how_to_guides/manage_datasets_in_application#filter-examples)
+- [Create a dataset via the SDK](./how_to_guides/manage_datasets_programmatically#create-a-dataset)
+- [Fetch a dataset via the SDK](./how_to_guides/manage_datasets_programmatically#fetch-datasets)
+- [Update a dataset via the SDK](./how_to_guides/manage_datasets_programmatically#update-examples)
+- [Version a dataset](./how_to_guides/version_datasets)
+- [Share/unshare a dataset publicly](./how_to_guides/share_dataset)
 - [Export filtered traces from an experiment to a dataset](./how_to_guides/export_filtered_traces_to_dataset)
 
 ## Annotation queues and human feedback
