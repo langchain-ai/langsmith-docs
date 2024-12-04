@@ -21,11 +21,6 @@
 module.exports = {
   // By default, Docusaurus generates a sidebar from the docs folder structure
   sidebar: [
-    {
-        type: 'html',
-        value: 'For Developers',
-        className: 'menu__list-item--category',
-    },
     "index",
     {
       type: "category",
@@ -170,11 +165,6 @@ module.exports = {
     {
         type: 'html',
         value: '<hr class="dropdown-separator" style="margin-top: 0.5rem; margin-bottom: 0.5rem">',
-    },
-    {
-        type: 'html',
-        value: 'For Admins',
-        className: 'menu__list-item--category',
     },
     {
       type: "category",
