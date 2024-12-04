@@ -26,7 +26,7 @@ You can see how to use it [here](./evaluate_llm_application).
   groupId="client-language"
   tabs={[
     python({caption: "Requires `langsmith>=0.2.0`"})`
-        from langsmith import aevaluate, wrappers, Client
+        from langsmith import wrappers, Client
         from openai import AsyncOpenAI
 
         # Optionally wrap the OpenAI client to trace all model calls.
@@ -61,7 +61,10 @@ list 5 concrete questions that should be investigated to determine if the idea i
             inputs=[{"idea": e} for e in examples,
         )
 
-        results = await aevaluate(
+        # Can equivalently use the 'aevaluate' function directly:
+        # from langsmith import aevaluate
+        # await aevaluate(...)
+        results = await ls_client.aevaluate(
             researcher_app,
             data=dataset,
             evaluators=[concise],

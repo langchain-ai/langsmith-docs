@@ -31,10 +31,9 @@ from langsmith import evaluate
 def semantic_router(inputs: dict):
     return {"class": 1}
 
+# Assumes dataset examples have reference outputs with a "label" key.
 def accuracy(outputs: dict, reference_outputs: dict) -> bool:
-    prediction = outputs["class"]
-    expected = reference_outputs["label"]
-    return prediction == expected
+    return outputs["class"] == reference_outputs["label"]
 
 results = evaluate(
     semantic_router,
