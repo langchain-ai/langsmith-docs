@@ -36,12 +36,14 @@ These functions can be passed directly into [evaluate()](https://langsmith-sdk.r
             evaluators=[correct]
         )
     `,
-    typescript`
+    typescript({caption: "Requires `langsmith>=0.2.9`"})`
       import type { EvaluationResult } from "langsmith/evaluation";
-      import type { Run, Example } from "langsmith/schemas";
 
-      function correct(run: Run, example: Example): EvaluationResult {
-        const score = run.outputs?.output === example.outputs?.output;
+      function correct({ outputs, referenceOutputs }: {
+        outputs: Record<string, any>;
+        referenceOutputs?: Record<string, any>;
+      }): EvaluationResult {
+        const score = outputs?.answer === referenceOutputs?.answer;
         return { key: "correct", score };
       }
     `,
