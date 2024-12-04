@@ -9,7 +9,8 @@ Evaluation of existing experiments is currently only supported in the Python SDK
 :::
 
 If you have already run an experiment and want to add additional evaluation metrics, you
-can apply any evaluators to the experiment using the `evaluate()` / `aevaluate()` methods.
+can apply any evaluators to the experiment using the `evaluate()` / `aevaluate()` methods as before.
+Just pass in the experiment name / ID instead of a target function:
 
 ```python
 from langsmith import evaluate
@@ -18,48 +19,5 @@ def always_half(inputs: dict, outputs: dict) -> float:
     return 0.5
 
 experiment_name = "my-experiment:abc" # Replace with an actual experiment name or ID
-evaluate_existing(experiment_name, evaluators=[always_half])
+evaluate(experiment_name, evaluators=[always_half])
 ```
-
-## Example
-
-Suppose you are evaluating a semantic router. You may first run an experiment:
-
-```python
-from langsmith import evaluate
-
-def semantic_router(inputs: dict):
-    return {"class": 1}
-
-# Assumes dataset examples have reference outputs with a "label" key.
-def accuracy(outputs: dict, reference_outputs: dict) -> bool:
-    return outputs["class"] == reference_outputs["label"]
-
-results = evaluate(
-    semantic_router,
-    data="Router Classification Dataset",
-    evaluators=[accuracy],
-)
-experiment_name = results.experiment_name
-```
-
-Later, you realize you want to add precision and recall summary metrics. You can rerun `evaluate()` this time with the extra metrics,
-which allows you to add both instance-level `evaluator`'s and aggregate `summary_evaluator`'s.
-
-```python
-from langsmith import evaluate
-
-# Note that now we take list of dicts as inputs instead of just dicts.
-def precision_recall(outputs: list[dict], reference_outputs: list[dict]) -> list[dict]:
-    true_positives = sum([ref["label"] == 1 and out["class"] == 1 for out, ref in zip(outputs, reference_outputs)])
-    predicted_positives = len([out for out in outputs if out["class"] == 1])
-    actual_positives = len([ref for ref in reference_outputs if ref["label"] == 1])
-    return [
-        {"score": true_positives / predicted_positives, "key": "precision"},
-        {"score": true_positives / actual_positives, "key": "recall"}
-    ]
-
-evaluate(experiment_name, summary_evaluators=[precision_recall])
-```
-
-The precision and recall metrics will now be available in the LangSmith UI for the `experiment_name` experiment.
