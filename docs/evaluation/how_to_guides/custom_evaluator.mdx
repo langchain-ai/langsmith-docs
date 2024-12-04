@@ -39,10 +39,10 @@ These functions can be passed directly into [evaluate()](https://langsmith-sdk.r
     typescript({caption: "Requires `langsmith>=0.2.9`"})`
       import type { EvaluationResult } from "langsmith/evaluation";
 
-      function correct({ outputs, referenceOutputs }: {
+      const correct = async ({ outputs, referenceOutputs }: {
         outputs: Record<string, any>;
         referenceOutputs?: Record<string, any>;
-      }): EvaluationResult {
+      }): Promise<EvaluationResult> => {
         const score = outputs?.answer === referenceOutputs?.answer;
         return { key: "correct", score };
       }
