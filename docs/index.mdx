@@ -27,9 +27,9 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Get started with LangSmith
 
-**LangSmith** is a platform for building production-grade LLM applications. 
-It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence. 
-Use of LangChain's open source frameworks [langchain](https://python.langchain.com) and [langgraph](https://langchain-ai.github.io/langgraph/) is not necessary - LangSmith works on its own!
+**LangSmith** is a platform for building production-grade LLM applications.
+It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence.
+LangChain's open source frameworks [langchain](https://python.langchain.com) and [langgraph](https://langchain-ai.github.io/langgraph/) work seemlessly with LangSmith but are not necessary - LangSmith works on its own!
 
 ## 1. Install LangSmith
 
@@ -106,53 +106,60 @@ Evaluation requires a system to test, data to serve as test cases, and optionall
 client = Client()
 
 # Define dataset: these are your test cases
+
 dataset = client.create_dataset(
-    "Sample Dataset", 
-    description="A sample dataset in LangSmith.",
+"Sample Dataset",
+description="A sample dataset in LangSmith.",
 )
 client.create_examples(
-    inputs=[
-        {"postfix": "to LangSmith"},
-        {"postfix": "to Evaluations in LangSmith"},
-    ],
-    outputs=[
-        {"response": "Welcome to LangSmith"},
-        {"response": "Welcome to Evaluations in LangSmith"},
-    ],
-    dataset_id=dataset.id,
+inputs=[
+{"postfix": "to LangSmith"},
+{"postfix": "to Evaluations in LangSmith"},
+],
+outputs=[
+{"response": "Welcome to LangSmith"},
+{"response": "Welcome to Evaluations in LangSmith"},
+],
+dataset_id=dataset.id,
 )
 
 # Define an interface to your application (tracing optional)
+
 @traceable
 def dummy_app(inputs: dict) -> dict:
-    return {"response": "Welcome " + inputs["postfix"]}
+return {"response": "Welcome " + inputs["postfix"]}
 
 # Define your evaluator(s)
+
 def exact_match(outputs: dict, reference_outputs: dict) -> bool:
-    return outputs["response"] == reference_outputs["response"]
+return outputs["response"] == reference_outputs["response"]
 
 # Run the evaluation
+
 experiment_results = client.evaluate(
-    dummy_app,  # Your AI system goes here
-    data=dataset, # The data to predict and grade over
-    evaluators=[exact_match], # The evaluators to score the results
-    experiment_prefix="sample-experiment", # The name of the experiment
-    metadata={"version": "1.0.0", "revision_id": "beta"},  # Metadata about the experiment
+dummy_app, # Your AI system goes here
+data=dataset, # The data to predict and grade over
+evaluators=[exact_match], # The evaluators to score the results
+experiment_prefix="sample-experiment", # The name of the experiment
+metadata={"version": "1.0.0", "revision_id": "beta"}, # Metadata about the experiment
 )
 
-# Analyze the results via the UI or programmatically 
-# If you have 'pandas' installed you can view the results as a 
-# pandas DataFrame by uncommenting below: 
+# Analyze the results via the UI or programmatically
+
+# If you have 'pandas' installed you can view the results as a
+
+# pandas DataFrame by uncommenting below:
 
 # experiment_results.to_pandas()
+
 `,
     },
     typescript`
-      import { Client, Run, Example } from "langsmith";
-      import { EvaluationResult, evaluate } from "langsmith/evaluation";
-      
+import { Client, Run, Example } from "langsmith";
+import { EvaluationResult, evaluate } from "langsmith/evaluation";
+
       const client = new Client();
-      
+
       // Define dataset: these are your test cases
       const datasetName = "Sample Dataset";
       const dataset = await client.createDataset(datasetName, {
@@ -169,7 +176,7 @@ experiment_results = client.evaluate(
         ],
         datasetId: dataset.id,
       });
-      
+
       // Define your evaluator
       const exactMatch = async (
         run: Run,
@@ -180,7 +187,7 @@ experiment_results = client.evaluate(
           score: run.outputs?.output === example?.outputs?.output,
         };
       };
-      
+
       await evaluate(
         (input: { postfix: string }) => ({ output: \`Welcome $\{input.postfix\}\` }),
         {
@@ -193,8 +200,9 @@ experiment_results = client.evaluate(
         }
       );
     `,
-  ]}
-  groupId="client-language"
+
+]}
+groupId="client-language"
 />
 
 - Click the link printed out by your evaluation run to access the LangSmith experiments UI,
