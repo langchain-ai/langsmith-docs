@@ -10,7 +10,7 @@ import {
   typescript,
 } from "@site/src/components/InstructionsWithCode";
 
-# How to evaluate intermediate steps
+# How to evaluate an application's intermediate steps
 
 While, in many scenarios, it is sufficient to evaluate the final output of your task, in some cases you might want to evaluate the intermediate steps of your pipeline.
 
@@ -26,8 +26,6 @@ In order to evaluate the intermediate steps of your pipeline, your evaluator fun
 ## 1. Define your LLM pipeline
 
 The below RAG pipeline consists of 1) generating a Wikipedia query given the input question, 2) retrieving relevant documents from Wikipedia, and 3) generating an answer given the retrieved documents.
-
-First lets install all the dependencies for this example:
 
 <CodeTabs
   tabs={[

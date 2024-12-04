@@ -23,11 +23,11 @@ Let's take a look at an example:
 <CodeTabs
   tabs={[
     python({caption: "Requires `langsmith>=0.2.0`. Example also uses `pandas`."})`
-    from langsmith import evaluate, Client
+    from langsmith import Client
 
     # 1. Create and/or select your dataset
-    client = Client()
-    dataset = client.clone_public_dataset(
+    ls_client = Client()
+    dataset = ls_client.clone_public_dataset(
         "https://smith.langchain.com/public/a63525f9-bdf2-4512-83e3-077dc9417f96/d"
     )
 
@@ -40,7 +40,7 @@ Let's take a look at an example:
         return {"answer": inputs["question"] + " is a good question. I don't know the answer."}
 
     # 4. Run an evaluation
-    experiment = evaluate(
+    experiment = ls_client.evaluate(
         chatbot,
         data=dataset,
         evaluators=[is_concise],
