@@ -167,7 +167,7 @@ import { EvaluationResult, evaluate } from "langsmith/evaluation";
         datasetId: dataset.id,
       });
 
-      // Define your evaluator
+      // Define your evaluator(s)
       const exactMatch = async ({ outputs, referenceOutputs }: {
         outputs?: Record<string, any>;
         referenceOutputs?: Record<string, any>;
@@ -178,8 +178,9 @@ import { EvaluationResult, evaluate } from "langsmith/evaluation";
         };
       };
 
-      await evaluate(
-        (input: { postfix: string }) => ({ response: \`Welcome $\{input.postfix\}\` }),
+      // Run the evaluation
+      const experimentResults = await evaluate(
+        (inputs: { postfix: string }) => ({ response: \`Welcome $\{inputs.postfix\}\` }),
         {
           data: datasetName,
           evaluators: [exactMatch],
