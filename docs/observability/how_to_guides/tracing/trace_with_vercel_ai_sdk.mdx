@@ -72,6 +72,8 @@ Afterwards, add the `experimental_telemetry` argument to your AI SDK calls that 
 
 ```ts
 import { AISDKExporter } from "langsmith/vercel";
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 await streamText({
   model: openai("gpt-4o-mini"),
@@ -80,6 +82,45 @@ await streamText({
   experimental_telemetry: AISDKExporter.getSettings(),
 });
 ```
+
+You should see a trace in your LangSmith dashboard [like this one](https://smith.langchain.com/public/a9d9521a-4f97-4843-b1e2-b87c3a125503/r).
+
+You can also trace runs with tool calls:
+
+```ts
+import { AISDKExporter } from "langsmith/vercel";
+import { generateText, tool } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
+
+await generateText({
+  model: openai("gpt-4o-mini"),
+  messages: [
+    {
+      role: "user",
+      content: "What are my orders and where are they? My user ID is 123",
+    },
+  ],
+  tools: {
+    listOrders: tool({
+      description: "list all orders",
+      parameters: z.object({ userId: z.string() }),
+      execute: async ({ userId }) =>
+        `User ${userId} has the following orders: 1`,
+    }),
+    viewTrackingInformation: tool({
+      description: "view tracking information for a specific order",
+      parameters: z.object({ orderId: z.string() }),
+      execute: async ({ orderId }) =>
+        `Here is the tracking information for ${orderId}`,
+    }),
+  },
+  experimental_telemetry: AISDKExporter.getSettings(),
+  maxSteps: 10,
+});
+```
+
+Which results in a trace like [this one](https://smith.langchain.com/public/4d3add36-756d-4c8c-845d-4ad701a315bb/r).
 
 ### Node.js
 
@@ -197,6 +238,8 @@ export default instrument<Env, unknown, unknown>(handler, (env) => ({
 }));
 ```
 
+You should see a trace in your LangSmith dashboard [like this one](https://smith.langchain.com/public/a9d9521a-4f97-4843-b1e2-b87c3a125503/r).
+
 ## Customize run name
 
 You can customize the run name by passing the `runName` argument to the `AISDKExporter.getSettings()` method.
@@ -232,6 +275,46 @@ await generateText({
   // highlight-end
 });
 ```
+
+## Nesting runs
+
+You can also nest runs within other traced functions to create a hierarchy of associated runs.
+Here's an example using the [`traceable`](https://docs.smith.langchain.com/observability/how_to_guides/tracing/annotate_code#use-traceable--traceable) method:
+
+```ts
+import { AISDKExporter } from "langsmith/vercel";
+import { openai } from "@ai-sdk/openai";
+import { generateText } from "ai";
+
+import { traceable } from "langsmith/traceable";
+
+const wrappedGenerateText = traceable(
+  async (content: string) => {
+    const { text } = await generateText({
+      model: openai("gpt-4o-mini"),
+      messages: [{ role: "user", content }],
+      experimental_telemetry: AISDKExporter.getSettings(),
+    });
+
+    const reverseText = traceable(
+      async (text: string) => {
+        return text.split("").reverse().join("");
+      },
+      { name: "reverseText" }
+    );
+
+    const reversedText = await reverseText(text);
+    return { text, reversedText };
+  },
+  { name: "parentTraceable" }
+);
+
+const result = await wrappedGenerateText(
+  "What color is the sky? Respond with one word."
+);
+```
+
+The resulting trace will look like [this one](https://smith.langchain.com/public/c0466ed5-3932-4140-83b1-cf11e998fa6a/r).
 
 ## Custom LangSmith client
 
@@ -270,6 +353,27 @@ const traceExporter = new AISDKExporter({ debug: true });
 ```
 
 Alternatively, you can set the `OTEL_LOG_LEVEL=DEBUG` environment variable to enable debug logs for the exporter as well as the rest of the OpenTelemetry stack.
+
+## Adding metadata
+
+You can add metadata to your traces to help organize and filter them in the LangSmith UI:
+
+```ts
+import { AISDKExporter } from "langsmith/vercel";
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+await generateText({
+  model: openai("gpt-4o-mini"),
+  prompt: "Write a vegetarian lasagna recipe for 4 people.",
+  experimental_telemetry: AISDKExporter.getSettings({
+    // highlight-next-line
+    metadata: { userId: "123", language: "english" },
+  }),
+});
+```
+
+Metadata will be visible in your LangSmith dashboard and can be used to filter and search for specific traces.
 
 ## `wrapAISDKModel` (deprecated)
 
