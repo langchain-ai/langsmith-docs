@@ -25,7 +25,7 @@ Simply use `list_examples` / `listExamples` to fetch examples from a particular 
       from langsmith import Client
 
       ls_client = Client()
-      
+
       # Assumes actual outputs have a 'class' key.
       # Assumes example outputs have a 'label' key.
       def correct(outputs: dict, reference_outputs: dict) -> bool:
@@ -37,7 +37,7 @@ Simply use `list_examples` / `listExamples` to fetch examples from a particular 
           # highlight-next-line
           data=ls_client.list_examples(
             # highlight-next-line
-            dataset_name="Toxic Queries", 
+            dataset_name="Toxic Queries",
             # highlight-next-line
             as_of="latest",  # specify version here
             # highlight-next-line
@@ -47,7 +47,7 @@ Simply use `list_examples` / `listExamples` to fetch examples from a particular 
     `,
     typescript`
       import { evaluate } from "langsmith/evaluation";
-      
+
       await evaluate((inputs) => labelText(inputs["input"]), {
         data: langsmith.listExamples({
           datasetName: datasetName,
@@ -56,7 +56,8 @@ Simply use `list_examples` / `listExamples` to fetch examples from a particular 
         evaluators: [correctLabel],
       });
     `,
-  ]}
+
+]}
 />
 
 ## Related
