@@ -300,9 +300,7 @@ const wrappedGenerateText = traceable(
       async (text: string) => {
         return text.split("").reverse().join("");
       },
-      {
-        name: "reverseText",
-      }
+      { name: "reverseText" }
     );
 
     const reversedText = await reverseText(text);
