@@ -104,7 +104,7 @@ In the Python example below, we are pulling [this structured prompt](https://smi
     python({caption: "Requires `langsmith>=0.1.145`"})`
       from langchain import hub
       from langchain.chat_models import init_chat_model
-      from langsmith import evaluate_comparative
+      from langsmith.evaluation import evaluate_comparative
 
       prompt = hub.pull("langchain-ai/pairwise-evaluation-2")
       model = init_chat_model("gpt-4o")
