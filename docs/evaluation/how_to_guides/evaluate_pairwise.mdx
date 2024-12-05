@@ -139,7 +139,13 @@ In the Python example below, we are pulling [this structured prompt](https://smi
 
       const openai = wrapOpenAI(new OpenAI());
 
-      async function rankedPreference({ inputs, runs }: { inputs: Record<string, any>, runs: Run[] }) {
+      async function rankedPreference({
+        inputs,
+        runs,
+      }: {
+        inputs: Record<string, any>;
+        runs: Run[];
+      }) {
         const scores: Record<string, number> = {};
         const [runA, runB] = runs;
 
