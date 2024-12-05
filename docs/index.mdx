@@ -135,6 +135,7 @@ Evaluation requires a system to test, data to serve as test cases, and optionall
             evaluators=[exact_match], # The evaluators to score the results
             experiment_prefix="sample-experiment", # The name of the experiment
             metadata={"version": "1.0.0", "revision_id": "beta"}, # Metadata about the experiment
+            max_concurrency=4,  # Add concurrency.
         )
 
         # Analyze the results via the UI or programmatically
@@ -185,6 +186,7 @@ import { EvaluationResult, evaluate } from "langsmith/evaluation";
           data: datasetName,
           evaluators: [exactMatch],
           metadata: { version: "1.0.0", revision_id: "beta" },
+          maxConcurrency: 4,
         }
       );
     `,

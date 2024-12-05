@@ -48,12 +48,11 @@ The below RAG pipeline consists of 1) generating a Wikipedia query given the inp
 <CodeTabs
   tabs={[
     python({ caption: 'Requires `langsmith>=0.2.0`' })`
-    import openai
     import wikipedia as wp
-
+    from openai import OpenAI
     from langsmith import traceable, wrappers
 
-    oai_client = wrappers.wrap_openai(openai.Client())
+    oai_client = wrappers.wrap_openai(OpenAI())
 
     @traceable
     def generate_wiki_search(question: str) -> str:
@@ -289,6 +288,20 @@ The key here is that the evaluator function should traverse the `run` / `rootRun
         return retrieve_run.inputs["query"] in page_contents
 
 
+    # Data model
+    class GradeHallucinations(BaseModel):
+        """Binary score for hallucination present in generation answer."""
+
+        is_grounded: bool = Field(..., description="True if the answer is grounded in the facts, False otherwise.")
+
+    # LLM with structured outputs for grading hallucinations
+    # For more see: https://python.langchain.com/docs/how_to/structured_output/
+    grader_llm= init_chat_model("gpt-4o-mini", temperature=0).with_structured_output(
+        GradeHallucinations,
+        method="json_schema",
+        strict=True,
+    )
+
     def no_hallucination(run: Run) -> bool:
         """Check if the answer is grounded in the documents.
 
@@ -296,42 +309,28 @@ The key here is that the evaluator function should traverse the `run` / `rootRun
         """
         # Get documents and answer
         qa_pipeline_run = next(
-            run for run in run.child_runs if run.name == "qa_pipeline"
+            r for r in run.child_runs if r.name == "qa_pipeline"
         )
         retrieve_run = next(
-            run for run in qa_pipeline_run.child_runs if run.name == "retrieve"
+            r for r in qa_pipeline_run.child_runs if r.name == "retrieve"
         )
         retrieved_content = "\\n\\n".join(
             doc["page_content"] for doc in retrieve_run.outputs["output"]
         )
 
-        # Data model
-        class GradeHallucinations(BaseModel):
-            """Binary score for hallucination present in generation answer."""
-
-            is_grounded: bool = Field(..., description="True if the answer is grounded in the facts, False otherwise.")
-
-        # LLM with structured outputs
-        # For more see: https://python.langchain.com/docs/how_to/structured_output/
-        llm = init_chat_model("gpt-4o-mini", temperature=0)
-        structured_llm= llm.with_structured_output(
-            GradeHallucinations,
-            method="json_schema",
-            strict=True,
-        )
-
-        # Prompt
+        # Construct prompt
         instructions = (
             "You are a grader assessing whether an LLM generation is grounded in / "
             "supported by a set of retrieved facts. Give a binary score 1 or 0, "
             "where 1 means that the answer is grounded in / supported by the set of facts."
         )
+
         messages = [
             {"role": "system", "content": instructions},
-            {"role": "user", "content": "Set of facts: \\n\\n {retrieved_content} \\n\\n LLM generation: {generation}"},
+            {"role": "user", "content": f"Set of facts:\\n{retrieved_content}\\n\\nLLM generation: {run.outputs['answer']}"},
         ]
 
-        grade = structured_llm.invoke(messages)
+        grade = grader_llm.invoke(messages)
         return grade.is_grounded`,
     typescript`
       import { EvaluationResult } from "langsmith/evaluation";

@@ -68,8 +68,8 @@ list 5 concrete questions that should be investigated to determine if the idea i
             researcher_app,
             data=dataset,
             evaluators=[concise],
-            # Optional, no max_concurrency by default but it is recommended to set one.
-            max_concurrency=2,
+            # Optional, add concurrency.
+            max_concurrency=2,  # Optional, add concurrency.
             experiment_prefix="gpt-4o-mini-baseline"  # Optional, random by default.
         )
     `,

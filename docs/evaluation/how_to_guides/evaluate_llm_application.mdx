@@ -201,6 +201,7 @@ The key arguments are:
           evaluators=[correct],
           experiment_prefix="gpt-4o-mini, baseline",  # optional, experiment name prefix
           description="Testing the baseline system.",  # optional, experiment description
+          max_concurrency=4, # optional, add concurrency
       )
     `,
     typescript`
@@ -210,6 +211,7 @@ The key arguments are:
         data: datasetName,
         evaluators: [correct],
         experimentPrefix: "gpt-4o-mini, baseline",  // optional, experiment name prefix
+        maxConcurrency: 4, // optional, add concurrency
       });
     `,
   ]}
@@ -281,12 +283,14 @@ _If you've annotated your code for tracing, you can open the trace of each row i
           return outputs["output"] == reference_outputs["label"]
 
       # Step 4. Run the evaluation
+      # Client.evaluate() and evaluate() behave the same.
       results = ls_client.evaluate(
           toxicity_classifier,
           data=dataset_name,
           evaluators=[correct],
           experiment_prefix="gpt-4o-mini, simple",  # optional, experiment name prefix
           description="Testing the baseline system.",  # optional, experiment description
+          max_concurrency=4,  # optional, add concurrency
       )
       `,
     typescript`
@@ -355,7 +359,7 @@ _If you've annotated your code for tracing, you can open the trace of each row i
         data: datasetName,
         evaluators: [correct],
         experimentPrefix: "gpt-4o-mini, simple",  // optional, experiment name prefix
-
+        maxConcurrency: 4, // optional, add concurrency
       });
       `,
 

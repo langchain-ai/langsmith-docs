@@ -76,7 +76,8 @@ export LANGCHAIN_API_KEY=<your-api-key>`),
         chatbot,
         data=dataset,
         evaluators=[is_concise],
-        experiment_prefix="my first experiment "
+        experiment_prefix="my first experiment ",
+        max_concurrency=4,
     )
 
 `,
@@ -107,6 +108,7 @@ answer: inputs.question + " Good question. I don't know the answer"
 data: datasetName,
 evaluators: [isConcise],
 experimentPrefix: "my first experiment ",
+maxConcurrency: 4,
 });`,
 ]}
 groupId="client-language"
