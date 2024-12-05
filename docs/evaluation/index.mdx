@@ -54,8 +54,8 @@ export LANGCHAIN_API_KEY=<your-api-key>`),
 
 <CodeTabs
   tabs={[
-    python({caption: "Requires `langsmith>=0.1.145`"})`
-    from langsmith import evaluate, Client
+    python({caption: "Requires `langsmith>=0.2.0`"})`
+    from langsmith import Client
 
     # 1. Create and/or select your dataset
     client = Client()
@@ -72,18 +72,20 @@ export LANGCHAIN_API_KEY=<your-api-key>`),
         return {"answer": inputs["question"] + " is a good question. I don't know the answer."}
 
     # 4. Run an evaluation
-    evaluate(
+    experiment_results = client.evaluate(
         chatbot,
         data=dataset,
         evaluators=[is_concise],
-        experiment_prefix="my first experiment "
+        experiment_prefix="my first experiment ",
+        max_concurrency=4,
     )
 
 `,
-    typescript`import { Client } from "langsmith";
+    typescript({caption: "Requires `langsmith>=0.2.9`"})`
+import { Client } from "langsmith";
 import { evaluate } from "langsmith/evaluation";
 import type { EvaluationResult } from "langsmith/evaluation";
-import type { Run, Example } from "langsmith/schemas";\n
+
 // 1. Define a dataset
 const client = new Client();
 const datasetName = "my first dataset"
@@ -92,21 +94,21 @@ const dataset = await client.clonePublicDataset(
 { datasetName: datasetName }
 )\n
 // 2. Define an evaluator
-function isConcise(rootRun: Run, example: Example): EvaluationResult {
-const score = rootRun.outputs?.outputs.length < 3 \* example.outputs?.answer.length;
+function isConcise({ outputs, referenceOutputs }: { outputs?: Record<string, any>, referenceOutputs?: Record<string, any> }): EvaluationResult {
+const score = outputs?.answer.length < 3 \* referenceOutputs?.answer.length;
 return { key: "is_concise", score: score };
 }\n
 // 3. Run an evaluation
-// For more info on evaluators, see: https://docs.smith.langchain.com/concepts/evaluation#evaluators
 await evaluate(
-(exampleInput) => {
+(inputs: { question: string }) => {
 return {
-answer: exampleInput.question + " Good question. I don't know the answer"
+answer: inputs.question + " Good question. I don't know the answer"
 };
 }, {
 data: datasetName,
 evaluators: [isConcise],
 experimentPrefix: "my first experiment ",
+maxConcurrency: 4,
 });`,
 ]}
 groupId="client-language"
