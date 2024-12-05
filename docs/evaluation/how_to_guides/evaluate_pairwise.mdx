@@ -20,7 +20,7 @@ import {
 LangSmith supports evaluating **existing** experiments in a comparative manner.
 This allows you to score the outputs from multiple experiments against each other, rather than being confined to evaluating outputs one at a time.
 Think [LMSYS Chatbot Arena](https://chat.lmsys.org/) - this is the same concept!
-To do this, use the [evaluate()](https://docs.smith.langchain.com/reference/python/evaluation/langsmith.evaluation._runner.evaluate) function with two existing experiments.
+To do this, use the [evaluate()](https://langsmith-docs-git-bagatur-rfcbuiltinsdkref-langchain.vercel.app/reference/python/evaluation/langsmith.evaluation._runner.evaluate) function with two existing experiments.
 
 If you haven't already created experiments to compare, check out our [quick start](../) or our [how-to guide](./evaluate_llm_application) to get started with evaluations.
 
@@ -132,20 +132,21 @@ In the Python example below, we are pulling [this structured prompt](https://smi
     `,
     typescript({caption: "Requires `langsmith>=0.2.9`"})`
       import { evaluate} from "langsmith/evaluation";
+      import { Run } from "langsmith/schemas";
       import { wrapOpenAI } from "langsmith/wrappers";
       import OpenAI from "openai";
       import { z } from "zod";
 
       const openai = wrapOpenAI(new OpenAI());
 
-      async function rankedPreference({ inputs, outputs }: { inputs: Record<string, any>, outputs: Record<string, any> }) {
+      async function rankedPreference({ inputs, runs }: { inputs: Record<string, any>, runs: Run[] }) {
         const scores: Record<string, number> = {};
         const [runA, runB] = runs;
 
         if (!runA || !runB) throw new Error("Expected at least two runs");
 
         const payload = {
-          question: example.inputs?.question,
+          question: inputs.question,
           answer_a: runA?.outputs?.output ?? "N/A",
           answer_b: runB?.outputs?.output ?? "N/A",
         };

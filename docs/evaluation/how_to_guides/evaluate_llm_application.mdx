@@ -169,10 +169,16 @@ Since we have labels for this task, our evaluator can directly check if the actu
       def correct(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
           return outputs["class"] == reference_outputs["label"]
     `,
-    typescript`
+    typescript({ caption: "Requires `langsmith>=0.2.9`" })`
       import type { EvaluationResult } from "langsmith/evaluation";
       
-      function correct({ outputs, referenceOutputs }: { outputs: Record<string, any>, referenceOutputs?: Record<string, any> }): EvaluationResult {
+      function correct({
+        outputs,
+        referenceOutputs,
+      }: {
+        outputs: Record<string, any>;
+        referenceOutputs?: Record<string, any>;
+      }): EvaluationResult {
         const score = outputs.output === referenceOutputs?.outputs;
         return { key: "correct", score };
       }
@@ -353,8 +359,14 @@ _If you've annotated your code for tracing, you can open the trace of each row i
       await langsmith.createExamples({ inputs, outputs, datasetId: toxicDataset.id });
 
       // Row-level evaluator
-      function correct(rootRun: Run, example: Example): EvaluationResult {
-        const score = rootRun.outputs?.output === example.outputs?.outputs;
+      function correct({
+        outputs,
+        referenceOutputs,
+      }: {
+        outputs: Record<string, any>;
+        referenceOutputs?: Record<string, any>;
+      }): EvaluationResult {
+        const score = outputs.output === referenceOutputs?.outputs;
         return { key: "correct", score };
       }
 
