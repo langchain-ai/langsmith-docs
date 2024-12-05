@@ -201,6 +201,14 @@
     {
         "source": "/evaluation/how_to_guides/human_feedback/:path*",
         "destination": "/evaluation/how_to_guides/:path*"
+    },
+    {
+        "source": "/reference/python(/?)",
+        "destination": "/reference/python/reference"
+    },
+    {
+        "source": "/reference/sdk_reference(/?)",
+        "destination": "/reference/"
     }
   ],
   "builds": [
