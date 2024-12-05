@@ -144,7 +144,7 @@ const config = {
               },
               {
                 label: "Python",
-                to: "https://docs.smith.langchain/reference/python",
+                to: "https://docs.smith.langchain.com/reference/python",
               },
             ],
           },
