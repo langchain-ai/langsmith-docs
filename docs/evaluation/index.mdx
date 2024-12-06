@@ -65,26 +65,19 @@ client = Client()
 
 # Create inputs and reference outputs
 example_inputs = [
-    (
-        "What state is the Golden Gate Bridge in?",
-        "The Golden Gate Bridge is in San Francisco, California.",
-    ),
-    (
-        "What is the tallest mountain in the world?",
-        "The tallest mountain in the world is Mount Everest.",
-    ),
-    (
-        "What is the capital of the United States?",
-        "The capital of the United States is Washington, D.C.",
-    )
+(
+    "Which country is Mount Kilimanjaro located in?",
+    "Mount Kilimanjaro is located in Tanzania.",
+),
+(
+    "What is Earth's lowest point?",
+    "Earth's lowest point is The Dead Sea.",
+)
 ]
-
-# Name the dataset
-dataset_name = "Sample dataset"
 
 # Programmatically create a dataset in LangSmith
 dataset = client.create_dataset(
-    dataset_name=dataset_name,
+    dataset_name="Sample dataset",
     description="A sample dataset in LangSmith."
 )
 
@@ -106,24 +99,17 @@ const client = new Client();
 // Create inputs and reference outputs
 const exampleInputs: [string, string][] = [
 [
-"What state is the Golden Gate Bridge in?",
-"The Golden Gate Bridge is in San Francisco, California.",
+"Which country is Mount Kilimanjaro located in?",
+    "Mount Kilimanjaro is located in Tanzania.",
 ],
 [
-"What is the tallest mountain in the world?",
-"The tallest mountain in the world is Mount Everest.",
-],
-[
-"What is the capital of the United States?",
-"The capital of the United States is Washington, D.C.",
+ "What is Earth's lowest point?",
+    "Earth's lowest point is The Dead Sea.",
 ],
 ];
 
-// Name the dataset
-const datasetName = "Sample dataset";
-
 // Programmatically create a dataset in LangSmith
-const dataset = await client.createDataset(datasetName, {
+const dataset = await client.createDataset("Sample dataset", {
 description: "A sample dataset in LangSmith.",
 });
 
@@ -156,24 +142,15 @@ import json
 
 openai_client = OpenAI()
 
-# Define accuracy evaluation prompt
-GRADE_ACCURACY_PROMPT = """You are a grader assessing a Student Answer relative to a reference Ground Truth answer.
+# Define accuracy evaluation prompt       
+GRADE_ACCURACY_PROMPT = """Evaluate Student Answer against Ground Truth for conceptual similarity and score 0 or 1:
 
-Is the Student Answer conceptually grounded in and similar to the Ground Truth answer?
-
-We do not expect all of the text in Student Answer to be identical to the Ground Truth answer.
-
-The main point is that the same concept is employed.
-
-A score of 1 means that the Student Answer answer is not at all conceptually grounded in and similar to the Ground Truth answer.
-
-A score of 5 means that the Assistant answer contains some information that is conceptually grounded in and similar to the Ground Truth answer.
-
-A score of 10 means that the Assistant answer is fully conceptually grounded in and similar to the Ground Truth answer.
+- Score 0: No conceptual match and similarity
+- Score 1: Most or full conceptual match and similarity
+- Key criteria: Concept should match, not exact wording.
 
 Ground Truth answer: {reference}
-
-Assistant's Answer: {prediction}"""
+Student's Answer: {prediction}"""
 
 class Response(BaseModel):
         score: int = Field(description="Score that indicates how accurate the response is relative to the reference answer")
@@ -185,7 +162,7 @@ def new_pipeline_answer(inputs):
       messages=[
               {
                 "role": "system", 
-                "content": "Answer the following question accurately and concisely. Use emojis to make the response more engaging and fun."
+                "content": "Answer the following question accurately and concisely"
               },
               {
                 "role": "user", 
@@ -223,23 +200,14 @@ import { Run, Example } from "langsmith";
 const openai = new OpenAI();
 
 // Define accuracy evaluation prompt
-const GRADE_ACCURACY_PROMPT = \`You are a grader assessing a Student Answer relative to a reference Ground Truth answer.
-Is the Student Answer conceptually grounded in and similar to the Ground Truth answer?
+const GRADE_ACCURACY_PROMPT = \`Evaluate Student Answer against Ground Truth for conceptual similarity and score 0 or 1:
 
-We do not expect all of the text in Student Answer to be identical to the Ground Truth answer.
-
-The main point is that the same concept is employed.
-
-A score of 1 means that the Student Answer is not at all conceptually grounded in and similar to the Ground Truth answer.
-
-A score of 5 means that the Assistant answer contains some information that is conceptually grounded in and similar to the Ground Truth answer.
-
-A score of 10 means that the Assistant answer is fully conceptually grounded in and similar to the Ground Truth answer.
+- Score 0: No conceptual match and similarity
+- Score 1: Most or full conceptual match and similarity
+- Key criteria: Concept should match, not exact wording.
 
 Ground Truth answer: {reference}
-
-Assistant's Answer: {prediction}
-\`
+Student's Answer: {prediction}\`
 
 const ResponseSchema = z.object({
 score: z
@@ -259,7 +227,7 @@ messages: [
 {
 role: "system",
 content:
-"Answer the following question accurately and concisely. Use emojis to make the response more engaging and fun.",
+"Answer the following question accurately and concisely.",
 },
 { role: "user", content: inputs.input },
 ],
@@ -307,37 +275,31 @@ groupId="client-language"
 <CodeTabs
   tabs={[
     python`
-    # Name the experiment
-experiment_prefix = "first-eval-in-langsmith"
-
 # After running the evaluation, a link will be provided to view the results in langsmith
 experiment_results = evaluate(
       new_pipeline_answer,
-      data = dataset_name,
+      data = "Sample dataset",
       evaluators = [
           answer_accuracy_evaluator,
           # can add multiple evaluators here
       ],
-      experiment_prefix = experiment_prefix,
+      experiment_prefix = "first-eval-in-langsmith",
 )
 
 `,
     typescript`
-// Name the experiment
-const experimentPrefix = "first-eval-in-langsmith";
-
 // After running the evaluation, a link will be provided to view the results in langsmith
 evaluate(
 (exampleInput) => {
 return newPipelineAnswer({ input: exampleInput.question });
 },
 {
-data: datasetName,
+data: "Sample dataset",
 evaluators: [
 answerAccuracyEvaluator,
 // can add multiple evaluators here
 ],
-experimentPrefix: experimentPrefix,
+experimentPrefix: "first-eval-in-langsmith",
 }
 );
 `,
