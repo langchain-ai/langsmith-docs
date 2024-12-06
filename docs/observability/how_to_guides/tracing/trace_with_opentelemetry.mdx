@@ -32,14 +32,14 @@ pip install opentelemetry-exporter-otlp
 Setup environment variables for the endpoint, substitute your specific values:
 
 ```bash
-export OTEL_OTEL_EXPORTER_OTLP_HEADERS=https://api.smith.langchain.com/otel
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
 export OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>"
 ```
 
 If you'd like to log to a different project than default, you can add the LANGSMITH_PROJECT:
 
 ```bash
-export OTEL_OTEL_EXPORTER_OTLP_HEADERS=https://api.smith.langchain.com/otel
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
 export OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>,LANGSMITH_PROJECT=<project name>"
 ```
 
