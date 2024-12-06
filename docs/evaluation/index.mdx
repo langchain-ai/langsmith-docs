@@ -180,9 +180,9 @@ class Response(BaseModel):
 
 # Run the application logic you want to evaluate
 def new_pipeline_answer(inputs):
-      response = openai_client.chat.completions.create(
-          model="gpt-4o-mini",
-          messages=[
+    response = openai_client.chat.completions.create(
+      model="gpt-4o-mini",
+      messages=[
               {
                 "role": "system", 
                 "content": "Answer the following question accurately and concisely. Use emojis to make the response more engaging and fun."
@@ -190,10 +190,29 @@ def new_pipeline_answer(inputs):
               {
                 "role": "user", 
                 "content": inputs["question"]
-              },
+                },
             ]
         )
-    return {"response": response.choices[0].message.content.strip()}
+    
+        return {"response": response.choices[0].message.content.strip()}
+
+# Define LLM judge evaluator that grades the accuracy of the response relative to the reference output
+def answer_accuracy_evaluator(outputs, reference_outputs) -> dict:
+  grade_answer_accuracy_prompt_formatted = GRADE_ACCURACY_PROMPT.format(
+      prediction=outputs["response"],
+      reference=reference_outputs["answer"]
+    )
+  response = openai_client.beta.chat.completions.parse(
+    model="gpt-4o-mini",
+    messages=[
+      {"role": "system", "content": grade_answer_accuracy_prompt_formatted},
+    ],
+    response_format=Response
+  )
+  return {
+    "key": "accuracy",
+    "score": json.loads(response.choices[0].message.content)["score"]
+}
 `,
 typescript({caption: "Requires `langsmith>=0.2.9`"})`
 import OpenAI from "openai";
