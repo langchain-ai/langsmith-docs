@@ -36,7 +36,7 @@ export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
 export OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>"
 ```
 
-If you'd like to log to a different project than default, you can add the LANGSMITH_PROJECT:
+#### **Optional: Specify a custom project name other than "default"**
 
 ```bash
 export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
@@ -95,7 +95,7 @@ def call_openai():
 
         span.set_attribute("gen_ai.response.model", completion.model)
         span.set_attribute("gen_ai.completion.0.content", str(completion.choices[0].message.content))
-        span.set_attribute("gen_ai.completion.0.role", "asistant")
+        span.set_attribute("gen_ai.completion.0.role", "assistant")
         span.set_attribute("gen_ai.usage.prompt_tokens", completion.usage.prompt_tokens)
         span.set_attribute("gen_ai.usage.completion_tokens", completion.usage.completion_tokens)
         span.set_attribute("gen_ai.usage.total_tokens", completion.usage.total_tokens)
@@ -131,7 +131,7 @@ TRACELOOP_BASE_URL=https://api.smith.langchain.com/otel
 TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>
 ```
 
-You can also specify a project name if you'd like:
+#### **Optional: Specify a custom project name other than "default"**
 
 ```bash
 TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>,LANGMITH_PROJECT=<langsmith_project_name>
