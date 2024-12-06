@@ -21,6 +21,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Trace the OpenAI API client](./how_to_guides/tracing/annotate_code#wrap-the-openai-client)
 - [Trace with `Instructor` (Python only)](./how_to_guides/tracing/trace_with_instructor)
 - [Trace with the Vercel `AI SDK` (JS only)](./how_to_guides/tracing/trace_with_vercel_ai_sdk)
+- [Trace with OpenTelemetry](./how_to_guides/tracing/trace_with_opentelemetry)
 
 ### Advanced configuration
 
