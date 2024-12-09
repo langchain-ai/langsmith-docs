@@ -10,7 +10,7 @@ import {
 
 # Trace with OpenTelemetry
 
-LangSmith can accept traces from from OpenTelemetry based clients.
+LangSmith can accept traces from OpenTelemetry based clients.
 This guide will walk through examples on how to achieve this.
 
 ## Logging Traces with a basic OpenTelemetry client
@@ -134,7 +134,7 @@ TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>
 #### **Optional: Specify a custom project name other than "default"**
 
 ```bash
-TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>,LANGMITH_PROJECT=<langsmith_project_name>
+TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>,LANGSMITH_PROJECT=<langsmith_project_name>
 ```
 
 ### 2. Initialize the SDK
