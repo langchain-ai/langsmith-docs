@@ -24,13 +24,13 @@ This quick start will get you up and running with our evaluation SDK and Experim
       value: "python",
       label: "Python",
       language: "bash",
-      content: `pip install -U langsmith openai`,
+      content: `pip install -U langsmith openai pydantic`,
     },
     {
       value: "typescript",
       label: "TypeScript",
       language: "bash",
-      content: `yarn add langsmith openai`,
+      content: `yarn add langsmith openai zod`,
     },
   ]}
   groupId="client-language"
@@ -59,72 +59,71 @@ export OPENAI_API_KEY=<your-openai-api-key>`),
     {
       value: "python",
       label: "Python",
-      content: `from langsmith import evaluate, Client
+      content: `from langsmith import Client
 
 client = Client()
 
 # Create inputs and reference outputs
-example_inputs = [
-(
-    "Which country is Mount Kilimanjaro located in?",
-    "Mount Kilimanjaro is located in Tanzania.",
-),
-(
-    "What is Earth's lowest point?",
-    "Earth's lowest point is The Dead Sea.",
-)
+examples = [
+    (
+        "Which country is Mount Kilimanjaro located in?",
+        "Mount Kilimanjaro is located in Tanzania.",
+    ),
+    (
+        "What is Earth's lowest point?",
+        "Earth's lowest point is The Dead Sea.",
+    ),
 ]
 
 # Programmatically create a dataset in LangSmith
 dataset = client.create_dataset(
-    dataset_name="Sample dataset",
-    description="A sample dataset in LangSmith."
+    dataset_name="Sample dataset", description="A sample dataset in LangSmith."
 )
 
-inputs = [{"question": input_prompt} for input_prompt, _ in example_inputs]
-outputs = [{"answer": output_answer} for _, output_answer in example_inputs]
+inputs = [{"question": input_prompt} for input_prompt, _ in examples]
+outputs = [{"answer": output_answer} for _, output_answer in examples]
 
 # Add examples to the dataset
-client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)`,
+client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+`,
     },
     {
       value: "typescript",
       label: "TypeScript",
       content: `
 import { Client } from "langsmith";
-import { evaluate } from "langsmith/evaluation";
 
 const client = new Client();
 
 // Create inputs and reference outputs
-const exampleInputs: [string, string][] = [
-[
-"Which country is Mount Kilimanjaro located in?",
+const examples: [string, string][] = [
+  [
+    "Which country is Mount Kilimanjaro located in?",
     "Mount Kilimanjaro is located in Tanzania.",
-],
-[
- "What is Earth's lowest point?",
+  ],
+  [
+    "What is Earth's lowest point?",
     "Earth's lowest point is The Dead Sea.",
-],
+  ],
 ];
 
 // Programmatically create a dataset in LangSmith
 const dataset = await client.createDataset("Sample dataset", {
-description: "A sample dataset in LangSmith.",
+  description: "A sample dataset in LangSmith.",
 });
 
-const inputs = exampleInputs.map(([inputPrompt]) => ({
-question: inputPrompt,
+const inputs = examples.map(([inputPrompt]) => ({
+  question: inputPrompt,
 }));
-const outputs = exampleInputs.map(([, outputAnswer]) => ({
-answer: outputAnswer,
+const outputs = examples.map(([, outputAnswer]) => ({
+  answer: outputAnswer,
 }));
 
 // Add examples to the dataset
 await client.createExamples({
-inputs,
-outputs,
-datasetId: dataset.id,
+  inputs,
+  outputs,
+  datasetId: dataset.id,
 });
 `,
 },
@@ -138,133 +137,123 @@ groupId="client-language"
   tabs={[
     python({caption: "Requires `langsmith>=0.1.145`"})`from pydantic import BaseModel, Field
 from openai import OpenAI
-import json
 
 openai_client = OpenAI()
 
-# Define accuracy evaluation prompt       
-GRADE_ACCURACY_PROMPT = """Evaluate Student Answer against Ground Truth for conceptual similarity and score 0 or 1:
-
-- Score 0: No conceptual match and similarity
-- Score 1: Most or full conceptual match and similarity
+# Define instructions for the LLM judge evaluator
+instructions = """Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
+- False: No conceptual match and similarity
+- True: Most or full conceptual match and similarity
 - Key criteria: Concept should match, not exact wording.
+"""
 
-Ground Truth answer: {reference}
-Student's Answer: {prediction}"""
+# Define context for the LLM judge evaluator
+context = """Ground Truth answer: {reference}; Student's Answer: {prediction}"""
 
-class Response(BaseModel):
-        score: int = Field(description="Score that indicates how accurate the response is relative to the reference answer")
+class Grade(BaseModel):
+      score: bool = Field(description="Boolean that indicates whether the response is accurate relative to the reference answer")
 
 # Run the application logic you want to evaluate
-def new_pipeline_answer(inputs):
-    response = openai_client.chat.completions.create(
-      model="gpt-4o-mini",
-      messages=[
-              {
-                "role": "system", 
-                "content": "Answer the following question accurately and concisely"
-              },
-              {
-                "role": "user", 
-                "content": inputs["question"]
-                },
-            ]
-        )
-    
-        return {"response": response.choices[0].message.content.strip()}
+def chatbot(inputs: dict) -> dict:
+      response = openai_client.chat.completions.create(
+          model="gpt-4o-mini",
+          messages=[
+            {"role": "system", "content": "Answer the following question accurately"},
+            {"role": "user", "content": inputs["question"]},
+          ]
+    )
+    return { "response": response.choices[0].message.content.strip()}
 
 # Define LLM judge evaluator that grades the accuracy of the response relative to the reference output
-def answer_accuracy_evaluator(outputs, reference_outputs) -> dict:
-  grade_answer_accuracy_prompt_formatted = GRADE_ACCURACY_PROMPT.format(
-      prediction=outputs["response"],
-      reference=reference_outputs["answer"]
-    )
-  response = openai_client.beta.chat.completions.parse(
-    model="gpt-4o-mini",
-    messages=[
-      {"role": "system", "content": grade_answer_accuracy_prompt_formatted},
-    ],
-    response_format=Response
-  )
-  return {
-    "key": "accuracy",
-    "score": json.loads(response.choices[0].message.content)["score"]
-}
+def accuracy(outputs: dict, reference_outputs: dict) -> bool:
+      response = openai_client.beta.chat.completions.parse(
+          model="gpt-4o-mini",
+          messages=[
+            { "role": "system", "content": instructions },
+            {"role": "user", "content": context.replace(
+              "{prediction}", outputs["response"]
+            ).replace(
+              "{reference}", reference_outputs["answer"]
+            )},
+          ],
+          response_format=Grade
+      )
+      return response.choices[0].message.parsed.score
 `,
 typescript({caption: "Requires `langsmith>=0.2.9`"})`
 import OpenAI from "openai";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { Run, Example } from "langsmith";
+import type { EvaluationResult } from "langsmith/evaluation";
 
 const openai = new OpenAI();
 
-// Define accuracy evaluation prompt
-const GRADE_ACCURACY_PROMPT = \`Evaluate Student Answer against Ground Truth for conceptual similarity and score 0 or 1:
-
-- Score 0: No conceptual match and similarity
-- Score 1: Most or full conceptual match and similarity
+// Define instructions for the LLM judge evaluator
+const instructions = \`Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
+- False: No conceptual match and similarity
+- True: Most or full conceptual match and similarity
 - Key criteria: Concept should match, not exact wording.
+\`;
 
-Ground Truth answer: {reference}
-Student's Answer: {prediction}\`
+// Define context for the LLM judge evaluator
+const context = \`Ground Truth answer: {reference}; Student's Answer: {prediction}\`;
 
 const ResponseSchema = z.object({
-score: z
-.number()
-.describe(
-"Score that indicates how accurate the response is relative to the reference answer"
-),
+  score: z
+    .boolean()
+    .describe(
+      "Boolean that indicates whether the response is accurate relative to the reference answer"
+    ),
 });
 
 // Run the application logic you want to evaluate
-async function newPipelineAnswer(inputs: {
-input: string;
-}): Promise<{ response: string }> {
-const response = await openai.chat.completions.create({
-model: "gpt-4o-mini",
-messages: [
-{
-role: "system",
-content:
-"Answer the following question accurately and concisely",
-},
-{ role: "user", content: inputs.input },
-],
-});
+async function newPipelineAnswer(inputs: string): Promise<{ response: string }> {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      {
+        role: "system",
+        content:
+          "Answer the following question accurately",
+      },
+      { role: "user", content: inputs },
+    ],
+  });
 
-return { response: response.choices[0].message.content?.trim() || "" };
+  return { response: response.choices[0].message.content?.trim() || "" };
 }
 
 // Define LLM judge evaluator that grades the accuracy of the response relative to the reference output
-async function answerAccuracyEvaluator(
-run: Run,
-example?: Example
-): Promise<{
-key: string;
-score: number;
-}> {
-const gradeAnswerAccuracyPromptFormatted = GRADE_ACCURACY_PROMPT.replace(
-"{prediction}",
-run.outputs?.response || ""
-).replace("{reference}", example?.outputs?.answer || "");
+async function answerAccuracyEvaluator({
+  outputs,
+  referenceOutputs,
+}: {
+  outputs?: Record<string, string>;
+  referenceOutputs?: Record<string, string>;
+}): Promise<EvaluationResult> {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: instructions },
+      {
+        role: "user",
+        content: context
+          .replace("{prediction}", outputs?.answer || "")
+          .replace("{reference}", referenceOutputs?.answer || ""),
+      },
+    ],
+    response_format: zodResponseFormat(ResponseSchema, "response"),
+  });
 
-const response = await openai.chat.completions.create({
-model: "gpt-4o-mini",
-messages: [{ role: "system", content: gradeAnswerAccuracyPromptFormatted }],
-response_format: zodResponseFormat(ResponseSchema, "response"),
-});
+  const parsedResponse = ResponseSchema.parse(
+    JSON.parse(response.choices[0].message.content || "")
+  );
 
-const parsedResponse = ResponseSchema.parse(
-JSON.parse(response.choices[0].message.content || "")
-);
-
-return {
-key: "accuracy",
-score: parsedResponse.score,
-};
+  return {
+    key: "accuracy",
+    score: parsedResponse.score,
+  };
 }
-
 `,
 ]}
 groupId="client-language"
@@ -274,33 +263,37 @@ groupId="client-language"
 
 <CodeTabs
   tabs={[
-    python`
-# After running the evaluation, a link will be provided to view the results in langsmith
-experiment_results = evaluate(
-      new_pipeline_answer,
-      data = "Sample dataset",
-      evaluators = [
-          answer_accuracy_evaluator,
-          # can add multiple evaluators here
+python`
+    # After running the evaluation, a link will be provided to view the results in langsmith
+    experiment_results = client.evaluate(
+      chatbot,
+      data="Sample dataset",
+      evaluators=[
+        accuracy,
+        # can add multiple evaluators here
       ],
-      experiment_prefix = "first-eval-in-langsmith",
+      experiment_prefix="first-eval-in-langsmith",
+      max_concurrency=2,
 )
 
 `,
     typescript`
+import { evaluate } from "langsmith/evaluation";   
+     
 // After running the evaluation, a link will be provided to view the results in langsmith
-evaluate(
-(exampleInput) => {
-return newPipelineAnswer({ input: exampleInput.question });
-},
-{
-data: "Sample dataset",
-evaluators: [
-answerAccuracyEvaluator,
-// can add multiple evaluators here
-],
-experimentPrefix: "first-eval-in-langsmith",
-}
+await evaluate(
+  (exampleInput) => {
+    return newPipelineAnswer(exampleInput.question);
+  },
+  {
+    data: "Sample dataset",
+    evaluators: [
+      answerAccuracyEvaluator,
+      // can add multiple evaluators here
+    ],
+    experimentPrefix: "first-eval-in-langsmith",
+    maxConcurrency: 2,
+  }
 );
 `,
 ]}
