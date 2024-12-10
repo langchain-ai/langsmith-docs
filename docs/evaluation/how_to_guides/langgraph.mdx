@@ -188,7 +188,7 @@ If any of you nodes are defined as async, you'll need to use `aevaluate`
     from langsmith import aevaluate
 
     def example_to_state(inputs: dict) -> dict:
-      return {"messages": [{"role": "user", "content": "inputs['question']"}]}
+      return {"messages": [{"role": "user", "content": inputs['question']}]}
 
     # We use LCEL declarative syntax here.
     # Remember that langgraph graphs are also langchain runnables.
