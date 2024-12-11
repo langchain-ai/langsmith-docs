@@ -165,7 +165,8 @@ def image_qa(inputs, attachments):
     )
     # The attachment tuple returned contains the presigned url first and then a reader of the bytes
     # Either can be used to read the bytes of the file
-    image_signed_url, image_reader = attachments['my_image']
+    image_signed_url = attachments['my_img']['presigned_url']
+    image_reader = attachments['my_img']['reader']
     human_message = HumanMessage(
         content=[
             {"type": "text", "text": inputs["question"]},
@@ -229,7 +230,8 @@ class Hallucination(BaseModel):
 
 
 def hallucination_evaluator(outputs: dict, attachments: dict):
-    image_signed_url, image_reader = attachments['my_image']
+    image_signed_url = attachments['my_img']['presigned_url']
+    image_reader = attachments['my_img']['reader']
     message = HumanMessage(
         content = [
             {"type": "text", "text": f"Does this description: {outputs['answer']} of the following image contain any hallucinations?"},
