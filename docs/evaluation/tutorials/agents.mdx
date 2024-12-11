@@ -698,7 +698,6 @@ expected_tool_call = 'sql_db_list_tables'
     else:
         return [tc['name'] for tc in first_ai_msg.tool_calls] == [list_tables_tool.name]
 
-
 def trajectory_correct(outputs: dict, reference_outputs: dict) -> bool:
 """Check if all expected tools are called in any order.""" # If the question is off-topic, no tools should be called:
 if not reference_outputs["ontopic"]:
