@@ -4,17 +4,17 @@ sidebar_position: 7
 
 # How to unit test applications (Python only)
 
-LangSmith functional tests are assertions and expectations designed to **quickly** identify obvious bugs and regressions in your AI system. 
+LangSmith functional tests are assertions and expectations designed to **quickly** identify obvious bugs and regressions in your AI system.
 Relative to evaluations, tests typically are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases with binary assertions.
 We recommend using LangSmith to track any unit tests, end-to-end integration tests, or other specific assertions that touch an LLM or other non-deterministic part of your AI system.
 Ideally these run on every commit in your CI pipeline to catch regressions early.
 
 :::info Version requirement
-`@unit` requires `langsmith` Python version `>=0.1.74`. 
+`@unit` requires `langsmith` Python version `>=0.1.74`.
 :::
 
 :::info TypeScript support
-If you are interested in unit testing functionality in TypeScript or other languages, please upvote/comment on [this GitHub Issue](https://github.com/langchain-ai/langsmith-sdk/issues/1321). 
+If you are interested in unit testing functionality in TypeScript or other languages, please upvote/comment on [this GitHub Issue](https://github.com/langchain-ai/langsmith-sdk/issues/1321).
 :::
 
 ## Write a @unit
@@ -22,7 +22,7 @@ If you are interested in unit testing functionality in TypeScript or other langu
 To write a LangSmith functional test, decorate your test function with `@unit`.
 If you want to track the full nested trace of the system or component being tested, you can mark those functions with `@traceable`. For example:
 
-```python 
+```python
 # my_app/main.py
 from langsmith import traceable
 
