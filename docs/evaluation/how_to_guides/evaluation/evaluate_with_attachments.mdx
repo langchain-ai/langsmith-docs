@@ -240,9 +240,9 @@ def hallucination_evaluator(outputs: dict, attachments: dict):
     return {"key": "hallincation", "score": hallucination_model.invoke(message).hallucination }
 
 evaluate(
-    target=pdf_qa,
+    target=image_qa,
     data="attachment-test-dataset",
-    evaluators=[hallucination_evaluator]
+    evaluators=[hallucination_evaluator],
     client=langsmith_client,
 )
 `),
@@ -309,9 +309,10 @@ async def ahallucination_evaluator(outputs: dict, attachments: dict):
     return {"key": "hallincation", "score": hallucination_model.invoke(message).hallucination }
 
 await aevaluate(
+    # Some async target function
     target=atarget,
     data="attachment-test-dataset",
-    evaluators=[ahallucination_evaluator]
+    evaluators=[ahallucination_evaluator],
     client=langsmith_client,
 )
 ```
