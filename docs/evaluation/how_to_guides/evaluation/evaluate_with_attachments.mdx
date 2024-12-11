@@ -1,4 +1,9 @@
-import { python } from "@site/src/components/InstructionsWithCode";
+import {
+  python,
+  CodeTabs,
+  PythonBlock,
+  TypeScriptBlock,
+} from "@site/src/components/InstructionsWithCode"
 
 # Evaluate applications with large file inputs
 
@@ -28,10 +33,12 @@ It is typically recommended to pass in the file path directly for large files, a
 When a file path is passed, LangSmith will stream the file content directly from the path, rather than loading the entire file into memory.
 :::
 
-```python
-from langsmith import Client
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client
 from langsmith.schemas import ExampleUploadWithAttachments, Attachment
 from pathlib import Path
+from uuid import uuid4
 
 # Define the LANGCHAIN_API_KEY environment variable with your api key
 langsmith_client = Client()
@@ -41,26 +48,67 @@ dataset = langsmith_client.create_dataset(
     description="Test dataset for evals with attachments",
 )
 
+# Create an example id
+example_id = uuid4()
+
 # Define the example
 example = ExampleUploadWithAttachments(
-    dataset_id=dataset.id,
+    id=example_id,
     inputs={"question": "What were the cumulative earnings earned from online orders in the midwest during Q2?"},
     outputs={"answer": "$123456"},
     attachments={
-        # Each attachments is just a name with a mime type and the path or bytes content of the file
+        # Each attachment consists of a name and a tuple of type and bytes data
         "my_pdf": ("application/pdf", Path("./foo_earnings.pdf").read_bytes()),
         # We can pass multiple attachments (of different types!), as long as they have different names
         "my_pptx": ("application/pptx", Path("./foo_earnings.pptx").read_bytes()),
-        # We can also pass in the file path directly. This is recommended for large files, as it avoids loading the entire file into memory
-        "my_txt": ("text/plain", Path("./foo_earnings.txt")),
+        # Files are limitied to 50MB
+        "my_txt": ("text/plain", Path("./foo_earnings.txt").read_bytes()),
         # We can also explicitly define an Attachment object if we want
         "my_img": Attachment(mime_type="image/png", data=Path("./foo_earnings.img").read_bytes())
     },
 )
 
 # Upsert the examples
-langsmith_client.upload_examples_multipart(uploads=[example])
-```
+langsmith_client.upload_examples_multipart(dataset_id=dataset.id, uploads=[example])
+`),
+    TypeScriptBlock(`import { Client } from "langsmith";
+import { evaluate } from "langsmith/evaluation";
+import { v4 as uuid4 } from "uuid";
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Define the LANGCHAIN_API_KEY environment variable with your api key
+const langsmithClient = new Client();
+
+const dataset = await langsmithClient.createDataset(
+    "attachment-test-dataset",
+    {
+        description: "Test dataset for evals with attachments",
+    }
+);
+
+// Create an example id
+const exampleId = uuid4();
+
+const example: ExampleUploadWithAttachments = {
+    id: exampleId,
+    inputs: { question: "What were the cumulative earnings earned from online orders in the midwest during Q2?" },
+    outputs: { answer: "$123456" },
+    attachments: {
+      // Each attachment consists of a name and a tuple of type and bytes data
+      my_pdf: ["application/pdf", fs.readFileSync(path.join(__dirname, './foo_earnings.pdf'))],
+      // We can pass multiple attachments (of different types!), as long as they have different names
+      my_pptx: ["application/pptx", fs.readFileSync(path.join(__dirname, './foo_earnings.pptx'))],
+      // Files are limitied to 50MB
+      my_txt: ["text/plain", fs.readFileSync(path.join(__dirname, './foo_earnings.txt'))],
+      my_png: ["image/png", fs.readFileSync(path.join(__dirname, './foo_earnings.png'))],
+    },
+};
+
+langsmithClient.uploadExamplesMultipart(dataset.id, [example]);`),
+  ]}
+  groupId="client-language"
+/>
 
 Once you upload examples with attachments, you can view them in the LangSmith UI. Each attachment will be rendered as a file with a preview, making it easy to inspect the contents.
 ![](./static/attachments_with_examples.png)
@@ -84,70 +132,99 @@ Once you have a dataset that contains examples with file attachments, you can ru
 ### Define a target function with attachments
 
 Now that we have a dataset that includes examples with attachments, we can define a target function to run our LLM application on these examples.
+
+:::tip Python Target Function with Attachments
 The target function must have two positional arguments in order to consume the attachments associated with the example, the first must be called `inputs` and the second must be called `attachments`.
 
 - The `inputs` argument is a dictionary that contains the input data for the example, excluding the attachments.
-- The `attachments` argument is a dictionary that maps the attachment name to a tuple containing a presigned url and a reader of the bytes content of the file. Either can be used to read the bytes of the file:
+- The `attachments` argument is a dictionary that maps the attachment name to a dictionary containing a presigned url and a reader of the bytes content of the file. Either can be used to read the bytes of the file:
   ```
   {
-      "attachment_name": (presigned_url, reader)
+      "attachment_name": {
+          "presigned_url": presigned_url,
+          "reader": reader
+      }
   }
   ```
+:::
 
-```python
+:::tip Javascript Target Function with Attachments
+:::
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
-import fitz
-from io import BytesIO
-import base64
 
 model = ChatOpenAI(model="gpt-4o-mini")
 
-def pdf_to_image_bytes(pdf_bytes, image_format='PNG'):
-    pdf_document = fitz.open(stream=pdf_bytes, filetype="pdf")
-    images = []
-    for page in pdf_document:
-        pix = page.get_pixmap()
-        img_bytes = BytesIO()
-        pix.pil_save(img_bytes, format=image_format)
-        # Encode the bytes in base64
-        base64_bytes = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
-        images.append(base64_bytes)
-    pdf_document.close()
-    return images
-
-
-def pdf_qa(inputs, attachments):
+def image_qa(inputs, attachments):
     system_message = SystemMessage(
         content="The images are of the pdf that the question is referencing. Use the images to generate your answer."
     )
     # The attachment tuple returned contains the presigned url first and then a reader of the bytes
     # Either can be used to read the bytes of the file
-    pdf_signed_url, pdf_reader = attachments['my_pdf']
-    pdf_images = pdf_to_image_bytes(pdf_reader.read())
     image_signed_url, image_reader = attachments['my_image']
     human_message = HumanMessage(
         content=[
             {"type": "text", "text": inputs["question"]},
-        ] + [{"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image}"}} for image in pdf_images],
+        ] + [{"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_reader.read().decode('utf-8')}"}}]
         # Certain providers also allow you to just pass in the URL for certain files
         # instead of having to convert to a base64 string first
         + [{"type": "image_url", "image_url": {"url": image_signed_url}}]
     )
     messages = [system_message, human_message]
     return {"answer": model.invoke(messages).content}
-```
+`),
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { SystemMessage, HumanMessage } from "@langchain/core/messages";
+
+const model = new ChatOpenAI({ model: "gpt-4o-mini" });
+    
+async function imageQA(inputs: Record<string, any>, config?: Record<string, any>) {
+  const systemMessage = new SystemMessage({
+    content: 'The images are of the data that the question is referencing. Use the images to generate your answer.',
+  });
+
+  const imageData = await fetch(config?.attachments?.["attachment.my_png"]?.presigned_url)
+  .then((res) => res.arrayBuffer())
+  .then((arrayBuffer) => {
+    return Buffer.from(arrayBuffer).toString('base64');
+  });
+
+  const humanMessage = new HumanMessage({
+    content: [
+      { 
+        type: 'text', 
+        text: inputs.question 
+    },
+      {
+        type: 'image_url',
+        image_url: { url: \`data:image/png;base64,$\{imageData\}\` },
+      },
+    ],
+  });
+
+  const messages = [systemMessage, humanMessage];
+  const response = await model.invoke(messages);
+  return { answer: response.content };
+}`),
+  ]}
+  groupId="client-language"
+/>
 
 ### Define custom evaluators with attachments
 
 In addition to using attachments inside of your target function, you can also use them inside of your evaluators as follows:
 
-```python
-from pydantic import BaseModel, Field
+<CodeTabs
+  tabs={[
+    PythonBlock(`from pydantic import BaseModel, Field
 
 class Hallucination(BaseModel):
     """Hallucination detection"""
-    reason: str = Field(description="Why you believe there was oor wasn't hallucination")
+    reason: str = Field(description="Why you believe there was or wasn't hallucination")
     hallucination: int = Field(ge=0, le=1, description="1 if hallucination detected, 0 if not")
 
 
@@ -155,7 +232,7 @@ def hallucination_evaluator(outputs: dict, attachments: dict):
     image_signed_url, image_reader = attachments['my_image']
     message = HumanMessage(
         content = [
-            {"type": "text", "text": f"Does this description: {} of the following image contain any hallucinations?"},
+            {"type": "text", "text": f"Does this description: {outputs['answer']} of the following image contain any hallucinations?"},
             {"type": "image_url", "image_url": {"url": image_signed_url}}
         ]
     )
@@ -168,10 +245,48 @@ evaluate(
     evaluators=[hallucination_evaluator]
     client=langsmith_client,
 )
-```
+`),
+TypeScriptBlock(`import { z } from "zod";
 
-We can also do this asynchronously:
+const hallucinationSchema = z.object({
+  reason: z.string().describe("Why you believe there was or wasn't hallucination"),
+  hallucination: z.number().optional().describe("1 if hallucination detected, 0 if not"),
+});
+const structuredModel = model.withStructuredOutput(hallucinationSchema);
 
+const hallcinationEvaluator = async ({ outputs, attachments }: { outputs?: any, attachments?: any }) => {
+  const imageData = await fetch(attachments["attachment.my_png"].presigned_url)
+  .then((res) => res.arrayBuffer())
+  .then((arrayBuffer) => {
+    return Buffer.from(arrayBuffer).toString('base64');
+  });
+
+  const message = new HumanMessage({
+    content: [
+    { type: 'text', text: \`Does this description: $\{outputs.answer\} of the following image contain any hallucinations?\` },
+    {
+        type: 'image_url',
+        image_url: { url: \`data:image/png;base64,$\{imageData\}\` },
+    },
+    ],
+  });
+  
+  const response = await structuredModel.invoke([message]);
+  return { key: "hallcination", score: response.hallucination };
+}
+
+await evaluate(imageQA, {
+  data: "attachment-test-dataset",
+  evaluators: [hallcinationEvaluator],
+  client: langsmithClient,
+  // Need to pass flag to include attachments
+  includeAttachments: true
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+We can also do this asynchronously (python only, Javascript is async by default):
 
 ```python
 from pydantic import BaseModel, Field
@@ -203,4 +318,72 @@ await aevaluate(
 
 ## Managing datasets with attachments
 
-TODO: FILL THIS OUT ONCE UPDATE ENDPOINTS EXIST
+### Managing programmatically
+
+In the code above we saw how we could upload examples with attachments using the SDK, and it
+is also possible to update these same examples using the SDK.
+
+When updating an example with attachments, you can update attachments in a few different ways:
+
+- Pass in new attachments
+- Rename existing attachments
+- Delete existing attachments
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith.schemas import ExampleUpdateWithAttachments, AttachmentsOperations
+    
+example_update = ExampleUpdateWithAttachments(
+    id=example_id,
+    attachments={
+        # These are net new attachments
+        "my_new_file": ("text/plain", b"foo bar"),
+    },
+    attachments_operations=AttachmentsOperations(
+        # Retained attachments will stay exactly the same
+        retain=["my_img", "my_pdf"],
+        # Renaming attachments preserves the original data
+        rename={
+            "my_pptx": "my_new_pptx",
+        }
+        # Any attachments not in rename/retain will be deleted
+        # In this case, that would be "my_txt"
+    ),
+)
+
+langsmith_client.update_example_with_attachments(dataset_id=dataset.id, updates=[example_update])
+`),
+    TypeScriptBlock(`import { ExampleUpdateWithAttachments } from "langsmith/schemas";
+    
+const exampleUpdate: ExampleUpdateWithAttachments = {
+    id: exampleId,
+    attachments: {
+        // These are net new attachments
+        "my_new_file": ["text/plain", b"foo bar"],
+    },
+    attachments_operations: {
+        // Retained attachments will stay exactly the same
+        retain: ["my_img", "my_pdf"],
+        // Renaming attachments preserves the original data
+        rename: {
+            "my_pptx": "my_new_pptx",
+        },
+        // Any attachments not in rename/retain will be deleted
+        // In this case, that would be "my_txt"
+    },
+};
+
+await langsmithClient.updateExamplesMultipart(
+    dataset.id,
+    [exampleUpdate],
+);
+`),
+]}
+  groupId="client-language"
+/>
+
+TODO: ADD NOTES ABOUT BEHAVIOR ON ATTACHMENT CONFLICT
+
+### From the LangSmith UI
+
+TODO: FILL OUT WITH SCREENSHOTS
