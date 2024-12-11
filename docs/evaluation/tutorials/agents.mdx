@@ -515,10 +515,10 @@ base_query_tool = QuerySQLDataBaseTool(db=db)
 async def query_sql_db(query: str) -> str:
     """Run a SQL query against the database. Make sure that the query is valid SQL and reference tables and columns that are in the db."""
     response = await llm.ainvoke(
-    [
-    {"role": "system", "content": query_check_instructions},
-    {"role": "user", "content": query},
-    ]
+        [
+            {"role": "system", "content": query_check_instructions},
+            {"role": "user", "content": query},
+        ]
     )
     query = response.content
     return await base_query_tool.ainvoke({"query": query})
