@@ -245,7 +245,7 @@ Now, we kick off evaluation:
 - `answer_evaluator`: Passes RAG chain answer, question, and ground truth answer to an evaluator
 
 ```python
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 
 experiment_results = evaluate(
     predict_rag_answer,
@@ -406,7 +406,7 @@ However, we will show that this is not required.
 
 We can isolate them as intermediate chain steps.
 
-See detail on isolating intermediate chain steps [here](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_on_intermediate_steps).
+See detail on isolating intermediate chain steps [here](../how_to_guides/evaluate_on_intermediate_steps).
 
 Here is the a video from our LangSmith evaluation series for reference:
 
@@ -414,7 +414,7 @@ https://youtu.be/yx3JMAaNggQ?feature=shared
 
 ```python
 from langsmith.schemas import Example, Run
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 
 def document_relevance_grader(root_run: Run, example: Example) -> dict:
     """

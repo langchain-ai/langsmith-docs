@@ -18,10 +18,11 @@ Quickly iterate on prompts and models in the LangSmith Playground.
 - [Run the playground against a custom LangServe model server](./how_to_guides/playground/custom_endpoint)
 - [Run the playground against an OpenAI-compliant model provider/proxy](./how_to_guides/playground/custom_openai_compliant_model)
 - [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)
-- [Save settings configuration](./how_to_guides/playground/save_model_configuration)
+- [Manage model configurations](./how_to_guides/playground/managing_model_configurations)
+- [Testing over a dataset](./how_to_guides/playground/testing_over_dataset)
 
 ## Few shot prompting
 
 Use LangSmith datasets to serve few shot examples to your application
 
-- [Index a dataset for few shot example selection](../../evaluation/how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection)
+- [Index a dataset for few shot example selection](../../evaluation/how_to_guides/index_datasets_for_dynamic_few_shot_example_selection)

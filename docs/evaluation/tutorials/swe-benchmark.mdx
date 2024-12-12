@@ -72,7 +72,7 @@ dataset = client.upload_csv(
 
 ### Create dataset split for quicker testing
 
-Since running the SWE-bench evaluator takes a long time when run on all examples, you can create a "test" split for quickly testing the evaluator and your code. Read [this guide](../../evaluation/how_to_guides/datasets/manage_datasets_in_application#create-and-manage-dataset-splits) to learn more about managing dataset splits, or watch this short video that shows how to do it (to get to the starting page of the video, just click on your dataset created above and go to the `Examples` tab):
+Since running the SWE-bench evaluator takes a long time when run on all examples, you can create a "test" split for quickly testing the evaluator and your code. Read [this guide](../../evaluation/how_to_guides/manage_datasets_in_application#create-and-manage-dataset-splits) to learn more about managing dataset splits, or watch this short video that shows how to do it (to get to the starting page of the video, just click on your dataset created above and go to the `Examples` tab):
 
 import creating_split from "./static/creating_split.mp4";
 
@@ -90,7 +90,7 @@ import creating_split from "./static/creating_split.mp4";
 Running evaluation over SWE-bench works a little differently than most evals you will typically run on LangSmith since we don't have a reference output. Because of this, we first generate all of our outputs without running an evaluator (note how the `evaluate` call doesn't have the `evaluators` parameter set). In this case we returned a dummy predict function, but you can insert your agent logic inside the `predict` function to make it work as intended.
 
 ```python
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 from langsmith import Client
 
 client = Client()
@@ -276,7 +276,7 @@ evaluate_predictions(dataset,predictions,max_workers=8,force_rebuild=False,cache
 Now, we can actually send our evaluation feedback to LangSmith by using the `evaluate_existing` function. Our evaluate function is incredibly simple in this case, because the `convert_runs_to_langsmith_feedback` function above made our life very easy by saving all the feedback to a single file.
 
 ```python
-from langsmith.evaluation import evaluate_existing
+from langsmith import evaluate_existing
 from langsmith.schemas import Example, Run
 
 def swe_bench_evaluator(run: Run, example: Example):

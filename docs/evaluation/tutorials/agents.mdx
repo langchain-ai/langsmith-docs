@@ -6,7 +6,7 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Evaluate an agent
 
-In this tutorial, we will walk through 3 evaluation strategies LLM agents, building on the conceptual points shared in our [evaluation guide](https://docs.smith.langchain.com/evaluation/concepts#agents).
+In this tutorial, we will walk through 3 evaluation strategies LLM agents, building on the conceptual points shared in our [evaluation guide](../concepts#agents).
 
 - `Final Response`: Evaluate the agent's final response.
 - `Single step`: Evaluate any agent step in isolation (e.g., whether it selects the appropriate tool).
@@ -348,7 +348,7 @@ Agent evaluation can focus on at least 3 things:
 
 :::tip
 
-See our [evaluation guide](https://docs.smith.langchain.com/evaluation/concepts#agents) for more details on Agent evaluation.
+See our [evaluation guide](../concepts#agents) for more details on Agent evaluation.
 
 :::
 
@@ -358,7 +358,7 @@ We can evaluate how well an agent does overall on a task. This basically involve
 
 :::tip
 
-See the full overview of agent response evaluation in our [conceptual guide](https://docs.smith.langchain.com/evaluation/concepts#evaluating-an-agents-final-response).
+See the full overview of agent response evaluation in our [conceptual guide](../concepts#evaluating-an-agents-final-response).
 
 :::
 
@@ -401,7 +401,7 @@ def predict_sql_agent_answer(example: dict):
 
 `Evaluator`
 
-This can [follow what we do for RAG](https://docs.smith.langchain.com/tutorials/Developers/rag) where we compare the generated answer with the reference answer.
+This can [follow what we do for RAG](./rag) where we compare the generated answer with the reference answer.
 
 ```python
 from langchain import hub
@@ -438,7 +438,7 @@ def answer_evaluator(run, example) -> dict:
 `Create evaluation`
 
 ```python
-from langsmith.evaluation import evaluate
+from langsmith import evaluate
 
 experiment_results = evaluate(
     predict_sql_agent_answer,
@@ -456,11 +456,11 @@ Agents generally make multiple actions. While it is useful to evaluate them end-
 
 :::tip
 
-See the full overview of single step evaluation in our [conceptual guide](https://docs.smith.langchain.com/evaluation/concepts#evaluating-a-single-step-of-an-agent).
+See the full overview of single step evaluation in our [conceptual guide](../concepts#evaluating-a-single-step-of-an-agent).
 
 :::
 
-We can check a specific tool call using [a custom evaluator](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators):
+We can check a specific tool call using [a custom evaluator](../how_to_guides/custom_evaluator):
 
 - Here, we just invoke the assistant, `assistant_runnable`, with a prompt and check if the resulting tool call is as expected.
 - Here, we are using a specialized agent where the tools are hard-coded (rather than passed with the dataset input).
@@ -507,7 +507,7 @@ experiment_results = evaluate(
 
 ### Trajectory
 
-We can check a trajectory of tool calls using [custom evaluators](https://docs.smith.langchain.com/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators):
+We can check a trajectory of tool calls using [custom evaluators](../how_to_guides/custom_evaluator):
 
 - Here, we just invoke the agent, `graph.invoke`, with a prompt.
 - Here, we are using a specialized agent where the tools are hard-coded (rather than passed with the dataset input).
@@ -519,7 +519,7 @@ We can check a trajectory of tool calls using [custom evaluators](https://docs.s
 
 :::tip
 
-See the full overview of single step evaluation in our [conceptual guide](https://docs.smith.langchain.com/evaluation/concepts#evaluating-an-agents-trajectory).
+See the full overview of single step evaluation in our [conceptual guide](../concepts#evaluating-an-agents-trajectory).
 
 :::
 

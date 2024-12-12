@@ -185,6 +185,30 @@
     {
       "source": "/tutorials/Developers/optimize_classifier",
       "destination": "/prompt_engineering/tutorials/optimize_classifier"
+    },
+    {
+        "source": "/evaluation/how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-particular-version-of-a-dataset",
+        "destination": "/evaluation/how_to_guides/evaluation/dataset_version"
+    },
+    {
+        "source": "/evaluation/how_to_guides/evaluation/:path*",
+        "destination": "/evaluation/how_to_guides/:path*"
+    },
+    {
+        "source": "/evaluation/how_to_guides/datasets/:path*",
+        "destination": "/evaluation/how_to_guides/:path*"
+    },
+    {
+        "source": "/evaluation/how_to_guides/human_feedback/:path*",
+        "destination": "/evaluation/how_to_guides/:path*"
+    },
+    {
+        "source": "/reference/python(/?)",
+        "destination": "/reference/python/reference"
+    },
+    {
+        "source": "/reference/sdk_reference(/?)",
+        "destination": "/reference/"
     }
   ],
   "builds": [

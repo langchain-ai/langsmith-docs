@@ -1,0 +1,39 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to evaluate with repetitions
+
+The optional `num_repetitions` param to the `evaluate` function allows you to specify how many times
+to run/evaluate each example in your dataset. For instance, if you have 5 examples and set
+`num_repetitions=5`, each example will be run 5 times, for a total of 25 runs. This can be useful for reducing
+noise in systems prone to high variability, such as agents.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith import evaluate
+      
+      results = evaluate(
+          lambda inputs: label_text(inputs["text"]),
+          data=dataset_name,
+          evaluators=[correct_label],
+          experiment_prefix="Toxic Queries",
+          num_repetitions=3,
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+      
+      await evaluate((inputs) => labelText(inputs["input"]), {
+        data: datasetName,
+        evaluators: [correctLabel],
+        experimentPrefix: "Toxic Queries",
+        numReptitions=3,
+      });
+    `,
+  ]}
+/>
