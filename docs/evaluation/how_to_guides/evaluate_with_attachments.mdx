@@ -327,18 +327,14 @@ The exact same rules apply as above to determine whether the evaluator should re
 <CodeTabs
   tabs={[
     PythonBlock(`# Assumes you've installed pydantic
-from pydantic import BaseModel
-
+from pydantic import BaseModel\n
 def valid_image_description(outputs: dict, attachments: dict) -> bool:
-"""Use an LLM to judge if the reasoning and the answer are consistent."""
-
+    """Use an LLM to judge if the reasoning and the answer are consistent."""\n
     instructions = """
     Does the description of the following image make sense?
-    Please carefully review the image and the description to determine if the description is valid."""
-
+    Please carefully review the image and the description to determine if the description is valid."""\n
     class Response(BaseModel):
-      description_is_valid: bool
-
+        description_is_valid: bool\n
     image_url = attachments["my_img"]["presigned_url"]
     response = client.beta.chat.completions.parse(
         model="gpt-4o",
@@ -356,14 +352,12 @@ def valid_image_description(outputs: dict, attachments: dict) -> bool:
             }
         ],
         response_format=Response
-    )
-
-    return response.choices[0].message.parsed.description_is_valid
-
+    )\n
+    return response.choices[0].message.parsed.description_is_valid\n
 langsmith_client.evaluate(
-file_qa,
-data=dataset_name,
-evaluators=[valid_image_description],
+    file_qa,
+    data=dataset_name,
+    evaluators=[valid_image_description],
 )
 `),
 TypeScriptBlock(`import { zodResponseFormat } from 'openai/helpers/zod';
