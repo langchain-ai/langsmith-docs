@@ -141,7 +141,7 @@ This can be the case for tasks like summarization - it may be hard to give a sum
 ## Experiment
 
 Each time we evaluate an application on a dataset, we are conducting an experiment.
-An experiment is a single execution of all the example inputs in your dataset through your application.
+An experiment is a single execution of the example inputs in your dataset through your application.
 Typically, we will run multiple experiments on a given dataset, testing different configurations of our application (e.g., different prompts or LLMs).
 In LangSmith, you can easily view all the experiments associated with your dataset.
 Additionally, you can compare multiple experiments in a comparison view.
@@ -150,8 +150,22 @@ Additionally, you can compare multiple experiments in a comparison view.
 
 ## Annotation queues
 
-Annotation queues a streamlined, directed view for human annotators to attach feedback to specific runs.
-While you can always annotate runs inline, annotation queues provide another option to group runs together, then have annotators review and provide feedback on them.
+Human feedback is often the most valuable feedback you can gather on your application.
+With annotation queues you can (manually or using automated rules) flag runs of your application for annotation.
+Human annotators then have a streamlined view to review and provide feedback on all the runs in a queue.
+Often (some subset of) these annotated runs are then transferred to a dataset for future evaluations.
+While you can always annotate runs inline, annotation queues provide another option to group runs together, specify annotation criteria, and configure permissions.
+
+An annotation queue has a/an:
+
+- Name
+- Description
+- Default dataset (optional): You can assign a default dataset to queue, which will streamline the process of sending the inputs and outputs of certain runs to datasets in your LangSmith workspace.
+- Annotation rubric (optional): Instructions for reviewers and the feedback metrics they should be scoring.
+- Number of reviewer criteria (optional): Set a minimum number of reviewers that must annotate a run for it to exit the queue.
+- Enable reservations: If enabled, prevents more than one reviewer from leaving feedback at a time.
+
+![Annotation queue](../how_to_guides/static/review_runs.png)
 
 ## Offline evaluation
 
@@ -287,10 +301,10 @@ When evaluating RAG applications, a key consideration is whether you have (or ca
 
 ![rag-types.png](./static/rag-types.png)
 
-When evaluating RAG applications, you have two main options:
+When evaluating RAG applications, you can have evaluators that require reference outputs and those that don't:
 
-1. `Reference` answer: Compare the RAG chain's generated answer or retrievals against a reference answer (or retrievals) to assess its correctness.
-2. `Reference-free`: Perform self-consistency checks using prompts that don't require a reference answer (represented by orange, green, and red in the above figure).
+1. **Require reference output**: Compare the RAG chain's generated answer or retrievals against a reference answer (or retrievals) to assess its correctness.
+2. **Don't require reference output**: Perform self-consistency checks using prompts that don't require a reference answer (represented by orange, green, and red in the above figure).
 
 #### Applying RAG Evaluation
 
@@ -304,13 +318,13 @@ When applying RAG evaluation, consider the following approaches:
 
 #### RAG evaluation summary
 
-| Use Case            | Detail                                            | Reference-free? | LLM-as-judge?                                                                         | Pairwise relevant |
-| ------------------- | ------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------- | ----------------- |
-| Document relevance  | Are documents relevant to the question?           | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-document-relevance)   | No                |
-| Answer faithfulness | Is the answer grounded in the documents?          | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
-| Answer helpfulness  | Does the answer help address the question?        | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness)   | No                |
-| Answer correctness  | Is the answer consistent with a reference answer? | No              | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference)  | No                |
-| Chain comparison    | How do multiple answer versions compare?          | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-rag)  | Yes               |
+| Evaluator           | Detail                                            | Needs reference output | LLM-as-judge?                                                                         | Pairwise relevant |
+| ------------------- | ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------- | ----------------- |
+| Document relevance  | Are documents relevant to the question?           | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-document-relevance)   | No                |
+| Answer faithfulness | Is the answer grounded in the documents?          | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
+| Answer helpfulness  | Does the answer help address the question?        | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness)   | No                |
+| Answer correctness  | Is the answer consistent with a reference answer? | Yes                    | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference)  | No                |
+| Chain comparison    | How do multiple answer versions compare?          | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-rag)  | Yes               |
 
 ### Summarization
 
@@ -322,11 +336,11 @@ Summarization is one specific type of free-form writing. The evaluation aim is t
 
 `Online` or `Offline` evaluation are feasible because of the `Reference-free` prompt used. `Pairwise` evaluation is also a powerful way to perform comparisons between different summarization chains (e.g., different summarization prompts or LLMs):
 
-| Use Case         | Detail                                                                     | Reference-free? | LLM-as-judge?                                                                                | Pairwise relevant |
-| ---------------- | -------------------------------------------------------------------------- | --------------- | -------------------------------------------------------------------------------------------- | ----------------- |
-| Factual accuracy | Is the summary accurate relative to the source documents?                  | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-accurancy-evaluator)     | Yes               |
-| Faithfulness     | Is the summary grounded in the source documents (e.g., no hallucinations)? | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-hallucination-evaluator) | Yes               |
-| Helpfulness      | Is summary helpful relative to user need?                                  | Yes             | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-helpfulness-evaluator)   | Yes               |
+| Use Case         | Detail                                                                     | Needs reference output | LLM-as-judge?                                                                                | Pairwise relevant |
+| ---------------- | -------------------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------- | ----------------- |
+| Factual accuracy | Is the summary accurate relative to the source documents?                  | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-accurancy-evaluator)     | Yes               |
+| Faithfulness     | Is the summary grounded in the source documents (e.g., no hallucinations)? | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-hallucination-evaluator) | Yes               |
+| Helpfulness      | Is summary helpful relative to user need?                                  | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/summary-helpfulness-evaluator)   | Yes               |
 
 ### Classification / Tagging
 
@@ -338,9 +352,8 @@ If ground truth reference labels are provided, then it's common to simply define
 
 `Online` or `Offline` evaluation is feasible when using `LLM-as-judge` with the `Reference-free` prompt used. In particular, this is well suited to `Online` evaluation when a user wants to tag / classify application input (e.g., for toxicity, etc).
 
-| Use Case  | Detail                          | Reference-free?         | LLM-as-judge?                                                        | Pairwise relevant |
-| --------- | ------------------------------- | ----------------------- | -------------------------------------------------------------------- | ----------------- |
-| Criteria  | Tag if specific criteria is met | Yes                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/tagging) | No                |
-| Accuracy  | Standard definition             | No (ground truth class) | No                                                                   | No                |
-| Precision | Standard definition             | No (ground truth class) | No                                                                   | No                |
-| Recall    | Standard definition             | No (ground truth class) | No                                                                   | No                |
+| Use Case  | Detail              | Needs reference output | LLM-as-judge? | Pairwise relevant |
+| --------- | ------------------- | ---------------------- | ------------- | ----------------- |
+| Accuracy  | Standard definition | Yes                    | No            | No                |
+| Precision | Standard definition | Yes                    | No            | No                |
+| Recall    | Standard definition | Yes                    | No            | No                |
