@@ -324,12 +324,15 @@ groupId="client-language"
 In addition to using attachments inside of your target function, you can also use them inside of your evaluators as follows.
 The exact same rules apply as above to determine whether the evaluator should receive attachments.
 
+The evaluator below uses an LLM to judge if the reasoning and the answer are consistent.
+To learn more about how to define llm-based evaluators, please see [this guide](./llm_as_judge).
+
 <CodeTabs
   tabs={[
     PythonBlock(`# Assumes you've installed pydantic
 from pydantic import BaseModel\n
 def valid_image_description(outputs: dict, attachments: dict) -> bool:
-    """Use an LLM to judge if the reasoning and the answer are consistent."""\n
+    """Use an LLM to judge if the image description and ime are consistent."""\n
     instructions = """
     Does the description of the following image make sense?
     Please carefully review the image and the description to determine if the description is valid."""\n
