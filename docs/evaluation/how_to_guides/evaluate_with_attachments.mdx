@@ -40,7 +40,7 @@ All of the below features are available in the following SDK versions:
 import uuid\n
 from langsmith import Client
 from langsmith.schemas import ExampleUploadWithAttachments, Attachment\n
-# Publicly available test files\n
+# Publicly available test files
 pdf_url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 wav_url = "https://openaiassets.blob.core.windows.net/$web/API/docs/audio/alloy.wav"
 png_url = "https://www.w3.org/Graphics/PNG/nurbcup2si.png"\n
@@ -48,14 +48,14 @@ png_url = "https://www.w3.org/Graphics/PNG/nurbcup2si.png"\n
 pdf_bytes = requests.get(pdf_url).content
 wav_bytes = requests.get(wav_url).content
 png_bytes = requests.get(png_url).content\n
-# Define the LANGCHAIN_API_KEY environment variable with your API key\n
+# Define the LANGCHAIN_API_KEY environment variable with your API key
 langsmith_client = Client()\n
 dataset_name = "attachment-test-dataset:" + str(uuid.uuid4())[0:8]\n
 dataset = langsmith_client.create_dataset(
     dataset_name=dataset_name,
     description="Test dataset for evals with publicly available attachments",
 )\n
-# Create example id\n
+# Create example id
 example_id = uuid.uuid4()\n
 # Define the example with attachments\n
 example = ExampleUploadWithAttachments(
