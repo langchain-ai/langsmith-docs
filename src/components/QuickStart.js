@@ -161,7 +161,6 @@ export function ConfigureSDKEnvironmentCodeTabs({}) {
         ShellBlock(`export LANGCHAIN_TRACING_V2=true
 export LANGCHAIN_API_KEY=<your-api-key>
 
-# The below examples use the OpenAI API, though it's not necessary in general
 export OPENAI_API_KEY=<your-openai-api-key>`),
       ]}
       groupId="client-language"
