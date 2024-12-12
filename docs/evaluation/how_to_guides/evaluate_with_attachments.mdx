@@ -3,7 +3,7 @@ import {
   CodeTabs,
   PythonBlock,
   TypeScriptBlock,
-} from "@site/src/components/InstructionsWithCode"
+} from "@site/src/components/InstructionsWithCode";
 
 # Evaluate applications with large file inputs
 
@@ -27,15 +27,12 @@ Finally, attachments are more user-friendly in the LangSmith UI, as they are ren
 To upload examples with attachments using the SDK, you need to use the `upload_examples_multipart` method of the LangSmith client.
 This method allows you to pass in a list of examples with attachments.
 
-Each attachment is represented as a dictionary, mapping the attachment name to a tuple containing the MIME type and the file content.
-The file content can be either a path to the file or the bytes content of the file.
-
 :::note Minimum SDK Versions
 The following features are available in the following SDK versions:
 
 - Python SDK: >=0.2.3
 - JS/TS SDK: >=0.2.13
-:::
+  :::
 
 <CodeTabs
   tabs={[
@@ -46,51 +43,68 @@ from langsmith import Client
 from langsmith.schemas import ExampleUploadWithAttachments, Attachment
 
 # Publicly available test files
+
 pdf_url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 wav_url = "https://openaiassets.blob.core.windows.net/$web/API/docs/audio/alloy.wav"
 png_url = "https://www.w3.org/Graphics/PNG/nurbcup2si.png"
 
 # Fetch the files as bytes
+
 pdf_bytes = requests.get(pdf_url).content
 wav_bytes = requests.get(wav_url).content
 png_bytes = requests.get(png_url).content
 
 # Define the LANGCHAIN_API_KEY environment variable with your API key
+
 langsmith_client = Client()
 
 dataset_name = "attachment-test-dataset:" + str(uuid.uuid4())[0:8]
 
 dataset = langsmith_client.create_dataset(
-    dataset_name=dataset_name,
-    description="Test dataset for evals with publicly available attachments",
+dataset_name=dataset_name,
+description="Test dataset for evals with publicly available attachments",
 )
 
 # Create example id
+
 example_id = uuid.uuid4()
 
 # Define the example with attachments
+
 example = ExampleUploadWithAttachments(
-    id=example_id,
-    inputs={
-        "audio_question": "What is in this audio clip?",
-        "image_question": "What is in this image?"
-    },
-    outputs={
-        "audio_answer": "The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
-        "image_answer": "A mug with a blanket over it."
-    },
-    attachments={
-        "my_pdf": ("application/pdf", pdf_bytes),
-        "my_wav": ("audio/wav", wav_bytes),
-        "my_img": Attachment(mime_type="image/png", data=png_bytes)
-    },
+id=example_id,
+inputs={
+"audio_question": "What is in this audio clip?",
+"image_question": "What is in this image?"
+},
+outputs={
+"audio_answer": "The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
+"image_answer": "A mug with a blanket over it."
+},
+attachments={
+"my_pdf": ("application/pdf", pdf_bytes),
+"my_wav": ("audio/wav", wav_bytes),
+"my_img": Attachment(mime_type="image/png", data=png_bytes)
+},
 )
 
 # Upload the examples with attachments
+
 langsmith_client.upload_examples_multipart(dataset_id=dataset.id, uploads=[example])
-`),
+`,
+        `In the Python SDK, you can use the \`upload_examples_multipart\` method to upload examples with attachments.
+
+Note that this is a different method from the standard \`create_examples\` method, which currently not support attachments.
+Utilize the \`ExampleUploadWithAttachments\` type to define examples with attachments.
+Each \`Attachment\` requires:\n
+
+- \`mime_type\` (str): The MIME type of the file (e.g., \`"image/png"\`).
+- \`data\` (bytes): The binary content of the file.\n
+  You can also define an attachment with a tuple tuple of the form \`(mime_type, data)\` for convenience.
+  `
+),
     TypeScriptBlock(`import { Client } from "langsmith";
-import { v4 as uuid4 } from "uuid";
+  import { v4 as uuid4 } from "uuid";
 
 // Publicly available test files
 const pdfUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
@@ -99,11 +113,11 @@ const pngUrl = "https://www.w3.org/Graphics/PNG/nurbcup2si.png";
 
 // Helper function to fetch file as ArrayBuffer
 async function fetchArrayBuffer(url: string): Promise<ArrayBuffer> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(\`Failed to fetch \${url}\: $\{response.statusText\}\`);
-  }
-  return response.arrayBuffer();
+const response = await fetch(url);
+if (!response.ok) {
+throw new Error(\`Failed to fetch \${url}\: $\{response.statusText\}\`);
+}
+return response.arrayBuffer();
 }
 
 // Fetch files as ArrayBuffer
@@ -119,42 +133,42 @@ const datasetName = "attachment-test-dataset:" + uuid4().substring(0, 8);
 
 // Create the dataset
 const dataset = await langsmithClient.createDataset(datasetName, {
-  description: "Test dataset for evals with publicly available attachments",
+description: "Test dataset for evals with publicly available attachments",
 });
 
 // Define the example with attachments
 const exampleId = uuid4();
 const example = {
-  id: exampleId,
-  inputs: {
-    audio_question: "What is in this audio clip?",
-    image_question: "What is in this image?",
-  },
-  outputs: {
-    audio_answer:
-      "The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
-    image_answer: "A mug with a blanket over it.",
-  },
-  attachments: {
-    my_pdf: {
-      mimeType: "application/pdf", 
-      data: pdfArrayBuffer
-    },
-    my_wav: {
-      mimeType: "audio/wav", 
-      data: wavArrayBuffer
-    },
-    my_img: {
-      mimeType: "image/png", 
-      data: pngArrayBuffer
-    },
-  },
+id: exampleId,
+inputs: {
+audio_question: "What is in this audio clip?",
+image_question: "What is in this image?",
+},
+outputs: {
+audio_answer:
+"The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
+image_answer: "A mug with a blanket over it.",
+},
+attachments: {
+my_pdf: {
+mimeType: "application/pdf",
+data: pdfArrayBuffer
+},
+my_wav: {
+mimeType: "audio/wav",
+data: wavArrayBuffer
+},
+my_img: {
+mimeType: "image/png",
+data: pngArrayBuffer
+},
+},
 };
 
 // Upload the example with attachments to the dataset
 await langsmithClient.uploadExamplesMultipart(dataset.id, [example]);`),
-  ]}
-  groupId="client-language"
+]}
+groupId="client-language"
 />
 
 Once you upload examples with attachments, you can view them in the LangSmith UI. Each attachment will be rendered as a file with a preview, making it easy to inspect the contents.
@@ -163,7 +177,7 @@ Once you upload examples with attachments, you can view them in the LangSmith UI
 ### From existing runs
 
 When adding runs to a LangSmith dataset, attachments can be selectively propagated from the source run to the destination example.
-To do learn more, please see [this guide](./../datasets/manage_datasets_in_application#add-runs-from-the-tracing-project-ui).
+To do learn more, please see [this guide](./manage_datasets_in_application#add-runs-from-the-tracing-project-ui).
 
 ### From the LangSmith UI
 
@@ -193,7 +207,7 @@ The target function must have two positional arguments in order to consume the a
       }
   }
   ```
-:::
+  :::
 
 :::tip Javascript Target Function with Attachments
 :::
@@ -208,31 +222,31 @@ from openai import OpenAI
 client = wrap_openai(OpenAI())
 
 # Define target function that uses attachments
-def file_qa(inputs, attachments):
-    # Read the audio bytes from the reader and encode them in base64
-    audio_reader = attachments["my_wav"]["reader"]
-    audio_b64 = base64.b64encode(audio_reader.read()).decode('utf-8')
-    audio_completion = client.chat.completions.create(
-        model="gpt-4o-audio-preview",
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": inputs["audio_question"]
-                    },
-                    {
-                        "type": "input_audio",
-                        "input_audio": {
-                            "data": audio_b64,
-                            "format": "wav"
-                        }
-                    }
-                ]
-            },
-        ]
-    )
+
+def file_qa(inputs, attachments): # Read the audio bytes from the reader and encode them in base64
+audio_reader = attachments["my_wav"]["reader"]
+audio_b64 = base64.b64encode(audio_reader.read()).decode('utf-8')
+audio_completion = client.chat.completions.create(
+model="gpt-4o-audio-preview",
+messages=[
+{
+"role": "user",
+"content": [
+{
+"type": "text",
+"text": inputs["audio_question"]
+},
+{
+"type": "input_audio",
+"input_audio": {
+"data": audio_b64,
+"format": "wav"
+}
+}
+]
+},
+]
+)
 
     # Most models support taking in an image URL directly in addition to base64 encoded images
     # You can pipe the image pre-signed URL directly to the model
@@ -259,6 +273,7 @@ def file_qa(inputs, attachments):
         "audio_answer": audio_completion.choices[0].message.content,
         "image_answer": image_completion.choices[0].message.content,
     }
+
 `),
     TypeScriptBlock(`import OpenAI from "openai";
 import { wrapOpenAI } from "langsmith/wrappers";
@@ -266,66 +281,65 @@ import { wrapOpenAI } from "langsmith/wrappers";
 const client: any = wrapOpenAI(new OpenAI());
 
 async function fileQA(inputs: Record<string, any>, config?: Record<string, any>) {
-  const presignedUrl = config?.attachments?.["my_wav"]?.presigned_url;
-  if (!presignedUrl) {
-    throw new Error("No presigned URL provided for audio.");
-  }
+const presignedUrl = config?.attachments?.["my_wav"]?.presigned_url;
+if (!presignedUrl) {
+throw new Error("No presigned URL provided for audio.");
+}
 
-  const response = await fetch(presignedUrl);
-  if (!response.ok) {
-    throw new Error(\`Failed to fetch audio: $\{response.statusText\}\`);
-  }
+const response = await fetch(presignedUrl);
+if (!response.ok) {
+throw new Error(\`Failed to fetch audio: $\{response.statusText\}\`);
+}
 
-  const arrayBuffer = await response.arrayBuffer();
-  const uint8Array = new Uint8Array(arrayBuffer);
-  const audioB64 = Buffer.from(uint8Array).toString("base64");
-  
-    
-  const audioCompletion = await client.chat.completions.create({
-    model: "gpt-4o-audio-preview",
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: inputs["audio_question"] },
-          {
-            type: "input_audio",
-            input_audio: {
-              data: audioB64,
-              format: "wav",
-            },
-          },
-        ],
-      },
-    ],
-  });
+const arrayBuffer = await response.arrayBuffer();
+const uint8Array = new Uint8Array(arrayBuffer);
+const audioB64 = Buffer.from(uint8Array).toString("base64");
 
-  const imageUrl = config?.attachments?.["my_img"]?.presigned_url
-  const imageCompletion = await client.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "text", text: inputs["image_question"] },
-          {
-            type: "image_url",
-            image_url: {
-              url: imageUrl,
-            },
-          },
-        ],
-      },
-    ],
-  });
+const audioCompletion = await client.chat.completions.create({
+model: "gpt-4o-audio-preview",
+messages: [
+{
+role: "user",
+content: [
+{ type: "text", text: inputs["audio_question"] },
+{
+type: "input_audio",
+input_audio: {
+data: audioB64,
+format: "wav",
+},
+},
+],
+},
+],
+});
 
-  return {
-    audio_answer: audioCompletion.choices[0].message.content,
-    image_answer: imageCompletion.choices[0].message.content,
-  };
+const imageUrl = config?.attachments?.["my_img"]?.presigned_url
+const imageCompletion = await client.chat.completions.create({
+model: "gpt-4o-mini",
+messages: [
+{
+role: "user",
+content: [
+{ type: "text", text: inputs["image_question"] },
+{
+type: "image_url",
+image_url: {
+url: imageUrl,
+},
+},
+],
+},
+],
+});
+
+return {
+audio_answer: audioCompletion.choices[0].message.content,
+image_answer: imageCompletion.choices[0].message.content,
+};
 }`),
-  ]}
-  groupId="client-language"
+]}
+groupId="client-language"
 />
 
 ### Define custom evaluators with attachments
@@ -338,7 +352,7 @@ In addition to using attachments inside of your target function, you can also us
 from pydantic import BaseModel
 
 def valid_image_description(outputs: dict, attachments: dict) -> bool:
-    """Use an LLM to judge if the reasoning and the answer are consistent."""
+"""Use an LLM to judge if the reasoning and the answer are consistent."""
 
     instructions = """
     Does the description of the following image make sense?
@@ -369,9 +383,9 @@ def valid_image_description(outputs: dict, attachments: dict) -> bool:
     return response.choices[0].message.parsed.description_is_valid
 
 langsmith_client.evaluate(
-    file_qa,
-    data=dataset_name,
-    evaluators=[valid_image_description],
+file_qa,
+data=dataset_name,
+evaluators=[valid_image_description],
 )
 `),
 TypeScriptBlock(`import { zodResponseFormat } from 'openai/helpers/zod';
@@ -379,18 +393,18 @@ import { z } from 'zod';
 import { evaluate } from "langsmith/evaluation";
 
 const DescriptionResponse = z.object({
-    description_is_valid: z.boolean(),
+description_is_valid: z.boolean(),
 });
 
 async function validImageDescription({
-  outputs,
-  attachments,
+outputs,
+attachments,
 }: {
-  outputs?: any;
-  attachments?: any;
+outputs?: any;
+attachments?: any;
 }): Promise<{ key: string; score: boolean}> {
-    const instructions = \`Does the description of the following image make sense?
-    Please carefully review the image and the description to determine if the description is valid.\`;
+const instructions = \`Does the description of the following image make sense?
+Please carefully review the image and the description to determine if the description is valid.\`;
 
     const imageUrl = attachments?.["my_img"]?.presigned_url
 
@@ -414,17 +428,18 @@ async function validImageDescription({
 
     const score: boolean = completion.choices[0]?.message?.parsed?.description_is_valid ?? false;
     return { key: "valid_image_description", score };
+
 }
 
 const resp = await evaluate(fileQA, {
-  data: datasetName,
-  // Need to pass flag to include attachments
-  includeAttachments: true,
-  evaluators: [validImageDescription],
-  client: langsmithClient
+data: datasetName,
+// Need to pass flag to include attachments
+includeAttachments: true,
+evaluators: [validImageDescription],
+client: langsmithClient
 });`),
-  ]}
-  groupId="client-language"
+]}
+groupId="client-language"
 />
 
 ## Managing datasets with attachments
@@ -465,35 +480,35 @@ example_update = ExampleUpdateWithAttachments(
 langsmith_client.update_example_with_attachments(dataset_id=dataset.id, updates=[example_update])
 `),
     TypeScriptBlock(`import { ExampleUpdateWithAttachments } from "langsmith/schemas";
-    
+
 const exampleUpdate: ExampleUpdateWithAttachments = {
-    id: exampleId,
-    attachments: {
-        // These are net new attachments
-        "my_new_file": {
-          mimeType: "text/plain",
-          data: Buffer.from("foo bar")
-        },
-    },
-    attachments_operations: {
-        // Retained attachments will stay exactly the same
-        retain: ["my_img"],
-        // Renaming attachments preserves the original data
-        rename: {
-            "my_wav": "my_new_wav",
-        },
-        // Any attachments not in rename/retain will be deleted
-        // In this case, that would be "my_pdf"
-    },
+id: exampleId,
+attachments: {
+// These are net new attachments
+"my_new_file": {
+mimeType: "text/plain",
+data: Buffer.from("foo bar")
+},
+},
+attachments_operations: {
+// Retained attachments will stay exactly the same
+retain: ["my_img"],
+// Renaming attachments preserves the original data
+rename: {
+"my_wav": "my_new_wav",
+},
+// Any attachments not in rename/retain will be deleted
+// In this case, that would be "my_pdf"
+},
 };
 
 await langsmithClient.updateExamplesMultipart(
-    dataset.id,
-    [exampleUpdate],
+dataset.id,
+[exampleUpdate],
 );
 `),
 ]}
-  groupId="client-language"
+groupId="client-language"
 />
 
 :::warning Attachment Operations
