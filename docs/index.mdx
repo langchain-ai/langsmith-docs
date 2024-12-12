@@ -29,8 +29,8 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 **LangSmith** is a platform for building production-grade LLM applications.
 It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence.
 With LangSmith you can:
-- **Trace LLM Calls**: Gain visibility into LLM calls, and other parts of your application's logic. 
-- **Evaluate Performance**: Compare results across models and prompts to identify what works best.
+- **Trace LLM Applications**: Gain visibility into LLM calls and other parts of your application's logic.
+- **Evaluate Performance**: Compare results across models, prompts, and architectures to identify what works best.
 - **Improve Prompts**: Quickly refine prompts to achieve more accurate and reliable results.
 
 :::tip LangSmith + LangChain OSS
@@ -105,9 +105,9 @@ By default, the trace will be logged to the project with the name `default`. You
 
 ## 6. Run your first evaluation
 
-[Evaluations](./evaluation/concepts#evaluators) help assess application performance by testing it against a given set of inputs. Evaluations require a system to test, data to serve as test cases, and optionally evaluators to grade the results. 
+[Evaluations](./evaluation/concepts) help assess application performance by testing the application against a given set of inputs. Evaluations require a system to test, data to serve as test cases, and evaluators to grade the results. 
 
-Here we are running an evaluation against a sample dataset using a built-in accuracy evaluator for accuracy. 
+Here we are running an evaluation against a sample dataset using a simple custom evaluator that checks if the real output exactly matches our gold-standard output.
 
 <CodeTabs
   tabs={[
