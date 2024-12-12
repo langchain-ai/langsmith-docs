@@ -37,118 +37,93 @@ The following features are available in the following SDK versions:
 <CodeTabs
   tabs={[
     PythonBlock(`import requests
-import uuid
-
+import uuid\n
 from langsmith import Client
-from langsmith.schemas import ExampleUploadWithAttachments, Attachment
-
-# Publicly available test files
-
+from langsmith.schemas import ExampleUploadWithAttachments, Attachment\n
+# Publicly available test files\n
 pdf_url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 wav_url = "https://openaiassets.blob.core.windows.net/$web/API/docs/audio/alloy.wav"
-png_url = "https://www.w3.org/Graphics/PNG/nurbcup2si.png"
-
-# Fetch the files as bytes
-
+png_url = "https://www.w3.org/Graphics/PNG/nurbcup2si.png"\n
+# Fetch the files as bytes\n
 pdf_bytes = requests.get(pdf_url).content
 wav_bytes = requests.get(wav_url).content
-png_bytes = requests.get(png_url).content
-
-# Define the LANGCHAIN_API_KEY environment variable with your API key
-
-langsmith_client = Client()
-
-dataset_name = "attachment-test-dataset:" + str(uuid.uuid4())[0:8]
-
+png_bytes = requests.get(png_url).content\n
+# Define the LANGCHAIN_API_KEY environment variable with your API key\n
+langsmith_client = Client()\n
+dataset_name = "attachment-test-dataset:" + str(uuid.uuid4())[0:8]\n
 dataset = langsmith_client.create_dataset(
-dataset_name=dataset_name,
-description="Test dataset for evals with publicly available attachments",
-)
-
-# Create example id
-
-example_id = uuid.uuid4()
-
-# Define the example with attachments
-
+    dataset_name=dataset_name,
+    description="Test dataset for evals with publicly available attachments",
+)\n
+# Create example id\n
+example_id = uuid.uuid4()\n
+# Define the example with attachments\n
 example = ExampleUploadWithAttachments(
-id=example_id,
-inputs={
-"audio_question": "What is in this audio clip?",
-"image_question": "What is in this image?"
-},
-outputs={
-"audio_answer": "The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
-"image_answer": "A mug with a blanket over it."
-},
-attachments={
-"my_pdf": ("application/pdf", pdf_bytes),
-"my_wav": ("audio/wav", wav_bytes),
-"my_img": Attachment(mime_type="image/png", data=png_bytes)
-},
-)
-
+    id=example_id,
+    inputs={
+        "audio_question": "What is in this audio clip?",
+        "image_question": "What is in this image?"
+    },
+    outputs={
+        "audio_answer": "The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
+        "image_answer": "A mug with a blanket over it."
+    },
+    attachments={
+        "my_pdf": ("application/pdf", pdf_bytes),
+        "my_wav": ("audio/wav", wav_bytes),
+        "my_img": Attachment(mime_type="image/png", data=png_bytes)
+    },
+)\n
 # Upload the examples with attachments
-
 langsmith_client.upload_examples_multipart(dataset_id=dataset.id, uploads=[example])
 `,
-        `In the Python SDK, you can use the \`upload_examples_multipart\` method to upload examples with attachments.
-
-Note that this is a different method from the standard \`create_examples\` method, which currently not support attachments.
-Utilize the \`ExampleUploadWithAttachments\` type to define examples with attachments.
-Each \`Attachment\` requires:\n
-
+        `In the Python SDK, you can use the \`upload_examples_multipart\` method to upload examples with attachments.\n
+Note that this is a different method from the standard \`create_examples\` method, which currently not support attachments.\n
+Utilize the \`ExampleUploadWithAttachments\` type to define examples with attachments.\n
+Each \`Attachment\` requires:
 - \`mime_type\` (str): The MIME type of the file (e.g., \`"image/png"\`).
 - \`data\` (bytes): The binary content of the file.\n
   You can also define an attachment with a tuple tuple of the form \`(mime_type, data)\` for convenience.
   `
 ),
     TypeScriptBlock(`import { Client } from "langsmith";
-  import { v4 as uuid4 } from "uuid";
-
+  import { v4 as uuid4 } from "uuid";\n
 // Publicly available test files
 const pdfUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
 const wavUrl = "https://openaiassets.blob.core.windows.net/$web/API/docs/audio/alloy.wav";
-const pngUrl = "https://www.w3.org/Graphics/PNG/nurbcup2si.png";
-
+const pngUrl = "https://www.w3.org/Graphics/PNG/nurbcup2si.png";\n
 // Helper function to fetch file as ArrayBuffer
 async function fetchArrayBuffer(url: string): Promise<ArrayBuffer> {
 const response = await fetch(url);
 if (!response.ok) {
-throw new Error(\`Failed to fetch \${url}\: $\{response.statusText\}\`);
+    throw new Error(\`Failed to fetch \${url}\: $\{response.statusText\}\`);
 }
-return response.arrayBuffer();
-}
-
+    return response.arrayBuffer();
+}\n
 // Fetch files as ArrayBuffer
 const pdfArrayBuffer = await fetchArrayBuffer(pdfUrl);
 const wavArrayBuffer = await fetchArrayBuffer(wavUrl);
-const pngArrayBuffer = await fetchArrayBuffer(pngUrl);
-
+const pngArrayBuffer = await fetchArrayBuffer(pngUrl);\n
 // Create the LangSmith client (Ensure LANGCHAIN_API_KEY is set in env)
-const langsmithClient = new Client();
-
+const langsmithClient = new Client();\n
 // Create a unique dataset name
-const datasetName = "attachment-test-dataset:" + uuid4().substring(0, 8);
-
+const datasetName = "attachment-test-dataset:" + uuid4().substring(0, 8);\n
 // Create the dataset
 const dataset = await langsmithClient.createDataset(datasetName, {
-description: "Test dataset for evals with publicly available attachments",
-});
-
+    description: "Test dataset for evals with publicly available attachments",
+});\n
 // Define the example with attachments
 const exampleId = uuid4();
 const example = {
-id: exampleId,
-inputs: {
-audio_question: "What is in this audio clip?",
-image_question: "What is in this image?",
-},
-outputs: {
-audio_answer:
-"The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
-image_answer: "A mug with a blanket over it.",
-},
+    id: exampleId,
+    inputs: {
+        audio_question: "What is in this audio clip?",
+        image_question: "What is in this image?",
+    },
+    outputs: {
+        audio_answer: "The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
+        image_answer: "A mug with a blanket over it.",
+    },
 attachments: {
 my_pdf: {
 mimeType: "application/pdf",
@@ -166,10 +141,16 @@ data: pngArrayBuffer
 };
 
 // Upload the example with attachments to the dataset
-await langsmithClient.uploadExamplesMultipart(dataset.id, [example]);`),
-]}
-groupId="client-language"
-/>
+await langsmithClient.uploadExamplesMultipart(dataset.id, [example]);`,
+        `In the TypeScript SDK, you can use the \`uploadExamplesMultipart\` method to upload examples with attachments.\n
+Note that this is a different method from the standard \`createExamples\` method, which currently does not support attachments.
+Each attachment requires either a \`Uint8Array\` or an \`ArrayBuffer\` as the data type.\n
+
+- \`Uint8Array\`: Useful for handling binary data directly.
+- \`ArrayBuffer\`: Represents fixed-length binary data, which can be converted to \`Uint8Array\` as needed.\n`),
+  ]}
+  groupId="client-language"
+  />
 
 Once you upload examples with attachments, you can view them in the LangSmith UI. Each attachment will be rendered as a file with a preview, making it easy to inspect the contents.
 ![](./static/attachments_with_examples.png)
@@ -177,11 +158,13 @@ Once you upload examples with attachments, you can view them in the LangSmith UI
 ### From existing runs
 
 When adding runs to a LangSmith dataset, attachments can be selectively propagated from the source run to the destination example.
-To do learn more, please see [this guide](./manage_datasets_in_application#add-runs-from-the-tracing-project-ui).
+To learn more, please see [this guide](./manage_datasets_in_application#add-runs-from-the-tracing-project-ui).
+
+![](./static/add_trace_with_attachments_to_dataset.png)
 
 ### From the LangSmith UI
 
-You can also add examples with attachments from the LangSmith UI. You can do so by clicking the `+ Example` button in the `Examples` tab of the dataset UI.
+You can also upload examples with attachments directly from the LangSmith UI. You can do so by clicking the `+ Example` button in the `Examples` tab of the dataset UI.
 You can then upload the attachments that you want by using the "Upload Files" button:
 
 ![](./static/create_example_with_attachments.png)
@@ -194,60 +177,36 @@ Once you have a dataset that contains examples with file attachments, you can ru
 
 Now that we have a dataset that includes examples with attachments, we can define a target function to run our LLM application on these examples.
 
-:::tip Python Target Function with Attachments
-The target function must have two positional arguments in order to consume the attachments associated with the example, the first must be called `inputs` and the second must be called `attachments`.
-
-- The `inputs` argument is a dictionary that contains the input data for the example, excluding the attachments.
-- The `attachments` argument is a dictionary that maps the attachment name to a dictionary containing a presigned url and a reader of the bytes content of the file. Either can be used to read the bytes of the file:
-  ```
-  {
-      "attachment_name": {
-          "presigned_url": presigned_url,
-          "reader": reader
-      }
-  }
-  ```
-  :::
-
-:::tip Javascript Target Function with Attachments
-:::
-
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith.wrappers import wrap_openai
-
+    PythonBlock(`from langsmith.wrappers import wrap_openai\n
 import base64
-from openai import OpenAI
-
-client = wrap_openai(OpenAI())
-
-# Define target function that uses attachments
-
+from openai import OpenAI\n
+client = wrap_openai(OpenAI())\n
+# Define target function that uses attachments\n
 def file_qa(inputs, attachments): # Read the audio bytes from the reader and encode them in base64
-audio_reader = attachments["my_wav"]["reader"]
-audio_b64 = base64.b64encode(audio_reader.read()).decode('utf-8')
-audio_completion = client.chat.completions.create(
-model="gpt-4o-audio-preview",
-messages=[
-{
-"role": "user",
-"content": [
-{
-"type": "text",
-"text": inputs["audio_question"]
-},
-{
-"type": "input_audio",
-"input_audio": {
-"data": audio_b64,
-"format": "wav"
-}
-}
-]
-},
-]
-)
-
+    audio_reader = attachments["my_wav"]["reader"]
+    audio_b64 = base64.b64encode(audio_reader.read()).decode('utf-8')
+    audio_completion = client.chat.completions.create(
+    model="gpt-4o-audio-preview",
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": inputs["audio_question"]
+                },
+                {
+                    "type": "input_audio",
+                    "input_audio": {
+                        "data": audio_b64,
+                        "format": "wav"
+                    }
+                }
+            ]
+        }
+    ]\n
     # Most models support taking in an image URL directly in addition to base64 encoded images
     # You can pipe the image pre-signed URL directly to the model
     image_url = attachments["my_img"]["presigned_url"]
@@ -267,14 +226,23 @@ messages=[
             ],
           }
         ],
-    )
-
+    )\n
     return {
         "audio_answer": audio_completion.choices[0].message.content,
         "image_answer": image_completion.choices[0].message.content,
     }
-
-`),
+`,
+`The target function you are evaluating must have two positional arguments in order to consume the attachments associated with the example, the first must be called \`inputs\` and the second must be called \`attachments\`.
+- The \`inputs\` argument is a dictionary that contains the input data for the example, excluding the attachments.
+- The \`attachments\` argument is a dictionary that maps the attachment name to a dictionary containing a presigned url and a reader of the bytes content of the file. Either can be used to read the bytes of the file:
+Each value in the attachments dictionary is a dictionary with the following structure:
+\`\`\`
+{
+      "presigned_url": str,
+      "reader": BinaryIO
+}
+\`\`\`
+  `),
     TypeScriptBlock(`import OpenAI from "openai";
 import { wrapOpenAI } from "langsmith/wrappers";
 
@@ -337,14 +305,23 @@ return {
 audio_answer: audioCompletion.choices[0].message.content,
 image_answer: imageCompletion.choices[0].message.content,
 };
-}`),
+}`,
+    `In the TypeScript SDK, the \`config\` argument is used to pass in the attachments to the target function if \`includeAttachments\` is set to \`true\`.\n
+The \`config\` will contain \`attachments\` which is an object mapping the attachment name to an object of the form:
+\`\`\`
+{
+presigned_url: string,
+}
+\`\`\``
+),
 ]}
 groupId="client-language"
 />
 
 ### Define custom evaluators with attachments
 
-In addition to using attachments inside of your target function, you can also use them inside of your evaluators as follows:
+In addition to using attachments inside of your target function, you can also use them inside of your evaluators as follows.
+The exact same rules apply as above to determine whether the evaluator should receive attachments.
 
 <CodeTabs
   tabs={[
@@ -442,12 +419,15 @@ client: langsmithClient
 groupId="client-language"
 />
 
-## Managing datasets with attachments
+## Manage datasets with attachments
 
-### Managing programmatically
+### Manage programmatically
 
-In the code above we saw how we could upload examples with attachments using the SDK, and it
+In the code [above](#add-examples-with-attachments-to-a-langsmith-dataset), we showed how to add examples with attachments to a dataset.
 is also possible to update these same examples using the SDK.
+
+As with existing examples, datasets are versioned when you update them with attachments. Therefore, you can navigate to the dataset version history to see the changes made to each example.
+To learn more, please see [this guide](./manage_datasets_in_application).
 
 When updating an example with attachments, you can update attachments in a few different ways:
 
@@ -515,6 +495,8 @@ groupId="client-language"
 Currently, errors are not thrown if you pass the wrong attaachment name to `rename` or `retain`.
 New attachments **ALWAYS** take precedence over existing attachments. So if you upload a new attachment
 name "foo" and try to retain or rename an existing attachment to "foo", the new attachment will be used instead.
+
+Anything not in `rename` or `retain` will be deleted.
 :::
 
 ### From the LangSmith UI
