@@ -9,6 +9,8 @@ import {
 
 In addition to supporting [file attachments with traces](../../../observability/how_to_guides/tracing/upload_files_with_traces), LangSmith supports arbitrary file attachments with your examples, which you can consume when you run experiments.
 
+This is particularly useful when working with LLM applications that require multimodal inputs or outputs.
+
 :::tip Using separate attachments outside of inputs/outputs
 When dealing with large files, it's recommended to upload them as attachments rather than embedding them in your JSON inputs or outputs via base64 encoding.
 
@@ -18,19 +20,21 @@ This also avoid potential performance bottlenecks with parsing large JSON payloa
 Finally, attachments are more user-friendly in the LangSmith UI, as they are rendered as files with previews, rather than as base64-encoded strings.
 :::
 
-## Create a dataset with attachments
+## Add examples with attachments to a LangSmith dataset
 
 ### SDK
 
-To create a dataset with attachments using the SDK, you need to use the `upload_examples_multipart` method of the LangSmith client.
+To upload examples with attachments using the SDK, you need to use the `upload_examples_multipart` method of the LangSmith client.
 This method allows you to pass in a list of examples with attachments.
 
 Each attachment is represented as a dictionary, mapping the attachment name to a tuple containing the MIME type and the file content.
 The file content can be either a path to the file or the bytes content of the file.
 
-:::note Working with large files
-It is typically recommended to pass in the file path directly for large files, as reading the file content into memory can be inefficient.
-When a file path is passed, LangSmith will stream the file content directly from the path, rather than loading the entire file into memory.
+:::note Minimum SDK Versions
+The following features are available in the following SDK versions:
+
+- Python SDK: >=0.2.3
+- JS/TS SDK: >=0.2.13
 :::
 
 <CodeTabs
@@ -97,7 +101,7 @@ const pngUrl = "https://www.w3.org/Graphics/PNG/nurbcup2si.png";
 async function fetchArrayBuffer(url: string): Promise<ArrayBuffer> {
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(\`Failed to fetch ${url}: $\{response.statusText\}\`);
+    throw new Error(\`Failed to fetch \${url}\: $\{response.statusText\}\`);
   }
   return response.arrayBuffer();
 }
@@ -508,4 +512,4 @@ When editing an example in the UI, you can upload new attachments, rename and de
 and there is also a quick reset button to restore the attachments to what previously existed on the example.
 No changes will be saved until you click submit.
 
-![](../evaluation/static/attachment_editing.gif)
+![](./static/attachment_editing.gif)
