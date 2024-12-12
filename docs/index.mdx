@@ -29,21 +29,22 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 **LangSmith** is a platform for building production-grade LLM applications.
 It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence.
 With LangSmith you can:
+
 - **Trace LLM Applications**: Gain visibility into LLM calls and other parts of your application's logic.
 - **Evaluate Performance**: Compare results across models, prompts, and architectures to identify what works best.
 - **Improve Prompts**: Quickly refine prompts to achieve more accurate and reliable results.
 
 :::tip LangSmith + LangChain OSS
 
-LangSmith integrates seamlessly with LangChain's open source frameworks [`langchain`](https://python.langchain.com) and [`langgraph`](https://langchain-ai.github.io/langgraph/), with no extra instrumentation needed. 
+LangSmith integrates seamlessly with LangChain's open source frameworks [`langchain`](https://python.langchain.com) and [`langgraph`](https://langchain-ai.github.io/langgraph/), with no extra instrumentation needed.
 
-If you're already using either of these, see the how-to guide for [setting up LangSmith with LangChain](./observability/how_to_guides/tracing/trace_with_langchain) or [setting up LangSmith with LangGraph](https://docs.smith.langchain.com/observability/how_to_guides/tracing/trace_with_langgraph). 
+If you're already using either of these, see the how-to guide for [setting up LangSmith with LangChain](./observability/how_to_guides/tracing/trace_with_langchain) or [setting up LangSmith with LangGraph](https://docs.smith.langchain.com/observability/how_to_guides/tracing/trace_with_langgraph).
 
 :::
 
-LangSmith is a **standalone platform** that can be used on it's own no matter how you're creating your LLM applicatons. 
+LangSmith is a **standalone platform** that can be used on it's own no matter how you're creating your LLM applicatons.
 
-In this tutorial, we'll walk you though logging your first trace in LangSmith using the LangSmith SDK and running an evaluation to measure the performance of your application. This example uses the OpenAI API, however you can use your provider of choice. 
+In this tutorial, we'll walk you though logging your first trace in LangSmith using the LangSmith SDK and running an evaluation to measure the performance of your application. This example uses the OpenAI API, however you can use your provider of choice.
 
 ## 1. Install LangSmith
 
@@ -100,12 +101,11 @@ Learn more about tracing in the observability [tutorials](./observability/tutori
 
 ## 5. View your trace
 
-By default, the trace will be logged to the project with the name `default`. You should see the following [sample output trace](https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r) logged using the above code. 
-
+By default, the trace will be logged to the project with the name `default`. You should see the following [sample output trace](https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r) logged using the above code.
 
 ## 6. Run your first evaluation
 
-[Evaluations](./evaluation/concepts) help assess application performance by testing the application against a given set of inputs. Evaluations require a system to test, data to serve as test cases, and evaluators to grade the results. 
+[Evaluations](./evaluation/concepts) help assess application performance by testing the application against a given set of inputs. Evaluations require a system to test, data to serve as test cases, and evaluators to grade the results.
 
 Here we are running an evaluation against a sample dataset using a simple custom evaluator that checks if the real output exactly matches our gold-standard output.
 
