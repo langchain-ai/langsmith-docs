@@ -175,7 +175,8 @@ Once you have a dataset that contains examples with file attachments, you can ru
 
 ### Define a target function with attachments
 
-Now that we have a dataset that includes examples with attachments, we can define a target function to run our LLM application on these examples.
+Now that we have a dataset that includes examples with attachments, we can define a target function to run over these examples.
+The following example simply uses OpenAI's GPT-4o model to answer questions about an image and an audio clip.
 
 <CodeTabs
   tabs={[
@@ -183,7 +184,7 @@ Now that we have a dataset that includes examples with attachments, we can defin
 import base64
 from openai import OpenAI\n
 client = wrap_openai(OpenAI())\n
-# Define target function that uses attachments\n
+# Define target function that uses attachments
 def file_qa(inputs, attachments): # Read the audio bytes from the reader and encode them in base64
     audio_reader = attachments["my_wav"]["reader"]
     audio_b64 = base64.b64encode(audio_reader.read()).decode('utf-8')
