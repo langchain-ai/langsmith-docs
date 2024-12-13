@@ -351,3 +351,8 @@ hr {
   background-color: var(--joy-palette-background-level2) !important;
 }
 
+div[class^='announcementBar_'] {
+  font-size: 20px;
+  background-color: #d0c9feff;
+  font-weight: bold;
+}
