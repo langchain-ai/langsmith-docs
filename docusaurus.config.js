@@ -10,7 +10,6 @@ const prism = require("prism-react-renderer");
 const baseLightCodeBlockTheme = prism.themes.vsLight;
 const baseDarkCodeBlockTheme = prism.themes.vsDark;
 
-
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "🦜️🛠️ LangSmith",
@@ -107,8 +106,8 @@ const config = {
         respectPrefersColorScheme: true,
       },
       announcementBar: {
-        content: 
-        'Learn the essentials of LangSmith in the new Introduction to LangSmith course! <a href="https://academy.langchain.com/courses/intro-to-langsmith" target="_blank" rel="noopener noreferrer"> Enroll for free. </a>', 
+        content:
+          'Learn the essentials of LangSmith in the new Introduction to LangSmith course! <a href="https://academy.langchain.com/courses/intro-to-langsmith" target="_blank" rel="noopener noreferrer"> Enroll for free. </a>',
       },
       prism: {
         theme: {
