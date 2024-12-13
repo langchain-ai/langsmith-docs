@@ -102,8 +102,12 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       colorMode: {
-        disableSwitch: true,
+        disableSwitch: false,
         respectPrefersColorScheme: true,
+      },
+      announcementBar: {
+        content:
+          'Learn the essentials of LangSmith in the new Introduction to LangSmith course! <a href="https://academy.langchain.com/courses/intro-to-langsmith" target="_blank" rel="noopener noreferrer"> Enroll for free. </a>',
       },
       prism: {
         theme: {
