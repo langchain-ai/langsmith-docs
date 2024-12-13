@@ -67,10 +67,11 @@ When setting up your evaluation, you may want to partition your dataset into dif
 ### Versions
 
 Datasets are versioned such that every time you add, update, or delete examples in your dataset, a new version of the dataset is created.
+This makes it easy to inspect and revert changes to your dataset in case you make a mistake.
 You can also tag versions of your dataset to give them a more human-readable name.
 This can be useful for marking important milestones in your dataset's history.
 
-You can run evaluations on different versions of a dataset.
+You can run evaluations on specific versions of a dataset. This can be useful when running evaluations in CI, to make sure that a dataset update doesn't accidentally break your CI pipelines.
 
 ## Evaluators
 
@@ -171,7 +172,7 @@ An annotation queue has a/an:
 
 Evaluating an application on a dataset is what we call "offline" evaluation.
 It is offline because we're evaluating on a pre-compiled set of data.
-An online evaluation is one in which we evaluate a deployed application's outputs on real traffic, in near realtime.
+An online evaluation, on the other hand, is one in which we evaluate a deployed application's outputs on real traffic, in near realtime.
 Offline evaluations are used for testing a version(s) of your application pre-deployment.
 
 You can run offline evaluations client-side using the LangSmith SDK. You can run them server-side via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground) or by configuring automations to run certain evaluators on every new experiment against a specific dataset.
@@ -179,10 +180,14 @@ You can run offline evaluations client-side using the LangSmith SDK. You can run
 ### Benchmarking
 
 Perhaps the most common type of offline evaluation is one in which we curate a dataset of representative inputs, define the key performance metrics, and benchmark multiple versions of our application to find the best one.
+Benchmarking can be laborious because for many use cases you have to curate a dataset with gold-standard reference outputs and design good metrics for comparing experimental outputs to them.
+For a RAG Q&A bot this might look like a dataset of questions and reference answers, and an LLM-as-judge evaluator that determines if the actual answer is semantically equivalent to the reference answer.
+For a ReACT agent this might look like a dataset of user requests and a reference set of all the tool calls the model is supposed to make, and a heuristic evaluator that checks if all of the reference tool calls were made.
 
 ### Unit tests
 
-Unit tests are used in software development to verify the correctness of individual system components. [Unit tests in the context of LLMs are often rule-based assertions](https://hamel.dev/blog/posts/evals/#level-1-unit-tests) on LLM inputs or outputs (e.g., type or schema checks) that validate basic functionality.
+Unit tests are used in software development to verify the correctness of individual system components.
+[Unit tests in the context of LLMs are often rule-based assertions](https://hamel.dev/blog/posts/evals/#level-1-unit-tests) on LLM inputs or outputs (e.g., checking that LLM-generated code can be compiled, JSON can be loaded, etc.) that validate basic functionality.
 
 Unit tests are often written with the expectation that they should always pass.
 These types of tests are nice to run as part of CI.
@@ -190,10 +195,12 @@ Note that when doing so it is useful to set up a cache to minimize LLM calls (be
 
 ### Regression tests
 
-Regression testing is used to measure performance across versions of your application over time. They are used to ensure new app versions do not regress on examples that your current version is passing. In practice, they help you assess how much better or worse your new version is relative to the baseline. Often these are triggered when you are making app updates that are expected to influence the user experience.
-They are also commonly done when evaluating new or different models.
+Regression tests are used to measure performance across versions of your application over time.
+They are used to, at the very least, ensure that a new app version does not regress on examples that your current version correctly handles, and ideally to measure how much better your new version is relative to the current.
+Often these are triggered when you are making app updates (e.g. updating models or architectures) that are expected to influence the user experience.
 
-LangSmith's comparison view has native support for regression testing, allowing you to quickly see examples that have changed relative to the baseline (with regressions on specific examples shown in red and improvements in green):
+LangSmith's comparison view has native support for regression testing, allowing you to quickly see examples that have changed relative to the baseline.
+Regressions are highlighted red, improvements green.
 
 ![Regression](./static/regression.png)
 
@@ -207,7 +214,10 @@ Then compare those results to what actually happened in production.
 
 ### Pairwise evaluation
 
-For some tasks [it is easier](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/) for a human or LLM grader to determine if `A is better than B` than to assign an absolute score to either A or B. This helps to explain why some have observed that pairwise evaluations can be a more stable scoring approach than assigning individual scores to each experiment, particularly when working with LLM-as-judge evaluators.
+For some tasks [it is easier](https://www.oreilly.com/radar/what-we-learned-from-a-year-of-building-with-llms-part-i/) for a human or LLM grader to determine if "version A is better than B" than to assign an absolute score to either A or B.
+Pairwise evaluations are just this — a scoring of the outputs of two versions against each other as opposed to against some reference output or absolute criteria.
+Pairwise evaluations are often useful when using LLM-as-judge evaluators on more general tasks.
+For example, if you have a summarizer application, it may be easier for an LLM-as-judge to determine "Which of these two summaries is more clear and concise?" than to give an absolute score like "Give this summary a score of 1-10 in terms of clarity and concision."
 
 ## Online evaluation
 
@@ -269,11 +279,11 @@ There are several benefits to this type of evaluation. It allows you to evaluate
 
 #### Evaluating an agent's trajectory
 
-Evaluating an agent's trajectory involves looking at all the steps an agent took and evaluating that sequence of steps.
+Evaluating an agent's trajectory involves evaluating all the steps an agent took.
 
 The inputs are again the inputs to the overall agent (the user input, and optionally a list of tools).
 
-The outputs are a list of tool calls, which can be formulated as an "exact" trajectory (e.g., an expected sequence of tool calls) or simply a list of tool calls that are expected (in any order).
+The outputs are a list of tool calls, which can be formulated as an "exact" trajectory (e.g., an expected sequence of tool calls) or simply a set of tool calls that are expected (in any order).
 
 The evaluator here is some function over the steps taken. Assessing the "exact" trajectory can use a single binary score that confirms an exact match for each tool name in the sequence. This is simple, but has some flaws. Sometimes there can be multiple correct paths. This evaluation also does not capture the difference between a trajectory being off by a single step versus being completely wrong.
 
@@ -324,7 +334,7 @@ When applying RAG evaluation, consider the following approaches:
 | Answer faithfulness | Is the answer grounded in the documents?          | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination) | No                |
 | Answer helpfulness  | Does the answer help address the question?        | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness)   | No                |
 | Answer correctness  | Is the answer consistent with a reference answer? | Yes                    | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference)  | No                |
-| Chain comparison    | How do multiple answer versions compare?          | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-rag)  | Yes               |
+| Pairwise comparison | How do multiple answer versions compare?          | No                     | Yes - [prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-rag)  | Yes               |
 
 ### Summarization
 
