@@ -102,11 +102,10 @@ An evaluator returns one or more metrics. These should be returned as a dictiona
 
 There are a number of ways to define and run evaluators:
 
-- Client-side functions: define custom functions and run them client-side with the help of the LangSmith Python or TypeScript SDKs.
-- Server-side builtin evaluators: LangSmith has a number of builtin evaluators that you can configure and run in the application.
-- Server-side functions: LangSmith also allows you to define custom evaluator functions in Python or TypeScript in the application and run them server-side.
+- Custom code: define evaluators as Python or TypeScript functions and run them client-side using the SDKs or server-side via the UI.
+- Builtin evaluators: LangSmith has a number of builtin evaluators that you can configure and run via the UI.
 
-Client-side evaluators are run by the user using the LangSmith SDK, server-side evaluators can be run via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground) and can be configured to run automatically on particular traced runs or experiments.
+You can run evaluators using the SDKs, via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground), or by configuring [Rules](../../observability/how_to_guides/monitoring/rules) to automatically run them on particular tracing projects or datasets.
 
 #### Evaluation techniques
 
