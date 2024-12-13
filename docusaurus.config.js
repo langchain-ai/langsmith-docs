@@ -10,7 +10,6 @@ const prism = require("prism-react-renderer");
 const baseLightCodeBlockTheme = prism.themes.vsLight;
 const baseDarkCodeBlockTheme = prism.themes.vsDark;
 
-
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "🦜️🛠️ LangSmith",
