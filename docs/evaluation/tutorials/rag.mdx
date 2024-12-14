@@ -4,94 +4,113 @@ sidebar_position: 4
 
 # RAG Evaluations
 
-We will walk through the evaluation workflow for RAG (retrieval augmented generation).
+RAG (retrieval augmented generation) has become one of the most popular applications of LLMs today.
+In this tutorial, we will demonstrate how to evaluate the performance of an RAG application using LangSmith.
 
 ## Overview
 
-We will discuss each piece of the workflow below.
+Evaluating RAG applications involves creating a dataset, running your RAG application, and then evaluating the performance of your application using different types of evaluators.
 
 ![rag_overview.png](./static/rag_overview.png)
 
-## Dataset
+## Setup
 
-Here is a dataset of [LCEL (LangChain Expression Language)](https://python.langchain.com/v0.1/docs/expression_language/) related questions that we will use.
-
-This dataset was created using csv upload in the LangSmith UI:
-
-https://smith.langchain.com/public/730d833b-74da-43e2-a614-4e2ca2502606/d
-
-Here, we ensure that API keys for OpenAI as well as LangSmith are set.
+First, let's set our environment variables:
 
 ```python
-import getpass
 import os
 
-def _set_env(var: str):
-    if not os.environ.get(var):
-        os.environ[var] = getpass.getpass(f"{var}: ")
-
-_set_env("OPENAI_API_KEY")
+os.environ["LANGCHAIN_API_KEY"] = "YOUR LANGCHAIN API KEY"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com" # Update appropriately for self-hosted installations or the EU region
-_set_env("LANGCHAIN_API_KEY")
+os.environ["OPENAI_API_KEY"] = "YOUR OPENAI API KEY"
 ```
 
-```python
-### Dataset name
+## Dataset
 
-# Clone dataset
+We are going to create a dataset from Lilian Weng's blogposts to use RAG on. Note that if you already have a dataset you want to test on, you can skip this step.
+
+```python
+from langsmith import Client
+
 client = Client()
-dataset = client.clone_public_dataset(
-    "https://smith.langchain.com/public/730d833b-74da-43e2-a614-4e2ca2502606/d"
-)
 
-dataset_name = "LCEL-QA"
+# Create examples for the dataset
+examples = [
+    (
+        "How does the ReAct agent use self-reflection? ",
+        "ReAct integrates reasoning and acting, performing actions - such tools like Wikipedia search API - and then observing / reasoning about the tool outputs.",
+    ),
+    (
+        "What are the types of biases that can arise with few-shot prompting?",
+        "The biases that can arise with few-shot prompting include (1) Majority label bias, (2) Recency bias, and (3) Common token bias.",
+    ),
+    (
+        "What are five types of adversarial attacks?",
+        "Five types of adversarial attacks are (1) Token manipulation, (2) Gradient based attack, (3) Jailbreak prompting, (4) Human red-teaming, (5) Model red-teaming.",
+    )
+]
+
+# Save the examples to LangSmith
+dataset_name = "RAG Agent Evaluation"
+dataset = client.create_dataset(dataset_name=dataset_name)
+inputs, outputs = zip(
+    *[({"input": text}, {"output": label}) for text, label in examples]
+)
+client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
 ```
 
-## Task
+## RAG application
 
-Here is a chain that will perform RAG on [LCEL (LangChain Expression Language)](https://python.langchain.com/v0.1/docs/expression_language/) docs.
+:::tip LangSmith
+For this tutorial we are using LangChain, but LangSmith works regardless of whether or not your pipeline is built with LangChain.
+:::
 
-We will be using LangChain strictly for creating the retriever and retrieving the relevant documents.
+Now we can define our RAG application. Again, if you already have a RAG application, you can skip this step.
+We will be using a fairly simple RAG app for this tutorial but there are plenty of ways you can improve on it such as
+introducing extra reasoning steps, adding feedback loops, etc.
 
-The overall pipeline does not use LangChain; LangSmith works regardless of whether or not your pipeline is built with LangChain.
+### Vector Store and Retriever
 
-Here, we return the retrieved documents as part of the final answer.
-
-However, below we will show that this is not required (using evaluation of intermediate steps).
-
-See our [RAG-From-Scratch](https://github.com/langchain-ai/rag-from-scratch) repo and tutorial video series for more on this.
+First, let's define our vector store and retriever, grabbing the blog posts that our questions/answer pairs are based on.
 
 ```python
-### INDEX
-
-from bs4 import BeautifulSoup as Soup
-from langchain_community.vectorstores import Chroma
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import WebBaseLoader
+from langchain_community.vectorstores import SKLearnVectorStore
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-# Load docs
-url = "https://python.langchain.com/v0.1/docs/expression_language/"
-loader = RecursiveUrlLoader(
-    url=url, max_depth=20, extractor=lambda x: Soup(x, "html.parser").text
+# List of URLs to load documents from
+urls = [
+    "https://lilianweng.github.io/posts/2023-06-23-agent/",
+    "https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/",
+    "https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/",
+]
+
+# Load documents from the URLs
+docs = [WebBaseLoader(url).load() for url in urls]
+docs_list = [item for sublist in docs for item in sublist]
+
+# Initialize a text splitter with specified chunk size and overlap
+text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+    chunk_size=250, chunk_overlap=0
 )
-docs = loader.load()
 
-# Split into chunks
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=4500, chunk_overlap=200)
-splits = text_splitter.split_documents(docs)
+# Split the documents into chunks
+doc_splits = text_splitter.split_documents(docs_list)
 
-# Embed and store in Chroma
-vectorstore = Chroma.from_documents(documents=splits, embedding=OpenAIEmbeddings())
-
-# Index
-retriever = vectorstore.as_retriever()
+# Add the document chunks to the "vector store" using OpenAIEmbeddings
+vectorstore = SKLearnVectorStore.from_documents(
+    documents=doc_splits,
+    embedding=OpenAIEmbeddings(),
+)
+retriever = vectorstore.as_retriever(k=4)
 ```
 
-```python
-### RAG bot
+### Application
 
+We can now define the application by creating functions to retrieve docs, invoke the LLM, and get the answer. 
+
+```python
 import openai
 from langsmith import traceable
 from langsmith.wrappers import wrap_openai
@@ -115,11 +134,20 @@ class RagBot:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a helpful AI code assistant with expertise in LCEL."
-                    " Use the following docs to produce a concise code solution to the user question.\n\n"
-                    f"## Docs\n\n{docs}",
+                    "content": f"""You are an assistant for question-answering tasks.
+
+                    Use the following documents to answer the question.
+
+                    If you don't know the answer, just say that you don't know.
+
+                    Use three sentences maximum and keep the answer concise.
+                    Documents: {docs}
+                    Answer:""",
                 },
-                {"role": "user", "content": question},
+                {
+                    "role": "user",
+                    "content": question,
+                },
             ],
         )
 
@@ -137,17 +165,14 @@ class RagBot:
 rag_bot = RagBot(retriever)
 ```
 
-```python
-response = rag_bot.get_answer("How to build a RAG chain in LCEL?")
-response["answer"][:150]
-```
+### Predictors
 
-Define a function that will:
+We can now define predictor functions to call, our predictor functions will:
 
 1. Take a dataset `example`
 2. Extract the relevant key (e.g., `question`) from the `example`
 3. Pass it to the RAG chain
-4. Return the relevant output values from the RAG chain
+4. Return the relevant output values from the RAG chain (either just the answer, or the asnwer and the context)
 
 ```python
 def predict_rag_answer(example: dict):
@@ -191,7 +216,7 @@ There are at least 4 types of RAG eval that users are typically interested in.
 
 ![](./static/rag_eval_overview.png)
 
-### **Response vs reference answer**
+### Response vs reference answer
 
 Here is an example prompt that we can use:
 
@@ -256,7 +281,7 @@ experiment_results = evaluate(
 )
 ```
 
-### **Response vs input**
+### Response vs input
 
 Here is an example prompt that we can use:
 
@@ -301,7 +326,7 @@ experiment_results = evaluate(
 )
 ```
 
-### **Response vs retrieved docs**
+### Response vs retrieved docs
 
 Here is an example prompt that we can use:
 
@@ -351,7 +376,7 @@ experiment_results = evaluate(
 )
 ```
 
-### **Retrieved docs vs input**
+### Retrieved docs vs input
 
 Here is an example prompt that we can use:
 
