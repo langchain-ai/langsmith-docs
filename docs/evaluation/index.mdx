@@ -181,7 +181,7 @@ def target(inputs: dict) -> dict:
             {"role": "user", "content": inputs["question"]},
         ],
     )
-    return {"response": response.choices[0].message.content.strip()}
+    return { "response": response.choices[0].message.content.strip() }
   `},
     {
       value: "typescript",
