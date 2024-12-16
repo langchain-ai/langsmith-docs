@@ -108,7 +108,6 @@ First we'll write some SQL helper functions:
 ```python
 import sqlite3
 
-
 #region [collapsed]
 def _refund(invoice_id: int | None, invoice_line_ids: list[int] | None) -> float:
     """Given an Invoice ID and/or Invoice Line IDs, delete the relevant Invoice/InvoiceLine records in the Chinook DB.
@@ -376,7 +375,7 @@ info_llm = init_chat_model("gpt-4o-mini").with_structured_output(
 
 
 #region
-async def gather_info(state) -> Command[Literal["lookup", "refund", END]]:
+async def gather_info(state: State) -> Command[Literal["lookup", "refund", END]]:
     info = await info_llm.ainvoke(
         [
             {"role": "system", "content": gather_info_instructions},
@@ -399,7 +398,7 @@ async def gather_info(state) -> Command[Literal["lookup", "refund", END]]:
 
 
 #region
-def refund(state):
+def refund(state: State) -> dict:
     refunded = _refund(
         invoice_id=state["invoice_id"], invoice_line_ids=state["invoice_line_ids"]
     )
@@ -412,7 +411,7 @@ def refund(state):
 
 
 #region
-def lookup(state):
+def lookup(state: State) -> dict:
     args = (
         state[k]
         for k in (
@@ -431,7 +430,7 @@ def lookup(state):
         followup = response
     else:
         response = f"Which of the following purchases would you like to be refunded for?\n\n```json{json.dumps(results, indent=2)}\n```"
-        followup = f"Which of the following purchases would you like to be refunded for?\n\n{tabulate(results)}"
+        followup = f"Which of the following purchases would you like to be refunded for?\n\n{tabulate(results, headers='keys')}"
     return {
         "messages": [{"role": "assistant", "content": response}],
         "followup": followup,
@@ -456,26 +455,31 @@ refund_graph = graph_builder.compile()
 
 ```python
 # Assumes you're in an interactive Python environment
+#region
 from IPython.display import Image, display
 
 display(Image(refund_graph.get_graph(xray=True).draw_mermaid_png()))
+#endregion
 ```
 
 ![Refund graph](./static/refund_graph.png)
 
 #### Lookup agent
 
-<details>
-<summary>SQL tools</summary>
-```python
-import sqlite3
+For the lookup (i.e. question-answering) agent, we'll use a simple ReACT architecture and give the agent tools for looking up track names, artist names, and album names based on the filter values of the other two. For example, you can look up albums by a particular artist, artists that released songs with a specific name, etc.
 
+```python
+#region
 from langchain.embeddings import init_embeddings
 from langchain_core.tools import tool
 from langchain_core.vectorstores import InMemoryVectorStore
+from langgraph.prebuilt import create_react_agent
 
+#endregion
 
-def index_fields():
+#region [collapsed]
+def index_fields() -> tuple[InMemoryVectorStore, InMemoryVectorStore, InMemoryVectorStore]:
+    """Create an index for all artists, an index for all albums, and an index for all songs."""
     try:
         # Connect to the chinook database
         conn = sqlite3.connect("chinook.db")
@@ -500,11 +504,12 @@ def index_fields():
     artist_store.add_texts([a[0] for a in artists])
     album_store.add_texts([a[0] for a in albums])
     return track_store, artist_store, album_store
-
+#endregion
 
 track_store, artist_store, album_store = index_fields()
 
 @tool
+#region [collapsed]
 def lookup_track(
     track_name: str | None = None,
     album_title: str | None = None,
@@ -550,9 +555,11 @@ def lookup_track(
 
     conn.close()
     return tracks
+#endregion
 
 
 @tool
+#region [collapsed]
 def lookup_album(
     track_name: str | None = None,
     album_title: str | None = None,
@@ -592,9 +599,11 @@ def lookup_album(
 
     conn.close()
     return albums
+#endregion
 
 
 @tool
+#region [collapsed]
 def lookup_artist(
     track_name: str | None = None,
     album_title: str | None = None,
@@ -634,13 +643,7 @@ def lookup_artist(
 
     conn.close()
     return artists
-```
-</details>
-
-For the lookup (i.e. question-answering) agent, we'll use a simple ReACT architecture and give the agent tools for looking up track names, artist names, and album names based on the filter values of the other two. For example, you can look up albums by a particular artist, artists that released songs with a specific name, etc.
-
-```python
-from langgraph.prebuilt import create_react_agent
+#endregion
 
 qa_llm = init_chat_model("claude-3-5-sonnet-latest")
 qa_graph = create_react_agent(qa_llm, [lookup_track, lookup_artist, lookup_album])
@@ -654,36 +657,133 @@ display(Image(qa_graph.get_graph(xray=True).draw_mermaid_png()))
 
 #### Parent agent
 ```python
-baz
+#region
+class UserIntent(TypedDict):
+    """The user's current intent in the conversation"""
+
+    intent: Literal["refund", "question_answering"]
+#endregion
+
+
+router_llm = init_chat_model("gpt-4o-mini").with_structured_output(
+    UserIntent, method="json_schema", strict=True
+)
+
+#region
+route_instructions = """You are managing an online music store that sells song tracks. \
+You can help customers in two types of ways: (1) answering general questions about \
+published tracks, (2) helping them get a refund on a purhcase they made at your store.
+
+Based on the following conversation, determine if the user is currently seeking general \
+information about song tracks or if they are trying to refund a specific purchase.
+
+Return 'refund' if they are trying to get a refund and 'question_answering' if they are \
+asking a general music question. Do NOT return anything else. Do NOT try to respond to \
+the user.
+"""
+#endregion
+
+#region
+async def intent_classifier(
+    state: State,
+) -> Command[Literal["refund", "question_answering"]]:
+    response = router_llm.invoke(
+        [{"role": "system", "content": route_instructions}, *state["messages"]]
+    )
+    return Command(goto=response["intent"])
+#endregion
+
+#region
+def compile_followup(state):
+    if not state.get("followup"):
+        return {"followup": state["messages"][-1].content}
+    return {}
+#endregion
+
+graph_builder = StateGraph(State)
+graph_builder.add_node(intent_classifier)
+graph_builder.add_node("refund", refund_graph)
+graph_builder.add_node("question_answering", qa_graph)
+graph_builder.add_node(compile_followup)
+
+graph_builder.set_entry_point("intent_classifier")
+graph_builder.add_edge("refund", "compile_followup")
+graph_builder.add_edge("question_answering", "compile_followup")
+graph_builder.add_edge("compile_followup", END)
+
+graph = graph_builder.compile()
 
 ```
 
-We can visualize our compiled graph:
+We can visualize our compiled parent graph including all of its subgraphs:
 
 ```python
-# Assumes you're in an interactive Python environment
-from IPython.display import display, Image
-
 display(Image(graph.get_graph().draw_mermaid_png()))
 ```
 
-![graph](./static/sql_agent_graph.png)
+![graph](./static/agent_tutorial_graph.png)
 
 #### Try it out
 
 ```python
-import uuid
-
-config = {"thread_id": str(uuid.uuid4())}
-
-## Invoke
-question = "Which country's customers spent the most? And how much did they spend?"
-state = await graph.ainvoke({"messages": [{"role": "user", "content": question}]}, config)
-print(state['messages'][-1].content)
+#region
+state = await graph.ainvoke(
+    {"messages": [{"role": "user", "content": "what james brown songs do you have"}]}
+)
+print(state["followup"])
+#endregion
 ```
 
 ```console
-The country whose customers spent the most is the USA, with a total spending of 523.06.
+#region [collapsed]
+I found 20 James Brown songs in the database, all from the album "Sex Machine". Here they are:
+
+1. Please Please Please
+2. Think
+3. Night Train
+4. Out Of Sight
+5. Papa's Got A Brand New Bag Pt.1
+6. I Got You (I Feel Good)
+7. It's A Man's Man's Man's World
+8. Cold Sweat
+9. Say It Loud, I'm Black And I'm Proud Pt.1
+10. Get Up (I Feel Like Being A) Sex Machine
+11. Hey America
+12. Make It Funky Pt.1
+13. I'm A Greedy Man Pt.1
+14. Get On The Good Foot
+15. Get Up Offa That Thing
+16. It's Too Funky In Here
+17. Living In America
+18. I'm Real
+19. Hot Pants Pt.1
+20. Soul Power (Live)
+
+This includes many of his most famous hits like "I Got You (I Feel Good)", "It's A Man's Man's Man's World", and "Living In America". All these tracks are collected on the album "Sex Machine".
+#endregion
+```
+
+```python
+#region
+state = await graph.ainvoke({"messages": [
+    {
+        "role": "user",
+        "content": "my name is Aaron Mitchell and my number is +1 (204) 452-6452. I bought some songs by Led Zeppelin that i'd like refunded",
+    }
+]})
+print(state["followup"])
+#endregion
+```
+
+```console
+#region [collapsed]
+Which of the following purchases would you like to be refunded for?
+
+  invoice_line_id  track_name                        artist_name    purchase_date          quantity_purchased    price_per_unit
+-----------------  --------------------------------  -------------  -------------------  --------------------  ----------------
+              267  How Many More Times               Led Zeppelin   2009-08-06 00:00:00                     1              0.99
+              268  What Is And What Should Never Be  Led Zeppelin   2009-08-06 00:00:00                     1              0.99
+#endregion
 ```
 
 ## Evaluations
@@ -693,8 +793,6 @@ Agent evaluation can focus on at least 3 things:
 - [Final response](../concepts#evaluating-an-agents-final-response): The inputs are a prompt and an optional list of tools. The output is the final agent response.
 - [Single step](../concepts#evaluating-a-single-step-of-an-agent): As before, the inputs are a prompt and an optional list of tools. The output is the tool call.
 - [Trajectory](../concepts#evaluating-an-agents-trajectory): As before, the inputs are a prompt and an optional list of tools. The output is the list of tool calls
-
-![](./static/agent_eval.png)
 
 ### Create a dataset
 
