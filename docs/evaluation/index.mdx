@@ -177,8 +177,8 @@ def target(inputs: dict) -> dict:
     response = openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "Answer the following question accurately"},
-            {"role": "user", "content": inputs["question"]},
+            { "role": "system", "content": "Answer the following question accurately" },
+            { "role": "user", "content": inputs["question"] },
         ],
     )
     return { "response": response.choices[0].message.content.strip() }
@@ -256,7 +256,7 @@ def accuracy(outputs: dict, reference_outputs: dict) -> bool:
     response = openai_client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": instructions},
+            { "role": "system", "content": instructions },
             {
                 "role": "user",
                 "content": context.replace("{prediction}", outputs["response"]).replace(
