@@ -32,15 +32,15 @@ pip install opentelemetry-exporter-otlp
 Setup environment variables for the endpoint, substitute your specific values:
 
 ```bash
-export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
-export OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>"
+OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
+OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>"
 ```
 
 #### **Optional: Specify a custom project name other than "default"**
 
 ```bash
-export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
-export OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>,LANGSMITH_PROJECT=<project name>"
+OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
+OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>,LANGSMITH_PROJECT=<project name>"
 ```
 
 ### 2. Log a trace
@@ -112,6 +112,8 @@ You should see a trace in your LangSmith dashboard [like this one](https://smith
 The Traceloop SDK is an OpenTelemetry compatible SDK that covers a range of models, vector databases and frameworks.
 If there are integrations that you are interested in instrumenting that are covered by this SDK, you
 can use this SDK with OpenTelemetry to log traces to LangSmith.
+
+To see what integrations are supported by the Traceloop SDK, see the [Traceloop SDK documentation](https://www.traceloop.com/docs/openllmetry/tracing/supported).
 
 To get started, follow these steps:
 
