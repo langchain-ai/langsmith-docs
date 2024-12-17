@@ -66,7 +66,7 @@ This can be a useful way to get a lot of datapoints, quickly.
 
 When setting up your evaluation, you may want to partition your dataset into different splits. For example, you might use a smaller split for many rapid and cheap iterations and a larger split for your final evaluation. In addition, splits can be important for the interpretability of your experiments. For example, if you have a RAG application, you may want your dataset splits to focus on different types of questions (e.g., factual, opinion, etc) and to evaluate your application on each split separately.
 
-Learn how to [create and manage dataset splits](evaluation/how_to_guides/manage_datasets_in_application#create-and-manage-dataset-splits).
+Learn how to [create and manage dataset splits](/evaluation/how_to_guides/manage_datasets_in_application#create-and-manage-dataset-splits).
 
 ### Versions
 
@@ -103,7 +103,7 @@ There are a number of ways to define and run evaluators:
 - **Custom code**: Define [custom evaluators](/evaluation/how_to_guides/custom_evaluator) as Python or TypeScript functions and run them client-side using the SDKs or server-side via the UI.
 - **Built-in evaluators**: LangSmith has a number of built-in evaluators that you can configure and run via the UI.
 
-You can run evaluators using the LangSmith SDK ([Python](/reference/python) and TypeScript), via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground), or by configuring [Rules](../../observability/how_to_guides/monitoring/rules) to automatically run them on particular tracing projects or datasets.
+You can run evaluators using the LangSmith SDK ([Python](/reference/python/reference) and TypeScript), via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground), or by configuring [Rules](../../observability/how_to_guides/monitoring/rules) to automatically run them on particular tracing projects or datasets.
 
 #### Evaluation techniques
 
@@ -156,7 +156,7 @@ Human feedback is often the most valuable feedback you can gather on your applic
 With [annotation queues](/evaluation/how_to_guides/annotation_queues) you can flag runs of your application for annotation.
 Human annotators then have a streamlined view to review and provide feedback on the runs in a queue.
 Often (some subset of) these annotated runs are then transferred to a [dataset](/evaluation/concepts#datasets) for future evaluations.
-While you can always [annotate runs inline](/how_to_guides/annotate_traces_inline), annotation queues provide another option to group runs together, specify annotation criteria, and configure permissions.
+While you can always [annotate runs inline](/evaluation/how_to_guides/annotate_traces_inline), annotation queues provide another option to group runs together, specify annotation criteria, and configure permissions.
 
 Learn more about [annotation queues and human feedback](/evaluation/how_to_guides#annotation-queues-and-human-feedback).
 
@@ -167,7 +167,7 @@ It is offline because we're evaluating on a pre-compiled set of data.
 An online evaluation, on the other hand, is one in which we evaluate a deployed application's outputs on real traffic, in near realtime.
 Offline evaluations are used for testing a version(s) of your application pre-deployment.
 
-You can run offline evaluations client-side using the LangSmith SDK ([Python](/reference/python) and TypeScript). You can run them server-side via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground) or by configuring [automations](/how_to_guides/monitoring/rules) to run certain evaluators on every new experiment against a specific dataset.
+You can run offline evaluations client-side using the LangSmith SDK ([Python](/reference/python) and TypeScript). You can run them server-side via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground) or by configuring [automations](/observability/how_to_guides/monitoring/rules) to run certain evaluators on every new experiment against a specific dataset.
 
 ![Offline](./static/offline.png)
 
@@ -222,7 +222,7 @@ In this case there is no dataset involved and no possibility of reference output
 This is be useful for monitoring your application and flagging unintended behavior.
 Online evaluation can also work hand-in-hand with offline evaluation: for example, an online evaluator can be used to classify input questions into a set of categories that can be later used to curate a dataset for offline evaluation.
 
-Online evaluators are generally intended to be run server-side. LangSmith has built-in [LLM-as-judge evaluators](evaluation/how_to_guides/llm_as_judge) that you can configure, or you can define custom code evaluators that are also run within LangSmith.
+Online evaluators are generally intended to be run server-side. LangSmith has built-in [LLM-as-judge evaluators](/evaluation/how_to_guides/llm_as_judge) that you can configure, or you can define custom code evaluators that are also run within LangSmith.
 
 ![Online](./static/online.png)
 
