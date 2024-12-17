@@ -87,9 +87,10 @@ Verisioning is a key part of iterating and collaborating on your different promp
 
 ### Commits
 
-Every time you save a new version of a prompt, it is saved with a new commit.
-You can view old commit, allowing you to easily see previous prompt versions in case you need to revert to previous functionality.
-You can access a specific commit of the prompt in the SDK by specifying a commit alongside the prompt name.
+Each time you save a new version of a prompt, a new commit is created. You can view previous commits, making it easy to review earlier prompt versions or revert to a previous state if needed. In the SDK, you can access a specific commit of a prompt by specifying the commit hash along with the prompt name (e.g. `prompt_name:commit_hash`).
+
+In the UI, you can compare a commit with its previous version by toggling the "diff" button in the top-right corner of the Commits tab.
+![](./static/commit_diff.png)
 
 ### Tags
 
