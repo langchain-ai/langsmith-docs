@@ -167,7 +167,7 @@ rag_bot = RagBot(retriever)
 
 ### Predictors
 
-We can now define predictor functions to call, our predictor functions will:
+We can now define predictor functions to call, which will:
 
 1. Take a dataset `example`
 2. Extract the relevant key (e.g., `question`) from the `example`
@@ -233,11 +233,44 @@ Here is our evaluator function:
 - We extract these values and pass them into our grader
 
 ```python
-from langchain import hub
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
+from pydantic import BaseModel, Field
+
+
+class Grade(BaseModel):
+    Score: int = Field(..., description="Provide the score on whether the answer is correct")
+    Explanation: str = Field(..., description="Explain your reasoning for the score")
 
 # Grade prompt
-grade_prompt_answer_accuracy = prompt = hub.pull("langchain-ai/rag-answer-vs-reference")
+grade_prompt_answer_accuracy_messages = [
+    SystemMessage(
+        content="""You are a teacher grading a quiz. 
+
+        You will be given a QUESTION, the GROUND TRUTH (correct) ANSWER, and the STUDENT ANSWER. 
+
+        Here is the grade criteria to follow:
+        (1) Grade the student answers based ONLY on their factual accuracy relative to the ground truth answer. 
+        (2) Ensure that the student answer does not contain any conflicting statements.
+        (3) It is OK if the student answer contains more information than the ground truth answer, as long as it is factually accurate relative to the  ground truth answer.
+
+        Score:
+        A score of 1 means that the student's answer meets all of the criteria. This is the highest (best) score. 
+        A score of 0 means that the student's answer does not meet all of the criteria. This is the lowest possible score you can give.
+        
+        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. 
+
+        Avoid simply stating the correct answer at the outset."""
+    ),
+    HumanMessage(
+        content="""QUESTION: {{question}}
+        GROUND TRUTH ANSWER: {{correct_answer}}
+        STUDENT ANSWER: {{student_answer}}"""
+    ),
+]
+
+grade_prompt_answer_accuracy = ChatPromptTemplate(grade_prompt_answer_accuracy_messages)
 
 def answer_evaluator(run, example) -> dict:
     """
@@ -251,9 +284,10 @@ def answer_evaluator(run, example) -> dict:
 
     # LLM grader
     llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
+    grade_answer_accuracy_llm = llm.with_structured_output(Grade)
 
     # Structured prompt
-    answer_grader = grade_prompt_answer_accuracy | llm
+    answer_grader = grade_prompt_answer_accuracy | grade_answer_accuracy_llm
 
     # Run evaluator
     score = answer_grader.invoke({"question": input_question,
@@ -290,8 +324,43 @@ https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness
 The information flow is similar to above, but we simply look at the `run` answer versus the `example` question.
 
 ```python
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_openai import ChatOpenAI
+from pydantic import BaseModel, Field
+
+
+class Grade(BaseModel):
+    Score: int = Field(..., description="Provide the score on whether the answer addresses the question")
+    Explanation: str = Field(..., description="Explain your reasoning for the score")
+
+
 # Grade prompt
-grade_prompt_answer_helpfulness = prompt = hub.pull("langchain-ai/rag-answer-helpfulness")
+grade_prompt_answer_helpfulness_messages = [
+    SystemMessage(
+        content="""You are a teacher grading a quiz. 
+
+        You will be given a QUESTION and a STUDENT ANSWER. 
+
+        Here is the grade criteria to follow:
+        (1) Ensure the STUDENT ANSWER is concise and relevant to the QUESTION
+        (2) Ensure the STUDENT ANSWER helps to answer the QUESTION
+
+        Score:
+        A score of 1 means that the student's answer meets all of the criteria. This is the highest (best) score. 
+        A score of 0 means that the student's answer does not meet all of the criteria. This is the lowest possible score you can give.
+
+        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. 
+
+        Avoid simply stating the correct answer at the outset."""
+    ),
+    HumanMessage(
+        content="""STUDENT ANSWER: {{student_answer}}
+        QUESTION: {{question}}"""
+    ),
+]
+
+grade_prompt_answer_helpfulness = ChatPromptTemplate(grade_prompt_answer_helpfulness_messages)
 
 def answer_helpfulness_evaluator(run, example) -> dict:
     """
@@ -304,9 +373,10 @@ def answer_helpfulness_evaluator(run, example) -> dict:
 
     # LLM grader
     llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
+    grade_prompt_answer_helpfulness_llm = llm.with_structured_output(Grade)
 
     # Structured prompt
-    answer_grader = grade_prompt_answer_helpfulness | llm
+    answer_grader = grade_prompt_answer_helpfulness | grade_prompt_answer_helpfulness_llm
 
     # Run evaluator
     score = answer_grader.invoke({"question": input_question,
@@ -337,8 +407,43 @@ Here is the a video from our LangSmith evaluation series for reference:
 https://youtu.be/IlNglM9bKLw?feature=shared
 
 ```python
-# Prompt
-grade_prompt_hallucinations = prompt = hub.pull("langchain-ai/rag-answer-hallucination")
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_openai import ChatOpenAI
+from pydantic import BaseModel, Field
+
+
+class Grade(BaseModel):
+    Score: int = Field(..., description="Provide the score on if the answer hallucinates from the documents")
+    Explanation: str = Field(..., description="Explain your reasoning for the score")
+
+
+# Grade prompt
+grade_prompt_hallucinations_messages = [
+    SystemMessage(
+        content="""You are a teacher grading a quiz. 
+
+        You will be given FACTS  and a STUDENT ANSWER. 
+
+        Here is the grade criteria to follow:
+        (1) Ensure the STUDENT ANSWER is grounded in the FACTS. 
+        (2) Ensure the STUDENT ANSWER does not contain "hallucinated" information outside the scope of the FACTS.
+
+        Score:
+        A score of 1 means that the student's answer meets all of the criteria. This is the highest (best) score. 
+        A score of 0 means that the student's answer does not meet all of the criteria. This is the lowest possible score you can give.
+
+        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. 
+
+        Avoid simply stating the correct answer at the outset."""
+    ),
+    HumanMessage(
+        content="""FACTS: {{documents}} 
+        STUDENT ANSWER: {{student_answer}}"""
+    ),
+]
+
+grade_prompt_hallucinations = ChatPromptTemplate(grade_prompt_hallucinations_messages)
 
 def answer_hallucination_evaluator(run, example) -> dict:
     """
@@ -354,9 +459,10 @@ def answer_hallucination_evaluator(run, example) -> dict:
 
     # LLM grader
     llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
+    grade_answer_hallucination_llm = llm.with_structured_output(Grade)
 
     # Structured prompt
-    answer_grader = grade_prompt_hallucinations | llm
+    answer_grader = grade_prompt_hallucinations | grade_answer_hallucination_llm
 
     # Get score
     score = answer_grader.invoke({"documents": contexts,
@@ -387,8 +493,43 @@ Here is the a video from our LangSmith evaluation series for reference:
 https://youtu.be/Fr_7HtHjcf0?feature=shared
 
 ```python
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_openai import ChatOpenAI
+from pydantic import BaseModel, Field
+
+
+class Grade(BaseModel):
+    Score: int = Field(..., description="Provide the score on whether the retrieved documents are related to the question")
+    Explanation: str = Field(..., description="Explain your reasoning for the score")
+    
 # Grade prompt
-grade_prompt_doc_relevance = hub.pull("langchain-ai/rag-document-relevance")
+grade_prompt_doc_relevance_messages = [
+    SystemMessage(
+        content="""You are a teacher grading a quiz. 
+
+        You will be given a QUESTION and a set of FACTS provided by the student. 
+
+        Here is the grade criteria to follow:
+        (1) You goal is to identify FACTS that are completely unrelated to the QUESTION
+        (2) If the facts contain ANY keywords or semantic meaning related to the question, consider them relevant
+        (3) It is OK if the facts have SOME information that is unrelated to the question (2) is met 
+
+        Score:
+        A score of 1 means that the FACT contain ANY keywords or semantic meaning related to the QUESTION and are therefore relevant. This is the highest (best) score. 
+        A score of 0 means that the FACTS are completely unrelated to the QUESTION. This is the lowest possible score you can give.
+
+        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. 
+
+        Avoid simply stating the correct answer at the outset."""
+    ),
+    HumanMessage(
+        content="""FACTS: {{documents}} 
+        QUESTION: {{question}}"""
+    ),
+]
+
+grade_prompt_doc_relevance = ChatPromptTemplate(grade_prompt_doc_relevance_messages)
 
 def docs_relevance_evaluator(run, example) -> dict:
     """
@@ -401,9 +542,10 @@ def docs_relevance_evaluator(run, example) -> dict:
 
     # LLM grader
     llm = ChatOpenAI(model="gpt-4-turbo", temperature=0)
+    grade_prompt_doc_relevance_llm = llm.with_structured_output(Grade)
 
     # Structured prompt
-    answer_grader = grade_prompt_doc_relevance | llm
+    answer_grader = grade_prompt_doc_relevance | grade_prompt_doc_relevance_llm
 
     # Get score
     score = answer_grader.invoke({"question":input_question,
@@ -503,6 +645,5 @@ experiment_results = evaluate(
     predict_rag_answer,
     data=dataset_name,
     evaluators=[document_relevance_grader, answer_hallucination_grader],
-    metadata={"version": "LCEL context, gpt-4-0125-preview"},
 )
 ```
