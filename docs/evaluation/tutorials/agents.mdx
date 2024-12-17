@@ -9,8 +9,8 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 In this tutorial, we'll build a customer support bot that helps users navigate a digital music store. We'll create three types of evaluations:
 
 - [Final response](../concepts#evaluating-an-agents-final-response): Evaluate the agent's final response.
-- [Single step](../concepts#evaluating-a-single-step-of-an-agent): Evaluate any agent step in isolation (e.g., whether it selects the appropriate first tool for a given ).
 - [Trajectory](../concepts#evaluating-an-agents-trajectory): Evaluate whether the agent took the expected path (e.g., of tool calls) to arrive at the final answer.
+- [Single step](../concepts#evaluating-a-single-step-of-an-agent): Evaluate any agent step in isolation (e.g., whether it selects the appropriate first tool for a given ).
 
 We'll build our agent using [LangGraph](https://github.com/langchain-ai/langgraph), but the techniques and LangSmith functionality shown here are framework-agnostic.
 
@@ -71,7 +71,7 @@ else:
 Here's a sample of the data in the db:
 
 ```python
-#region
+#region [collapsed]
 import sqlite3
 
 conn = sqlite3.connect("chinook.db")
@@ -92,16 +92,22 @@ And here's the database schema (image from https://github.com/lerocha/chinook-da
 
 ### Define the customer support agent
 
-We'll create a [LangGraph](https://langchain-ai.github.io/langgraph/) agent with limited access to our database. For demo purposes, our agent will support two basic types of requets:
-- Lookup: The customer can look up song titles based on other information like artist and album names.
-- Refund: The customer can request a refund on their past purchases.
+We'll create a [LangGraph](https://langchain-ai.github.io/langgraph/) agent with limited access to our database. For demo purposes, our agent will support two basic types of requests:
+- Lookup: The customer can look up song titles, artist names, and albums based on other identifying information. For example: "What songs do you have by Jimi Hendrix?"
+- Refund: The customer can request a refund on their past purchases. For example: "My name is Claude Shannon and I'd like a refund on a purchase I made last week, could you help me?"
 
-For the purpose of this demo, we'll model a "refund" by just deleting a row from our database. We won't worry about things like user auth for the sake of this demo.
+For the purpose of this demo, we'll model a "refund" by just deleting the relevant rows from our database. We won't worry about things like user auth for the sake of this demo.
+
 We'll implement both of these functionalities as subgraphs that a parent graph routes to.
 
 #### Refund agent
 
-First we'll write some SQL helper functions:
+Let's create an agent that can help a user get a refund on a recent purchase. We'll need to be able to find and delete the relevant Invoice / InvoiceLines.
+
+First let's write some SQL helper functions that will take care of actually querying the DB once we've collected the necessary args. 
+We'll have one helper for executing the refund and one for returning all of the purchases that match a user's information.
+
+Note that we design these helpers so that we can easily test them without updating our database. Specifically we provide an option to "mock" the refund functionality.
 
 ```python
 import sqlite3
@@ -109,9 +115,14 @@ import sqlite3
 #region [collapsed]
 def _refund(invoice_id: int | None, invoice_line_ids: list[int] | None, mock: bool = False) -> float:
     """Given an Invoice ID and/or Invoice Line IDs, delete the relevant Invoice/InvoiceLine records in the Chinook DB.
+    
+    Args:
+        invoice_id: The Invoice to delete.
+        invoice_line_ids: The Invoice Lines to delete.
+        mock: If True, do not actually delete the specified Invoice/Invoice Lines. Used for testing purposes.
 
     Returns:
-        the total dollar amount that was deleted.
+        float: The total dollar amount that was deleted (or mock deleted).
     """
 
     if invoice_id is None and invoice_line_ids is None:
@@ -296,7 +307,14 @@ def _lookup(
 #endregion
 ```
 
-And now we can define our agent
+Now let's define our graph. We'll use a simple extraction and routing architecture:
+- First we'll extract any relevant info about the customer and their purchase
+- If we have enough purchase information to execute the refund, we'll route to the refund node
+- If we have enough customer information to look up the customer's purchases, we'll route to the lookup node
+- Otherwise we'll respond directly to the user requesting that they provide the necessary info
+
+Our graph state will contain the messages to and from the user, all of the information we've gathered about the user from the conversation so far, and the followup text to next send to the user.
+
 ```python
 #region
 import json
@@ -310,6 +328,7 @@ from tabulate import tabulate
 from typing_extensions import Annotated, TypedDict
 #endregion
 
+# Graph state.
 #region
 class State(TypedDict):
     """Agent state."""
@@ -327,6 +346,7 @@ class State(TypedDict):
     purchase_date_iso_8601: str | None
 #endregion
 
+# Instructions for extracting the user/purchase info from the conversation.
 #region
 gather_info_instructions = """You are managing an online music store that sells song tracks. \
 Customers can buy multiple tracks at a time and these purchases are recorded in a database as \
@@ -347,6 +367,7 @@ If the customer has not specified the required information (either Invoice/Invoi
 or first name, last name, phone) then please ask them to specify it."""
 #endregion
 
+# Extraction schema, mirrors the graph state.
 #region
 class PurchaseInformation(TypedDict):
     """All of the known information about the invoice / invoice lines the customer would like refunded. Do not make up values, leave fields as null if you don't know their value."""
@@ -367,10 +388,12 @@ class PurchaseInformation(TypedDict):
     ]
 #endregion
 
+# Model for performing extraction.
 info_llm = init_chat_model("gpt-4o-mini").with_structured_output(
     PurchaseInformation, method="json_schema", include_raw=True
 )
 
+# Graph node for extracting user info and routing to lookup/refund/END.
 #region
 async def gather_info(state: State) -> Command[Literal["lookup", "refund", END]]:
     info = await info_llm.ainvoke(
@@ -393,8 +416,9 @@ async def gather_info(state: State) -> Command[Literal["lookup", "refund", END]]
     return Command(update=update, goto=goto)
 #endregion
 
+# Graph node for executing the refund.
 #region
-def refund(state: State, config: RunnableConfig):
+def refund(state: State, config: RunnableConfig) -> dict:
     # whether to mock the deletion. True if the configurable var 'env' is set to 'test'.
     mock = config.get("configurable", {}).get("env", "prod") == "test"
     refunded = _refund(
@@ -407,6 +431,7 @@ def refund(state: State, config: RunnableConfig):
     }
 #endregion
 
+# Graph node for looking up the users purchases
 #region
 def lookup(state: State) -> dict:
     args = (
@@ -435,6 +460,7 @@ def lookup(state: State) -> dict:
     }
 #endregion
 
+# Building our graph
 graph_builder = StateGraph(State)
 
 graph_builder.add_node(gather_info)
@@ -448,9 +474,11 @@ graph_builder.add_edge("refund", END)
 refund_graph = graph_builder.compile()
 ```
 
+We can visualize our refund graph:
+
 ```python
 # Assumes you're in an interactive Python environment
-#region
+#region [collapsed]
 from IPython.display import Image, display
 
 display(Image(refund_graph.get_graph(xray=True).draw_mermaid_png()))
@@ -461,7 +489,7 @@ display(Image(refund_graph.get_graph(xray=True).draw_mermaid_png()))
 
 #### Lookup agent
 
-For the lookup (i.e. question-answering) agent, we'll use a simple ReACT architecture and give the agent tools for looking up track names, artist names, and album names based on the filter values of the other two. For example, you can look up albums by a particular artist, artists that released songs with a specific name, etc.
+For the lookup (i.e. question-answering) agent, we'll use a simple ReACT architecture and give the agent tools for looking up track names, artist names, and album names based on various filters. For example, you can look up albums by a particular artist, artists who released songs with a specific name, etc.
 
 ```python
 #region
@@ -469,9 +497,16 @@ from langchain.embeddings import init_embeddings
 from langchain_core.tools import tool
 from langchain_core.vectorstores import InMemoryVectorStore
 from langgraph.prebuilt import create_react_agent
-
 #endregion
 
+#region
+# Our SQL queries will only work if we filter on the exact string values that are in the DB.
+# To ensure this, we'll create vectorstore indexes for all of the artists, tracks and albums
+# ahead of time and use those to disambiguate the user input. E.g. if a user searches for
+# songs by "prince" and our DB records the artist as "Prince", ideally when we query our 
+# artist vectorstore for "prince" we'll get back the value "Prince", which we can then
+# use in our SQL queries.
+#endregion
 #region [collapsed]
 def index_fields() -> tuple[InMemoryVectorStore, InMemoryVectorStore, InMemoryVectorStore]:
     """Create an index for all artists, an index for all albums, and an index for all songs."""
@@ -503,6 +538,7 @@ def index_fields() -> tuple[InMemoryVectorStore, InMemoryVectorStore, InMemoryVe
 
 track_store, artist_store, album_store = index_fields()
 
+# Agent tools
 @tool
 #region [collapsed]
 def lookup_track(
@@ -552,7 +588,6 @@ def lookup_track(
     return tracks
 #endregion
 
-
 @tool
 #region [collapsed]
 def lookup_album(
@@ -595,7 +630,6 @@ def lookup_album(
     conn.close()
     return albums
 #endregion
-
 
 @tool
 #region [collapsed]
@@ -640,7 +674,10 @@ def lookup_artist(
     return artists
 #endregion
 
+# Agent model
 qa_llm = init_chat_model("claude-3-5-sonnet-latest")
+# The prebuilt ReACT agent only expects State to have a 'messages' key, so the 
+# state we defined for the refund agent can also be passed to our lookup agent.
 qa_graph = create_react_agent(qa_llm, [lookup_track, lookup_artist, lookup_album])
 ```
 
@@ -653,9 +690,12 @@ display(Image(qa_graph.get_graph(xray=True).draw_mermaid_png()))
 #### Parent agent
 
 Now let's define a parent agent that combines our two task-specific agents.
-The only job of the parent agent is to route to one of the sub-agents by classifying the user's current intent.
+The only job of the parent agent is to route to one of the sub-agents by classifying the user's current intent, and to compile the output into a followup message.
 
 ```python
+# Schema for routing user intent.
+# We'll use structured outputs to enforce that the model returns only 
+# the desired output.
 #region
 class UserIntent(TypedDict):
     """The user's current intent in the conversation"""
@@ -663,11 +703,12 @@ class UserIntent(TypedDict):
     intent: Literal["refund", "question_answering"]
 #endregion
 
-
+# Routing model with structured output
 router_llm = init_chat_model("gpt-4o-mini").with_structured_output(
     UserIntent, method="json_schema", strict=True
 )
 
+# Instructions for routing.
 #region
 route_instructions = """You are managing an online music store that sells song tracks. \
 You can help customers in two types of ways: (1) answering general questions about \
@@ -682,6 +723,7 @@ the user.
 """
 #endregion
 
+# Node for routing.
 #region
 async def intent_classifier(
     state: State,
@@ -692,6 +734,7 @@ async def intent_classifier(
     return Command(goto=response["intent"] + "_agent")
 #endregion
 
+# Node for making sure the 'followup' key is set before our agent run completes.
 #region
 def compile_followup(state):
     if not state.get("followup"):
@@ -699,8 +742,11 @@ def compile_followup(state):
     return {}
 #endregion
 
+# Agent definition
 graph_builder = StateGraph(State)
 graph_builder.add_node(intent_classifier)
+# Since all of our subagents have compatible state, 
+# we can add them as nodes directly.
 graph_builder.add_node("refund_agent", refund_graph)
 graph_builder.add_node("question_answering_agent", qa_graph)
 graph_builder.add_node(compile_followup)
@@ -711,7 +757,6 @@ graph_builder.add_edge("question_answering", "compile_followup")
 graph_builder.add_edge("compile_followup", END)
 
 graph = graph_builder.compile()
-
 ```
 
 We can visualize our compiled parent graph including all of its subgraphs:
@@ -723,6 +768,8 @@ display(Image(graph.get_graph().draw_mermaid_png()))
 ![graph](./static/agent_tutorial_graph.png)
 
 #### Try it out
+
+Let's give our custom support agent a whirl!
 
 ```python
 #region
@@ -790,12 +837,13 @@ Which of the following purchases would you like to be refunded for?
 Agent evaluation can focus on at least 3 things:
 
 - [Final response](../concepts#evaluating-an-agents-final-response): The inputs are a prompt and an optional list of tools. The output is the final agent response.
-- [Single step](../concepts#evaluating-a-single-step-of-an-agent): As before, the inputs are a prompt and an optional list of tools. The output is the tool call.
 - [Trajectory](../concepts#evaluating-an-agents-trajectory): As before, the inputs are a prompt and an optional list of tools. The output is the list of tool calls
+- [Single step](../concepts#evaluating-a-single-step-of-an-agent): As before, the inputs are a prompt and an optional list of tools. The output is the tool call.
 
-### Create a dataset
+### Final response evaluator
 
-First, create a [dataset](../concepts#datasets) that evaluates end-to-end performance of the agent. We'll use this for final response and trajectory evaluation, so we'll add the relevant labels:
+First, let's create a [dataset](../concepts#datasets) that evaluates end-to-end performance of the agent. 
+For simplicity we'll use the same dataset for final response and trajectory evaluation, so lets add all the relevant labels:
 
 ```python
 from langsmith import Client
@@ -846,14 +894,12 @@ if not client.has_dataset(dataset_name=dataset_name):
 #endregion
 ```
 
-### Final response and trajectory evaluators
-
 We can evaluate how well an agent does overall on a task. This involves treating the agent as a black box and just evaluating whether it gets the job done or not.
 
-We'll create a custom [LLM-as-judge](../concepts#llm-as-judge) evaluator that uses another model to compare our agent's output to the dataset reference output, and judge if they're equivalent or not:
+We'll create a custom [LLM-as-judge](../concepts#llm-as-judge) evaluator that uses another model to compare our agent's output on each example to the reference output, and judge if they're equivalent or not:
 
 ```python
-# Prompt
+# LLM-as-judge instructions
 #region
 grader_instructions = """You are a teacher grading a quiz.
 
@@ -871,7 +917,7 @@ False means that the student's response does not meet all of the criteria.
 Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct."""
 #endregion
 
-# Output schema
+# LLM-as-judge output schema
 #region
 class Grade(TypedDict):
     """Compare the expected and actual answers and grade the actual answer."""
@@ -879,15 +925,16 @@ class Grade(TypedDict):
     is_correct: Annotated[bool, ..., "True if the student response is mostly or exactly correct, otherwise False."]
 #endregion
 
-
-# LLM with structured output
+# Judge LLM
 grader_llm = init_chat_model("gpt-4o-mini", temperature=0).with_structured_output(Grade, method="json_schema", strict=True)
 
-# Evaluator
+# Evaluator function
 #region
 async def final_answer_correct(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
     """Evaluate if the final response is equivalent to reference response."""
 
+    # Note that we assume the outputs has a 'response' dictionary. We'll need to make sure
+    # that the target function we define includes this key.
     user = f"""QUESTION: {inputs['question']}
     GROUND TRUTH RESPONSE: {reference_outputs['response']}
     STUDENT RESPONSE: {outputs['response']}"""
@@ -896,6 +943,39 @@ async def final_answer_correct(inputs: dict, outputs: dict, reference_outputs: d
     return grade["is_correct"]
 #endregion
 ```
+
+Now we can run our evaluation. Our evaluator assumes that our target function returns a 'response' key, so lets define a function that does so.
+
+Also remember that in our refund graph we made the refund node configurable, so that if we specified `config={"env":  "test"}`, we would mock out the refunds without actually updating the DB:
+
+```python
+# Target function
+#region
+async def run_graph(inputs: dict) -> dict:
+    """Run graph and track the trajectory it takes along with the final response."""
+    result = await graph.ainvoke({"messages": [
+        { "role": "user", "content": inputs['question']},
+        config={"env": "test"}
+    ]})
+    return {"response": result["followup"]}
+#endregion
+experiment_prefix = "sql-agent-gpt4o"
+metadata = {"version": "Chinook, gpt-4o base-case-agent"}
+
+# Evaluation job and results
+experiment_results = await client.aevaluate(
+    run_graph,
+    data=dataset_name,
+    evaluators=[final_answer_correct, trajectory_subsequence],
+    experiment_prefix=experiment_prefix,
+    num_repetitions=1,
+    metadata=metadata,
+    max_concurrency=4,
+)
+experiment_results.to_pandas()
+```
+
+### Trajectory evaluator
 
 The more complex your agent, the more possible steps it could fail at. 
 In such cases, it can be values to come up with non-binary evaluations that give your agent partial credit for taking some correct steps even if it doesn't get to the correct final answer.
@@ -920,14 +1000,16 @@ def trajectory_subsequence(outputs: dict, reference_outputs: dict) -> bool:
 #endregion
 ```
 
-Now we can run our evaluation. Our evaluators assume that our target function returns a 'response' and 'trajectory' key, so lets define a function that does so
+Now we can run our evaluation. Our evaluator assumes that our target function returns a 'response' key, so lets define a function that does so.
+
+Note that we are reusing the same dataset as for our final response evaluation, so we technically could have both evaluations together and defined a target function that returns both "response" and "trajectory". 
+In practice it's often useful to have separate datasets for each type of evaluation, which is why we still show them separately here:
 
 ```python
 #region
 async def run_graph(inputs: dict) -> dict:
     """Run graph and track the trajectory it takes along with the final response."""
     trajectory = []
-    final_response = None
     async for namespace, chunk in graph.astream({"messages": [
             {
                 "role": "user",
@@ -939,10 +1021,6 @@ async def run_graph(inputs: dict) -> dict:
             if chunk['payload']['name'] == 'tools' and chunk['type'] == 'task':
                     for tc in chunk['payload']['input']['messages'][-1].tool_calls:
                         trajectory.append(tc['name'])
-        elif chunk['type'] == "task_result" and "followup" in [res[0] for res in chunk['payload']['result']]:
-            final_response = next(res[1] for res in chunk['payload']['result'] if res[0] == "followup")
-        else: 
-            continue
     
     return {"trajectory": trajectory, "response": final_response}
 #endregion
@@ -953,7 +1031,7 @@ metadata = {"version": "Chinook, gpt-4o base-case-agent"}
 experiment_results = await client.aevaluate(
     run_graph,
     data=dataset_name,
-    evaluators=[final_answer_correct, trajectory_subsequence],
+    evaluators=[trajectory_subsequence],
     experiment_prefix=experiment_prefix,
     num_repetitions=1,
     metadata=metadata,
