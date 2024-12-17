@@ -153,44 +153,10 @@ function CollapsibleCodeBlock({ children, ...props }) {
   React.useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
-      .code-block-wrapper {
-        position: relative;
-      }
-      .fold-markers {
-        position: absolute;
-        left: 0;
-        top: 10px;
-        bottom: 0;
-        width: 25px;
-        background: var(--prism-background-color);
-        opacity: 0.8;
-        z-index: 1;
-        border-top-left-radius: var(--ifm-code-border-radius);
-        border-bottom-left-radius: var(--ifm-code-border-radius);
-      }
-      .fold-marker {
-        position: absolute;
-        cursor: pointer;
-        user-select: none;
-        color: var(--ifm-menu-color);
-        width: 25px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        transition: color 0.2s ease, transform 0.2s ease;
-        transform-origin: center;
-      }
-      .fold-marker.collapsed {
-        transform: rotate(-90deg) translateX(-5px) translateY(-5px);
-      }
-      .fold-marker:hover {
-        color: var(--ifm-menu-color-active);
-      }
-      .code-block-with-gutter {
-        padding-left: 25px !important;
-      }
+    .code-block-wrapper {
+      position: relative;
+    }
+
     `;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
@@ -208,7 +174,7 @@ function CollapsibleCodeBlock({ children, ...props }) {
             className={`fold-marker ${item.isCollapsed ? 'collapsed' : ''}`}
             onClick={() => toggleSection(item.index)}
             style={{
-              top: `${item.line * 22.03}px` // Back to using fixed pixel height
+              top: `${item.line * 22.0375}px` // Back to using fixed pixel height
             }}
           >
             ⌵
