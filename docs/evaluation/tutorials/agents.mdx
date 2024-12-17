@@ -833,7 +833,7 @@ examples = [
 ]
 #endregion
 
-dataset_name = "Chinook Customer Service Bot E2E"
+dataset_name = "Chinook Customer Service Bot: E2E"
 
 #region
 if not client.has_dataset(dataset_name=dataset_name):
@@ -846,15 +846,13 @@ if not client.has_dataset(dataset_name=dataset_name):
 #endregion
 ```
 
-### Final response evaluators
+### Final response and trajectory evaluators
 
 We can evaluate how well an agent does overall on a task. This involves treating the agent as a black box and just evaluating whether it gets the job done or not.
 
 We'll create a custom [LLM-as-judge](../concepts#llm-as-judge) evaluator that uses another model to compare our agent's output to the dataset reference output, and judge if they're equivalent or not:
 
 ```python
-from typing_extensions import TypedDict, Annotated
-
 # Prompt
 #region
 grader_instructions = """You are a teacher grading a quiz.
@@ -892,80 +890,112 @@ async def final_answer_correct(inputs: dict, outputs: dict, reference_outputs: d
 
     user = f"""QUESTION: {inputs['question']}
     GROUND TRUTH RESPONSE: {reference_outputs['response']}
-    STUDENT RESPONSE: {outputs['followup']}"""
+    STUDENT RESPONSE: {outputs['response']}"""
 
     grade = await grader_llm.ainvoke([{"role": "system", "content": grader_instructions}, {"role": "user", "content": user}])
     return grade["is_correct"]
 #endregion
 ```
 
-### Trajectory evaluators
-
 The more complex your agent, the more possible steps it could fail at. 
 In such cases, it can be values to come up with non-binary evaluations that give your agent partial credit for taking some correct steps even if it doesn't get to the correct final answer.
 Trajectory evaluations make it easy to do this — we can compare the actual sequence of steps the agent took to the desired sequence of steps, and score it based on the number of correct steps it took.
 In this case, we've defined our end-to-end dataset to include an ordered subsequence of steps we expect our agent to have taken.
-We can now write an evaluator to check 
+Let's write an evaluator that checks the actual agent trajectory to see if the desired subsequence occurred:
 
 ```python
-def trajectory_correct(outputs: dict, reference_outputs: dict) -> bool:
-    """Check if all expected tools are called in any order."""
-    # If the question is off-topic, no tools should be called:
-    if not reference_outputs["ontopic"]:
-        expected = set()
-    # If the question is on-topic, each tools should be called at least once:
-    else:
-        expected = {t.name for t in tools}
-    messages = outputs["messages"]
-    tool_calls = {tc['name'] for m in messages['messages'] for tc in getattr(m, 'tool_calls', [])}
-
-    # Could change this to check order if we had a specific order we expected.
-    return expected == tool_calls
+#region
+def trajectory_subsequence(outputs: dict, reference_outputs: dict) -> bool:
+    """Check if the actual trajectory contains the desired subsequence."""
+    if len(reference_outputs['trajectory']) > len(outputs['trajectory']):
+        return False
+        
+    i = j = 0
+    while i < len(reference_outputs['trajectory']) and j < len(outputs['trajectory']):
+        if reference_outputs['trajectory'][i] == outputs['trajectory'][j]:
+            i += 1
+        j += 1
+    
+    return i == len(reference_outputs['trajectory'])
+#endregion
 ```
 
-### Single step evaluators
-
-Agents generally make multiple actions. While it is useful to evaluate them end-to-end, it can also be useful to evaluate the individual actions. This generally involves evaluating a single step of the agent - the LLM call where it decides what to do.
-
-We can check a specific tool call using [a custom evaluator](../how_to_guides/custom_evaluator) and by either looking at the [intermediate steps](../how_to_guides/evaluate_on_intermediate_steps) of the run or, in the case of most LangGraph agents, by just looking at specific messages in the output:
-
-For example, for all of the questions in this dataset we know that the model should always be calling the ListSQLDatabseTool tool first. We can check for this directly:
+Now we can run our evaluation. Our evaluators assume that our target function returns a 'response' and 'trajectory' key, so lets define a function that does so
 
 ```python
-from langchain_core.messages import AIMessage
+#region
+async def run_graph(inputs: dict) -> dict:
+    """Run graph and track the trajectory it takes along with the final response."""
+    trajectory = []
+    final_response = None
+    async for namespace, chunk in graph.astream({"messages": [
+            {
+                "role": "user",
+                "content": inputs['question'],
+            }
+        ]}, subgraphs=True, stream_mode="debug"):
+        if chunk['type'] == 'task':
+            trajectory.append(chunk['payload']['name'])
+            if chunk['payload']['name'] == 'tools' and chunk['type'] == 'task':
+                    for tc in chunk['payload']['input']['messages'][-1].tool_calls:
+                        trajectory.append(tc['name'])
+        elif chunk['type'] == "task_result" and "followup" in [res[0] for res in chunk['payload']['result']]:
+            final_response = next(res[1] for res in chunk['payload']['result'] if res[0] == "followup")
+        else: 
+            continue
+    
+    return {"trajectory": trajectory, "response": final_response}
+#endregion
 
-def first_tool_correct(outputs: dict, reference_outputs: dict) -> dict:
-    """Check if the first tool call in the response matches the expected tool call."""
-    # Expected tool call
-    expected_tool_call = 'sql_db_list_tables'
-
-    first_ai_msg = next(msg for msg in outputs["messages"] if isinstance(msg, AIMessage))
-
-    # If the question is off-topic, no tools should be called:
-    if not reference_outputs["ontopic"]:
-        return not first_ai_msg.tool_calls
-    # Correct if the first model response had only a single tool call for the list tables tool:
-    else:
-        return [tc['name'] for tc in first_ai_msg.tool_calls] == [list_tables_tool.name]
-```
-
-
-### Run evaluation
-
-```python
 experiment_prefix = "sql-agent-gpt4o"
 metadata = {"version": "Chinook, gpt-4o base-case-agent"}
 
 experiment_results = await client.aevaluate(
-    graph_wrapper,
+    run_graph,
     data=dataset_name,
-    evaluators=[final_answer_correct, first_tool_correct, trajectory_correct],
+    evaluators=[final_answer_correct, trajectory_subsequence],
     experiment_prefix=experiment_prefix,
     num_repetitions=1,
     metadata=metadata,
     max_concurrency=4,
 )
+experiment_results.to_pandas()
 ```
+
+### Single step evaluators
+
+While end-to-end tests give you the most signal about your agents performance, for the sake of debugging and iterating on your agent it can be helpful to pinpoint specific steps that are difficult and evaluate them directly.
+
+A crucial part of our agent is that it routes the user's intention correctly into either the "refund" path or the "question answering" path. Let's create a dataset and run some evaluations to really stress test this one component.
+
+```python
+#region
+examples = [
+    {"messages": [{"role": "user", "content": "i bought some tracks recently and i dont like them"}], "route": "refund_graph"},
+    {"messages": [{"role": "user", "content": "I was thinking of purchasing some Rolling Stones tunes, any recommendations?"}], "route": "question_answering_graph"},
+    {"messages": [{"role": "user", "content": "i want a refund on purchase 237"}, {"role": "assistant", "content": "I've refunded you a total of $1.98. How else can I help you today?"}, {"role": "user", "content": "did prince release any albums in 2000?"}], "route": "question_answering_graph"},
+    {"messages": [{"role": "user", "content": "i purchased a cover of Yesterday recently but can't remember who it was by, which versions of it do you have?"}], "route": "question_answering_graph"},
+]
+#endregion
+
+dataset_name = "Chinook Customer Service Bot: Intent Classifier"
+if not client.has_dataset(dataset_name=dataset_name):
+    
+
+def correct(outputs: dict, reference_outputs: dict) -> dict:
+    """Check if the agent chose the correct route."""
+    assert outputs.goto == reference_outputs["route"]
+
+experiment_results = await client.aevalaute(
+    graph.nodes['intent_classifier'],
+    data=dataset_name,
+    evaluators=[correct],
+    experiment_prefix=experiment_prefix,
+    metadata=metadata
+    max_concurrency=4,
+)
+```
+
 
 ## Reference code
 
