@@ -243,8 +243,17 @@ def accuracy(outputs: dict, reference_outputs: dict) -> bool:
     {
       value: "typescript",
       label: "TypeScript",
-      content: `
-      // Define output schema for the LLM judge
+      content: `// Define instructions for the LLM judge evaluator
+const instructions = \`Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
+- False: No conceptual match and similarity
+- True: Most or full conceptual match and similarity
+- Key criteria: Concept should match, not exact wording.
+\`;
+
+// Define context for the LLM judge evaluator
+const context = \`Ground Truth answer: {reference}; Student's Answer: {prediction}\`;
+
+// Define output schema for the LLM judge
 const ResponseSchema = z.object({
   score: z
     .boolean()
@@ -280,7 +289,7 @@ async function accuracy({
   groupId="client-language"
 />
 
-## 8. Run and view results
+## 7. Run and view results
 
 <CodeTabs tabs={[
   
