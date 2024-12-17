@@ -204,7 +204,7 @@ async function target(inputs: string): Promise<{ response: string }> {
   groupId="client-language"
 />
 
-## 6. Define evaluator prompt
+## 6. Define evaluator
 
 <CodeTabs
   tabs={[
@@ -218,34 +218,7 @@ instructions = """Evaluate Student Answer against Ground Truth for conceptual si
 - Key criteria: Concept should match, not exact wording.
 """
 
-# Define context for the LLM judge evaluator
-context = """Ground Truth answer: {reference}; Student's Answer: {prediction}"""`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      content: `// Define instructions for the LLM judge evaluator
-const instructions = \`Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
-- False: No conceptual match and similarity
-- True: Most or full conceptual match and similarity
-- Key criteria: Concept should match, not exact wording.
-\`;
-
-// Define context for the LLM judge evaluator
-const context = \`Ground Truth answer: {reference}; Student's Answer: {prediction}\`;`,
-    },
-  ]}
-  groupId="client-language"
-/>
-
-## 7. Define evaluator logic
-
-<CodeTabs
-  tabs={[
-    {
-      value: "python",
-      label: "Python",
-      content: `# Define output schema for the LLM judge
+# Define output schema for the LLM judge
 class Grade(BaseModel):
     score: bool = Field(
         description="Boolean that indicates whether the response is accurate relative to the reference answer"
@@ -259,9 +232,8 @@ def accuracy(outputs: dict, reference_outputs: dict) -> bool:
             { "role": "system", "content": instructions },
             {
                 "role": "user",
-                "content": context.replace("{prediction}", outputs["response"]).replace(
-                    "{reference}", reference_outputs["answer"]
-                ),
+                "content": f"""Ground Truth answer: {reference_outputs["answer"]}; 
+                Student's Answer: {outputs["response"]}"""
             },
         ],
         response_format=Grade,
