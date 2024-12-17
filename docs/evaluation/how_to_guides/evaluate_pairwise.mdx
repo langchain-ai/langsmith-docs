@@ -124,7 +124,7 @@ In the Python example below, we are pulling [this structured prompt](https://smi
           return scores
 
       evaluate(
-          ["experiment-1", "experiment-2"],  # Replace with the names/IDs of your experiments
+          ("experiment-1", "experiment-2"),  # Replace with the names/IDs of your experiments
           evaluators=[ranked_preference],
           randomize_order=True,
           max_concurrency=4,
