@@ -263,8 +263,13 @@ html[data-theme="dark"] {
   bottom: 0;
   width: 12px;
   background: var(--prism-background-color);
-  opacity: 0.8;
   z-index: 1;
+}
+
+/* Dark mode specific styling */
+[data-theme='dark'] .fold-markers {
+  /* background: var(--prism-background-color) !important; */
+  background: #1e1e1e;
 }
 
 .fold-marker {
