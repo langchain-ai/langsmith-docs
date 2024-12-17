@@ -66,7 +66,7 @@ module.exports = {
           link: { type: "doc", id: "observability/concepts/index" },
         },
       ],
-      link: { type: "doc", id: "observability/concepts/index" },
+      link: { type: "doc", id: "observability/tutorials/index" },
     },
     {
       type: "category",
@@ -159,7 +159,7 @@ module.exports = {
           link: { type: "doc", id: "prompt_engineering/concepts/index" },
         },
       ],
-      link: { type: "doc", id: "prompt_engineering/concepts/index" },
+      link: { type: "doc", id: "prompt_engineering/tutorials/index" },
     },
     "langgraph_cloud",
     {
@@ -211,7 +211,7 @@ module.exports = {
           link: { type: "doc", id: "administration/concepts/index" },
         },
       ],
-      link: { type: "doc", id: "administration/concepts/index" },
+      link: { type: "doc", id: "administration/tutorials/index" },
     },
     {
       type: "category",
