@@ -1107,7 +1107,9 @@ You can see what these results look like here: [LangSmith link](https://smith.la
 
 ## Reference code
 
-```python
+Here's a consolidated script with all the above code:
+
+````python
 #region [collapsed]
 import json
 import sqlite3
@@ -1123,8 +1125,22 @@ from langgraph.graph.message import AnyMessage, add_messages
 from langgraph.prebuilt import create_react_agent
 from langgraph.types import Command, interrupt
 from langsmith import Client
+import requests
 from tabulate import tabulate
 from typing_extensions import Annotated, TypedDict
+
+url = "https://storage.googleapis.com/benchmarks-artifacts/chinook/Chinook.db"
+
+response = requests.get(url)
+
+if response.status_code == 200:
+    # Open a local file in binary write mode
+    with open("chinook.db", "wb") as file:
+        # Write the content of the response (the file) to the local file
+        file.write(response.content)
+    print("File downloaded and saved as Chinook.db")
+else:
+    print(f"Failed to download the file. Status code: {response.status_code}")
 
 
 def _refund(
@@ -1970,4 +1986,4 @@ experiment_results = await client.aevaluate(
 )
 experiment_results.to_pandas()
 #endregion
-```
+````
