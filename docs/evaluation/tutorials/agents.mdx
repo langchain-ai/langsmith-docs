@@ -1425,7 +1425,7 @@ async def gather_info(state: State) -> Command[Literal["lookup", "refund", END]]
 # Graph node for executing the refund.
 # Note that here we inspect the runtime config for an "env" variable.
 # If "env" is set to "test", then we don't actually delete any rows from our database.
-# This will become important when we're runnign our evaluations.
+# This will become important when we're running our evaluations.
 def refund(state: State, config: RunnableConfig) -> dict:
     # Whether to mock the deletion. True if the configurable var 'env' is set to 'test'.
     mock = config.get("configurable", {}).get("env", "prod") == "test"
