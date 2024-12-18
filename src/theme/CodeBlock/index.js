@@ -33,41 +33,42 @@ function Imports({ imports }) {
   );
 }
 
-
 function CollapsibleCodeBlock({ children, ...props }) {
   const processCode = (code) => {
-    const lines = code.split('\n');
+    const lines = code.split("\n");
     const processedLines = [];
     let currentSection = null;
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      
+
       // Check for region with optional [collapsed] flag
-      const regionMatch = line.match(/(\/\/#region|#region)\s*(\[collapsed\])?\s*(.*)/);
+      const regionMatch = line.match(
+        /(\/\/#region|#region)\s*(\[collapsed\])?\s*(.*)/
+      );
       if (regionMatch) {
         currentSection = {
           start: i,
           title: regionMatch[3].trim(),
           content: [],
-          defaultCollapsed: !!regionMatch[2] // true if [collapsed] is present
+          defaultCollapsed: !!regionMatch[2], // true if [collapsed] is present
         };
-      } else if (line.includes('#endregion') || line.includes('//#endregion')) {
+      } else if (line.includes("#endregion") || line.includes("//#endregion")) {
         if (currentSection) {
           processedLines.push({
-            type: 'section',
+            type: "section",
             ...currentSection,
-            end: i
+            end: i,
           });
           currentSection = null;
         }
       } else if (currentSection) {
         currentSection.content.push(line);
       } else {
-        processedLines.push({ type: 'line', content: line });
+        processedLines.push({ type: "line", content: line });
       }
     }
-    
+
     return processedLines;
   };
 
@@ -83,10 +84,10 @@ function CollapsibleCodeBlock({ children, ...props }) {
 
   const [collapsedSections, setCollapsedSections] = useState(() => {
     const initial = new Set();
-    if (typeof children === 'string') {
+    if (typeof children === "string") {
       const processed = processCode(children);
       processed.forEach((item, index) => {
-        if (item.type === 'section' && item.defaultCollapsed) {
+        if (item.type === "section" && item.defaultCollapsed) {
           initial.add(index);
         }
       });
@@ -95,24 +96,25 @@ function CollapsibleCodeBlock({ children, ...props }) {
   });
 
   const renderCode = () => {
-    if (typeof children !== 'string') {
+    if (typeof children !== "string") {
       return children;
     }
 
     const processedCode = processCode(children);
-    let result = '';
-    
+    let result = "";
+
     processedCode.forEach((item, index) => {
-      if (item.type === 'line') {
-        result += item.content + '\n';
+      if (item.type === "line") {
+        result += item.content + "\n";
       } else {
         const isCollapsed = collapsedSections.has(index);
         // Always show the first line
-        result += item.content[0] + (isCollapsed ? ' ...\n' : '\n');
+        result += item.content[0] + (isCollapsed ? " ...\n" : "\n");
         if (!isCollapsed) {
           // Add the rest of the content starting from the second line
-          result += item.content.slice(1).join('\n') + 
-            (index < processedCode.length - 1 ? '\n' : ''); // Only add newline if not last item
+          result +=
+            item.content.slice(1).join("\n") +
+            (index < processedCode.length - 1 ? "\n" : ""); // Only add newline if not last item
         }
       }
     });
@@ -121,14 +123,14 @@ function CollapsibleCodeBlock({ children, ...props }) {
   };
 
   const getGutterItems = () => {
-    if (typeof children !== 'string') return [];
+    if (typeof children !== "string") return [];
 
     const processedCode = processCode(children);
     const items = [];
     let lineCount = 0;
 
     processedCode.forEach((item, index) => {
-      if (item.type === 'line') {
+      if (item.type === "line") {
         lineCount++;
       } else {
         const isCollapsed = collapsedSections.has(index);
@@ -136,7 +138,7 @@ function CollapsibleCodeBlock({ children, ...props }) {
           line: lineCount,
           title: item.title,
           isCollapsed,
-          index
+          index,
         });
         // Always count the first line
         lineCount += 1;
@@ -151,7 +153,7 @@ function CollapsibleCodeBlock({ children, ...props }) {
   };
 
   React.useEffect(() => {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
     .code-block-wrapper {
       position: relative;
@@ -171,10 +173,10 @@ function CollapsibleCodeBlock({ children, ...props }) {
         {gutterItems.map((item) => (
           <div
             key={item.index}
-            className={`fold-marker ${item.isCollapsed ? 'collapsed' : ''}`}
+            className={`fold-marker ${item.isCollapsed ? "collapsed" : ""}`}
             onClick={() => toggleSection(item.index)}
             style={{
-              top: `${item.line * 22.0375}px` // Back to using fixed pixel height
+              top: `${item.line * 22.0375}px`, // Back to using fixed pixel height
             }}
           >
             ⌵
