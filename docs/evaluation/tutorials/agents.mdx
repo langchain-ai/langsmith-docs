@@ -1030,7 +1030,7 @@ async def run_graph(inputs: dict) -> dict:
         if chunk['type'] == 'task':
             # Record the node name
             trajectory.append(chunk['payload']['name'])
-            # Given how we defined our dataset, we also need to track when specific tools are 
+            # Given how we defined our dataset, we also need to track when specific tools are
             # called by our question answering ReACT agent. These tool calls can be found
             # when the ToolsNode (named "tools") is invoked by looking at the AIMessage.tool_calls
             # of the latest input message.
@@ -1086,7 +1086,7 @@ if not client.has_dataset(dataset_name=dataset_name):
 def correct(outputs: dict, reference_outputs: dict) -> bool:
     """Check if the agent chose the correct route."""
     return outputs["route"] == reference_outputs["route"]
-    
+
 # Target function for running the relevant step
 async def run_intent_classifier(inputs: dict) -> dict:
     # Note that we can access and run the intent_classifier node of our graph directly.
