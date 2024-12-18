@@ -39,7 +39,7 @@ function CollapsibleCodeBlock({ children, ...props }) {
     const processedLines = [];
     let currentSection = null;
 
-    for (let i = 0; i < lines.length; i++) {
+    for (let i = 0; i < lines.length; i += 1) {
       const line = lines[i];
 
       // Check for region with optional [collapsed] flag
@@ -72,16 +72,6 @@ function CollapsibleCodeBlock({ children, ...props }) {
     return processedLines;
   };
 
-  const toggleSection = (index) => {
-    const newCollapsed = new Set(collapsedSections);
-    if (newCollapsed.has(index)) {
-      newCollapsed.delete(index);
-    } else {
-      newCollapsed.add(index);
-    }
-    setCollapsedSections(newCollapsed);
-  };
-
   const [collapsedSections, setCollapsedSections] = useState(() => {
     const initial = new Set();
     if (typeof children === "string") {
@@ -95,6 +85,16 @@ function CollapsibleCodeBlock({ children, ...props }) {
     return initial;
   });
 
+  const toggleSection = (index) => {
+    const newCollapsed = new Set(collapsedSections);
+    if (newCollapsed.has(index)) {
+      newCollapsed.delete(index);
+    } else {
+      newCollapsed.add(index);
+    }
+    setCollapsedSections(newCollapsed);
+  };
+
   const renderCode = () => {
     if (typeof children !== "string") {
       return children;
@@ -105,7 +105,7 @@ function CollapsibleCodeBlock({ children, ...props }) {
 
     processedCode.forEach((item, index) => {
       if (item.type === "line") {
-        result += item.content + "\n";
+        result += `${item.content}\n`;
       } else {
         const isCollapsed = collapsedSections.has(index);
         // Always show the first line
@@ -131,7 +131,7 @@ function CollapsibleCodeBlock({ children, ...props }) {
 
     processedCode.forEach((item, index) => {
       if (item.type === "line") {
-        lineCount++;
+        lineCount += 1;
       } else {
         const isCollapsed = collapsedSections.has(index);
         items.push({
@@ -175,8 +175,15 @@ function CollapsibleCodeBlock({ children, ...props }) {
             key={item.index}
             className={`fold-marker ${item.isCollapsed ? "collapsed" : ""}`}
             onClick={() => toggleSection(item.index)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                toggleSection(item.index);
+              }
+            }}
+            role="button"
+            tabIndex={0}
             style={{
-              top: `${item.line * 22.0375}px`, // Back to using fixed pixel height
+              top: `${item.line * 22.0375}px`,
             }}
           >
             ⌵
