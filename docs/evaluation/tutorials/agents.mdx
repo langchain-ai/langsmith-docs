@@ -6,7 +6,7 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 [Agent evaluation](../concepts#agents) | [Evaluators](../concepts#evaluators) | [LLM-as-judge evaluators](../concepts#llm-as-judge)
 :::
 
-In this tutorial, we'll build a customer support bot that helps users navigate a digital music store. We'll create three types of evaluations:
+In this tutorial, we'll build a customer support bot that helps users navigate a digital music store. Then, we'll go through the three most effective types of evaluations to run on chat bots:
 
 - [Final response](../concepts#evaluating-an-agents-final-response): Evaluate the agent's final response.
 - [Trajectory](../concepts#evaluating-an-agents-trajectory): Evaluate whether the agent took the expected path (e.g., of tool calls) to arrive at the final answer.
@@ -24,7 +24,7 @@ Let's install the required dependencies:
 pip install -U langgraph langchain langchain-community langchain-openai
 ```
 
-and set up our environment variables for OpenAI and <RegionalUrl text='LangSmith'/>:
+Let's set up environment variables for OpenAI and <RegionalUrl text='LangSmith'/>:
 
 ```python
 #region
@@ -429,7 +429,7 @@ async def gather_info(state: State) -> Command[Literal["lookup", "refund", END]]
 # Graph node for executing the refund.
 # Note that here we inspect the runtime config for an "env" variable.
 # If "env" is set to "test", then we don't actually delete any rows from our database.
-# This will become important when we're runnign our evaluations.
+# This will become important when we're running our evaluations.
 #region
 def refund(state: State, config: RunnableConfig) -> dict:
     # Whether to mock the deletion. True if the configurable var 'env' is set to 'test'.
@@ -1434,7 +1434,7 @@ async def gather_info(state: State) -> Command[Literal["lookup", "refund", END]]
 # Graph node for executing the refund.
 # Note that here we inspect the runtime config for an "env" variable.
 # If "env" is set to "test", then we don't actually delete any rows from our database.
-# This will become important when we're runnign our evaluations.
+# This will become important when we're running our evaluations.
 def refund(state: State, config: RunnableConfig) -> dict:
     # Whether to mock the deletion. True if the configurable var 'env' is set to 'test'.
     mock = config.get("configurable", {}).get("env", "prod") == "test"
