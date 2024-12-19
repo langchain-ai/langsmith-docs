@@ -71,9 +71,9 @@ Custom evaluators are expected to return one of the following types:
 
 Python and JS/TS
 
-- `dict`: dicts of the form `{"score" | "value": ..., "name": ...}` allow you to customize the metric type ("score" for numerical and "value" for categorical) and metric name. This if useful if, for example, you want to log an integer as a categorical metric.
+- `dict`: dicts of the form `{"score" | "value": ..., "key": ...}` allow you to customize the metric type ("score" for numerical and "value" for categorical) and metric name. This if useful if, for example, you want to log an integer as a categorical metric.
 
-Currently Python only
+Python only
 
 - `int | float | bool`: this is interepreted as an continuous metric that can be averaged, sorted, etc. The function name is used as the name of the metric.
 - `str`: this is intepreted as a categorical metric. The function name is used as the name of the metric.

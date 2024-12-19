@@ -124,6 +124,10 @@ Which results in a trace like [this one](https://smith.langchain.com/public/4d3a
 
 ### Node.js
 
+First, learn more how to setup OpenTelemetry instrumentation within your Node.js app [here](https://opentelemetry.io/docs/languages/js/getting-started/nodejs/#setup).
+
+In particular, you will need to ensure that OTEL setup and configuration run before your application logic. One tool commonly used for this task are Node's [`--require`](https://nodejs.org/api/cli.html#-r---require-module) or `--import` flags.
+
 Add the `AISDKExporter` to the trace exporter to your OpenTelemetry setup.
 
 ```ts
