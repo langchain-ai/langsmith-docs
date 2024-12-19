@@ -4,13 +4,14 @@ sidebar_position: 5
 
 # Backtesting
 
-Deploying your application is just the beginning of a continuous improvement process. 
-Typically, you'll want to refine your system by enhancing prompts, language models, tools, and architectures. 
+Deploying your application is just the beginning of a continuous improvement process.
+Typically, you'll want to refine your system by enhancing prompts, language models, tools, and architectures.
 While the initial datasets you created before deployment are useful for testing new versions, you now have access to real historical data. This data provides a more accurate representation of the inputs your application will encounter in the future.
-Backtesting involves assessing new versions of your application using this historical data and comparing the new outputs to the original ones. 
+Backtesting involves assessing new versions of your application using this historical data and comparing the new outputs to the original ones.
 This approach can offer a clearer indication of whether the new version is an improvement over the current deployment compared to evaluations using pre-production datasets.
 
 Here are the basic steps for backtesting:
+
 1. Select sample runs from your production tracing project to test against.
 2. Transform the run inputs into a dataset and record the run outputs as an initial experiment against that dataset.
 3. Execute your new system on the new dataset and compare the results of the experiments.
@@ -18,12 +19,13 @@ Here are the basic steps for backtesting:
 This process will provide you with a new dataset of representative inputs, which you can version and use for backtesting your models.
 
 :::info Ground truth data
-Often, you won't have definitive "ground truth" answers available. 
-In such cases, you can manually label the outputs or use evaluators that don't rely on reference data. 
+Often, you won't have definitive "ground truth" answers available.
+In such cases, you can manually label the outputs or use evaluators that don't rely on reference data.
 If your application allows for capturing ground-truth labels, for example by allowing users to leave feedback, we strongly recommend doing so.
 :::
 
 ## Setup
+
 ### Configure the environment
 
 Install and set environment variables. This guide requires `langsmith>=0.2.4`.
@@ -67,8 +69,8 @@ from langchain_core.rate_limiters import InMemoryRateLimiter
 
 # We will use GPT-3.5 Turbo as the baseline and compare against GPT-4o
 gpt_3_5_turbo = init_chat_model(
-    "gpt-3.5-turbo", 
-    temperature=1, 
+    "gpt-3.5-turbo",
+    temperature=1,
     configurable_fields=("model", "model_provider"),
 )
 
@@ -83,7 +85,7 @@ instructions = """You are a tweet writing assistant. Given a topic, do some rese
 
 # Define the tools our agent can use
 
-# If you have a higher tiered Tavily API plan you can increase this 
+# If you have a higher tiered Tavily API plan you can increase this
 rate_limiter = InMemoryRateLimiter(requests_per_second=0.08)
 
 # Use DuckDuckGo if you don't have a Tavily API key:
@@ -120,7 +122,7 @@ agent.batch(
 ## Convert Production Traces to Experiment
 
 The first step is to generate a dataset based on the production _inputs_.
-Then copy over all the traces to serve as a baseline experiment. 
+Then copy over all the traces to serve as a baseline experiment.
 
 ### Select runs to backtest on
 
@@ -178,7 +180,7 @@ convert_runs_to_test(
 )
 ```
 
-Once this step is complete, you should see a new dataset in your LangSmith project 
+Once this step is complete, you should see a new dataset in your LangSmith project
 called "Tweet Writing Task-backtesting TODAYS DATE", with a single experiment like so:
 
 ![](./static/baseline_experiment.png)
@@ -195,7 +197,7 @@ Note that we have no reference outputs, so we'll need to come up with evaluation
 ```python
 import emoji
 from pydantic import BaseModel, Field
-from langchain_core.messages import ToolMessage
+from langchain_core.messages import convert_to_openai_messages
 
 class Grade(BaseModel):
     """Grade whether a response is supported by some context."""
@@ -209,18 +211,21 @@ Otherwise it is grounded."""
 grounded_model = init_chat_model(model="gpt-4o").with_structured_output(Grade)
 
 def lt_280_chars(outputs: dict) -> bool:
-    return len(outputs["messages"][-1]['content']) <= 280
-    
+    messages = convert_to_openai_messages(outputs["messages"])
+    return len(messages[-1]['content']) <= 280
+
 def gte_3_emojis(outputs: dict) -> bool:
-    return len(emoji.emoji_list(outputs["messages"][-1]['content'])) >= 3
-    
+    messages = convert_to_openai_messages(outputs["messages"])
+    return len(emoji.emoji_list(messages[-1]['content'])) >= 3
+
 async def is_grounded(outputs: dict) -> bool:
     context = ""
-    for message in outputs["messages"]:
-        if isinstance(message, ToolMessage):
+    messages = convert_to_openai_messages(outputs["messages"])
+    for message in messages:
+        if message["role"] == "tool":
             # Tool message outputs are the results returned from the Tavily/DuckDuckGo tool
-            context += "\n\n" + message.content 
-    tweet = outputs["messages"][-1].content
+            context += "\n\n" + message["content"]
+    tweet = messages[-1]["content"]
     grade = await grounded_model.ainvoke([
         {"role": "system", "content": grounded_instructions},
         {"role": "user", "content": tweet}
@@ -243,7 +248,7 @@ baseline_results = await client.aevaluate(
 
 ### Define and evaluate new system
 
-Now, let's define and evaluate our new system. 
+Now, let's define and evaluate our new system.
 In this example our new system will be the same as the old system, but will use GPT-4o instead of GPT-3.5.
 Since we've made our model configurable we can just update the default config passed to our agent:
 
@@ -254,6 +259,8 @@ candidate_results = await client.aevaluate(
     evaluators=[lt_280_chars, gte_3_emojis, is_grounded],
     experiment_prefix="candidate-gpt-4o",
 )
+# If you have pandas installed can easily explore results as df:
+# candidate_results.to_pandas()
 ```
 
 ## Compare results
@@ -263,7 +270,7 @@ Your dataset should now have two experiments:
 ![](./static/dataset_page.png)
 
 We can see that the GPT-4o model does a better job of writing tweets that are
-under 280 characters. We can enter the comparison view to see the exact runs on 
+under 280 characters. We can enter the comparison view to see the exact runs on
 which GPT-4o is better than GPT-3.5:
 
 ![](./static/comparison_view.png)
