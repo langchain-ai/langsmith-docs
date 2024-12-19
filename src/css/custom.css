@@ -250,11 +250,82 @@ html[data-theme="dark"] {
   box-shadow: none !important;
 }
 
-.theme-code-block {
-  border-color: var(--joy-palette-divider) !important;
-  padding-left: 0 !important;
+/* Update gutter styles */
+.fold-markers {
+  border-right: none;
+  border-left: 1px solid var(--joy-palette-divider) !important;
+  border-top: 1px solid var(--joy-palette-divider) !important;
+  border-bottom: 1px solid var(--joy-palette-divider) !important;
+  border-radius: var(--ifm-code-border-radius) 0 0 var(--ifm-code-border-radius);
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background: var(--prism-background-color);
+  z-index: 1;
 }
 
+/* Dark mode specific styling */
+[data-theme='dark'] .fold-markers {
+  /* background: var(--prism-background-color) !important; */
+  background: #1e1e1e;
+}
+
+.fold-marker {
+  position: absolute;
+  cursor: pointer;
+  user-select: none;
+  color: var(--ifm-menu-color);
+  width: 12px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: color 0.2s ease, transform 0.2s ease;
+  transform-origin: center;
+  left: 12px;
+  padding-top: 20px;
+}
+.fold-marker.collapsed {
+  transform: rotate(-90deg) translateX(-13px) translateY(-12px);
+}
+.fold-marker:hover {
+  color: var(--ifm-menu-color-active);
+}
+
+/* Remove border radius when inside tabs */
+.tabs-container .fold-markers {
+  border-radius: 0 !important;
+}
+
+/* Remove code block border and shadow */
+.theme-code-block {
+  border: 1px solid var(--joy-palette-divider) !important;
+  border-left: none !important;
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+/* Ensure wrapper doesn't add extra shadows */
+.code-block-wrapper {
+  box-shadow: none !important;
+}
+
+/* Remove any nested borders */
+.code-block-wrapper > .code-block-with-gutter > div,
+.code-block-wrapper > .code-block-with-gutter > div pre {
+  border-left: none !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.code-block-with-gutter {
+  padding-left: 12px
+}
+
+/* Remove theme border */
 .theme-code-block::before {
   display: none !important;
 }
@@ -351,3 +422,8 @@ hr {
   background-color: var(--joy-palette-background-level2) !important;
 }
 
+div[class^='announcementBar_'] {
+  font-size: 20px;
+  background-color: #d0c9feff;
+  font-weight: bold;
+}
