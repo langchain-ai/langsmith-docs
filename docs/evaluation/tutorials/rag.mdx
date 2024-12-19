@@ -108,7 +108,7 @@ retriever = vectorstore.as_retriever(k=4)
 
 ### Application
 
-We can now define the application by creating functions to retrieve docs, invoke the LLM, and get the answer. 
+We can now define the application by creating functions to retrieve docs, invoke the LLM, and get the answer.
 
 ```python
 import openai
@@ -246,20 +246,20 @@ class Grade(BaseModel):
 # Grade prompt
 grade_prompt_answer_accuracy_messages = [
     SystemMessage(
-        content="""You are a teacher grading a quiz. 
+        content="""You are a teacher grading a quiz.
 
-        You will be given a QUESTION, the GROUND TRUTH (correct) ANSWER, and the STUDENT ANSWER. 
+        You will be given a QUESTION, the GROUND TRUTH (correct) ANSWER, and the STUDENT ANSWER.
 
         Here is the grade criteria to follow:
-        (1) Grade the student answers based ONLY on their factual accuracy relative to the ground truth answer. 
+        (1) Grade the student answers based ONLY on their factual accuracy relative to the ground truth answer.
         (2) Ensure that the student answer does not contain any conflicting statements.
         (3) It is OK if the student answer contains more information than the ground truth answer, as long as it is factually accurate relative to the  ground truth answer.
 
         Score:
-        A score of 1 means that the student's answer meets all of the criteria. This is the highest (best) score. 
+        A score of 1 means that the student's answer meets all of the criteria. This is the highest (best) score.
         A score of 0 means that the student's answer does not meet all of the criteria. This is the lowest possible score you can give.
-        
-        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. 
+
+        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct.
 
         Avoid simply stating the correct answer at the outset."""
     ),
@@ -338,19 +338,19 @@ class Grade(BaseModel):
 # Grade prompt
 grade_prompt_answer_helpfulness_messages = [
     SystemMessage(
-        content="""You are a teacher grading a quiz. 
+        content="""You are a teacher grading a quiz.
 
-        You will be given a QUESTION and a STUDENT ANSWER. 
+        You will be given a QUESTION and a STUDENT ANSWER.
 
         Here is the grade criteria to follow:
         (1) Ensure the STUDENT ANSWER is concise and relevant to the QUESTION
         (2) Ensure the STUDENT ANSWER helps to answer the QUESTION
 
         Score:
-        A score of 1 means that the student's answer meets all of the criteria. This is the highest (best) score. 
+        A score of 1 means that the student's answer meets all of the criteria. This is the highest (best) score.
         A score of 0 means that the student's answer does not meet all of the criteria. This is the lowest possible score you can give.
 
-        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. 
+        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct.
 
         Avoid simply stating the correct answer at the outset."""
     ),
@@ -421,24 +421,24 @@ class Grade(BaseModel):
 # Grade prompt
 grade_prompt_hallucinations_messages = [
     SystemMessage(
-        content="""You are a teacher grading a quiz. 
+        content="""You are a teacher grading a quiz.
 
-        You will be given FACTS  and a STUDENT ANSWER. 
+        You will be given FACTS  and a STUDENT ANSWER.
 
         Here is the grade criteria to follow:
-        (1) Ensure the STUDENT ANSWER is grounded in the FACTS. 
+        (1) Ensure the STUDENT ANSWER is grounded in the FACTS.
         (2) Ensure the STUDENT ANSWER does not contain "hallucinated" information outside the scope of the FACTS.
 
         Score:
-        A score of 1 means that the student's answer meets all of the criteria. This is the highest (best) score. 
+        A score of 1 means that the student's answer meets all of the criteria. This is the highest (best) score.
         A score of 0 means that the student's answer does not meet all of the criteria. This is the lowest possible score you can give.
 
-        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. 
+        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct.
 
         Avoid simply stating the correct answer at the outset."""
     ),
     HumanMessage(
-        content="""FACTS: {{documents}} 
+        content="""FACTS: {{documents}}
         STUDENT ANSWER: {{student_answer}}"""
     ),
 ]
@@ -502,29 +502,29 @@ from pydantic import BaseModel, Field
 class Grade(BaseModel):
     Score: int = Field(..., description="Provide the score on whether the retrieved documents are related to the question")
     Explanation: str = Field(..., description="Explain your reasoning for the score")
-    
+
 # Grade prompt
 grade_prompt_doc_relevance_messages = [
     SystemMessage(
-        content="""You are a teacher grading a quiz. 
+        content="""You are a teacher grading a quiz.
 
-        You will be given a QUESTION and a set of FACTS provided by the student. 
+        You will be given a QUESTION and a set of FACTS provided by the student.
 
         Here is the grade criteria to follow:
         (1) You goal is to identify FACTS that are completely unrelated to the QUESTION
         (2) If the facts contain ANY keywords or semantic meaning related to the question, consider them relevant
-        (3) It is OK if the facts have SOME information that is unrelated to the question (2) is met 
+        (3) It is OK if the facts have SOME information that is unrelated to the question (2) is met
 
         Score:
-        A score of 1 means that the FACT contain ANY keywords or semantic meaning related to the QUESTION and are therefore relevant. This is the highest (best) score. 
+        A score of 1 means that the FACT contain ANY keywords or semantic meaning related to the QUESTION and are therefore relevant. This is the highest (best) score.
         A score of 0 means that the FACTS are completely unrelated to the QUESTION. This is the lowest possible score you can give.
 
-        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct. 
+        Explain your reasoning in a step-by-step manner to ensure your reasoning and conclusion are correct.
 
         Avoid simply stating the correct answer at the outset."""
     ),
     HumanMessage(
-        content="""FACTS: {{documents}} 
+        content="""FACTS: {{documents}}
         QUESTION: {{question}}"""
     ),
 ]
