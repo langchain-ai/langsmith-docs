@@ -214,11 +214,11 @@ grounded_model = init_chat_model(model="gpt-4o").with_structured_output(Grade)
 def lt_280_chars(outputs: dict) -> bool:
     messages = convert_to_openai_messages(outputs["messages"])
     return len(messages[-1]['content']) <= 280
-
+    
 def gte_3_emojis(outputs: dict) -> bool:
     messages = convert_to_openai_messages(outputs["messages"])
     return len(emoji.emoji_list(messages[-1]['content'])) >= 3
-
+    
 async def is_grounded(outputs: dict) -> bool:
     context = ""
     messages = convert_to_openai_messages(outputs["messages"])
@@ -227,9 +227,14 @@ async def is_grounded(outputs: dict) -> bool:
             # Tool message outputs are the results returned from the Tavily/DuckDuckGo tool
             context += "\n\n" + message["content"]
     tweet = messages[-1]["content"]
+    user = f"""CONTEXT PROVIDED:
+    {context}
+
+    RESPONSE GIVEN:
+    {tweet}"""
     grade = await grounded_model.ainvoke([
         {"role": "system", "content": grounded_instructions},
-        {"role": "user", "content": tweet}
+        {"role": "user", "content": user}
     ])
     return grade.grounded
 ```
@@ -264,14 +269,23 @@ candidate_results = await client.aevaluate(
 # candidate_results.to_pandas()
 ```
 
-## Compare results
+## Comparing the results
 
-Your dataset should now have two experiments:
+After running both experiments, you can view them in your dataset:
 
 ![](./static/dataset_page.png)
 
-We can see that the GPT-4o model does a better job of writing tweets that are
-under 280 characters. We can enter the comparison view to see the exact runs on
-which GPT-4o is better than GPT-3.5:
+The results reveal an interesting tradeoff between the two models:
+
+1. GPT-4o shows improved performance in following formatting rules, consistently including the requested number of emojis
+2. However, GPT-4o is less reliable at staying grounded in the provided search results
+
+To illustrate the grounding issue: in [this example run](https://smith.langchain.com/public/be060e19-0bc0-4798-94f5-c3d35719a5f6/r/07d43e7a-8632-479d-ae28-c7eac6e54da4), GPT-4o included facts about Abū Bakr Muhammad ibn Zakariyyā al-Rāzī's medical contributions that weren't present in the search results. This demonstrates how it's pulling from its internal knowledge rather than strictly using the provided information.
+
+This backtesting exercise revealed that while GPT-4o is generally considered a more capable model, simply upgrading to it wouldn't improve our tweet-writer. To effectively use GPT-4o, we would need to:
+- Refine our prompts to more strongly emphasize using only provided information
+- Or modify our system architecture to better constrain the model's outputs
+
+This insight demonstrates the value of backtesting - it helped us identify potential issues before deployment.
 
 ![](./static/comparison_view.png)
