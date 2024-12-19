@@ -97,18 +97,21 @@ We'll create a [LangGraph](https://langchain-ai.github.io/langgraph/) agent with
 - Lookup: The customer can look up song titles, artist names, and albums based on other identifying information. For example: "What songs do you have by Jimi Hendrix?"
 - Refund: The customer can request a refund on their past purchases. For example: "My name is Claude Shannon and I'd like a refund on a purchase I made last week, could you help me?"
 
-For the purpose of this demo, we'll model a "refund" by just deleting the relevant rows from our database. We won't worry about things like user auth for the sake of this demo.
+For simplicity in this demo, we'll implement refunds by deleting the corresponding database records. We'll skip implementing user authentication and other production security measures.
 
-We'll implement both of these functionalities as subgraphs that a parent graph routes to.
+The agent's logic will be structured as two separate subgraphs (one for lookups and one for refunds), with a parent graph that routes requests to the appropriate subgraph.
 
 #### Refund agent
 
-Let's create an agent that can help a user get a refund on a recent purchase. We'll need to be able to find and delete the relevant Invoice / InvoiceLines.
+Let's build the refund processing agent. This agent needs to:
+1. Find the customer's purchase records in the database
+2. Delete the relevant Invoice and InvoiceLine records to process the refund
 
-First let's write some SQL helper functions that will take care of actually querying the DB once we've collected the necessary args.
-We'll have one helper for executing the refund and one for returning all of the purchases that match a user's information.
+We'll create two SQL helper functions:
+1. A function to execute the refund by deleting records
+2. A function to look up a customer's purchase history
 
-Note that we design these helpers so that we can easily test them without updating our database. Specifically we provide an option to "mock" the refund functionality.
+To make testing easier, we'll add a "mock" mode to these functions. When mock mode is enabled, the functions will simulate database operations without actually modifying any data.
 
 ```python
 import sqlite3
@@ -308,14 +311,18 @@ def _lookup(
 #endregion
 ```
 
-Now let's define our graph. We'll use a simple extraction and routing architecture:
+Now let's define our graph. We'll use a simple architecture with three main paths:
 
-- First we'll extract any relevant info about the customer and their purchase
-- If we have enough purchase information to execute the refund, we'll route to the refund node
-- If we have enough customer information to look up the customer's purchases, we'll route to the lookup node
-- Otherwise we'll respond directly to the user requesting that they provide the necessary info
+1. Extract customer and purchase information from the conversation
+2. Route the request to one of three paths:
+   - Refund path: If we have sufficient purchase details (Invoice ID or Invoice Line IDs) to process a refund
+   - Lookup path: If we have enough customer information (name and phone) to search their purchase history
+   - Response path: If we need more information, respond to the user requesting the specific details needed
 
-Our graph state will contain the messages to and from the user, all of the information we've gathered about the user from the conversation so far, and the followup text to next send to the user.
+The graph's state will track:
+- The conversation history (messages between user and agent)
+- All customer and purchase information extracted from the conversation
+- The next message to send to the user (followup text)
 
 ````python
 #region
@@ -985,11 +992,13 @@ You can see what these results look like here: [LangSmith link](https://smith.la
 
 ### Trajectory evaluator
 
-The more complex your agent, the more opportunities for it to fail.
-In such cases, it can be valuable to have non-binary evaluations that give your agent partial credit for taking some correct steps even if it doesn't get to the correct final answer.
-Trajectory evaluations do just this—we can compare the actual sequence of steps the agent took to the desired sequence of steps, and score it based on the number of correct steps it took.
-In this case, we've defined our end-to-end dataset to include an ordered subsequence of steps we expect our agent to have taken.
-Let's write an evaluator that checks the actual agent trajectory to see how many of the desired steps were taken:
+As agents become more complex, they have more potential points of failure. Rather than using simple pass/fail evaluations, it's often better to use evaluations that can give partial credit when an agent takes some correct steps, even if it doesn't reach the right final answer.
+
+This is where trajectory evaluations come in. A trajectory evaluation:
+1. Compares the actual sequence of steps the agent took against an expected sequence
+2. Calculates a score based on how many of the expected steps were completed correctly
+
+For this example, our end-to-end dataset contains an ordered list of steps that we expect the agent to take. Let's create an evaluator that checks the agent's actual trajectory against these expected steps and calculates what percentage were completed:
 
 ```python
 #region
