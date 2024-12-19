@@ -226,7 +226,6 @@ gpt_4o = ChatOpenAI(model="gpt-4o")
 new_agent = create_react_agent(gpt_4o, tools=tools, state_modifier=modifier)
 
 def new_target(inputs):
-    rate_limiter.acquire()
     raw = new_agent.invoke(inputs)
     return {"messages": convert_to_openai_messages(raw['messages'])}
 
