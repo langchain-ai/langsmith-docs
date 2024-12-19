@@ -4,101 +4,116 @@ sidebar_position: 5
 
 # Backtesting
 
-Deploying your app into production is just one step in a longer journey of continuous improvement. 
-You'll likely want to develop other candidate systems that improve on your production model using 
-improved prompts, llms, tools, and other techniques. While you may have a set of offline datasets 
-you can compare your new system against, it's often useful to compare system performance on more recent production data.
-This can help you get a good idea of how the new system performs in the real world.
+Deploying your application is just the beginning of a continuous improvement process. 
+Typically, you'll want to refine your system by enhancing prompts, language models, tools, and architectures. 
+While the initial datasets you created before deployment are useful for testing new versions, you now have access to real historical data. This data provides a more accurate representation of the inputs your application will encounter in the future.
+Backtesting involves assessing new versions of your application using this historical data and comparing the new outputs to the original ones. 
+This approach can offer a clearer indication of whether the new version is an improvement over the current deployment compared to evaluations using pre-production datasets.
 
-The basic steps for doing such backtesting are:
+Here are the basic steps for backtesting:
+1. Select sample runs from your production tracing project to test against.
+2. Transform the run inputs into a dataset and record the run outputs as an initial experiment against that dataset.
+3. Execute your new system on the new dataset and compare the results of the experiments.
 
-1. Sample runs to test against from your production tracing project.
-2. Convert these runs to a dataset + initial experiment.
-3. Run your new system against the inputs of those runs and compare the results.
+This process will provide you with a new dataset of representative inputs, which you can version and use for backtesting your models.
 
-You will then have a new dataset of representative inputs you can you can version and backtest your models against.
-
-:::note Ground Truth Data
-In most cases, you won't have "ground truth" answers in this case, but you can manually compare and label or use reference-free evaluators to score the outputs.
-If your application DOES permit capturing ground-truth labels, then we recommend you use those.
+:::info Ground truth data
+Often, you won't have definitive "ground truth" answers available. 
+In such cases, you can manually label the outputs or use evaluators that don't rely on reference data. 
+If your application allows for capturing ground-truth labels, for example by allowing users to leave feedback, we strongly recommend doing so.
 :::
 
-## Prerequisites
+## Setup
+### Configure the environment
 
-Install + set environment variables. This requires `langsmith>=0.1.29` to use the beta utilities.
+Install and set environment variables. This guide requires `langsmith>=0.2.4`.
 
-```python
-%%capture --no-stderr
-%pip install -U --quiet langsmith langchain_anthropic langchainhub langchain
+:::info Optional LangChain usage
+
+For convenience we'll use the LangChain OSS framework in this tutorial, but the LangSmith functionality shown is framework-agnostic.
+
+:::
+
+```bash
+pip install -U langsmith langchain langchain-anthropic langchainhub emoji
 ```
 
 ```python
+import getpass
 import os
 
 # Set the project name to whichever project you'd like to be testing against
 project_name = "Tweet Writing Task"
 os.environ["LANGCHAIN_PROJECT"] = project_name
-os.environ["LANGCHAIN_API_KEY"] = "YOUR API KEY"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
+if not os.environ.get("LANGCHAIN_API_KEY"):
+    os.environ["LANGCHAIN_API_KEY"] = getpass.getpass("YOUR API KEY")
+
+# Optional. You can swap OpenAI for any other tool-calling chat model.
 os.environ["OPENAI_API_KEY"] = "YOUR OPENAI API KEY"
-# Optional, you can use DuckDuckGo which requires no API key
+# Optional. You can swap Tavily for the free DuckDuckGo search tool if preferred.
 os.environ["TAVILY_API_KEY"] = "YOUR TAVILY API KEY"
 ```
 
-## Create some production runs
+### Define the application
 
-If you already have a tracing project with tracing runs, you can skip this step.
-For people who don't we will provide some starter code so you can follow along for the rest of the tutorial.
-
-The example app we will make is a Tweet writer:
+For this example lets create a simple Tweet-writing application that has access to some internet search tools:
 
 ```python
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, convert_to_openai_messages
+from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
 from langchain_community.tools import DuckDuckGoSearchRun, TavilySearchResults
-from langchain_core.runnables import RunnableLambda
 from langchain_core.rate_limiters import InMemoryRateLimiter
 
-rate_limiter = InMemoryRateLimiter(
-    requests_per_second=0.08 # If you have a higher tiered API plan you can increase this
+# We will use GPT-3.5 Turbo as the baseline and compare against GPT-4o
+gpt_3_5_turbo = init_chat_model(
+    "gpt-3.5-turbo", 
+    temperature=1, 
+    configurable_fields=("model", "model_provider"),
 )
 
-# We will use GPT-3.5 Turbo as the baseline and compare against GPT-4o
-gpt_3_5_turbo = ChatOpenAI(model="gpt-3.5-turbo")
-
-# The modifier is passed as a system message to the agent
-modifier = "You are a tweet writing assistant. Use at least 3 emojis in each tweet and remember that tweets are constrained to 280 characters. "
-"Please use the search tool to gather recent information on the tweet topic. Respond only with the tweet content."
-"Make sure the tweet uses information you retrieved during your search, also mention the source of the information. Make your tweet as engaging as possible."
+# The instrucitons are passed as a system message to the agent
+instructions = """You are a tweet writing assistant. Given a topic, do some research and write a relevant and engaging tweet about it.
+- Use at least 3 emojis in each tweet
+- The tweet should be no longer than 280 characters
+- Always use the search tool to gather recent information on the tweet topic
+- Write the tweet only based on the search content. Do not rely on your internal knowledge
+- When relevant, link to your sources
+- Make your tweet as engaging as possible"""
 
 # Define the tools our agent can use
-tools = [TavilySearchResults(max_results=3, rate_limiter=rate_limiter)]
-# Use DuckDuckGo if you don't have a Tavily API key
+
+# If you have a higher tiered Tavily API plan you can increase this 
+rate_limiter = InMemoryRateLimiter(requests_per_second=0.08)
+
+# Use DuckDuckGo if you don't have a Tavily API key:
 # tools = [DuckDuckGoSearchRun(rate_limiter=rate_limiter)]
-agent = create_react_agent(gpt_3_5_turbo, tools=tools, state_modifier=modifier)
+tools = [TavilySearchResults(max_results=5, rate_limiter=rate_limiter)]
 
-def target(inputs):
-    raw = agent.invoke(inputs)
-    return {"messages": convert_to_openai_messages(raw['messages'])}
-    
-agent_runnable = RunnableLambda(target)
+agent = create_react_agent(gpt_3_5_turbo, tools=tools, state_modifier=instructions)
+```
 
-inputs = [
-    "LangChain recent news",
-    "The 2024 NFL Season",
-    "Agents built using LangGraph",
-    "The 2024 United States presidential election",
-    "Research related to mechanistic interpretability",
-    "The latest frontier LLM models",
-    "Host cities for the 2026 world cup",
-    "The stock market over the last week",
-    "Willow, Google's Quantum Computing Chip",
-    "The Billboard 100 for the first week of december 2024"
+### Simulate production data
+
+Now lets simulate some production data:
+
+```python
+fake_production_inputs = [
+    "Alan turing's early childhood",
+    "Economic impacts of the European Union",
+    "Underrated philosophers",
+    "History of the Roxie theater in San Francisco",
+    "ELI5: gravitational waves",
+    "The arguments for and against a parliamentary system",
+    "Pivotal moments in music history",
+    "Big ideas in programming languages",
+    "Big questions in biology",
+    "The relationship between math and reality",
+    "What makes someone funny",
 ]
 
-agent_runnable.batch(
-    [{"messages": [HumanMessage(content=content)]} for content in inputs],
+agent.batch(
+    [{"messages": [{"role": "user", "content": content}]} for content in fake_production_inputs],
 )
 ```
 
@@ -118,15 +133,13 @@ from uuid import uuid4
 from langsmith import Client
 from langsmith.beta import convert_runs_to_test
 
+# Fetch the runs we want to convert to a dataset/experiment
+client = Client()
+
 # How we are sampling runs to include in our dataset
 end_time = datetime.now(tz=timezone.utc)
 start_time = end_time - timedelta(days=1)
 run_filter = f'and(gt(start_time, "{start_time.isoformat()}"), lt(end_time, "{end_time.isoformat()}"))'
-
-
-# Fetch the runs we want to convert to a dataset/experiment
-client = Client()
-
 prod_runs = list(
     client.list_runs(
         project_name=project_name,
@@ -134,7 +147,6 @@ prod_runs = list(
         filter=run_filter,
     )
 )
-baseline_experiment_name = f"prod-baseline-gpt-3.5-turbo-{str(uuid4())[:4]}"
 ```
 
 ### Convert runs to experiment
@@ -148,9 +160,10 @@ baseline_experiment_name = f"prod-baseline-gpt-3.5-turbo-{str(uuid4())[:4]}"
 ```python
 # Name of the dataset we want to create
 dataset_name = f'{project_name}-backtesting {start_time.strftime("%Y-%m-%d")}-{end_time.strftime("%Y-%m-%d")}'
+# Name of the experiment we want to create from the historical runs
+baseline_experiment_name = f"prod-baseline-gpt-3.5-turbo-{str(uuid4())[:4]}"
 
 # This converts the runs to a dataset + experiment
-# It does not actually invoke your model
 convert_runs_to_test(
     prod_runs,
     # Name of the resulting dataset
@@ -177,30 +190,42 @@ Now we can start the process of benchmarking our production runs against a new s
 ### Define evaluators
 
 First let's define the evaluators we will use to compare the two systems.
+Note that we have no reference outputs, so we'll need to come up with evaluation metrics that only require the actual outputs.
 
 ```python
 import emoji
 from pydantic import BaseModel, Field
+from langchain_core.messages import ToolMessage
 
-class Grounded(BaseModel):
-    """Whether the tweet was grounded in the retrieved context"""
-    grounded: bool = Field(..., description="Is the majorits of the tweet content supported by the retrieved context?")
+class Grade(BaseModel):
+    """Grade whether a response is supported by some context."""
+    grounded: bool = Field(..., description="Is the majority of the response supported by the retrieved context?")
 
-grounded_model = ChatOpenAI(model = "gpt-4o").with_structured_output(Grounded)
+grounded_instructions = f"""You have given somebody some contextual information and asked them to write a statement grounded in that context.
 
-def length_evaluator(outputs):
-    return {"key": "satisfies_tweet_length", "score": int(len(outputs["messages"][-1]['content']) <= 280)}
+Grade whether their response is fully supported by the context you have provided. \
+If any meaningful part of their statement is not backed up directly by the context you provided, then their response is not grounded. \
+Otherwise it is grounded."""
+grounded_model = init_chat_model(model="gpt-4o").with_structured_output(Grade)
+
+def lt_280_chars(outputs: dict) -> bool:
+    return len(outputs["messages"][-1]['content']) <= 280
     
-def emoji_evaluator(outputs):
-    return {"key": "satisfies_emoji_requirement", "score": (len(emoji.emoji_list(outputs["messages"][-1]['content'])) >= 3)}
+def gte_3_emojis(outputs: dict) -> bool:
+    return len(emoji.emoji_list(outputs["messages"][-1]['content'])) >= 3
     
-def grounded_evaluator(outputs):
+async def is_grounded(outputs: dict) -> bool:
     context = ""
     for message in outputs["messages"]:
-        if message['role'] == "tool" and ('status' in message and message['status'] != "error"):
+        if isinstance(message, ToolMessage):
             # Tool message outputs are the results returned from the Tavily/DuckDuckGo tool
-            context += message['content']
-    return {"key": "grounded_in_context", "score": int(grounded_model.invoke(f"Is the tweet about the following context: {context}?").grounded)}
+            context += "\n\n" + message.content 
+    tweet = outputs["messages"][-1].content
+    grade = await grounded_model.ainvoke([
+        {"role": "system", "content": grounded_instructions},
+        {"role": "user", "content": tweet}
+    ])
+    return grade.grounded
 ```
 
 ### Evaluate baseline
@@ -208,33 +233,26 @@ def grounded_evaluator(outputs):
 Now, let's run our evaluators against the baseline experiment.
 
 ```python
-from langsmith import evaluate
-
-evaluate(
+baseline_results = await client.aevaluate(
     baseline_experiment_name,
-    evaluators=[length_evaluator, emoji_evaluator, grounded_evaluator],
+    evaluators=[lt_280_chars, gte_3_emojis, is_grounded],
 )
+# If you have pandas installed can easily explore results as df:
+# baseline_results.to_pandas()
 ```
 
 ### Define and evaluate new system
 
-Now, let's define and evaluate our new system. In this example our new system
-will be the same as the old system, but will use GPT-4o instead of GPT-3.5.
+Now, let's define and evaluate our new system. 
+In this example our new system will be the same as the old system, but will use GPT-4o instead of GPT-3.5.
+Since we've made our model configurable we can just update the default config passed to our agent:
 
 ```python
-gpt_4o = ChatOpenAI(model="gpt-4o")
-new_agent = create_react_agent(gpt_4o, tools=tools, state_modifier=modifier)
-
-def new_target(inputs):
-    rate_limiter.acquire()
-    raw = new_agent.invoke(inputs)
-    return {"messages": convert_to_openai_messages(raw['messages'])}
-
-evaluate(
-    new_target,
-    data = dataset_name,
-    evaluators = [length_evaluator, emoji_evaluator, grounded_evaluator],
-    experiment_prefix="new-baseline-gpt-4o",
+candidate_results = await client.aevaluate(
+    agent.with_config(model="gpt-4o"),
+    data=dataset_name,
+    evaluators=[lt_280_chars, gte_3_emojis, is_grounded],
+    experiment_prefix="candidate-gpt-4o",
 )
 ```
 
@@ -249,10 +267,3 @@ under 280 characters. We can enter the comparison view to see the exact runs on
 which GPT-4o is better than GPT-3.5:
 
 ![](./static/comparison_view.png)
-
-## Next steps
-
-This was a simple example to show how you could backtest your production system against a new system.
-There are many different ways to do this backtesting, including using targeted filters
-to select the production runs you want to improve on, or using human preference
-data instead of evlautors defined in code.
