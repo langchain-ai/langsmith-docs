@@ -73,7 +73,7 @@ First, lets load the blog posts we want to build a chatbot for and index them.
 ```python
 #region
 from langchain_community.document_loaders import WebBaseLoader
-from langchain_community.vectorstores import SKLearnVectorStore
+from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -97,7 +97,7 @@ text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
 doc_splits = text_splitter.split_documents(docs_list)
 
 # Add the document chunks to the "vector store" using OpenAIEmbeddings
-vectorstore = SKLearnVectorStore.from_documents(
+vectorstore = InMemoryVectorStore.from_documents(
     documents=doc_splits,
     embedding=OpenAIEmbeddings(),
 )
@@ -116,15 +116,15 @@ We can now define the generative pipeline.
 from langchain_openai import ChatOpenAI
 from langsmith import traceable
 
-llm = ChatOpenAI("gpt-4o", temperature=1)
+llm = ChatOpenAI(model="gpt-4o", temperature=1)
 
 # Add decorator so this function is traced in LangSmith
 @traceable()
 def rag_bot(question: str) -> dict:
     # langchain Retriever will be automatically traced
     docs = retriever.invoke(question)
-
     docs_string = "\n\n".join(doc.page_content for doc in docs)
+
     instructions = f"""You are a helpful assistant who is good at analyzing source information and answering questions. \
 Use the following source documents to answer the user's questions. \
 If you don't know the answer, just say that you don't know. \
@@ -132,6 +132,7 @@ Use three sentences maximum and keep the answer concise.
 
 Documents:
 {docs_string}"""
+
     # langchain ChatModel will be automatically traced
     ai_msg = llm.invoke([
             {"role": "system", "content": instructions},
@@ -243,7 +244,7 @@ Avoid simply stating the correct answer at the outset."""
 # Grader LLM
 grader_llm = ChatOpenAI(model="gpt-4o", temperature=0).with_structured_output(CorrectnessGrade, method="json_schema", strict=True)
 
-def correctness(inputs: dict, output: dict, reference_outputs: dict) -> bool:
+def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
     """An evaluator for RAG answer accuracy"""
     answers = f"""\
 QUESTION: {inputs['question']}
@@ -287,7 +288,7 @@ Avoid simply stating the correct answer at the outset."""
 relevance_llm = ChatOpenAI(model="gpt-4o", temperature=0).with_structured_output(RelevanceGrade, method="json_schema", strict=True)
 
 # Evaluator
-def relevance(intputs: dict, outputs: dict) -> dict:
+def relevance(inputs: dict, outputs: dict) -> bool:
     """A simple evaluator for RAG answer helpfulness."""
     answer = f"""\
 QUESTION: {inputs['question']}
@@ -327,7 +328,7 @@ Avoid simply stating the correct answer at the outset."""
 grounded_llm = ChatOpenAI(model="gpt-4o", temperature=0).with_structured_output(GroundedGrade, method="json_schema", strict=True)
 
 # Evaluator
-def groundedness(inputs: dict, outputs: dict) -> dict:
+def groundedness(inputs: dict, outputs: dict) -> bool:
     """A simple evaluator for RAG answer groundedness."""
     doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
     answer = f"""\
@@ -391,6 +392,8 @@ experiment_results = client.evaluate(
     experiment_prefix="rag-doc-relevance",
     metadata={"version": "LCEL context, gpt-4-0125-preview"},
 )
+# Explore results locally as a dataframe if you have pandas installed
+# experiment_results.to_pandas()
 ```
 
 
@@ -401,7 +404,7 @@ Here's a consolidated script with all the above code:
 ```python
 #region [collapsed]
 from langchain_community.document_loaders import WebBaseLoader
-from langchain_community.vectorstores import SKLearnVectorStore
+from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langsmith import Client, traceable
@@ -427,7 +430,7 @@ text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
 doc_splits = text_splitter.split_documents(docs_list)
 
 # Add the document chunks to the "vector store" using OpenAIEmbeddings
-vectorstore = SKLearnVectorStore.from_documents(
+vectorstore = InMemoryVectorStore.from_documents(
     documents=doc_splits,
     embedding=OpenAIEmbeddings(),
 )
@@ -435,7 +438,7 @@ vectorstore = SKLearnVectorStore.from_documents(
 # With langchain we can easily turn any vector store into a retrieval component:
 retriever = vectorstore.as_retriever(k=6)
 
-llm = ChatOpenAI("gpt-4o", temperature=1)
+llm = ChatOpenAI(model="gpt-4o", temperature=1)
 
 
 # Add decorator so this function is traced in LangSmith
@@ -525,7 +528,7 @@ grader_llm = ChatOpenAI(model="gpt-4o", temperature=0).with_structured_output(
 )
 
 
-def correctness(inputs: dict, output: dict, reference_outputs: dict) -> bool:
+def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
     """An evaluator for RAG answer accuracy"""
     answers = f"""\
 QUESTION: {inputs['question']}
@@ -574,7 +577,7 @@ relevance_llm = ChatOpenAI(model="gpt-4o", temperature=0).with_structured_output
 
 
 # Evaluator
-def relevance(intputs: dict, outputs: dict) -> dict:
+def relevance(inputs: dict, outputs: dict) -> bool:
     """A simple evaluator for RAG answer helpfulness."""
     answer = f"""\
 QUESTION: {inputs['question']}
@@ -620,7 +623,7 @@ grounded_llm = ChatOpenAI(model="gpt-4o", temperature=0).with_structured_output(
 
 
 # Evaluator
-def groundedness(inputs: dict, outputs: dict) -> dict:
+def groundedness(inputs: dict, outputs: dict) -> bool:
     """A simple evaluator for RAG answer groundedness."""
     doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
     answer = f"""\
