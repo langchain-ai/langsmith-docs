@@ -381,6 +381,8 @@ QUESTION: {inputs['question']}"""
 
 ## Run evaluation
 
+We can now kick off our evaluation job with all of our different evaluators.
+
 ```python
 def target(inputs: dict) -> dict:
     return rag_bot(inputs["question"])
@@ -396,6 +398,7 @@ experiment_results = client.evaluate(
 # experiment_results.to_pandas()
 ```
 
+You can see an example of what these results look like here: [LangSmith link](https://smith.langchain.com/public/302573e2-20bf-4f8c-bdad-e97c20f33f1b/d)
 
 ## Reference code
 
