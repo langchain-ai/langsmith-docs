@@ -1,476 +1,184 @@
-# Evaluation Concepts
+Evaluation Concepts
+===================
 
-The pace of AI application development is often limited by high-quality evaluations.
-Evaluations are methods designed to assess the performance and capabilities of AI applications.
+High-quality evaluations are essential for refining, testing, and iterating AI applications. Meaningful evaluations make it easier to tailor prompts, choose models, experiment with new architectures, and confirm that your deployed applications continue to function as intended. LangSmith is designed to simplify the process of constructing these effective evaluations.
 
-Good evaluations enable you to:
-- Iteratively improve prompts
-- Select optimal models
-- Test different architectures
-- Ensure deployed applications maintain expected performance
+This guide walks through LangSmith’s evaluation framework and the underlying concepts for evaluating AI applications. It explores:
 
-This guide explains the key concepts behind the LangSmith evaluation framework and evaluations for AI applications more broadly.
+• Datasets, which serve as test collections for your application’s inputs (and optionally reference outputs).  
+• Evaluators, which are functions that measure how well your application’s outputs meet certain criteria.
 
-## Core Components
+Datasets
+--------
 
-LangSmith evaluations consist of two essential parts:
-- [**Datasets**](#datasets): Collections of test inputs and optional reference outputs
-- [**Evaluators**](#evaluators): Functions that score outputs based on dataset inputs
+A dataset is a curated collection of examples—each containing inputs and optional reference outputs—that you use to measure your application’s performance.
 
-## Datasets
-
-A dataset contains a collection of examples used for evaluating an application.
-
-![Dataset](./static/dataset_concept.png)
+Illustration: Datasets consist of examples. Each example may include inputs, optional reference outputs, and metadata.
 
 ### Examples
 
-Each example in a dataset consists of three components:
+Each example represents one test case and generally includes three parts. First, it has one or more inputs—organized in a dictionary—that your application receives during a run. Second, it may include reference outputs, also called target or gold-standard outputs. These reference outputs are typically reserved for evaluators (instead of being fed directly into your application). Lastly, you can attach metadata in a dictionary format to keep track of any descriptive notes or tags you want to associate with the example. This metadata can then be used to filter or slice your dataset when performing evaluations.
 
-1. **Inputs**: A dictionary of input variables passed to your application
-2. **Reference outputs** (optional): A dictionary of expected outputs used only by evaluators
-3. **Metadata** (optional): Additional information for creating filtered dataset views
-
-![Example](./static/example_concept.png)
+Illustration: An example has inputs, possible reference outputs, and optional metadata.
 
 ### Dataset Curation
 
-There are several effective approaches to building evaluation datasets:
+When building datasets to represent your application’s use cases, there are a few methods you can follow.
 
-#### 1. Manually Curated Examples
-This is our recommended starting point for dataset creation. Benefits include:
-- Leverages your understanding of expected application inputs
-- Allows definition of "good" response criteria
-- Enables coverage of common edge cases
-- Even 10-20 high-quality examples can provide valuable insights
+Manually Curated Examples. This approach is a strong starting point if you already know the kinds of tasks your app needs to handle and what good outputs look like. Carefully selected examples can catch both typical cases and edge cases. Even a small set—perhaps 10 to 20 entries—can offer significant insights.
 
-#### 2. Historical Traces
-Once your application is in production, real user interactions become valuable examples. Selection methods include:
+Historical Traces. Once your system is active in production, you can gather real-world runs to see how actual users interact with your application. You might pick out runs flagged by user complaints or poor ratings, examine cases where runtime anomalies occurred, or programmatically detect interesting patterns (such as users repeating themselves when the system didn’t address their query effectively).
 
-- **User Feedback**: 
-  - Collect end user responses
-  - Focus on examples with negative feedback
-  - Identify areas where application underperformed
-
-- **Heuristics**: 
-  - Identify "interesting" datapoints
-  - Flag runs with longer completion times
-  - Track unusual patterns
-
-- **LLM Feedback**: 
-  - Use LLMs to detect noteworthy runs
-  - Flag conversations requiring user rephrasing
-  - Identify incorrect initial responses
-
-#### 3. Synthetic Data
-After establishing baseline examples, synthetic data can expand your dataset:
-- Build upon existing hand-crafted examples
-- Useful for rapid dataset growth
-- Maintain quality through careful generation
+Synthetic Generation. You can bolster your dataset by asking a language model to generate fresh test examples. This scales efficiently but works best if you have previously curated a small batch of high-quality examples for the model to emulate.
 
 ### Splits
 
-Dataset splits serve multiple purposes in evaluation:
-- Enable rapid iteration on smaller subsets
-- Support final evaluation on larger datasets
-- Improve experiment interpretability
+Datasets in LangSmith can be partitioned into one or more splits. Splits enable you to separate your data in ways that help you run cost-effective experiments on a smaller slice while retaining more extensive tests for comprehensive evaluation. For instance, with a retrieval-augmented generation (RAG) system, you could divide data between factual queries and opinion-based queries, testing each category independently.
 
-For example, in RAG applications, splits can focus on different question types:
-- Factual questions
-- Opinion-based questions
-- Complex reasoning tasks
-
-Learn how to [create and manage dataset splits](/evaluation/how_to_guides/manage_datasets_in_application#create-and-manage-dataset-splits).
+Learn more about how to create and manage dataset splits here:  
+(/evaluation/how_to_guides/manage_datasets_in_application#create-and-manage-dataset-splits)
 
 ### Versions
 
-Dataset versioning is a key feature that:
-- Creates new versions upon any modification (add/update/delete)
-- Enables inspection and reverting of changes
-- Supports [version tagging](/evaluation/how_to_guides/version_datasets#tag-a-version) for human-readable milestones
+Every time you modify a dataset—adding, editing, or removing examples—LangSmith automatically creates a new version. This versioning allows you to revisit or revert earlier dataset states, making it easier to keep track of your changes as your application evolves. You can label these versions with meaningful tags that denote specific milestones or stable states of the dataset. You can also run evaluations on specific dataset versions if you want to lock a particular set of tests into a continuous integration (CI) pipeline.  
+More details on dataset versioning are available here:  
+(/evaluation/how_to_guides/version_datasets)
 
-Version-specific evaluations are particularly valuable for CI pipelines, ensuring dataset updates don't disrupt existing processes.
+Evaluators
+----------
 
-## Evaluators
+Evaluators are functions that assign one or more metrics to your application’s outputs. They provide “grades” indicating how closely the application’s outputs align with the desired criteria.
 
-Evaluators are functions that assess application performance on specific examples.
+### Evaluator Inputs
 
-### Evaluator Components
+Evaluators receive both the example (which supplies the input data and any reference outputs) and the run (the actual output produced by your application). The run may include the final output and any intermediate steps that occurred along the way, such as tool calls.
 
-#### Inputs
-Evaluators receive:
-- [Example](/evaluation/concepts#examples): Dataset examples containing:
-  - Inputs
-  - Reference outputs (optional)
-  - Metadata
-- [Run](/observability/concepts#runs): Actual application performance data:
-  - Outputs
-  - Intermediate steps (child runs)
+### Evaluator Outputs
 
-#### Outputs
-Evaluators return metrics as dictionaries or lists of dictionaries containing:
-- `key`: Metric name
-- `score` | `value`: Metric result (numerical or categorical)
-- `comment` (optional): Reasoning or additional context
+Evaluators produce metrics in a dictionary or list of dictionaries. Typically, these metrics will have:  
+• A “key” which names the metric.  
+• A “score” or “value” that holds either a numeric measure or a categorical label.  
+• An optional “comment” that explains how the evaluator arrived at the score or label.
 
-### Evaluator Implementation
+### Defining Evaluators
 
-Multiple approaches are available:
-1. **Custom code**: 
-   - Define evaluators in Python or TypeScript
-   - Run client-side via SDKs
-   - Execute server-side through UI
-
-2. **Built-in evaluators**: 
-   - Use LangSmith's pre-configured evaluators
-   - Configure via UI
-
-Evaluators can be executed through:
-- LangSmith SDK ([Python](https://docs.smith.langchain.com/reference/python) and TypeScript)
-- [Prompt Playground](../../prompt_engineering/concepts#prompt-playground)
-- [Rules](../../observability/how_to_guides/monitoring/rules) for automated evaluation
+You can define and run LangSmith evaluators in a variety of ways. You can write your own custom evaluators in Python or TypeScript or rely on built-in evaluators that come with LangSmith. Evaluation can be triggered through the LangSmith SDK (in Python or TypeScript), the Prompt Playground (a feature within LangSmith), or via automated rules you set up in your project.
 
 ### Evaluation Techniques
 
-#### 1. Human Evaluation
-- Often the best starting point
-- Enables detailed review of outputs and traces
-- Facilitated by LangSmith's [annotation queues](/evaluation/concepts#annotation-queues)
+When building evaluators for large language model (LLM) applications, you can choose from several common strategies:
 
-#### 2. Heuristic Evaluation
-- Deterministic, rule-based functions
-- Ideal for simple checks:
-  - Non-empty chatbot responses
-  - Code compilation verification
-  - Exact classification matching
+Human Review. You or your team members can manually examine outputs for correctness and user satisfaction. This direct feedback is crucial, particularly in the early stages of development. LangSmith Annotation Queues allow you to structure this process for efficiency, including permissions and guidelines.
 
-#### 3. LLM-as-judge
-Evaluators using LLMs to score outputs:
-- Encode grading criteria in prompts
-- Can be reference-free or reference-based
-- Require careful review and prompt tuning
-- Benefit from few-shot examples in grader prompts
+Heuristic Checking. Basic, rule-based evaluators can check for empty responses, monitoring how long responses are, or ensuring that certain keywords appear or do not appear.
 
-Learn about [implementing LLM-as-judge evaluators](/evaluation/how_to_guides/llm_as_judge).
+LLM-as-Judge. You can use a language model to evaluate or grade outputs. This approach often involves encoding your evaluation instructions in a prompt. It can be used in situations either with or without reference outputs.
 
-#### 4. Pairwise Evaluation
-Compare outputs from two application versions:
-- Similar to [LMSYS Chatbot Arena](https://chat.lmsys.org/)
-- Applicable to general AI applications
-- Can use:
-  - Heuristics
-  - LLM-based comparison
-  - Human annotation
+Pairwise Comparisons. When you’re testing two versions of your application, you can have an evaluator decide which version performed better for a given example. This is often simpler for tasks like summarization, where “which is better?” is easier to judge than producing an absolute numeric performance score.
 
-**When to use pairwise evaluation:**
-- Direct scoring is difficult
-- Comparing outputs is more straightforward
-- Example: Summarization quality assessment
+Experiment
+----------
 
-Learn [how to implement pairwise evaluations](/evaluation/how_to_guides/evaluate_pairwise).
+Every time you run your dataset’s inputs through your application, you’re effectively launching a new experiment. Using LangSmith, you can track every experiment linked to a dataset, making it simple to compare different versions of your application side by side. This comparison helps you detect regressions or measure gains accurately as you refine prompts, models, or other system components.
 
-## Experiment
+Illustration: Compare multiple experiments side by side to see changes in scores or outputs.
 
-An experiment represents a single evaluation run of your application on a dataset:
-- Tests specific application configurations
-- Enables comparison of different:
-  - Prompts
-  - LLMs
-  - Architectures
-- Supports [multi-experiment comparison](/evaluation/how_to_guides/compare_experiment_results)
+Annotation Queues
+-----------------
 
-![Example](./static/comparing_multiple_experiments.png)
+Gathering real user input is a key part of refining your system. With annotation queues, you can sort runs into a review flow where human annotators examine outputs and assign feedback or corrective notes. These collected annotations can eventually form a dataset for future evaluations. In some cases, you might label only a sample of runs; in others, you may label them all. Annotation queues provide a structured environment for capturing this feedback while making it easy to keep track of who reviewed what.
 
-## Annotation Queues
+To learn more about annotation queues and best practices for managing human feedback, see:  
+(/evaluation/how_to_guides#annotation-queues-and-human-feedback)
 
-Human feedback provides crucial insights for application improvement. [Annotation queues](/evaluation/how_to_guides/annotation_queues) enable:
-- Systematic flagging of runs for review
-- Streamlined interface for annotators
-- Efficient feedback collection
+Offline Evaluation
+------------------
 
-While [inline run annotation](/evaluation/how_to_guides/annotate_traces_inline) is always available, annotation queues offer additional benefits:
-- Grouped run organization
-- Specific annotation criteria
-- Configurable permissions
-- Easy transfer to evaluation datasets
+Offline evaluation is done on a static dataset rather than live end-user queries. It’s often the best way to verify changes to your model or your workflow prior to deployment, since you can test your system on curated or historical examples and measure the results in a controlled environment.
 
-Learn more about [annotation queues and human feedback](/evaluation/how_to_guides#annotation-queues-and-human-feedback).
-
-## Offline Evaluation
-
-Offline evaluation involves testing applications on pre-compiled datasets before deployment, contrasting with online evaluation which assesses live application performance.
-
-You can run offline evaluations:
-- Client-side: Using LangSmith SDK ([Python](https://docs.smith.langchain.com/reference/python) and TypeScript)
-- Server-side: Via [Prompt Playground](../../prompt_engineering/concepts#prompt-playground)
-- Automated: Through [automations](/observability/how_to_guides/monitoring/rules)
-
-![Offline](./static/offline.png)
+Illustration: Offline evaluations let you pass many curated or historical inputs into your application and systematically measure performance.
 
 ### Benchmarking
 
-Benchmarking is a common offline evaluation approach that involves:
-1. Curating representative input datasets
-2. Defining key performance metrics
-3. Testing multiple application versions
-
-Challenges include:
-- Dataset curation effort
-- Creating gold-standard references
-- Designing effective metrics
-
-**Example**: RAG Q&A bot evaluation
-- Dataset: Questions with reference answers
-- Evaluator: LLM-as-judge for semantic equivalence
-- Metrics: Answer accuracy and relevance
-
-**Example**: ReACT agent evaluation
-- Dataset: User requests with expected tool calls
-- Evaluator: Heuristic checking of tool call sequences
-- Metrics: Tool call accuracy and completeness
+Benchmarking involves running your application against a carefully assembled dataset to compare one or more metrics. For instance, you might supply question-answer pairs and then measure semantic similarity between your application’s answers and the reference answers. Alternatively, you could rely on LLM-as-judge prompts to assess correctness or helpfulness. Because creating and maintaining large reference datasets can be expensive, teams often reserve thorough benchmarking for high-stakes or major version releases.
 
 ### Unit Tests
 
-Unit tests verify individual component functionality:
-- Focus on basic assertions
-- Expected to consistently pass
-- Ideal for CI integration
-
-⚠️ **Important**: Consider caching for CI to manage LLM costs
+When dealing with LLMs, you can still implement traditional “unit tests” in your codebase. In many cases, these tests are rule-based checks that verify whether a generated response meets basic criteria—such as being valid JSON or avoiding empty outputs. Including them in your continuous integration (CI) pipeline can automate detection of small but critical issues any time your underlying system changes.
 
 ### Regression Tests
 
-Regression tests track performance across versions:
-- Ensure new versions maintain existing functionality
-- Measure improvements over previous versions
-- Typically triggered by significant updates:
-  - Model changes
-  - Architecture modifications
-  - Major prompt revisions
+Regression tests examine how your system handles a known set of examples after an update. Suppose you tweak your prompt or switch to a new model. By re-running the same dataset and comparing the old outputs against the new outputs, you can quickly spot examples where performance has worsened. The LangSmith dashboard presents this visually, highlighting negative changes in red and improvements in green.
 
-LangSmith's comparison view highlights:
-- Regressions (red)
-- Improvements (green)
-- Performance changes relative to baseline
-
-![Regression](./static/regression.png)
+Illustration: Regression view highlights newly broken examples in red, improvements in green.
 
 ### Backtesting
 
-Backtesting combines dataset creation with evaluation:
-1. Convert production logs to evaluation datasets
-2. Run updated versions on historical inputs
-3. Compare against original production results
+Backtesting replays your stored production traces—queries from real user sessions—through a newer version of your system. By comparing real user interactions against the new model’s outputs, you get a clear idea of whether the next model release will benefit your user base before you adopt it in production.
 
-**Common Use Case**: Model Version Testing
-- Collect recent production runs
-- Test with new model versions
-- Compare performance metrics
+### Pairwise Evaluation (Offline)
 
-### Pairwise Evaluation
+Offline pairwise evaluation directly compares outputs from two different system versions on the same collection of examples. Rather than trying to score a single run in isolation, you simply choose which of two outputs is superior. This approach is particularly helpful in tasks like summarization.
 
-Pairwise evaluation is particularly valuable when:
-- Absolute scoring is challenging
-- Relative comparisons are more reliable
-- Evaluating general tasks
+Online Evaluation
+-----------------
 
-For example, in summarization:
-- Instead of: "Rate this summary 1-10"
-- Better: "Which summary is clearer and more concise?"
+Online evaluation continuously measures your application’s performance in a live setting. Rather than waiting until an offline batch test is complete, online evaluation monitors production runs in near real time, allowing you to detect errors or performance deterioration the moment they appear. This can be done with heuristic methods, reference-free LLM prompts that check for common failure modes, or any custom-coded logic you choose to deploy in production.
 
-Learn [how to implement pairwise evaluations](/evaluation/how_to_guides/evaluate_pairwise).
+Illustration: Online evaluation actively checks real-time runs for undesired application outputs.
 
-## Online Evaluation
+Application-Specific Techniques
+-------------------------------
 
-Online evaluation assesses deployed applications in real-time:
-- No pre-existing dataset
-- No reference outputs available
-- Focus on immediate behavior assessment
-
-Use cases include:
-- Application monitoring
-- Behavior flagging
-- Performance tracking
-
-Online evaluators typically run server-side using:
-- Built-in [LLM-as-judge evaluators](/evaluation/how_to_guides/llm_as_judge)
-- Custom code evaluators within LangSmith
-
-![Online](./static/online.png)
-
-## Application-specific Techniques
+Below are a few evaluation strategies tailored to specific LLM application patterns.
 
 ### Agents
 
-[LLM-powered autonomous agents](https://lilianweng.github.io/posts/2023-06-23-agent/) combine three core components:
-1. Tool calling
-2. Memory
-3. Planning
+Autonomous LLM-driven agents combine an LLM for decision-making with tools for calls and memory for context. Each agent step typically involves the LLM deciding whether to invoke a tool, how to parse the user’s request, and what to do next based on prior steps.
 
-Agents [leverage tool calling](https://python.langchain.com/v0.1/docs/modules/agents/agent_types/tool_calling/) with planning (often via prompting) and memory (typically short-term message history) for response generation. [Tool calling](https://python.langchain.com/v0.1/docs/modules/model_io/chat/function_calling/) enables models to:
-- Select appropriate tools
-- Generate required input arguments
+Illustration: The agent uses an LLM to decide whether to call a tool and how.
 
-![Tool use](./static/tool_use.png)
+You can evaluate agents by focusing on:
 
-#### Agent Architecture Example
+• Final Response: Assess whether the ultimate answer is correct or helpful, ignoring the chain of actions the agent took.  
+• Single Step: Look at each decision independently. Did the agent choose the correct tool or produce the correct query at each stage?  
+• Trajectory: Check whether the sequence of actions is logical. You could compare the agent’s chosen tools with a reference “ideal” list, or see if the agent’s overall plan leads to the correct outcome.
 
-Below shows a tool-calling agent in [LangGraph](https://langchain-ai.github.io/langgraph/tutorials/introduction/):
+#### Evaluating an Agent’s Final Response
 
-1. `assistant node`: LLM determines tool usage based on input
-2. `tool condition`: Routes to tool node if tool selected
-3. `tool node`: Executes tool and returns output
-4. Loop continues until no tool is selected
+If your concern is whether the end result is correct, you can evaluate it just as you would any other LLM-generated answer. This method disregards intermediate steps, so it’s simpler to implement but doesn’t highlight at which point errors occur.
 
-![Agent](./static/langgraph_agent.png)
+#### Evaluating a Single Step
 
-#### Evaluation Types
+An agent often makes multiple decisions in sequence. By evaluating each step individually, you can catch smaller mistakes immediately. This requires more granular data on which tool was chosen at each step and why, and makes data collection slightly more complex.
 
-This architecture enables three primary evaluation approaches:
+#### Evaluating an Agent’s Trajectory
 
-1. **Final Response Evaluation**
-   - Assesses overall task completion
-   - Treats agent as black box
-   - Evaluates end result
+With trajectory-based evaluation, you consider the entire path from start to finish. This might involve matching the agent’s tool usage and outputs against a known “correct” chain of thought or simply passing the full trace to an evaluator (human or model) for a holistic verdict. Trajectory evaluations provide the richest feedback but require more setup and careful dataset construction.
 
-2. **Single Step Evaluation**
-   - Examines individual actions
-   - Focuses on tool selection
-   - Evaluates step accuracy
+### Retrieval Augmented Generation (RAG)
 
-3. **Trajectory Evaluation**
-   - Analyzes complete action sequence
-   - Verifies expected tool call paths
-   - Assesses overall strategy
+A RAG system fetches relevant documents to feed to the LLM. This is useful in tasks such as question-answering, enterprise search, or knowledge-based chat experiences.
 
-![Agent-eval](./static/agent_eval.png)
+Comprehensive RAG details:  
+https://github.com/langchain-ai/rag-from-scratch
 
-#### Detailed Evaluation Approaches
+#### Dataset
 
-##### 1. Final Response Evaluation
+For RAG, your dataset generally consists of queries and possibly reference answers. If reference answers exist, you can compare generated answers to these references for offline evaluation. If no reference answers exist, you can still measure whether relevant documents were retrieved or ask an LLM-as-judge to check whether the answer is faithful to the retrieved passages.
 
-**Components needed:**
-- Inputs: User input and optional tool list
-- Output: Final agent response
-- Evaluator: Task-dependent, often LLM-as-judge
+#### Evaluator
 
-**Considerations:**
-- (+) Evaluates complete task success
-- (-) Longer execution time
-- (-) Limited debugging insight
-- (-) Complex metric definition
-
-##### 2. Single Step Evaluation
-
-**Components needed:**
-- Inputs: Single step context
-- Outputs: LLM response/tool calls
-- Evaluator: Binary scoring for tool selection
-
-**Benefits:**
-- Precise debugging
-- Fast execution
-- Simple evaluation metrics
-
-**Challenges:**
-- Dataset creation complexity
-- Limited context consideration
-- Focuses on individual steps only
-
-##### 3. Trajectory Evaluation
-
-**Evaluation methods:**
-1. Exact sequence matching
-2. Tool set verification
-3. Full trajectory analysis
-
-**Metrics options:**
-- Binary exact match
-- Step deviation count
-- Expected tool coverage
-- LLM-based trajectory assessment
-
-### RAG (Retrieval Augmented Generation)
-
-:::info
-For comprehensive RAG understanding, see our [`RAG From Scratch` series](https://github.com/langchain-ai/rag-from-scratch).
-:::
-
-#### Dataset Considerations
-
-Key factors:
-- Reference answer availability
-- Ease of obtaining ground truth
-- Evaluation goals
-
-#### Evaluation Types
-
-![rag-types.png](./static/rag-types.png)
-
-1. **Reference-based**
-   - Compares against ground truth
-   - Assesses correctness
-   - Requires reference outputs
-
-2. **Reference-free**
-   - Self-consistency checks
-   - No reference required
-   - Multiple evaluation aspects
-
-#### RAG Evaluation Framework
-
-| Evaluator           | Purpose                                           | Reference Needed | LLM-as-judge                                                                         | Pairwise Compatible |
-|--------------------|----------------------------------------------------|------------------|------------------------------------------------------------------------------------|-------------------|
-| Document relevance  | Assess retrieval quality                           | No               | [prompt](https://smith.langchain.com/hub/langchain-ai/rag-document-relevance)       | No                |
-| Answer faithfulness | Verify grounding in documents                      | No               | [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-hallucination)     | No                |
-| Answer helpfulness  | Evaluate user value                                | No               | [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-helpfulness)       | No                |
-| Answer correctness  | Check reference consistency                        | Yes              | [prompt](https://smith.langchain.com/hub/langchain-ai/rag-answer-vs-reference)      | No                |
-| Pairwise comparison | Compare multiple versions                          | No               | [prompt](https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-rag)      | Yes               |
+Evaluators for RAG systems often revolve around factual accuracy and alignment with retrieved documents. You can assess how relevant the retrieved documents were and whether or not the final answer relies on accurate information. This can be done offline if reference answers are available, online if you want immediate monitoring in production, or through pairwise evaluations to compare different retrieval strategies.
 
 ### Summarization
 
-Summarization evaluation focuses on assessing free-form writing against specific criteria.
+When summarizing text, there isn’t always a single “correct” summary. Consequently, LLM-based evaluators are popular. The model can be asked to check clarity, factual accuracy, or faithfulness to the original text. You can conduct these evaluations offline on a curated set of source documents or run them online in near real time for user-generated inputs. Pairwise evaluation is also a common approach, since it may be easier to choose which of two summaries is better than to assign an absolute quality score to a single summary.
 
-#### Dataset Sources
+### Classification / Tagging
 
-1. **Developer Examples**
-   - Manually curated texts
-   - [Example dataset](https://smith.langchain.com/public/659b07af-1cab-4e18-b21a-91a69a4c3990/d)
+Classification tasks assign labels or tags to inputs. If you already have a labeled dataset, standard precision, recall, and accuracy metrics can be calculated. If labels are not available, you can use an LLM-as-judge to categorize inputs according to specified criteria and check for consistency.
 
-2. **Production Logs**
-   - Real user interactions
-   - Online evaluation compatible
+When reference labels exist, you can build a custom evaluator that compares predictions to ground truth and produces numeric performance metrics. Without reference labels, you could still rely on carefully designed prompts that instruct your model to classify inputs appropriately. Pairwise comparisons can be beneficial if you are testing two different classification systems and want to see which approach yields more satisfactory labels according to certain guidelines.
 
-#### Evaluation Framework
-
-| Use Case         | Purpose                                                      | Reference Needed | LLM-as-judge                                                                            |
-|-----------------|--------------------------------------------------------------|------------------|----------------------------------------------------------------------------------------|
-| Factual accuracy | Verify source accuracy                                       | No               | [prompt](https://smith.langchain.com/hub/langchain-ai/summary-accurancy-evaluator)      |
-| Faithfulness     | Check for hallucinations                                     | No               | [prompt](https://smith.langchain.com/hub/langchain-ai/summary-hallucination-evaluator)  |
-| Helpfulness      | Assess user value                                            | No               | [prompt](https://smith.langchain.com/hub/langchain-ai/summary-helpfulness-evaluator)    |
-
-### Classification/Tagging
-
-Classification evaluation approaches depend on reference label availability.
-
-#### With Reference Labels
-
-Standard metrics:
-- Accuracy
-- Precision
-- Recall
-
-Implementation: Custom [heuristic evaluator](./how_to_guides/custom_evaluator)
-
-#### Without Reference Labels
-
-Approach:
-- LLM-as-judge evaluation
-- Criteria-based assessment
-- Suitable for online evaluation
-
-| Metric    | Reference Required | LLM-as-judge | Best Use Case        |
-|-----------|-------------------|---------------|---------------------|
-| Accuracy  | Yes               | No            | Binary classification|
-| Precision | Yes               | No            | False positive focus |
-| Recall    | Yes               | No            | False negative focus |
+All the techniques discussed—offline or online evaluation, pairwise comparisons, heuristic checks, and more—can help ensure your classification tasks remain reliable as your system evolves.
