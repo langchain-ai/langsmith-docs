@@ -12,28 +12,64 @@ These are called `summary_evaluators`.
 
 ## Basic example
 
-Below, we'll implement a very simple summary evaluator that computes overall pass rate:
+Here, we'll compute the f1-score, which is a combination of precision and recall.
+
+This sort of metric can only be computed over all of the examples in our experiment, so our evaluator takes in a list of outputs, and a list of reference_outputs.
 
 <CodeTabs
   groupId="client-language"
   tabs={[
     python`
-      def pass_50(outputs: list[dict], reference_outputs: list[dict]) -> bool:
-          """Pass if >50% of all results are correct."""
-          correct = sum([out["class"] == ref["label"] for out, ref in zip(outputs, reference_outputs)])
-          return correct / len(outputs) > 0.5
+      def f1_score_summary_evaluator(outputs: list[dict], reference_outputs: list[dict]) -> dict:
+          true_positives = 0
+          false_positives = 0
+          false_negatives = 0
+          for output_dict, reference_output_dict in zip(outputs, reference_outputs):
+              output = output_dict["class"]
+              reference_output = reference_output_dict["class"]
+              if output == "Toxic" and reference_output == "Toxic":
+                  true_positives += 1
+              elif output == "Toxic" and reference_output == "Not toxic":
+                  false_positives += 1
+              elif output == "Not toxic" and reference_output == "Toxic":
+                  false_negatives += 1
+
+          if true_positives == 0:
+              return {"key": "f1_score", "score": 0.0}
+
+          precision = true_positives / (true_positives + false_positives)
+          recall = true_positives / (true_positives + false_negatives)
+          f1_score = 2 * (precision * recall) / (precision + recall)
+          return {"key": "f1_score", "score": f1_score}
     `,
     typescript`
-      function summaryEval({ outputs, referenceOutputs }: { outputs: Record<string, any>[], referenceOutputs?: Record<string, any>[]}) {
-        let correct = 0;
+      function f1ScoreSummaryEvaluator({ outputs, referenceOutputs }: { outputs: Record<string, any>[], referenceOutputs: Record<string, any>[] }) {
+        let truePositives = 0;
+        let falsePositives = 0;
+        let falseNegatives = 0;
         
         for (let i = 0; i < outputs.length; i++) {
-          if (outputs[i]["output"] === referenceOutputs[i]["label"]) {
-            correct += 1;
+          const output = outputs[i]["class"];
+          const referenceOutput = referenceOutputs[i]["class"];
+          
+          if (output === "Toxic" && referenceOutput === "Toxic") {
+            truePositives += 1;
+          } else if (output === "Toxic" && referenceOutput === "Not toxic") {
+            falsePositives += 1;
+          } else if (output === "Not toxic" && referenceOutput === "Toxic") {
+            falseNegatives += 1;
           }
         }
         
-        return { key: "pass", score: correct / outputs.length > 0.5 };
+        if (truePositives === 0) {
+          return { key: "f1_score", score: 0.0 };
+        }
+        
+        const precision = truePositives / (truePositives + falsePositives);
+        const recall = truePositives / (truePositives + falseNegatives);
+        const f1Score = 2 * (precision * recall) / (precision + recall);
+        
+        return { key: "f1_score", score: f1Score };
       }
     `,
   ]}
