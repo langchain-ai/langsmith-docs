@@ -81,9 +81,9 @@ Each \`Attachment\` requires:\n
 
 - \`mime_type\` (str): The MIME type of the file (e.g., \`"image/png"\`).
 - \`data\` (bytes): The binary content of the file.\n
-  Simply decorate a function with \`@traceable\` and include your \`Attachment\` instances as arguments.`  ),
-  TypeScriptBlock(
-   `import { traceable } from "langsmith/traceable";\n
+  Simply decorate a function with \`@traceable\` and include your \`Attachment\` instances as arguments.` ),
+TypeScriptBlock(
+`import { traceable } from "langsmith/traceable";\n
   const traceableWithAttachments = traceable(
   (
   val: number,
@@ -130,7 +130,7 @@ Each \`Attachment\` requires:\n
   const text = "Hello, world!";\n
   // Call traceableWithAttachments with the files
   const result = await traceableWithAttachments(val, text, image, mp3ArrayBuffer, video, pdfArrayBuffer, csv);`,
-    `In the TypeScript SDK, you can add attachments to traces by using \`Uint8Array\` or \`ArrayBuffer\` as data types.
+  `In the TypeScript SDK, you can add attachments to traces by using \`Uint8Array\` or \`ArrayBuffer\` as data types.
   Each attachment's MIME type is specified within \`extractAttachments\`:\n\n
 - \`Uint8Array\`: Useful for handling binary data directly.
 - \`ArrayBuffer\`: Represents fixed-length binary data, which can be converted to \`Uint8Array\` as needed.\n
