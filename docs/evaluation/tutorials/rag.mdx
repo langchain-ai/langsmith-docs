@@ -60,15 +60,24 @@ First, let's set our environment variables:
 />
 
 And install the dependencies we'll need:
-```bash
-pip install -U langsmith langchain langchain-community langchain-openai
-```
 
-Or if you are using JS:
-
-```bash
-yarn add langsmith langchain @langchain/community @langchain/openai 
-```
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "bash",
+      content: `pip install -U langsmith langchain langchain-community langchain-openai`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "bash",
+      content: `yarn add langsmith langchain @langchain/community @langchain/openai`,
+    },
+  ]}
+  groupId="client-language"
+/>
 
 ### Application
 
@@ -788,8 +797,10 @@ You can see an example of what these results look like here: [LangSmith link](ht
 
 ## Reference code
 
+<details>
+<summary>
 Here's a consolidated script with all the above code:
-
+</summary>
 <CodeTabs
   groupId="client-language"
   tabs={[
@@ -1409,3 +1420,4 @@ Here's a consolidated script with all the above code:
     `,
   ]}
 />
+</details>
