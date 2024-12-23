@@ -4,84 +4,154 @@ sidebar_position: 5
 
 # Backtesting
 
-Deploying your app into production is just one step in a longer journey continuous improvement. You'll likely want to develop other candidate systems that improve on your production model using improved prompts, llms, indexing strategies, and other techniques. While you may have a set of offline datasets already created by this point, it's often useful to compare system performance on more recent production data.
+Deploying your application is just the beginning of a continuous improvement process.
+After you deploy to production, you'll want to refine your system by enhancing prompts, language models, tools, and architectures.
+Backtesting involves assessing new versions of your application using historical data and comparing the new outputs to the original ones.
+Compared to evaluations using pre-production datasets, backtesting offers a clearer indication of whether the new version of your application is an improvement over the current deployment. 
 
-This notebook shows how to do this in LangSmith.
+Here are the basic steps for backtesting:
 
-The basic steps are:
+1. Select sample runs from your production tracing project to test against.
+2. Transform the run inputs into a dataset and record the run outputs as an initial experiment against that dataset.
+3. Execute your new system on the new dataset and compare the results of the experiments.
 
-1. Sample runs to test against from your production tracing project.
-2. Convert runs to dataset + initial experiment.
-3. Run new system against the dataset to compare.
+This process will provide you with a new dataset of representative inputs, which you can version and use for backtesting your models.
 
-You will then have a new dataset of representative inputs you can you can version and backtest your models against.
+:::info Ground truth data
+Often, you won't have definitive "ground truth" answers available.
+In such cases, you can manually label the outputs or use evaluators that don't rely on reference data.
+If your application allows for capturing ground-truth labels, for example by allowing users to leave feedback, we strongly recommend doing so.
+:::
 
-![](./static/dataset_page.png)
+## Setup
 
-**Note:** In most cases, you won't have "ground truth" answers in this case, but you can manually compare and label or use reference-free evaluators to score the outputs.(If your application DOES permit capturing ground-truth labels, then we obviously recommend you use those.
+### Configure the environment
 
-## Prerequisites
+Install and set environment variables. This guide requires `langsmith>=0.2.4`.
 
-Install + set environment variables. This requires `langsmith>=0.1.29` to use the beta utilities.
+:::info Optional LangChain usage
 
-```python
-%%capture --no-stderr
-%pip install -U --quiet langsmith langchain_anthropic langchainhub langchain
+For convenience we'll use the LangChain OSS framework in this tutorial, but the LangSmith functionality shown is framework-agnostic.
+
+:::
+
+```bash
+pip install -U langsmith langchain langchain-anthropic langchainhub emoji
 ```
 
 ```python
+import getpass
 import os
 
 # Set the project name to whichever project you'd like to be testing against
-project_name = "Tweet Critic"
-os.environ["LANGCHAIN_API_KEY"] = "YOUR API KEY"
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["ANTHROPIC_API_KEY"] = "YOUR ANTHROPIC API KEY"
+project_name = "Tweet Writing Task"
 os.environ["LANGCHAIN_PROJECT"] = project_name
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+if not os.environ.get("LANGCHAIN_API_KEY"):
+    os.environ["LANGCHAIN_API_KEY"] = getpass.getpass("YOUR API KEY")
+
+# Optional. You can swap OpenAI for any other tool-calling chat model.
+os.environ["OPENAI_API_KEY"] = "YOUR OPENAI API KEY"
+# Optional. You can swap Tavily for the free DuckDuckGo search tool if preferred.
+# Get Tavily API key: https://tavily.com
+os.environ["TAVILY_API_KEY"] = "YOUR TAVILY API KEY"
 ```
 
-#### (Preliminary) Production Deployment
+### Define the application
 
-You likely have a project already and can skip this step.
-
-We'll simulate one here so no one reading this notebook gets left out.
-Our example app is a "tweet critic" that revises tweets we put out.
+For this example lets create a simple Tweet-writing application that has access to some internet search tools:
 
 ```python
-from langchain import hub
-from langchain_anthropic import ChatAnthropic
-from langchain_core.messages import HumanMessage
-from langchain_core.output_parsers import StrOutputParser
+from langchain.chat_models import init_chat_model
+from langgraph.prebuilt import create_react_agent
+from langchain_community.tools import DuckDuckGoSearchRun, TavilySearchResults
+from langchain_core.rate_limiters import InMemoryRateLimiter
 
-prompt = hub.pull("wfh/tweet-critic:7e4f539e")
-llm = ChatAnthropic(model="claude-3-haiku-20240307")
-system = prompt | llm | StrOutputParser()
+# We will use GPT-3.5 Turbo as the baseline and compare against GPT-4o
+gpt_3_5_turbo = init_chat_model(
+    "gpt-3.5-turbo",
+    temperature=1,
+    configurable_fields=("model", "model_provider"),
+)
 
+# The instrucitons are passed as a system message to the agent
+instructions = """You are a tweet writing assistant. Given a topic, do some research and write a relevant and engaging tweet about it.
+- Use at least 3 emojis in each tweet
+- The tweet should be no longer than 280 characters
+- Always use the search tool to gather recent information on the tweet topic
+- Write the tweet only based on the search content. Do not rely on your internal knowledge
+- When relevant, link to your sources
+- Make your tweet as engaging as possible"""
 
-inputs = [
-    """RAG From Scratch: Our RAG From Scratch video series covers some important RAG concepts in short, focused videos with code. This is the 10th video and it discusses query routing. Problem: We sometimes have multiple datastores (e.g., different vector DBs, SQL DBs, etc) and prompts to choose from based on a user query. Idea: Logical routing can use an LLM to decide which datastore is more appropriate. Semantic routing embeds the query and prompts, then chooses the best prompt based on similarity. Video: https://youtu.be/pfpIndq7Fi8 Code: https://github.com/langchain-ai/rag-from-scratch/blob/main/rag_from_scratch_10_and_11.ipynb""",
-    """@Voyage_AI_ Embedding Integration Package Use the same custom embeddings that power Chat LangChain via the new langchain-voyageai package! Voyage AI builds custom embedding models that can improve retrieval quality. ChatLangChain: https://chat.langchain.com Python Docs: https://python.langchain.com/docs/integrations/providers/voyageai""",
-    """Implementing RAG: How to Write a Graph Retrieval Query in LangChain Our friends at @neo4j have a nice guide on combining LLMs and graph databases. Blog:""",
-    """Text-to-PowerPoint with LangGraph.js You can now generate PowerPoint presentations from text! @TheGreatBonnie wrote a guide showing how to use LangGraph.js, @tavilyai, and @CopilotKit to build a Next.js app for this. Tutorial: https://dev.to/copilotkit/how-to-build-an-ai-powered-powerpoint-generator-langchain-copilotkit-openai-nextjs-4c76 Repo: https://github.com/TheGreatBonnie/aipoweredpowerpointapp""",
-    """Build an Answer Engine Using Groq, Mixtral, Langchain, Brave & OpenAI in 10 Min Our friends at @Dev__Digest have a tutorial on building an answer engine over the internet. Code: https://github.com/developersdigest/llm-answer-engine YouTube: https://youtube.com/watch?v=43ZCeBTcsS8&t=96s""",
-    """Building a RAG Pipeline with LangChain and Amazon Bedrock Amazon Bedrock has great models for building LLM apps. This guide covers how to get started with them to build a RAG pipeline. https://gettingstarted.ai/langchain-bedrock/""",
-    """SF Meetup on March 27! Join our meetup to hear from LangChain and Pulumi experts and learn about building AI-enabled capabilities. Sign up: https://meetup.com/san-francisco-pulumi-user-group/events/299491923/?utm_campaign=FY2024Q3_Meetup_PUG%20SF&utm_content=286236214&utm_medium=social&utm_source=twitter&hss_channel=tw-837770064870817792""",
-    """Chat model response metadata @LangChainAI chat model invocations now include metadata like logprobs directly in the output. Upgrade your version of `langchain-core` to try it. PY: https://python.langchain.com/docs/modules/model_io/chat/logprobs JS: https://js.langchain.com/docs/integrations/chat/openai#generation-metadata""",
-    """Benchmarking Query Analysis in High Cardinality Situations Handling high-cardinality categorical values can be challenging. This blog explores 6 different approaches you can take in these situations. Blog: https://blog.langchain.dev/high-cardinality""",
-    """Building Google's Dramatron with LangGraph.js & Claude 3 We just released a long YouTube video (1.5 hours!) on building Dramatron using LangGraphJS and @AnthropicAI's Claude 3 "Haiku" model. It's a perfect fit for LangGraph.js and Haiku's speed. Check out the tutorial: https://youtube.com/watch?v=alHnQjyn7hg""",
-    """Document Loading Webinar with @AirbyteHQ Join a webinar on document loading with PyAirbyte and LangChain on 3/14 at 10am PDT. Features our founding engineer @eyfriis and the @aaronsteers and Bindi Pankhudi team. Register: https://airbyte.com/session/airbyte-monthly-ai-demo""",
+# Define the tools our agent can use
+
+# If you have a higher tiered Tavily API plan you can increase this
+rate_limiter = InMemoryRateLimiter(requests_per_second=0.08)
+
+# Use DuckDuckGo if you don't have a Tavily API key:
+# tools = [DuckDuckGoSearchRun(rate_limiter=rate_limiter)]
+tools = [TavilySearchResults(max_results=5, rate_limiter=rate_limiter)]
+
+agent = create_react_agent(gpt_3_5_turbo, tools=tools, state_modifier=instructions)
+```
+
+### Simulate production data
+
+Now lets simulate some production data:
+
+```python
+fake_production_inputs = [
+    "Alan turing's early childhood",
+    "Economic impacts of the European Union",
+    "Underrated philosophers",
+    "History of the Roxie theater in San Francisco",
+    "ELI5: gravitational waves",
+    "The arguments for and against a parliamentary system",
+    "Pivotal moments in music history",
+    "Big ideas in programming languages",
+    "Big questions in biology",
+    "The relationship between math and reality",
+    "What makes someone funny",
 ]
 
-_ = system.batch(
-    [{"messages": [HumanMessage(content=content)]} for content in inputs],
-    {"max_concurrency": 3},
+agent.batch(
+    [{"messages": [{"role": "user", "content": content}]} for content in fake_production_inputs],
 )
 ```
 
-## Convert Prod Runs to Experiment
+## Convert Production Traces to Experiment
 
 The first step is to generate a dataset based on the production _inputs_.
-Then copy over all the traces to serve as a baseline run.
+Then copy over all the traces to serve as a baseline experiment.
+
+### Select runs to backtest on
+
+You can select the runs to backtest on using the `filter` argument of `list_runs`.
+The `filter` argument uses the LangSmith [trace query syntax](/reference/data_formats/trace_query_syntax) to select runs.
+
+```python
+from datetime import datetime, timedelta, timezone
+from uuid import uuid4
+from langsmith import Client
+from langsmith.beta import convert_runs_to_test
+
+# Fetch the runs we want to convert to a dataset/experiment
+client = Client()
+
+# How we are sampling runs to include in our dataset
+end_time = datetime.now(tz=timezone.utc)
+start_time = end_time - timedelta(days=1)
+run_filter = f'and(gt(start_time, "{start_time.isoformat()}"), lt(end_time, "{end_time.isoformat()}"))'
+prod_runs = list(
+    client.list_runs(
+        project_name=project_name,
+        execution_order=1,
+        filter=run_filter,
+    )
+)
+```
+
+### Convert runs to experiment
 
 `convert_runs_to_test` is a function which takes some runs and does the following:
 
@@ -90,32 +160,12 @@ Then copy over all the traces to serve as a baseline run.
    function and received those outputs.
 
 ```python
-from datetime import datetime, timedelta, timezone
-
-from langsmith import Client
-from langsmith.beta import convert_runs_to_test
-
-# How we are sampling runs to include in our dataset
-end_time = datetime.now(tz=timezone.utc)
-start_time = end_time - timedelta(days=1)
-run_filter = f'and(gt(start_time, "{start_time.isoformat()}"), lt(end_time, "{end_time.isoformat()}"))'
-
-
-# Fetch the runs we want to convert to a dataset/experiment
-client = Client()
-
-prod_runs = list(
-    client.list_runs(
-        project_name=project_name,
-        execution_order=1,
-        filter=run_filter,
-    )
-)
-
 # Name of the dataset we want to create
 dataset_name = f'{project_name}-backtesting {start_time.strftime("%Y-%m-%d")}-{end_time.strftime("%Y-%m-%d")}'
+# Name of the experiment we want to create from the historical runs
+baseline_experiment_name = f"prod-baseline-gpt-3.5-turbo-{str(uuid4())[:4]}"
+
 # This converts the runs to a dataset + experiment
-# It does not actually invoke your model
 convert_runs_to_test(
     prod_runs,
     # Name of the resulting dataset
@@ -125,48 +175,116 @@ convert_runs_to_test(
     # Whether to include the full traces in the resulting experiment
     # (default is to just include the root run)
     load_child_runs=True,
+    # Name of the experiment so we can apply evalautors to it after
+    test_project_name=baseline_experiment_name
 )
 ```
 
-## Benchmark new system
+Once this step is complete, you should see a new dataset in your LangSmith project
+called "Tweet Writing Task-backtesting TODAYS DATE", with a single experiment like so:
 
-Now we have the dataset and prod runs saved as an experiment.
+![](./static/baseline_experiment.png)
 
-Let's run inference on our new system to compare.
+## Benchmark against new system
+
+Now we can start the process of benchmarking our production runs against a new system.
+
+### Define evaluators
+
+First let's define the evaluators we will use to compare the two systems.
+Note that we have no reference outputs, so we'll need to come up with evaluation metrics that only require the actual outputs.
 
 ```python
-from langsmith import evaluate
+import emoji
+from pydantic import BaseModel, Field
+from langchain_core.messages import convert_to_openai_messages
 
-def predict(example_input: dict):
-    # The dataset includes serialized messages that we
-    # must convert to a format accepted by our system.
-    messages = {
-        "messages": [
-            (message["type"], message["content"])
-            for message in example_input["messages"]
-        ]
-    }
-    return system.invoke(messages)
+class Grade(BaseModel):
+    """Grade whether a response is supported by some context."""
+    grounded: bool = Field(..., description="Is the majority of the response supported by the retrieved context?")
 
+grounded_instructions = f"""You have given somebody some contextual information and asked them to write a statement grounded in that context.
 
-# Use an updated version of the prompt
-prompt = hub.pull("wfh/tweet-critic:34c57e4f")
-llm = ChatAnthropic(model="claude-3-haiku-20240307")
-system = prompt | llm | StrOutputParser()
+Grade whether their response is fully supported by the context you have provided. \
+If any meaningful part of their statement is not backed up directly by the context you provided, then their response is not grounded. \
+Otherwise it is grounded."""
+grounded_model = init_chat_model(model="gpt-4o").with_structured_output(Grade)
 
-test_results = evaluate(
-    predict, data=dataset_name, experiment_prefix="HaikuBenchmark", max_concurrency=3
-)
+def lt_280_chars(outputs: dict) -> bool:
+    messages = convert_to_openai_messages(outputs["messages"])
+    return len(messages[-1]['content']) <= 280
+    
+def gte_3_emojis(outputs: dict) -> bool:
+    messages = convert_to_openai_messages(outputs["messages"])
+    return len(emoji.emoji_list(messages[-1]['content'])) >= 3
+    
+async def is_grounded(outputs: dict) -> bool:
+    context = ""
+    messages = convert_to_openai_messages(outputs["messages"])
+    for message in messages:
+        if message["role"] == "tool":
+            # Tool message outputs are the results returned from the Tavily/DuckDuckGo tool
+            context += "\n\n" + message["content"]
+    tweet = messages[-1]["content"]
+    user = f"""CONTEXT PROVIDED:
+    {context}
+
+    RESPONSE GIVEN:
+    {tweet}"""
+    grade = await grounded_model.ainvoke([
+        {"role": "system", "content": grounded_instructions},
+        {"role": "user", "content": user}
+    ])
+    return grade.grounded
 ```
 
-## Review runs
+### Evaluate baseline
 
-You can now compare the outputs in the UI.
+Now, let's run our evaluators against the baseline experiment.
+
+```python
+baseline_results = await client.aevaluate(
+    baseline_experiment_name,
+    evaluators=[lt_280_chars, gte_3_emojis, is_grounded],
+)
+# If you have pandas installed can easily explore results as df:
+# baseline_results.to_pandas()
+```
+
+### Define and evaluate new system
+
+Now, let's define and evaluate our new system.
+In this example our new system will be the same as the old system, but will use GPT-4o instead of GPT-3.5.
+Since we've made our model configurable we can just update the default config passed to our agent:
+
+```python
+candidate_results = await client.aevaluate(
+    agent.with_config(model="gpt-4o"),
+    data=dataset_name,
+    evaluators=[lt_280_chars, gte_3_emojis, is_grounded],
+    experiment_prefix="candidate-gpt-4o",
+)
+# If you have pandas installed can easily explore results as df:
+# candidate_results.to_pandas()
+```
+
+## Comparing the results
+
+After running both experiments, you can view them in your dataset:
+
+![](./static/dataset_page.png)
+
+The results reveal an interesting tradeoff between the two models:
+
+1. GPT-4o shows improved performance in following formatting rules, consistently including the requested number of emojis
+2. However, GPT-4o is less reliable at staying grounded in the provided search results
+
+To illustrate the grounding issue: in [this example run](https://smith.langchain.com/public/be060e19-0bc0-4798-94f5-c3d35719a5f6/r/07d43e7a-8632-479d-ae28-c7eac6e54da4), GPT-4o included facts about Abū Bakr Muhammad ibn Zakariyyā al-Rāzī's medical contributions that weren't present in the search results. This demonstrates how it's pulling from its internal knowledge rather than strictly using the provided information.
+
+This backtesting exercise revealed that while GPT-4o is generally considered a more capable model, simply upgrading to it wouldn't improve our tweet-writer. To effectively use GPT-4o, we would need to:
+- Refine our prompts to more strongly emphasize using only provided information
+- Or modify our system architecture to better constrain the model's outputs
+
+This insight demonstrates the value of backtesting - it helped us identify potential issues before deployment.
 
 ![](./static/comparison_view.png)
-
-## Conclusion
-
-Congrats! You've sampled production runs and started benchmarking other systems against them.
-In this exercise, we chose not to apply any evaluators to simplify things (since we lack ground-truth answers for this task).
-You can manually review the results in LangSmith and/or apply a reference-free evaluator to the results to generate metrics instead.
