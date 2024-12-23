@@ -81,9 +81,8 @@ Each \`Attachment\` requires:\n
 
 - \`mime_type\` (str): The MIME type of the file (e.g., \`"image/png"\`).
 - \`data\` (bytes): The binary content of the file.\n
-  Simply decorate a function with \`@traceable\` and include your \`Attachment\` instances as arguments.` ),
-TypeScriptBlock(
-`import { traceable } from "langsmith/traceable";\n
+  Simply decorate a function with \`@traceable\` and include your \`Attachment\` instances as arguments.`),
+TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
   const traceableWithAttachments = traceable(
   (
   val: number,
