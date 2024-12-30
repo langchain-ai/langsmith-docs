@@ -184,6 +184,12 @@ Use [resource tags](#resource-tags) to organize resources by environment using t
 permissions when we release attribute based access control (ABAC). ABAC on the resource tag will provide a fine-grained way to restrict access to production tracing projects, for example. We do not recommend that you use Workspaces for environment separation as you cannot share resources
 across Workspaces. If you would like to promote a prompt from `staging` to `prod`, we recommend you use prompt tags instead. See [docs](../prompt_engineering/concepts#tags) for more information.
 
+### Cross-workspace access
+
+Use a personal access token (PAT) associated with an organization admin to programmatically create workspaces. This PAT can also programmatically manage resources across your organization's workspaces (e.g. creating and deleting tracing projects, datasets, prompts, etc.).
+By default, a PAT targets the workspace it was created in. To manage resources in a workspace different from the default, you can specify the desired workspace ID in the client declaration. The sample code
+shows how to both create a workspace and manage resources across workspaces using a single PAT associated with an organization admin.
+
 ## Usage and Billing
 
 ### Data Retention
