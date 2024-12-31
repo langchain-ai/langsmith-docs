@@ -1,3 +1,5 @@
+import { CodeTabs } from "@site/src/components/InstructionsWithCode";
+
 # Concepts
 
 This conceptual guide covers topics related to managing users, organizations, and workspaces within LangSmith.
@@ -186,9 +188,83 @@ across Workspaces. If you would like to promote a prompt from `staging` to `prod
 
 ### Cross-workspace access
 
-Use a personal access token (PAT) associated with an organization admin to programmatically create workspaces. This PAT can also programmatically manage resources across your organization's workspaces (e.g. creating and deleting tracing projects, datasets, prompts, etc.).
-By default, a PAT targets the workspace it was created in. To manage resources in a workspace different from the default, you can specify the desired workspace ID in the client declaration. The sample code
-shows how to both create a workspace and manage resources across workspaces using a single PAT associated with an organization admin.
+Use a personal access token (PAT) associated with an organization admin to programmatically create workspaces. This PAT can also be used to manage resources across your organization's workspaces (e.g. creating and deleting tracing projects, datasets, prompts, etc.).
+By default, the PAT will target the workspace it was created in. To manage resources in a workspace different from the default, you can specify the desired workspace ID in the client declaration. The sample code
+shows how to both create a workspace and manage resources across workspaces using an organization admin's PAT.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `from dotenv import load_dotenv
+import requests
+import langsmith as ls
+from langsmith import Client
+from langchain_core.prompts import ChatPromptTemplate
+import os
+
+load_dotenv()
+
+api_key = os.environ["LANGCHAIN_API_KEY"]
+organization_id = os.environ["LANGCHAIN_ORGANIZATION_ID"]
+base_url = os.environ.get("LANGCHAIN_ENDPOINT") or "https://api.smith.langchain.com"
+
+# Set headers for API request
+headers = {
+"Content-Type": "application/json",
+"X-API-Key": api_key,
+"X-Organization-Id": organization_id,
+}
+
+session = requests.Session()
+session.headers.update(headers)
+workspaces_path = f"{base_url}/api/v1/workspaces"
+orgs_path = f"{base_url}/api/v1/orgs/current"
+api_keys_path = f"{base_url}/api/v1/api-key"
+
+# Programmatically create a workspace
+workspace_res = session.post(workspaces_path, json={"display_name": "Test Admin Workspace"})
+workspace_res.raise_for_status()
+workspace = workspace_res.json()
+workspace_id = workspace["id"]
+
+print("successfully created workspace with id:", workspace_id)
+
+# Initialize LangSmith client
+client = Client()
+
+# Create a tracing project in the default workspace
+project_name = "example tracing project"
+project = client.create_project(project_name=project_name)
+
+# Create a prompt in the default workspace
+prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
+url = client.push_prompt("example-joke-prompt", object=prompt)
+
+print("Successfully created prompt and tracing project in default workspace", project.id, url)
+
+session = requests.Session()
+
+# Specify new workspace id
+session.headers.update({"X-Tenant-Id": "<YOUR_WORKSPACE_ID>"})
+client = ls.Client(session=session)
+
+# Create a tracing project in the new workspace
+project_name = "example tracing project"
+project = client.create_project(project_name=project_name)
+
+# Create a prompt in the new workspace
+prompt = ChatPromptTemplate.from_template("tell me a joke about {topic}")
+url = client.push_prompt("example-joke-prompt", object=prompt)
+
+print("Successfully created prompt and tracing project in new workspace", project.id, url)
+`,
+},
+]}
+groupId="client-language"
+/>
 
 ## Usage and Billing
 
