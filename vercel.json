@@ -209,7 +209,11 @@
     {
         "source": "/reference/sdk_reference(/?)",
         "destination": "/reference/"
-    }
+    },
+    {
+      "source": "/administration/pricing",
+      "destination": "https://www.langchain.com/pricing-langsmith"
+  }
   ],
   "builds": [
     {
