@@ -156,7 +156,7 @@
     },
     {
       "source": "/pricing:path*",
-      "destination": "/administration/pricing"
+      "destination": "/pricing"
     },
     {
       "source": "/tutorials/Developers/observability",
@@ -215,8 +215,8 @@
       "destination": "https://www.langchain.com/pricing-langsmith"
   },    
   {
-    "source": "/pricing",
-    "destination": "https://www.langchain.com/pricing-langsmith"
+     "source": "/pricing/plans",
+     "destination": "https://www.langchain.com/pricing-langsmith"
   }
   ],
   "builds": [
