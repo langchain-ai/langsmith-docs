@@ -213,6 +213,10 @@
     {
       "source": "/administration/pricing",
       "destination": "https://www.langchain.com/pricing-langsmith"
+  },    
+  {
+    "source": "/pricing",
+    "destination": "https://www.langchain.com/pricing-langsmith"
   }
   ],
   "builds": [
