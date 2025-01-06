@@ -188,10 +188,10 @@ across Workspaces. If you would like to promote a prompt from `staging` to `prod
 
 ### Programmatically Managing Workspaces
 :::info
-A PAT associated with an organization admin has access to all resources within an organization. Ensure this token is only provided to developers who need to manage resources across workspaces.
+A PAT associated with an organization admin has access to all resources within an organization. Ensure this token is only provided to developers who require organization-wide permissions.
 :::
 
-Use a personal access token (PAT) associated with an organization admin to programmatically create workspaces. This PAT can also be used to manage resources across your organization's workspaces (e.g. creating and deleting tracing projects, datasets, prompts, etc.).
+Use a [personal access token](./concepts#personal-access-tokens-pats) (PAT) associated with an [organization admin](./how_to_guides/organization_management/set_up_organization#organization-roles) to programmatically create [workspaces](./concepts#workspaces). This PAT can also be used to manage resources across your organization's workspaces (e.g. creating and deleting tracing projects, datasets, prompts, etc.).
 By default, the PAT will target the workspace it was created in. To manage resources in a workspace different from the default, you can specify the desired workspace ID in the client declaration. The sample code
 shows how to both create a workspace and manage resources across workspaces using an organization admin's PAT.
 
