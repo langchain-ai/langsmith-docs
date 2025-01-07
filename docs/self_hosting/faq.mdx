@@ -33,12 +33,9 @@ Our deployment only needs egress for a few things (most of which can reside with
 - Talking to any LLM endpoints
 - Talking to any external storage services you may have configured
 - Fetching OAuth information
-- Telemetry (if not running in offline mode)
+- Subscription Metrics and Operational Metadata (if not running in offline mode)
   - Requires egress to `https://beacon.langchain.com`
-  - See [usage reporting](../self_hosting/usage_reporting) for more information
-- License Checks (if not running in offline mode)
-  - Requires egress to `https://beacon.langchain.com`
-  - See [license verification](../self_hosting/license_verification) for more information
+  - See [Egress](../self_hosting/egress) for more information
 
 Your VPC can set up rules to limit any other access.  
 Note: We require the `X-Organization-Id` and `X-Tenant-Id` headers to be allowed to be passed through to the backend service. These are used to determine which organization and workspace (previously called "tenant") the request is for.
