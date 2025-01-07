@@ -30,8 +30,10 @@ This guide provides instructions for installing and setting up your environment 
    ```bash
    openssl rand -base64 32
    ```
+1. Egress to `https://beacon.langchain.com` (if not running in offline mode)
+   1. LangSmith requires egress to `https://beacon.langchain.com` for license verification and usage reporting. This is required for LangSmith to function properly. You can find more information on egress requirements in the [Egress](/self_hosting/egress) section.
 1. Configuration
-1. There are several configuration options that you can set in the `.env` file. You can find more information on the available configuration options in the [Configuration](/self_hosting/configuration) section.
+   1. There are several configuration options that you can set in the `.env` file. You can find more information on the available configuration options in the [Configuration](/self_hosting/configuration) section.
 
 ## Running via Docker Compose
 

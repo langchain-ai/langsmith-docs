@@ -9,7 +9,6 @@ description: "Frequently Asked Questions"
 ### _I can't create API keys or manage users in the UI, what's wrong?_
 
 - You have likely deployed LangSmith without setting up SSO. LangSmith requires SSO to manage users and API keys. You can find more information on setting up SSO in the [configuration section.](../self_hosting/configuration/sso)
--
 
 #### _How does load balancing/ingress work_?
 
@@ -28,12 +27,18 @@ You can find more information on setting up SSO in the [configuration section.](
 
 #### _Does my application need egress to function properly?_
 
-Our deployment only needs egress for a few things:
+Our deployment only needs egress for a few things (most of which can reside within your VPC):
 
 - Fetching images (If mirroring your images, this may not be needed)
-- Talking to any LLMs
+- Talking to any LLM endpoints
 - Talking to any external storage services you may have configured
 - Fetching OAuth information
+- Telemetry (if not running in offline mode)
+  - Requires egress to `https://beacon.langchain.com`
+  - See [usage reporting](../self_hosting/usage_reporting) for more information
+- License Checks (if not running in offline mode)
+  - Requires egress to `https://beacon.langchain.com`
+  - See [license verification](../self_hosting/license_verification) for more information
 
 Your VPC can set up rules to limit any other access.  
 Note: We require the `X-Organization-Id` and `X-Tenant-Id` headers to be allowed to be passed through to the backend service. These are used to determine which organization and workspace (previously called "tenant") the request is for.
