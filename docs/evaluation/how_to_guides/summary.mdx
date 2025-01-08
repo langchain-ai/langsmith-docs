@@ -16,31 +16,22 @@ Below, we'll implement a very simple summary evaluator that computes overall pas
   groupId="client-language"
   tabs={[
     python`
-      from langsmith.schemas import Example, Run
-      
-      def summary_eval(runs: list[Run], examples: list[Example]) -> dict:
-          correct = 0
-          for i, run in enumerate(runs):
-              if run.outputs["output"] == examples[i].outputs["label"]:
-                  correct += 1
-          if correct / len(runs) > 0.5:
-              return {"key": "pass", "score": True}
-          else:
-              return {"key": "pass", "score": False}
+      def pass_50(outputs: list[dict], reference_outputs: list[dict]) -> bool:
+          """Pass if >50% of all results are correct."""
+          correct = sum([out["class"] == ref["label"] for out, ref in zip(outputs, reference_outputs)])
+          return correct / len(outputs) > 0.5
     `,
     typescript`
-      import { Run, Example } from "langsmith/schemas";
-      
-      function summaryEval(runs: Run[], examples: Example[]) {
+      function summaryEval({ outputs, referenceOutputs }: { outputs: Record<string, any>[], referenceOutputs?: Record<string, any>[]}) {
         let correct = 0;
         
-        for (let i = 0; i < runs.length; i++) {
-          if (runs[i].outputs["output"] === examples[i].outputs["label"]) {
+        for (let i = 0; i < outputs.length; i++) {
+          if (outputs[i]["output"] === referenceOutputs[i]["label"]) {
             correct += 1;
           }
         }
         
-        return { key: "pass", score: correct / runs.length > 0.5 };
+        return { key: "pass", score: correct / outputs.length > 0.5 };
       }
     `,
   ]}
@@ -52,23 +43,58 @@ You can then pass this evaluator to the `evaluate` method as follows:
   groupId="client-language"
   tabs={[
     python`
-      results = evaluate(
-          lambda inputs: label_query(inputs["text"]),
-          data=dataset_name,
-          evaluators=[correct_label],
-          summary_evaluators=[summary_eval],
-          experiment_prefix="Toxic Queries",
+      from langsmith import Client
+      
+      ls_client = Client()
+      dataset = ls_client.clone_public_dataset(
+        "https://smith.langchain.com/public/3d6831e6-1680-4c88-94df-618c8e01fc55/d
+      )
+      
+      def bad_classifier(inputs: dict) -> dict:
+        return {"class": "Not toxic"}
+        
+      def correct(outputs: dict, reference_outputs: dict) -> bool:
+        """Row-level correctness evaluator."""
+        return outputs["class"] == reference_outputs["label"]
+
+      results = ls_client.evaluate(
+          bad_classified,
+          data=dataset,
+          evaluators=[correct],
+          summary_evaluators=[pass_50],
       )
     `,
     typescript`
-      await evaluate((inputs) => labelQuery(inputs["input"]), {
+
+      import { Client } from "langsmith";
+      import { evaluate } from "langsmith/evaluation";
+      import type { EvaluationResult } from "langsmith/evaluation";
+
+      const client = new Client();
+      const datasetName = "Toxic queries";
+      const dataset = await client.clonePublicDataset(
+        "https://smith.langchain.com/public/3d6831e6-1680-4c88-94df-618c8e01fc55/d,
+        { datasetName: datasetName }
+      );
+
+      function correct({ outputs, referenceOutputs }: { outputs: Record<string, any>, referenceOutputs?: Record<string, any> }): EvaluationResult {
+        const score = outputs["class"] === referenceOutputs?["label"];
+        return { key: "correct", score };
+      }
+
+      function badClassifier(inputs: Record<string, any>): { class: string } {
+        return { class: "Not toxic" };
+      }
+
+      await evaluate(badClassifier, {
         data: datasetName,
-        evaluators: [correctLabel],
+        evaluators: [correct],
         summaryEvaluators: [summaryEval],
         experimentPrefix: "Toxic Queries",
       });
     `,
-  ]}
+
+]}
 />
 
 In the LangSmith UI, you'll the summary evaluator's score displayed with the corresponding key.

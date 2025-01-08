@@ -8,8 +8,8 @@ import { CodeTabs, python } from "@site/src/components/InstructionsWithCode";
 
 :::
 
-We can run evaluations asynchronously via the SDK using [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html),
-which accepts all of the same arguments as [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) but expects the application function to be asynchronous.
+We can run evaluations asynchronously via the SDK using [aevaluate()](https://docs.smith.langchain.com/reference/python/evaluation/langsmith.evaluation._arunner.aevaluate),
+which accepts all of the same arguments as [evaluate()](https://docs.smith.langchain.com/reference/python/evaluation/langsmith.evaluation._runner.evaluate) but expects the application function to be asynchronous.
 You can learn more about how to use the `evaluate()` function [here](./evaluate_llm_application).
 
 :::info Python only
@@ -25,8 +25,8 @@ You can see how to use it [here](./evaluate_llm_application).
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({caption: "Requires `langsmith>=0.1.145`"})`
-        from langsmith import aevaluate, wrappers, Client
+    python({caption: "Requires `langsmith>=0.2.0`"})`
+        from langsmith import wrappers, Client
         from openai import AsyncOpenAI
 
         # Optionally wrap the OpenAI client to trace all model calls.
@@ -61,12 +61,15 @@ list 5 concrete questions that should be investigated to determine if the idea i
             inputs=[{"idea": e} for e in examples,
         )
 
-        results = await aevaluate(
+        # Can equivalently use the 'aevaluate' function directly:
+        # from langsmith import aevaluate
+        # await aevaluate(...)
+        results = await ls_client.aevaluate(
             researcher_app,
             data=dataset,
             evaluators=[concise],
-            # Optional, no max_concurrency by default but it is recommended to set one.
-            max_concurrency=2,
+            # Optional, add concurrency.
+            max_concurrency=2,  # Optional, add concurrency.
             experiment_prefix="gpt-4o-mini-baseline"  # Optional, random by default.
         )
     `,

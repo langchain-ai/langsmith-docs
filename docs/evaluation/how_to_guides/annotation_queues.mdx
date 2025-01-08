@@ -14,10 +14,27 @@ While you can always [annotate runs inline](./annotate_traces_inline), annotatio
 To create an annotation queue, navigate to the **Annotation queues** section through the homepage or left-hand navigation bar.
 Then click **+ New annotation queue** in the top right corner.
 
-![](./static/annotation_queue_form.png)
+![](./static/create_annotation_queue_new.png)
+
+### Basic Details
 
 Fill in the form with the **name** and **description** of the queue.
 You can also assign a **default dataset** to queue, which will streamline the process of sending the inputs and outputs of certain runs to datasets in your LangSmith workspace.
+
+### Annotation Rubric
+
+Begin by drafting some high-level instructions for your annotators, which will be shown in the sidebar on every run.
+
+Next, click "+ Desired Feedback" to add feedback keys to your annotation queue. Annotators will be presented with these feedback keys on each run.
+Add a description for each, as well as a short description of each category if the feedback is categorical.
+
+![annotation queue rubric](./static/create_annotation_rubric.png)
+
+Reviewers will see this:
+
+![rubric for annotators](./static/rubric_for_annotators.png)
+
+### Collaborator Settings
 
 There are a few settings related to multiple annotators:
 
@@ -55,6 +72,9 @@ To assign runs to an annotation queue, either:
    ![](./static/multi_select_annotation_queue.png)
 
 3. [Set up an automation rule](../../../observability/how_to_guides/monitoring/rules) that automatically assigns runs which pass a certain filter and sampling condition to an annotation queue.
+
+4. Select one or multiple experiments from the dataset page and click **Annotate**. From the resulting popup, you may either create a new queue or add the runs to an existing one:
+   ![](./static/annotate_experiment.png)
 
 :::tip
 

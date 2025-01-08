@@ -1,0 +1,21 @@
+---
+sidebar_label: Organization Charts
+sidebar_position: 7
+table_of_contents: true
+---
+
+# Viewing trace counts across your organization
+
+:::note
+This feature is available on Helm chart versions 0.8.21 and later.
+:::
+
+LangSmith automatically generates and syncs organization usage charts for self-hosted installations.
+
+These charts are available under `Settings > Usage and billing > Usage graph`:
+
+- Usage by Workspace: this counts traces (root runs) by workspace
+- Organization Usage: this counts all traces (root runs) for the organization
+
+The charts are refreshed to include any new workspaces every 5 minutes.  
+Note that the charts are not editable.

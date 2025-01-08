@@ -9,7 +9,7 @@ import {
 A common issue when running large evaluation jobs is running into third-party API rate limits, usually from model providers.
 There are a few ways to deal with rate limits.
 
-## Using `langchain` RateLimiters
+## Using `langchain` RateLimiters (Python only)
 
 If you're using `langchain` Python ChatModels in your application or evaluators, you can add rate limiters to your model(s) that will add client-side control of the frequency with which requests are sent to the model provider API to avoid rate limit errors.
 
@@ -50,7 +50,7 @@ This continues until either the request succeeds or a maximum number of requests
 
 #### With `langchain`
 
-If you're using `langchain` components you can add retries to all model calls with the `.with_retry(...)` method:
+If you're using `langchain` components you can add retries to all model calls with the `.with_retry(...)` / `.withRetry()` method:
 
 <CodeTabs
   groupId="client-language"
@@ -58,12 +58,19 @@ If you're using `langchain` components you can add retries to all model calls wi
     python`
         from langchain import init_chat_model
         
-        llm = init_chat_model("gpt-4o-mini").with_retry(stop_after_attempt=6)
+        llm_with_retry = init_chat_model("gpt-4o-mini").with_retry(stop_after_attempt=6)
     `,
     typescript`
-      
+        import { initChatModel } from "langchain/chat_models/universal";
+
+        const llm = await initChatModel("gpt-4o", {
+            modelProvider: "openai",
+        });
+
+        const llmWithRetry = llm.withRetry({ stopAfterAttept: 2 });
     `,
-  ]}
+
+]}
 />
 
 See the `langchain` [Python](https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.chat_models.BaseChatModel.html#langchain_core.language_models.chat_models.BaseChatModel.with_retry) and [JS](https://v03.api.js.langchain.com/classes/_langchain_core.language_models_chat_models.BaseChatModel.html#withRetry) API references for more.
@@ -76,15 +83,16 @@ See some examples of how to do this in the [OpenAI docs](https://platform.openai
 ## Limiting max_concurrency
 
 Limiting the number of concurrent calls you're making to your application and evaluators is another way to decrease the frequency of model calls you're making, and in that way avoid rate limit errors.
-`max_concurrency` can be set directly on the [evaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._runner.evaluate.html) / [aevaluate()](https://langsmith-sdk.readthedocs.io/en/latest/evaluation/langsmith.evaluation._arunner.aevaluate.html) functions.
+`max_concurrency` can be set directly on the [evaluate()](https://docs.smith.langchain.com/reference/python/evaluation/langsmith.evaluation._runner.evaluate) / [aevaluate()](https://docs.smith.langchain.com/reference/python/evaluation/langsmith.evaluation._arunner.aevaluate) functions.
+This parallelizes evaluation by effectively splitting the dataset across threads.
 
 <CodeTabs
   groupId="client-language"
   tabs={[
     python`
-      from langsmith import evaluate
+      from langsmith import aevaluate
         
-      results = evaluate(
+      results = await aevaluate(
           ...
           max_concurrency=4,
       )
@@ -99,5 +107,3 @@ Limiting the number of concurrent calls you're making to your application and ev
     `,
   ]}
 />
-
-## Related

@@ -103,10 +103,9 @@ patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})
 
 export const PythonSDKTracingCode = () =>
   `import openai
-from langsmith.wrappers import wrap_openai
-from langsmith import traceable\n
+from langsmith import wrappers, traceable\n
 # Auto-trace LLM calls in-context
-client = wrap_openai(openai.Client())\n
+client = wrappers.wrap_openai(openai.Client())\n
 @traceable # Auto-trace this function
 def pipeline(user_input: str):
     result = client.chat.completions.create(
@@ -162,7 +161,6 @@ export function ConfigureSDKEnvironmentCodeTabs({}) {
         ShellBlock(`export LANGCHAIN_TRACING_V2=true
 export LANGCHAIN_API_KEY=<your-api-key>
 
-# The below examples use the OpenAI API, though it's not necessary in general
 export OPENAI_API_KEY=<your-openai-api-key>`),
       ]}
       groupId="client-language"

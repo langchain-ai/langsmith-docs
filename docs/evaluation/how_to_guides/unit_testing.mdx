@@ -4,12 +4,17 @@ sidebar_position: 7
 
 # How to unit test applications (Python only)
 
-LangSmith functional tests are assertions and expectations designed to **quickly** identify obvious bugs and regressions in your AI system. Relative to evaluations, tests typically are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases.
+LangSmith functional tests are assertions and expectations designed to **quickly** identify obvious bugs and regressions in your AI system.
+Relative to evaluations, tests typically are designed to be **fast** and **cheap** to run, focusing on **specific** functionality and edge cases with binary assertions.
 We recommend using LangSmith to track any unit tests, end-to-end integration tests, or other specific assertions that touch an LLM or other non-deterministic part of your AI system.
-These should run on every commit in your CI pipeline to catch regressions early.
+Ideally these run on every commit in your CI pipeline to catch regressions early.
 
-:::note
-`@unit` currently requires `langsmith` python version `>=0.1.74` (named `@unit` for versions `>=0.1.42`). If you are interested in unit testing functionality in TypeScript or other languages, please let us know at [support@langchain.dev](mailto:support@langchain.dev).  
+:::info Version requirement
+`@unit` requires `langsmith` Python version `>=0.1.74`.
+:::
+
+:::info TypeScript support
+If you are interested in unit testing functionality in TypeScript or other languages, please upvote/comment on [this GitHub Issue](https://github.com/langchain-ai/langsmith-sdk/issues/1321).
 :::
 
 ## Write a @unit
@@ -18,7 +23,7 @@ To write a LangSmith functional test, decorate your test function with `@unit`.
 If you want to track the full nested trace of the system or component being tested, you can mark those functions with `@traceable`. For example:
 
 ```python
- my_app/main.py
+# my_app/main.py
 from langsmith import traceable
 
 @traceable # Optional
@@ -30,8 +35,8 @@ def generate_sql(user_query):
 
 Then define your test:
 
-```python tests/test_my_app.py
- tests/test_my_app.py
+```python
+# tests/test_my_app.py
 from langsmith import unit
 from my_app.main import generate_sql
 
@@ -78,8 +83,8 @@ def user_query():
 def expected_sql():
     return "SELECT * FROM customers"
 
- output_keys indicate which test arguments to save as 'outputs' in the dataset (Optional)
- Otherwise, all arguments are saved as 'inputs'
+# output_keys indicate which test arguments to save as 'outputs' in the dataset (Optional)
+# Otherwise, all arguments are saved as 'inputs'
 @unit(output_keys=["expected_sql"])
 def test_sql_generation_with_fixture(user_query, expected_sql):
     sql = generate_sql(user_query)
@@ -91,7 +96,7 @@ def test_sql_generation_with_fixture(user_query, expected_sql):
 Parametrizing tests lets you run the same assertions across multiple sets of inputs. Use `pytest`'s `parametrize` decorator to achieve this. For example:
 
 ```python
-@unit
+@unit(output_keys=["expected_sql"])
 @pytest.mark.parametrize(
     "user_query, expected_sql",
     [
@@ -125,7 +130,7 @@ This will log the binary "expectation" score to the experiment results, addition
 `expect` also provides "fuzzy match" methods. For example:
 
 ```python
-@unit
+@unit(output_keys=["expectation"])
 @pytest.mark.parametrize(
     "query, expectation",
     [

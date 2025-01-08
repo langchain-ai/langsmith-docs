@@ -136,7 +136,7 @@ And a simple evaluator:
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({caption: "Requires `langsmith>=0.1.145`"})`
+    python({caption: "Requires `langsmith>=0.2.0`"})`
 
     judge_llm = init_chat_model("gpt-4o")
 
@@ -184,11 +184,11 @@ If any of you nodes are defined as async, you'll need to use `aevaluate`
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({caption: "Requires `langsmith>=0.1.145`"})`
+    python({caption: "Requires `langsmith>=0.2.0`"})`
     from langsmith import aevaluate
 
     def example_to_state(inputs: dict) -> dict:
-      return {"messages": [{"role": "user", "content": "inputs['question']"}]}
+      return {"messages": [{"role": "user", "content": inputs['question']}]}
 
     # We use LCEL declarative syntax here.
     # Remember that langgraph graphs are also langchain runnables.
@@ -217,7 +217,7 @@ For example, we can look at the messages to assert that the model invoked the 's
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({caption: "Requires `langsmith>=0.1.145`"})`
+    python({caption: "Requires `langsmith>=0.2.0`"})`
 
     def right_tool(outputs: dict) -> bool:
         tool_calls = outputs["messages"][1].tool_calls
