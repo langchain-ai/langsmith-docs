@@ -109,9 +109,7 @@ This **LLM-as-a-judge** is relatively common for cases that are too complex to m
 We can define our own prompt and LLM to use for evaluation here:
 
 ```python
-from langchain_anthropic import ChatAnthropic
-from langchain_core.prompts.prompt import PromptTemplate
-from langsmith.evaluation import LangChainStringEvaluator
+from langchain_openai import ChatOpenAI
 
 _PROMPT_TEMPLATE = """You are an expert professor specialized in grading students' answers to questions.
 You are grading the following question:
@@ -124,12 +122,16 @@ Respond with CORRECT or INCORRECT:
 Grade:
 """
 
-PROMPT = PromptTemplate(
-    input_variables=["query", "answer", "result"], template=_PROMPT_TEMPLATE
-)
-eval_llm = ChatAnthropic(temperature=0.0)
+eval_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
 
-qa_evaluator = LangChainStringEvaluator("qa", config={"llm": eval_llm, "prompt": PROMPT})
+def qa_evaluator(inputs: dict, outputs: dict, reference_outputs: dict) -> dict:
+    prompt = _PROMPT_TEMPLATE.format(
+        query=inputs["question"],
+        answer=reference_outputs["answer"],
+        result=outputs["output"],
+    )
+    response = eval_llm.invoke(prompt)
+    return {"key":"correctness", "score": response.content == "CORRECT"}
 ```
 
 :::note
@@ -142,9 +144,9 @@ We can just define a simple function that checks whether the actual output is le
 ```python
 from langsmith.schemas import Run, Example
 
-def evaluate_length(run: Run, example: Example) -> dict:
-    prediction = run.outputs.get("output") or ""
-    required = example.outputs.get("answer") or ""
+def evaluate_length(outputs: dict, reference_outputs: dict) -> dict:
+    prediction = outputs["output"]
+    required = reference_outputs["answer"]
     score = int(len(prediction) < 2 * len(required))
     return {"key":"length", "score": score}
 ```
@@ -158,12 +160,13 @@ We will build this using the OpenAI SDK directly:
 
 ```python
 import openai
+from langsmith.wrappers import wrap_openai
 
-openai_client = openai.Client()
+openai_client = wrap_openai(openai.Client())
 
 def my_app(question):
     return openai_client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-3.5-turbo",
         temperature=0,
         messages=[
             {
@@ -192,9 +195,7 @@ Now we're ready to run evaluation.
 Let's do it!
 
 ```python
-from langsmith import evaluate
-
-experiment_results = evaluate(
+experiment_results = client.evaluate(
     langsmith_app, # Your AI system
     data=dataset_name, # The data to predict and grade over
     evaluators=[evaluate_length, qa_evaluator], # The evaluators to score the results
@@ -205,7 +206,7 @@ experiment_results = evaluate(
 # import asyncio
 # from langsmith import aevaluate
 #
-# experiment_results = asyncio.run(aevaluate(
+# experiment_results = asyncio.run(client.aevaluate(
 #     my_async_langsmith_app, # Your AI system
 #     data=dataset_name, # The data to predict and grade over
 #     evaluators=[evaluate_length, qa_evaluator], # The evaluators to score the results
@@ -226,8 +227,9 @@ Let's now try it out with a different model! Let's try `gpt-4-turbo`
 
 ```python
 import openai
+from langsmith.wrappers import wrap_openai
 
-openai_client = openai.Client()
+openai_client = wrap_openai(openai.Client())
 
 def my_app_1(question):
     return openai_client.chat.completions.create(
@@ -250,9 +252,7 @@ def langsmith_app_1(inputs):
     output = my_app_1(inputs["question"])
     return {"output": output}
 
-from langsmith import evaluate
-
-experiment_results = evaluate(
+experiment_results = client.evaluate(
     langsmith_app_1, # Your AI system
     data=dataset_name, # The data to predict and grade over
     evaluators=[evaluate_length, qa_evaluator], # The evaluators to score the results
@@ -264,8 +264,9 @@ And now let's use GPT-4 but also update the prompt to be a bit more strict in re
 
 ```python
 import openai
+from langsmith.wrappers import wrap_openai
 
-openai_client = openai.Client()
+openai_client = wrap_openai(openai.Client())
 
 def my_app_2(question):
     return openai_client.chat.completions.create(
@@ -288,9 +289,7 @@ def langsmith_app_2(inputs):
     output = my_app_2(inputs["question"])
     return {"output": output}
 
-from langsmith import evaluate
-
-experiment_results = evaluate(
+experiment_results = client.evaluate(
     langsmith_app_2, # Your AI system
     data=dataset_name, # The data to predict and grade over
     evaluators=[evaluate_length, qa_evaluator], # The evaluators to score the results
