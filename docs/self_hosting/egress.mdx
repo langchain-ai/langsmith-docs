@@ -5,16 +5,23 @@ sidebar_position: 7
 
 # Egress for Subscription Metrics and Operational Metadata
 
-Self-Hosted LangSmith instances store all information locally and never send sensitive information outside your network. However, we do require egress to `https://beacon.langchain.com` to better remotely support our self-hosted customers. Currently, we track your usage of the platform for billing purposes according to the entitlements in your order form. In the future, we will introduce support diagnostics so that we can help ensure you’re running LangSmith optimally in your environment.
+Self-Hosted LangSmith instances store all information locally and will never send sensitive information outside of your network. We currently only track platform usage for billing purposes according to the entitlements in your order. In order to better remotely support our customers, we do require egress to `https://beacon.langchain.com`.
 
+In the future, we will be introducing support diagnostics to help us ensure that the LangSmith platform is running at an optimal level within your environment.
+
+:::warning Important
 **This will require egress to `https://beacon.langchain.com` from your network.**
+:::
 
 Generally, data that we send to Beacon can be categorized as follows:
 
 - Subscription Metrics
-  - Subscription metrics are used to determine your access and use of the LangSmith, starting with the number of traces and number of users.
+    - Subscription metrics are used to determine level of access and utilization of LangSmith. This includes, but are not limited to:
+        - Number of traces
+        - Seats allocated per contract
+        - Seats in currently use
 - Operational Metadata
-  - This metadata will be collected to help with remote support, allowing the LangChain team to diagnose and troubleshoot performance issues more effectively.
+    - This metadata will contain and collect the above subscription metrics to assist with remote support, allowing the LangChain team to diagnose and troubleshoot performance issues more effectively and proactively.
 
 ## Example Payloads
 
@@ -76,7 +83,7 @@ In an effort to maximize transparency, we provide sample payloads here:
 
 ```json
 {
-  "inserted_count": 1 // Number of transactions successfully ingested
+  "inserted_count": 1 //Number of transactions successfully ingested
 }
 ```
 
