@@ -110,9 +110,11 @@ We can define our own prompt and LLM to use for evaluation here:
 
 ```python
 from langchain_openai import ChatOpenAI
+from langchain_core.messages import SystemMessage, HumanMessage
 
-_PROMPT_TEMPLATE = """You are an expert professor specialized in grading students' answers to questions.
-You are grading the following question:
+SYSTEM_PROMPT = "You are an expert professor specialized in grading students' answers to questions."
+
+_HUMAN_PROMPT_TEMPLATE = """You are grading the following question:
 {query}
 Here is the real answer:
 {answer}
@@ -124,14 +126,17 @@ Grade:
 
 eval_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
 
-def qa_evaluator(inputs: dict, outputs: dict, reference_outputs: dict) -> dict:
-    prompt = _PROMPT_TEMPLATE.format(
+def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> dict:
+    prompt = _HUMAN_PROMPT_TEMPLATE.format(
         query=inputs["question"],
         answer=reference_outputs["answer"],
         result=outputs["output"],
     )
-    response = eval_llm.invoke(prompt)
-    return {"key":"correctness", "score": response.content == "CORRECT"}
+    response = eval_llm.invoke([
+        SystemMessage(content=SYSTEM_PROMPT),
+        HumanMessage(content=prompt),
+    ])
+    return response.content == "CORRECT"
 ```
 
 :::note
@@ -142,13 +147,10 @@ For evaluating the length of the response, this is a lot easier!
 We can just define a simple function that checks whether the actual output is less than 2x the length of the expected result.
 
 ```python
-from langsmith.schemas import Run, Example
-
-def evaluate_length(outputs: dict, reference_outputs: dict) -> dict:
+def length(outputs: dict, reference_outputs: dict) -> dict:
     prediction = outputs["output"]
     required = reference_outputs["answer"]
-    score = int(len(prediction) < 2 * len(required))
-    return {"key":"length", "score": score}
+    return int(len(prediction) < 2 * len(required))
 ```
 
 ## Run Evaluations
@@ -198,7 +200,7 @@ Let's do it!
 experiment_results = client.evaluate(
     langsmith_app, # Your AI system
     data=dataset_name, # The data to predict and grade over
-    evaluators=[evaluate_length, qa_evaluator], # The evaluators to score the results
+    evaluators=[length, correctness], # The evaluators to score the results
     experiment_prefix="openai-3.5", # A prefix for your experiment names to easily identify them
 )
 
@@ -209,7 +211,7 @@ experiment_results = client.evaluate(
 # experiment_results = asyncio.run(client.aevaluate(
 #     my_async_langsmith_app, # Your AI system
 #     data=dataset_name, # The data to predict and grade over
-#     evaluators=[evaluate_length, qa_evaluator], # The evaluators to score the results
+#     evaluators=[length, correctness], # The evaluators to score the results
 #     experiment_prefix="openai-3.5", # A prefix for your experiment names to easily identify them
 # ))
 
@@ -255,7 +257,7 @@ def langsmith_app_1(inputs):
 experiment_results = client.evaluate(
     langsmith_app_1, # Your AI system
     data=dataset_name, # The data to predict and grade over
-    evaluators=[evaluate_length, qa_evaluator], # The evaluators to score the results
+    evaluators=[length, correctness], # The evaluators to score the results
     experiment_prefix="openai-4", # A prefix for your experiment names to easily identify them
 )
 ```
@@ -292,7 +294,7 @@ def langsmith_app_2(inputs):
 experiment_results = client.evaluate(
     langsmith_app_2, # Your AI system
     data=dataset_name, # The data to predict and grade over
-    evaluators=[evaluate_length, qa_evaluator], # The evaluators to score the results
+    evaluators=[length, correctness], # The evaluators to score the results
     experiment_prefix="strict-openai-4", # A prefix for your experiment names to easily identify them
 )
 ```
@@ -342,7 +344,7 @@ def test_length_score() -> None:
     experiment_results = evaluate(
         langsmith_app, # Your AI system
         data=dataset_name, # The data to predict and grade over
-        evaluators=[evaluate_length, qa_evaluator], # The evaluators to score the results
+        evaluators=[length, correctness], # The evaluators to score the results
     )
     # This will be cleaned up in the next release:
     feedback = client.list_feedback(
