@@ -280,7 +280,7 @@ const pipeline = new RunTree({
     run_type: "chain",
     inputs: { question }
 });
-await pipeline.post();\n
+await pipeline.postRun();\n
 // This can be retrieved in a retrieval step
 const context = "During this morning's meeting, we solved all world conflict.";
 const messages = [
