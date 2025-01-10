@@ -162,10 +162,10 @@ The `expect` utility is modeled off of [Jest](https://jestjs.io/docs/expect)'s e
 
 #### Dry-run mode
 
-If you want to run the tests without syncing the results to LangSmith, you can set `LANGCHAIN_TEST_TRACKING=false` in your environment.
+If you want to run the tests without syncing the results to LangSmith, you can set `LANGSMITH_TEST_TRACKING=false` in your environment.
 
 ```bash
-LANGCHAIN_TEST_TRACKING=false pytest tests/
+LANGSMITH_TEST_TRACKING=false pytest tests/
 ```
 
 The tests will run as normal, but the experiment logs will not be sent to LangSmith.
@@ -174,10 +174,10 @@ The tests will run as normal, but the experiment logs will not be sent to LangSm
 
 LLMs on every commit in CI can get expensive. To save time and resources, LangSmith lets you cache results to disk. Any identical inputs will be loaded from the cache so you don't have to call out to your LLM provider unless there are changes to the model, prompt, or retrieved data.
 
-To enable caching, run with `LANGCHAIN_TEST_CACHE=/my/cache/path`. For example:
+To enable caching, run with `LANGSMITH_TEST_CACHE=/my/cache/path`. For example:
 
 ```bash
-LANGCHAIN_TEST_CACHE=tests/cassettes pytest tests/my_llm_tests
+LANGSMITH_TEST_CACHE=tests/cassettes pytest tests/my_llm_tests
 ```
 
 All requests will be cached to `tests/cassettes` and loaded from there on subsequent runs. If you check this in to your repository, your CI will be able to use the cache as well.
@@ -188,7 +188,7 @@ With caching enabled, you can iterate quickly on your tests using `watch` mode w
 
 ```bash
 pip install pytest-watch
-LANGCHAIN_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests
+LANGSMITH_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests
 ```
 
 ## Explanations

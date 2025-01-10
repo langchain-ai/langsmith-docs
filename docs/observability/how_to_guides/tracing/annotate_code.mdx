@@ -26,9 +26,9 @@ If you are using LangChain (either Python or JS/TS), you can skip this section a
 LangSmith makes it easy to log traces with minimal changes to your existing code with the `@traceable` decorator in Python and `traceable` function in TypeScript.
 
 :::note
-The `LANGCHAIN_TRACING_V2` environment variable must be set to `'true'` in order for traces to be logged to LangSmith, even when using `@traceable` or `traceable`. This allows you to toggle tracing on and off without changing your code.
+The `LANGSMITH_TRACING` environment variable must be set to `'true'` in order for traces to be logged to LangSmith, even when using `@traceable` or `traceable`. This allows you to toggle tracing on and off without changing your code.
 
-Additionally, you will need to set the `LANGCHAIN_API_KEY` environment variable to your API key (see [Setup](/) for more information).
+Additionally, you will need to set the `LANGSMITH_API_KEY` environment variable to your API key (see [Setup](/) for more information).
 
 By default, the traces will be logged to a project named `default`.
 To log traces to a different project, see [this section](./log_traces_to_project).
@@ -172,9 +172,9 @@ The wrapper works seamlessly with the `@traceable` decorator or `traceable` func
 Tool calls are automatically rendered
 
 :::note
-The `LANGCHAIN_TRACING_V2` environment variable must be set to `'true'` in order for traces to be logged to LangSmith, even when using `wrap_openai` or `wrapOpenAI`. This allows you to toggle tracing on and off without changing your code.
+The `LANGSMITH_TRACING` environment variable must be set to `'true'` in order for traces to be logged to LangSmith, even when using `wrap_openai` or `wrapOpenAI`. This allows you to toggle tracing on and off without changing your code.
 
-Additionally, you will need to set the `LANGCHAIN_API_KEY` environment variable to your API key (see [Setup](/) for more information).
+Additionally, you will need to set the `LANGSMITH_API_KEY` environment variable to your API key (see [Setup](/) for more information).
 
 By default, the traces will be logged to a project named `default`.
 To log traces to a different project, see [this section](./log_traces_to_project).
@@ -232,7 +232,7 @@ await chatPipeline("Can you summarize this morning's meetings?");`),
 ## Use the `RunTree` API
 
 Another, more explicit way to log traces to LangSmith is via the `RunTree` API. This API allows you more control over your tracing - you can manually
-create runs and children runs to assemble your trace. You still need to set your `LANGCHAIN_API_KEY`, but `LANGCHAIN_TRACING_V2` is not
+create runs and children runs to assemble your trace. You still need to set your `LANGSMITH_API_KEY`, but `LANGSMITH_TRACING` is not
 necessary for this method.
 
 This method is not recommended, as it's easier to make mistakes in propagating trace context.

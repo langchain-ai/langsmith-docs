@@ -14,7 +14,7 @@ This guide assumes you have already deployed a self-hosted LangSmith instance. I
 
 ### Configuring the application you want to use with LangSmith
 
-LangSmith has two APIs: One for interacting with the LangChain Hub/prompts and one for interacting with the backend of the LangSmith application. Each exists at its own URL and in a self-hosted environment are set via the `LANGCHAIN_HUB_API_URL` and `LANGCHAIN_ENDPOINT` environment variables, respectively, and have their own separate SDKs.
+LangSmith has a single API for interacting with both the hub and the LangSmith backend.
 
 1. Once you have deployed your instance, you can access the LangSmith UI at `http://<host>`.
 2. The backend API will be available at `http://<host>/api`
@@ -22,9 +22,8 @@ LangSmith has two APIs: One for interacting with the LangChain Hub/prompts and o
 To use the LangSmith API, you will need to set the following environment variables in your application:
 
 ```bash
-LANGCHAIN_ENDPOINT=http://<host>/api
-LANGCHAIN_HUB_API_URL=http://<host>/api # Only set this if using the legacy langchainhub SDK
-LANGCHAIN_API_KEY=foo # Set to a legitimate API key if using OAuth
+LANGSMITH_ENDPOINT=http://<host>/api
+LANGSMITH_API_KEY=foo # Set to a legitimate API key if using OAuth
 ```
 
 You can also configure these variables directly in the LangSmith SDK client:
@@ -35,15 +34,6 @@ import langsmith
 langsmith_client = langsmith.Client(
     api_key='<api_key>',
     api_url='http://<host>/api',
-)
-
-# Deprecated, you can use the Langsmith client for all interactions
-import langchainhub
-
-# Deprecated, use langsmith.Client instead
-langchainhub.Client(
-    api_key='<api_key>',
-    api_url='http://<host>/api'
 )
 ```
 
