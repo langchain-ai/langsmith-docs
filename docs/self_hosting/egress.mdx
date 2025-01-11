@@ -3,6 +3,11 @@ sidebar_label: Egress for Subscription Metrics and Operational Metadata
 sidebar_position: 7
 ---
 
+:::important Version Requirement
+This section only applies to customers who are not running in offline mode and assumes you are using a self-hosted LangSmith instance serving version 0.9.0 or later.
+Previous versions of LangSmith did not have this feature.
+:::
+
 # Egress for Subscription Metrics and Operational Metadata
 
 Self-Hosted LangSmith instances store all information locally and will never send sensitive information outside of your network. We currently only track platform usage for billing purposes according to the entitlements in your order. In order to better remotely support our customers, we do require egress to `https://beacon.langchain.com`.
