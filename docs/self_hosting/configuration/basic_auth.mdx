@@ -35,14 +35,15 @@ Changing the JWT secret will log out your users
 <CodeTabs
   tabs={[
     HelmBlock(
-`
+      `
 config:
     authType: mixed
     basicAuth:
       enabled: true
       initialOrgAdminEmail: \<YOUR EMAIL ADDRESS\>
       initialOrgAdminPassword: \<PASSWORD\> # Must be at least 12 characters long and have at least one lowercase, uppercase, and symbol
-      jwtSecret: \<SECRET\>`),
+      jwtSecret: \<SECRET\>`
+    ),
     DockerBlock(
       `# In your .env file
 AUTH_TYPE=mixed
