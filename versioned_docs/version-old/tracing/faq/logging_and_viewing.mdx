@@ -231,6 +231,7 @@ const childRun = await pipeline.createChild({
     run_type: "llm",
     inputs: { messages },
 });
+await childRun.postRun();
 // Generate a completion
 const client = new OpenAI();
 const chatCompletion = await client.chat.completions.create({
@@ -239,7 +240,7 @@ const chatCompletion = await client.chat.completions.create({
 });
 // End the runs and log them
 childRun.end(chatCompletion);
-await childRun.postRun();
+await childRun.patchRun();
 await pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
 await pipeline.patchRun();`),
   ]}
