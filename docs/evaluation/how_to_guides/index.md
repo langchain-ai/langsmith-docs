@@ -45,11 +45,11 @@ Evaluate and improve your application before deploying it.
 - [Print detailed logs (Python only)](../../observability/how_to_guides/tracing/output_detailed_logs)
 - [Run an evaluation locally (beta, Python only)](./how_to_guides/local)
 
-## Unit testing
+## Testing integrations
 
-Unit test your system to identify bugs and regressions.
+Run evals using your favorite testing tools:
 
-- [Unit test applications (Python only)](./how_to_guides/unit_testing)
+- [Run evals with pytest](./how_to_guides/pytest)
 
 ## Online evaluation
 
