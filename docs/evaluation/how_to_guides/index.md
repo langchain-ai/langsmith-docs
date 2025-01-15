@@ -49,7 +49,7 @@ Evaluate and improve your application before deploying it.
 
 Run evals using your favorite testing tools:
 
-- [Run evals with pytest](./how_to_guides/pytest)
+- [Run evals with pytest (beta)](./how_to_guides/pytest)
 
 ## Online evaluation
 
