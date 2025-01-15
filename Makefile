@@ -14,11 +14,12 @@ build-api-ref:
 	$(PYTHON) langsmith-sdk/python/docs/create_api_rst.py
 	LC_ALL=C $(PYTHON) -m sphinx -T -E -b html -d langsmith-sdk/python/docs/_build/doctrees -c langsmith-sdk/python/docs langsmith-sdk/python/docs langsmith-sdk/python/docs/_build/html -j auto
 	$(PYTHON) langsmith-sdk/python/docs/scripts/custom_formatter.py langsmith-sdk/docs/_build/html/
-	cd langsmith-sdk/js && yarn && cat package.json && yarn run build:typedoc
+	cd langsmith-sdk/js && yarn && yarn run build:typedoc
 
 vercel-build: install-vercel-deps build-api-ref 
 	mkdir -p static/reference/python
 	mv langsmith-sdk/python/docs/_build/html/* static/reference/python/
+	mkdir -p static/reference/js
 	mv langsmith-sdk/js/_build/api_refs/* static/reference/js/
 	rm -rf langsmith-sdk
 	NODE_OPTIONS="--max-old-space-size=5000" yarn run docusaurus build
