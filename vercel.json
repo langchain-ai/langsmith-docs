@@ -213,11 +213,15 @@
     {
       "source": "/administration/pricing",
       "destination": "https://www.langchain.com/pricing-langsmith"
-  },    
-  {
-     "source": "/pricing/plans",
-     "destination": "https://www.langchain.com/pricing-langsmith"
-  }
+    },    
+    {
+      "source": "/pricing/plans",
+      "destination": "https://www.langchain.com/pricing-langsmith"
+    },
+    {
+      "source": "/evaluation/how_to_guides/unit_testing(/?)",
+      "destination": "/evauation/how_to_guides/pytest"
+    }
   ],
   "builds": [
     {
