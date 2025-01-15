@@ -363,3 +363,37 @@ If ground truth reference labels are provided, then it's common to simply define
 | Accuracy  | Standard definition | Yes                    | No            | No                |
 | Precision | Standard definition | Yes                    | No            | No                |
 | Recall    | Standard definition | Yes                    | No            | No                |
+
+
+## Experiment configuration
+
+LangSmith supports a number of experiment configurations which make it easier to run your evals in the manner you want.
+
+### Repetitions
+
+By passing the `num_repitions` argument to `evaluate` / `aevaluate`, you can specify how many times to repeat the experiment on your data.
+Repeating the experiment involves both rerunning the target function and rerunning the evaluators. Running an experiment multiple times can
+be helpful since the LLM outputs are not deterministic and can differ from one repetition to the next. By running multiple repetitions, you can
+get a more accurate estimate of the performance of your system.
+
+### Concurrency
+
+By passing the `max_concurrency` argument to `evaluate` / `aevaluate`, you can specify the concurrency of your experiment. The
+`max_concurrency` argument has slightly different semantics depending on whether you are using `evaluate` or `aevaluate`.
+
+#### `evaluate`
+
+The `max_concurrency` argument to `evaluate` specifies the maximum number of concurrent threads to use when running the experiment.
+This is both for when running your target function as well as your evaluators.
+
+#### `aevaluate`
+
+The `max_concurrency` argument to `aevaluate` is fairly similar to `evaluate`, but instead uses a semaphore to limit the number of
+concurrent tasks that can run at once. `aevaluate` works by creating a task for each example in the dataset. Each task consists of running the target function
+as well as all of the evaluators on that specific example. The `max_concurrency` argument specifies the maximum number of concurrent tasks, or put another way - examples,
+to run at once.
+
+### Caching
+
+Lastly, you can also cache the API calls made in your experiment by setting the `LANGSMITH_CACHE_PATH` to a valid folder on your device with write access.
+This will cause the API calls made in your experiment to be cached to disk, meaning future experiments that make the same API calls will be greatly sped up.
