@@ -187,7 +187,7 @@ pipeline = RunTree(
     run_type="chain",
     inputs={"question": question}
 )
-await pipeline.post();
+pipeline.post()
 # This can be retrieved in a retrieval step
 context = "During this morning's meeting, we solved all world conflict."
 messages = [
@@ -200,6 +200,7 @@ child_llm_run = pipeline.create_child(
     run_type="llm",
     inputs={"messages": messages},
 )
+child_llm_run.post()
 # Generate a completion
 client = openai.Client()
 chat_completion = client.chat.completions.create(
@@ -207,9 +208,9 @@ chat_completion = client.chat.completions.create(
 )
 # End the runs and log them
 child_llm_run.end(outputs=chat_completion)
-child_llm_run.post()
+child_llm_run.patch()
 pipeline.end(outputs={"answer": chat_completion.choices[0].message.content})
-pipeline.post()`),
+pipeline.patch()`),
     TypeScriptBlock(`import OpenAI from "openai";
 import { RunTree } from "langsmith";
 // This can be a user input to your app
@@ -231,6 +232,7 @@ const childRun = await pipeline.createChild({
     run_type: "llm",
     inputs: { messages },
 });
+await childRun.postRun();
 // Generate a completion
 const client = new OpenAI();
 const chatCompletion = await client.chat.completions.create({
@@ -239,7 +241,7 @@ const chatCompletion = await client.chat.completions.create({
 });
 // End the runs and log them
 childRun.end(chatCompletion);
-await childRun.postRun();
+await childRun.patchRun();
 await pipeline.end({ outputs: { answer: chatCompletion.choices[0].message.content } });
 await pipeline.patchRun();`),
   ]}
