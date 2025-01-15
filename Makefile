@@ -5,7 +5,7 @@ install-vercel-deps:
 PYTHON = .venv/bin/python
 
 build-api-ref:
-	git clone --depth=1 -b jacob/api_refs https://github.com/langchain-ai/langsmith-sdk.git
+	git clone --depth=1 https://github.com/langchain-ai/langsmith-sdk.git
 	python3 -m venv .venv
 	. .venv/bin/activate
 	$(PYTHON) -m pip install --upgrade pip
