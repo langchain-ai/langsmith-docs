@@ -5,7 +5,7 @@ sidebar_position: 7
 # How to run evals with pytest
 
 The LangSmith pytest plugin lets Python developers define their datasets and evaluations as pytest test cases.
-Compared to the default `Client.evaluate()` evaluation flow, this is useful when:
+Compared to the default `evaluate()` evaluation flow, this is useful when:
 - Each example requires different evaluation logic
 - You want to assert binary expectations, and both track these assertions in LangSmith and raise assertion errors locally (e.g. in CI pipelines)
 - You want pytest-like terminal outputs
@@ -27,7 +27,8 @@ The JS/TS SDK has an analogous Jest/Vitest/Bun integration.
 ## Define and run tests
 
 The pytest integration lets you define datasets and evaluators as test cases.
-All you need to do is decorate the relevant tests with `@pytest.mark.langsmith`.
+
+To track a test in LangSmith add the `@pytest.mark.langsmith` decorator.
 Every decorated test case will be synced to a dataset example. 
 When you run the test suite, the dataset will be updated and a new experiment will be created with one result for each test case.
 
@@ -84,8 +85,13 @@ Each time you run this test suite, LangSmith:
 - creates an experiment row for each test case
 - collects the pass/fail rate under the `pass` feedback key for each test case
 
-![Experiment](./static/simple-pytest.png)
+Here's what a test suite dataset looks like:
+
 ![Dataset](./static/simple-pytest-dataset.png)
+
+And what an experiment against that test suite looks like:
+
+![Experiment](./static/simple-pytest.png)
 
 ## Trace inputs, outputs, and reference outputs
 
@@ -193,6 +199,8 @@ You can configure which test suite a test belongs to by passing the `test_suite_
 LANGSMITH_TEST_SUITE="SQL app tests" pytest tests/
 ```
 
+We generally recommend setting `LANGSMITH_TEST_SUITE` to get a consolidated view of all of your results.
+
 ## Caching
 
 LLMs on every commit in CI can get expensive. 
@@ -255,7 +263,17 @@ LANGSMITH_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests
 
 ## Rich outputs
 
-By default LangSmith does not change the pytest terminal output. If you'd prefer, you can 
+If you'd like to see a rich display of the LangSmith results of your test run you can specify `--output='ls'`:
+
+```bash
+pytest --output='ls' tests
+```
+
+You'll get a nice table per test suite that updates live as the results are uploaded to LangSmith:
+
+Some important notes for using this feature:
+- Make sure you've installed `pip install -U "langsmith[pytest]"
+- Rich outputs do not work with `pytest-xdist`
 
 ## Dry-run mode
 
