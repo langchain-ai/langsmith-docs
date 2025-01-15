@@ -109,9 +109,7 @@ This **LLM-as-a-judge** is relatively common for cases that are too complex to m
 We can define our own prompt and LLM to use for evaluation here:
 
 ```python
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import SystemMessage, HumanMessage
-
+from langchain.chat_models import init_chat_model
 SYSTEM_PROMPT = "You are an expert professor specialized in grading students' answers to questions."
 
 _HUMAN_PROMPT_TEMPLATE = """You are grading the following question:
@@ -124,30 +122,36 @@ Respond with CORRECT or INCORRECT:
 Grade:
 """
 
-eval_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
+eval_llm = init_chat_model("gpt-4o-mini", model_provider="openai", temperature=0.0)
 
-def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> dict:
+def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
     prompt = _HUMAN_PROMPT_TEMPLATE.format(
         query=inputs["question"],
         answer=reference_outputs["answer"],
         result=outputs["output"],
     )
     response = eval_llm.invoke([
-        SystemMessage(content=SYSTEM_PROMPT),
-        HumanMessage(content=prompt),
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        },
+        {
+            "role": "user",
+            "content": prompt
+        },
     ])
     return response.content == "CORRECT"
 ```
 
 :::note
-This example assumes you have the `ANTHROPIC_API_KEY` environment variable set. You can just as easily run this example with OpenAI by replacing `ChatAnthropic` with `ChatOpenAI` from `langchain_openai`.
+This example assumes you have the `OPENAI_API_KEY` environment variable set. You can just as easily run this example with Anthropic by replacing the model name and provider in the `init_chat_model` call.
 :::
 
 For evaluating the length of the response, this is a lot easier!
 We can just define a simple function that checks whether the actual output is less than 2x the length of the expected result.
 
 ```python
-def length(outputs: dict, reference_outputs: dict) -> dict:
+def length(outputs: dict, reference_outputs: dict) -> bool:
     prediction = outputs["output"]
     required = reference_outputs["answer"]
     return int(len(prediction) < 2 * len(required))
@@ -168,7 +172,7 @@ openai_client = wrap_openai(openai.Client())
 
 def my_app(question):
     return openai_client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
         temperature=0,
         messages=[
             {
@@ -201,20 +205,8 @@ experiment_results = client.evaluate(
     langsmith_app, # Your AI system
     data=dataset_name, # The data to predict and grade over
     evaluators=[length, correctness], # The evaluators to score the results
-    experiment_prefix="openai-3.5", # A prefix for your experiment names to easily identify them
+    experiment_prefix="openai-4o-mini", # A prefix for your experiment names to easily identify them
 )
-
-# Note: If your system is async, you can use the asynchronous `aevaluate` function
-# import asyncio
-# from langsmith import aevaluate
-#
-# experiment_results = asyncio.run(client.aevaluate(
-#     my_async_langsmith_app, # Your AI system
-#     data=dataset_name, # The data to predict and grade over
-#     evaluators=[length, correctness], # The evaluators to score the results
-#     experiment_prefix="openai-3.5", # A prefix for your experiment names to easily identify them
-# ))
-
 ```
 
 This will output a URL. If we click on it, we should see results of our evaluation!
@@ -258,7 +250,7 @@ experiment_results = client.evaluate(
     langsmith_app_1, # Your AI system
     data=dataset_name, # The data to predict and grade over
     evaluators=[length, correctness], # The evaluators to score the results
-    experiment_prefix="openai-4", # A prefix for your experiment names to easily identify them
+    experiment_prefix="openai-4o-mini", # A prefix for your experiment names to easily identify them
 )
 ```
 
@@ -295,7 +287,7 @@ experiment_results = client.evaluate(
     langsmith_app_2, # Your AI system
     data=dataset_name, # The data to predict and grade over
     evaluators=[length, correctness], # The evaluators to score the results
-    experiment_prefix="strict-openai-4", # A prefix for your experiment names to easily identify them
+    experiment_prefix="strict-openai-4o-mini", # A prefix for your experiment names to easily identify them
 )
 ```
 
