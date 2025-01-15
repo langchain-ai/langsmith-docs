@@ -188,11 +188,11 @@ across Workspaces. If you would like to promote a prompt from `staging` to `prod
 
 ### Programmatically Managing Workspaces
 :::info
-A PAT associated with an organization admin has access to all resources within an organization. Ensure this token is only provided to developers who require organization-wide permissions.
+A PAT associated with an organization admin has access to all resources within an organization. Ensure this token is only provided sparingly when organization-wide permissions is required. We also recommend rotating this PAT periodically as a security best practice.
 :::
 
-Use a [personal access token](./concepts#personal-access-tokens-pats) (PAT) associated with an [organization admin](./how_to_guides/organization_management/set_up_organization#organization-roles) to programmatically create [workspaces](./concepts#workspaces). This PAT can also be used to manage resources across your organization's workspaces (e.g. creating and deleting tracing projects, datasets, prompts, etc.).
-By default, the PAT will target the workspace it was created in. To manage resources in a workspace different from the default, you can specify the desired workspace ID in the client declaration. The sample code
+Use a [personal access token](./concepts#personal-access-tokens-pats) (PAT) associated with an [organization admin](./how_to_guides/organization_management/set_up_organization#organization-roles) to programmatically create [workspaces](./concepts#workspaces). To create a PAT, follow this [how to guide](../administration/how_to_guides/organization_management/create_account_api_key#create-an-api-key). This PAT can also be used to manage resources across your organization's workspaces (e.g. creating and deleting tracing projects, datasets, prompts, etc.).
+To learn more about when to use workspaces, read more [here](./concepts#workspaces). By default, the PAT will target the workspace it was created in. To learn more about when  To manage resources in a workspace different from the default, you can specify the desired workspace ID in the client declaration. The sample code
 shows how to both create a workspace and manage resources across workspaces using an organization admin's PAT.
 
 <CodeTabs
