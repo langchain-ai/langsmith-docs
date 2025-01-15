@@ -221,7 +221,9 @@ Let's now try it out with a different model! Let's try `gpt-4-turbo`
 
 ```python
 import openai
-from langsmith.wrappers import wrap_openai
+from langsmith import wrappers
+
+openai_client = wrappers.wrap_openai(openai.OpenAI())
 
 openai_client = wrap_openai(openai.Client())
 
