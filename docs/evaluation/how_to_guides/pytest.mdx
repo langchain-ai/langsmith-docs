@@ -271,9 +271,11 @@ pytest --output='ls' tests
 
 You'll get a nice table per test suite that updates live as the results are uploaded to LangSmith:
 
+![Rich pytest outputs](./static/rich-pytest-outputs.png)
+
 Some important notes for using this feature:
-- Make sure you've installed `pip install -U "langsmith[pytest]"
-- Rich outputs do not work with `pytest-xdist`
+- Make sure you've installed `pip install -U "langsmith[pytest]"`
+- Rich outputs do not currently work with `pytest-xdist`
 
 ## Dry-run mode
 
