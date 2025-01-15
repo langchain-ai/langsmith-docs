@@ -15,6 +15,7 @@ build-api-ref:
 	LC_ALL=C $(PYTHON) -m sphinx -T -E -b html -d langsmith-sdk/python/docs/_build/doctrees -c langsmith-sdk/python/docs langsmith-sdk/python/docs langsmith-sdk/python/docs/_build/html -j auto
 	$(PYTHON) langsmith-sdk/python/docs/scripts/custom_formatter.py langsmith-sdk/docs/_build/html/
 	cd langsmith-sdk/js && yarn
+        cat package.json
 	yarn run build:typedoc
 
 vercel-build: install-vercel-deps build-api-ref 
