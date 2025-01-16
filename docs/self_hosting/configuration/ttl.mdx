@@ -19,14 +19,16 @@ configurable:
 
 <CodeTabs
   tabs={[
-    HelmBlock(`config:
-  ttl:
-    enabled: true
-    ttl_period_seconds:
-      # -- TTL seconds - 400 day longlived and 14 day shortlived
-      longlived: "34560000"
-      shortlived: "1209600"
-    `),
+    HelmBlock(
+      `config:
+    ttl:
+      enabled: true
+      ttl_period_seconds:
+        # -- TTL seconds - 400 day longlived and 14 day shortlived
+        longlived: "34560000"
+        shortlived: "1209600"
+    `
+    ),
     DockerBlock(
       `# In your .env file
 FF_TRACE_TIERS_ENABLED=true
