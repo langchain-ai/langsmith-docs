@@ -152,7 +152,7 @@ const config = {
               },
               {
                 label: "JS/TS",
-                to: "https://docs.smith.langchain.com/reference/js/",
+                to: "https://docs.smith.langchain.com/reference/js",
               },
             ],
           },

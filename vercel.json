@@ -207,14 +207,6 @@
       "destination": "/reference/python/reference"
     },
     {
-      "source": "/reference/js/:path*([^/]$)",
-      "destination": "/reference/js/:path*/"
-    },
-    {
-      "source": "/reference/js([^/]$)",
-      "destination": "/reference/js/"
-    },
-    {
       "source": "/reference/sdk_reference(/?)",
       "destination": "/reference/"
     },
