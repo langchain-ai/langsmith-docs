@@ -150,6 +150,10 @@ const config = {
                 label: "Python",
                 to: "https://docs.smith.langchain.com/reference/python",
               },
+              {
+                label: "JS/TS",
+                to: "https://docs.smith.langchain.com/reference/js/",
+              },
             ],
           },
         ],
