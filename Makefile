@@ -14,7 +14,7 @@ build-api-ref:
 	$(PYTHON) langsmith-sdk/python/docs/create_api_rst.py
 	LC_ALL=C $(PYTHON) -m sphinx -T -E -b html -d langsmith-sdk/python/docs/_build/doctrees -c langsmith-sdk/python/docs langsmith-sdk/python/docs langsmith-sdk/python/docs/_build/html -j auto
 	$(PYTHON) langsmith-sdk/python/docs/scripts/custom_formatter.py langsmith-sdk/docs/_build/html/
-	cd langsmith-sdk/js && yarn && yarn run build:typedoc --useHostedBaseUrlForAbsoluteLinks true --hostedBaseUrl https://${VERCEL_URL:-docs.smith.langchain.com}/reference/js/
+	cd langsmith-sdk/js && yarn && yarn run build:typedoc --useHostedBaseUrlForAbsoluteLinks true --hostedBaseUrl "https://$${VERCEL_URL:-docs.smith.langchain.com}/reference/js/"
 
 vercel-build: install-vercel-deps build-api-ref 
 	mkdir -p static/reference/python
