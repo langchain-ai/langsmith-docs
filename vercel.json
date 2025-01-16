@@ -207,11 +207,11 @@
       "destination": "/reference/python/reference"
     },
     {
-      "source": "/reference/js/:path*(/)?",
+      "source": "/reference/js/:path*([^/]$)",
       "destination": "/reference/js/:path*/"
     },
     {
-      "source": "/reference/js(/?)",
+      "source": "/reference/js([^/]$)",
       "destination": "/reference/js/"
     },
     {
