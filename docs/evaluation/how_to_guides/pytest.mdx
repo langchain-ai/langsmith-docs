@@ -79,9 +79,15 @@ Use `pytest` as you normally would to run the tests:
 pytest tests/
 ```
 
+In most cases we recommend setting a test suite name:
+
+```bash
+LANGSMITH_TEST_SUITE='SQL app tests' pytest tests/
+```
+
 Each time you run this test suite, LangSmith:
-- creates a dataset for each test file. If a dataset for this test file already exists it will be updated
-- creates an experiment in each created/updated dataset
+- creates a [dataset](../concepts/#datasets) for each test file. If a dataset for this test file already exists it will be updated
+- creates an [experiment](../concepts/#experiment) in each created/updated dataset
 - creates an experiment row for each test case
 - collects the pass/fail rate under the `pass` feedback key for each test case
 
@@ -201,6 +207,14 @@ LANGSMITH_TEST_SUITE="SQL app tests" pytest tests/
 
 We generally recommend setting `LANGSMITH_TEST_SUITE` to get a consolidated view of all of your results.
 
+## Naming experiments
+
+You can name an experiment using the `LANGSMITH_EXPERIMENT` env var:
+
+```bash
+LANGSMITH_TEST_SUITE="SQL app tests" LANGSMITH_EXPERIMENT="baseline" pytest tests/
+```
+
 ## Caching
 
 LLMs on every commit in CI can get expensive. 
@@ -290,6 +304,16 @@ The tests will run as normal, but the experiment logs will not be sent to LangSm
 ## Legacy
 
 #### `@test` / `@unit` decorator
+
+The legacy method for marking test cases is using the `@test` or `@unit` decorators:
+
+```python
+from langsmith import test
+
+@test
+def test_foo() -> None:
+    pass
+```
 
 #### Expectations 
 
