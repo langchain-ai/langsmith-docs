@@ -260,15 +260,12 @@ If we do that, we can see a high level view of the metrics for each run:
 Great! So we can tell that GPT-4 is better than GPT-3.5 at knowing who companies are, and we can see that the strict prompt helped a lot with the length.
 But what if we want to explore in more detail?
 
-In order to do that, we can select all the runs we want to compare (in this case all three) and open them up in a comparison view:
-
-![](./static/testing_tutorial_open_compare.png)
-
+In order to do that, we can select all the runs we want to compare (in this case all three) and open them up in a comparison view.
 We immediately see all three tests side by side.
 Some of the cells are color coded - this is showing a regression of _a certain metric_ compared to _a certain baseline_.
-We automatically choose defaults for the baseline and metric, but you can change those yourself (outlined in blue below).
-You can also choose which columns and which metrics you see by using the `Display` control (outlined in yellow below).
-You can also automatically filter to only see the runs that have improvements/regressions by clicking on the icons at the top (outlined in red below).
+We automatically choose defaults for the baseline and metric, but you can change those yourself.
+You can also choose which columns and which metrics you see by using the `Display` control.
+You can also automatically filter to only see the runs that have improvements/regressions by clicking on the icons at the top.
 
 ![](./static/testing_tutorial_compare_runs.png)
 
@@ -336,25 +333,17 @@ from langsmith import Client, wrappers
 # Application code
 openai_client = wrappers.wrap_openai(openai.OpenAI())
 
-default_instructions = (
-    "Respond to the users question in a short, concise manner (one short sentence)."
-)
+default_instructions = "Respond to the users question in a short, concise manner (one short sentence)."
 
-def my_app(
-    question: str, model: str = "gpt-4o-mini", instructions: str = default_instructions
-) -> str:
-    return (
-        openai_client.chat.completions.create(
-            model=model,
-            temperature=0,
-            messages=[
-                {"role": "system", "content": instructions},
-                {"role": "user", "content": question},
-            ],
-        )
-        .choices[0]
-        .message.content
-    )
+def my_app(question: str, model: str = "gpt-4o-mini", instructions: str = default_instructions) -> str:
+    return openai_client.chat.completions.create(
+        model=model,
+        temperature=0,
+        messages=[
+            {"role": "system", "content": instructions},
+            {"role": "user", "content": question},
+        ],
+    ).choices[0].message.content
 
 client = Client()
 
@@ -380,9 +369,7 @@ client.create_examples(
 )
 
 # Define evaluators
-eval_instructions = (
-    "You are an expert professor specialized in grading students' answers to questions."
-)
+eval_instructions = "You are an expert professor specialized in grading students' answers to questions."
 
 def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
     user_content = f"""You are grading the following question:
@@ -394,18 +381,14 @@ You are grading the following predicted answer:
 Respond with CORRECT or INCORRECT:
 Grade:
 """
-    response = (
-        openai_client.chat.completions.create(
-            model="gpt-4o-mini",
-            temperature=0,
-            messages=[
-                {"role": "system", "content": eval_instructions},
-                {"role": "user", "content": user_content},
-            ],
-        )
-        .choices[0]
-        .message.content
-    )
+    response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        temperature=0,
+        messages=[
+            {"role": "system", "content": eval_instructions},
+            {"role": "user", "content": user_content},
+        ],
+    ).choices[0].message.content
     return response == "CORRECT"
 
 def concision(outputs: dict, reference_outputs: dict) -> bool:
@@ -416,10 +399,10 @@ def ls_target(inputs: str) -> dict:
     return {"response": my_app(inputs["question"])}
 
 experiment_results_v1 = client.evaluate(
-    ls_target,  # Your AI system
-    data=dataset_name,  # The data to predict and grade over
-    evaluators=[concision, correctness],  # The evaluators to score the results
-    experiment_prefix="openai-4o-mini",  # A prefix for your experiment names to easily identify them
+    ls_target, # Your AI system
+    data=dataset_name, # The data to predict and grade over
+    evaluators=[concision, correctness], # The evaluators to score the results
+    experiment_prefix="openai-4o-mini", # A prefix for your experiment names to easily identify them
 )
 
 def ls_target_v2(inputs: str) -> dict:
@@ -436,7 +419,9 @@ instructions_v3 = "Respond to the users question in a short, concise manner (one
 
 def ls_target_v3(inputs: str) -> dict:
     response = my_app(
-        inputs["question"], model="gpt-4-turbo", instructions=instructions_v3
+        inputs["question"], 
+        model="gpt-4-turbo",
+        instructions=instructions_v3
     )
     return {"response": response}
 
