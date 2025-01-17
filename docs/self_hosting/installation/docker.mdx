@@ -37,7 +37,7 @@ This guide provides instructions for installing and setting up your environment 
 
 ## Running via Docker Compose
 
-The following explains how to run the LangSmith using Docker Compose. This is the most flexible way to run LangSmith without Kubernetes. In production, we highly recommend using Kubernetes.
+The following explains how to run the LangSmith using Docker Compose. This is the most flexible way to run LangSmith without Kubernetes. The default configuration for Docker Compose is intended for local testing only and not for instances where any services are exposed to the public internet. <b>In production, we highly recommend using a secured Kubernetes environment.</b>
 
 ### 1. Fetch the LangSmith `docker-compose.yml` file
 
@@ -108,6 +108,8 @@ In this state, there is no authentication or concept of user accounts nor API ke
 
 As a next step, it is strongly recommended you work with your infrastructure administrators to:
 
-- Setup DNS for your LangSmith instance to enable easier access.
+- Setup DNS for your LangSmith instance to enable easier access
 - Configure SSL to ensure in-transit encryption of traces submitted to LangSmith
 - Configure LangSmith for [oauth authentication](/self_hosting/configuration/sso) or [basic authentication](/self_hosting/configuration/basic_auth) to secure your LangSmith instance
+- Secure access to your Docker environment to limit access to only the LangSmith frontend and API
+- Connect LangSmith to secured Postgres and Redis instances
