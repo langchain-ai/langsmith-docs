@@ -1,0 +1,620 @@
+import Tabs from "@theme/Tabs";
+import CodeBlock from "@theme/CodeBlock";
+import {
+  CodeTabs,
+  typescript,
+  python,
+} from "@site/src/components/InstructionsWithCode";
+
+# LangSmith Testing Framework tutorial
+
+This tutorial will show you how to use LangSmith's testing frameworks in both Python and JS/TS to test your LLM applications.
+We will be testing a React agent that answers financial data questions, and will show how to do so in both Python and JS/TS.
+
+## Setup
+
+### Installation
+
+First, install the packages required for making the agent:
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "bash",
+      content: `pip install -U langchain_community langchain_openai langgraph openai e2b_code_interpreter`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "bash",
+      content: `yarn add @langchain/openai @langchain/community @langchain/langgraph @langchain/core @e2b/code-interpreter @polygon.io/client-js openai zod`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+Next, add the installs for the testing framework:
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Pytest",
+      language: "bash",
+      content: `pip install -U langsmith pytest`,
+    },
+    {
+      value: "vitest",
+      label: "Vitest",
+      language: "bash",
+      content: `yarn add langsmith vitest`,
+    },
+    {
+      value: "jest",
+      label: "Jest",
+      language: "bash",
+      content: `yarn add langsmith jest`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+### Environment Variables
+
+Set the following environment variables (all of the API keys are free except for OpenAI):
+
+```bash
+OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
+TAVILY_API_KEY=<YOUR_TAVILY_API_KEY>
+E2B_API_KEY=<YOUR_E2B_API_KEY>
+POLYGON_API_KEY=<YOUR_POLYGON_API_KEY>
+```
+
+## Create your app
+
+To define our React agent, we will use LangGraph/LangGraphJS for the orchestation and LangChain for the LLM and tools.
+
+### Define tools
+
+First we are going to define the tools we are going to use in our agent. There are going to be 3 tools:
+- A search tool using Tavily
+- A code interpreter tool using E2B
+- A stock information tool using Polygon
+
+#### Search Tool
+
+We will use Tavily for the search tool.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `from langchain_community.tools import TavilySearchResults
+search_tool = TavilySearchResults(
+    max_results=5,
+    include_raw_content=True,
+)`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "typescript",
+      content: `import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
+      
+const searchTool = new TavilySearchResults({
+    maxResults: 5,
+});`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+#### Code Interpreter Tool
+
+We will use E2B for the code interpreter tool.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `from e2b_code_interpreter import Sandbox
+def code_tool(code: str) -> str:
+    """Execute the python code and return the result."""
+    sbx = Sandbox()
+    execution = sbx.run_code(code) 
+    if execution.error:
+        return f"Error: {execution.error}"
+    return f"Results: {execution.results}, Logs: {execution.logs}"`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "typescript",
+      content: `import { Sandbox } from "@e2b/code-interpreter";
+import { tool } from "@langchain/core/tools";
+import { z } from "zod";
+
+const codeTool = tool(
+  async (input): Promise<string> => {
+    const sbx = await Sandbox.create();
+    const execution = await sbx.runCode(input.code);
+    if (execution.error) {
+      return \`Error: \${execution.error}\`;
+    }
+    return \`Results: \${execution.results}, Logs: \${execution.logs}\`;
+  },
+  {
+    name: "code",
+    description: "Execute the python code and return the result.",
+    schema: z.object({
+      code: z.string().describe("The python code to execute"),
+    }),
+  }
+);`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+#### Stock Information Tool
+
+We will use Polygon for the stock information tool.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `from langchain_community.tools.polygon.aggregates import PolygonAggregates
+from langchain_community.utilities.polygon import PolygonAPIWrapper
+from typing_extensions import Annotated, TypedDict, Optional, Literal
+
+class TickerToolInput(TypedDict):
+    """Input format for the ticker tool.
+    
+    The tool will pull data in aggregate blocks (timespan_multiplier * timespan) from the from_date to the to_date
+    """
+    ticker: Annotated[str, ..., "The ticker symbol of the stock"]
+    timespan: Annotated[Literal["minute", "hour", "day", "week", "month", "quarter", "year"], ..., "The size of the time window."]
+    timespan_multiplier: Annotated[int, ..., "The multiplier for the time window"]
+    from_date: Annotated[str, ..., "The date to start pulling data from, YYYY-MM-DD format - ONLY include the year month and day"]
+    to_date: Annotated[str, ..., "The date to stop pulling data, YYYY-MM-DD format - ONLY include the year month and day"]
+
+api_wrapper = PolygonAPIWrapper()
+polygon_aggregate = PolygonAggregates(api_wrapper=api_wrapper)
+
+def ticker_tool(query: TickerToolInput) -> str:
+    """Pull data for the ticker."""
+    return polygon_aggregate.invoke(query)`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "typescript",
+      content: `import { restClient } from "@polygon.io/client-js";
+import { tool } from "@langchain/core/tools";
+import { z } from "zod";
+
+const TickerToolInputSchema = z.object({
+  ticker: z.string().describe("The ticker symbol of the stock"),
+  timespan: z.enum(["minute", "hour", "day", "week", "month", "quarter", "year"]).describe("The size of the time window."),
+  timespan_multiplier: z.number().describe("The multiplier for the time window"),
+  from_date: z
+    .string()
+    .describe("The date to start pulling data from, YYYY-MM-DD format - ONLY include the year, month, and day"),
+  to_date: z
+    .string()
+    .describe("The date to stop pulling data, YYYY-MM-DD format - ONLY include the year, month, and day"),
+});
+
+
+const rest = restClient(process.env.POLYGON_API_KEY);
+
+const tickerTool = tool(async (query): Promise<string> => 
+  {
+    const parsed = TickerToolInputSchema.parse(query);
+    const result = await rest.stocks.aggregates(
+        parsed.ticker,
+        parsed.timespan_multiplier,
+        parsed.timespan,
+        parsed.from_date,
+        parsed.to_date
+    );
+    return JSON.stringify(result);
+  },
+  {
+    name: "ticker",
+    description: "Pull data for the ticker",
+    schema: TickerToolInputSchema,
+  }
+);`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+### Define agent
+
+Now that we have defined all of our tools, we can use `create_react_agent`/`createReactAgent` to create our agent.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `from langchain_openai import ChatOpenAI
+from langgraph.prebuilt import create_react_agent
+from typing_extensions import Annotated, TypedDict, Optional
+      
+class AgentOutputFormat(TypedDict):
+    numeric_answer: Annotated[Optional[float], ..., "The numeric answer, if the user asked for one"]
+    text_answer: Annotated[Optional[str], ..., "The text answer, if the user asked for one"]
+    reasoning: Annotated[str, ..., "The reasoning behind the answer"]
+
+tools = [code_tool, search_tool, ticker_tool]
+
+agent = create_react_agent(
+    model=ChatOpenAI(model="gpt-4o-mini"),
+    tools=tools,
+    response_format=AgentOutputFormat,
+    state_modifier="You are a financial expert. Respond to the users query accurately",
+)`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "typescript",
+      content: `import { z } from "zod";
+import { ChatOpenAI } from "@langchain/openai";
+import { createReactAgent } from "@langchain/langgraph/prebuilt";
+
+const AgentOutputFormatSchema = z.object({
+    numeric_answer: z.number().optional().describe("The numeric answer, if the user asked for one"),
+    text_answer: z.string().optional().describe("The text answer, if the user asked for one"),
+    reasoning: z.string().describe("The reasoning behind the answer"),  
+})
+
+const tools = [codeTool, searchTool, tickerTool];
+
+const agent = createReactAgent({
+    llm: new ChatOpenAI({ model: "gpt-4o" }),
+    tools: tools,
+    responseFormat: AgentOutputFormatSchema,
+    stateModifier: "You are a financial expert. Respond to the users query accurately",
+}); 
+
+export default agent;`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+## Write tests
+
+Now that we have defined our agent, let's write a few tests to ensure basic functionality.
+In this tutorial we are going to test whether the agent's tool calling abilities are working, 
+whether the agent knows to ignore irrelevant questions, and whether it is able to answer complex questions
+that involve using all of the tools.
+
+### Setup test file
+
+Before we write any test, we need to set up our test file and add the imports needed at the top of the file.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Pytest",
+      language: "python",
+      caption: "Name your test file \`test_evals.py\`",
+      content: `from agent import agent # import from wherever your agent is defined
+import pytest
+import json
+from langsmith import testing`,
+    },
+    {
+      value: "vitest",
+      label: "Vitest",
+      language: "typescript",
+      caption: "Name your test file \`agent.vitest.eval.ts\`",
+      content: `import { expect } from "vitest";
+import * as ls from "langsmith/vitest";
+import agent from "../../src/agent"; // import from wherever your agent is defined`
+    },
+    {
+      value: "jest",
+      label: "Jest",
+      language: "typescript",
+      caption: "Name your test file \`agent.jest.eval.ts\`",
+      content: `import { expect } from "@jest/globals";
+import * as ls from "langsmith/jest";
+import agent from "../../src/agent"; // import from wherever your agent is defined`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+### Test 1: Ignore irrelevant questions
+
+The first test will be a simple check that the agent does not use tools on irrelevant queries.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Pytest",
+      language: "python",
+      content: `@pytest.mark.langsmith
+@pytest.mark.parametrize( # Can still use all normal pytest markers
+    "query",
+    [
+        "Hello!",
+        "How are you doing?"
+    ],
+)
+def test_no_tools_on_unrelated_query(query):
+    # Test that the agent does not use tools on unrelated queries
+    result = agent.invoke({"messages": [("user", query)]})
+    
+    # Check that the flow was HUMAN -> AI FINAL RESPONSE (no tools called)
+    assert len(result['messages']) == 2`,
+    },
+    {
+      value: "vite",
+      label: "Vitest",
+      language: "typescript",
+      caption: `Remember to place each individual test inside a describe block \n
+      \`ls.describe("Agent Tests", () => {
+        // PLACE TESTS Here
+      })\`
+      `,
+      content: `ls.test.each([
+    { inputs: { query: "Hello!" }, expected: { numMessages: 2 } },
+    { inputs: { query: "How are you doing?" }, expected: { numMessages: 2 } },
+  ])(
+    "should not use tools on unrelated query: %s",
+    async ({ inputs: { query }, expected: { numMessages } }) => {
+      const result = await agent.invoke({ messages: [["user", query]] });
+      
+      // Check that the flow was HUMAN -> AI FINAL RESPONSE (no tools called)
+      expect(result.messages).toHaveLength(numMessages);
+    }
+  );`,
+    },
+    {
+      value: "jest",
+      label: "Jest",
+      language: "typescript",
+      caption: `Remember to place each individual test inside a describe block \n
+      \`ls.describe("Agent Tests", () => {
+        // PLACE TESTS Here
+      })\`
+      `,
+      content: `ls.test.each([
+    { inputs: { query: "Hello!" }, expected: { numMessages: 2 } },
+    { inputs: { query: "How are you doing?" }, expected: { numMessages: 2 } },
+  ])(
+    "should not use tools on unrelated query: %s",
+    async ({ inputs: { query }, expected: { numMessages } }) => {
+      const result = await agent.invoke({ messages: [["user", query]] });
+      
+      // Check that the flow was HUMAN -> AI FINAL RESPONSE (no tools called)
+      expect(result.messages).toHaveLength(numMessages);
+    }
+  );`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+### Test 2: Tool calling
+
+For tool calling, we are going to verify that the agent calls the correct tool with the correct parameters.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Pytest",
+      language: "python",
+      content: `@pytest.mark.langsmith
+def test_searches_for_correct_ticker():
+    # Test that the agent searches for the correct ticker
+    result = agent.invoke({"messages": [("user", "What is the price of Aple?")]})
+    
+    # The agent should have made a single tool call to the ticker tool
+    ticker = json.loads(result['messages'][1].additional_kwargs['tool_calls'][0]['function']['arguments'])["query"]["ticker"]
+    
+    # Check that the right ticker was queried
+    assert ticker == "AAPL"
+    
+    # Check that the flow was HUMAN -> AI -> TOOL -> AI FINAL RESPONSE
+    assert len(result['messages']) == 4`,
+    },
+    {
+      value: "vite",
+      label: "Vitest",
+      language: "typescript",
+      caption: `Remember to place each individual test inside a describe block \n
+      \`ls.describe("Agent Tests", () => {
+        // PLACE TESTS Here
+      })\`
+      `,
+      content: `ls.test(
+    "should search for correct ticker",
+    {
+      inputs: { query: "What is the price of Aple?" },
+      expected: { numMessages: 4 },
+    },
+    async ({ inputs: { query }, expected: { numMessages } }) => {
+      const result = await agent.invoke({
+        messages: [["user", query]],
+      });
+      
+      // The agent should have made a single tool call to the ticker tool
+      const toolCalls = result.messages[1].additional_kwargs?.tool_calls || [];
+      const tickerQuery = JSON.parse(toolCalls[0].function.arguments).query.ticker;
+
+      // Check that the right ticker was queried
+      expect(tickerQuery).toBe("AAPL");
+      
+      // Check that the flow was HUMAN -> AI -> TOOL -> AI FINAL RESPONSE
+      expect(result.messages).toHaveLength(numMessages);
+    }
+  );`,
+    },
+    {
+      value: "jest",
+      label: "Jest",
+      language: "typescript",
+      caption: `Remember to place each individual test inside a describe block \n
+      \`ls.describe("Agent Tests", () => {
+        // PLACE TESTS Here
+      })\`
+      `,
+      content: `ls.test(
+    "should search for correct ticker",
+    {
+      inputs: { query: "What is the price of Aple?" },
+      expected: { numMessages: 4 },
+    },
+    async ({ inputs: { query }, expected: { numMessages } }) => {
+      const result = await agent.invoke({
+        messages: [["user", query]],
+      });
+      
+      // The agent should have made a single tool call to the ticker tool
+      const toolCalls = result.messages[1].additional_kwargs?.tool_calls || [];
+      const tickerQuery = JSON.parse(toolCalls[0].function.arguments).query.ticker;
+
+      // Check that the right ticker was queried
+      expect(tickerQuery).toBe("AAPL");
+      
+      // Check that the flow was HUMAN -> AI -> TOOL -> AI FINAL RESPONSE
+      expect(result.messages).toHaveLength(numMessages);
+    }
+  );`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+### Test 3: Complex question answering
+
+For answering a complex question, we are going to ensure that the agent uses the coding tool for any
+calculations, and also log the total number of steps taken so we can track over time how the performance of the agent improves.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Pytest",
+      language: "python",
+      content: `@pytest.mark.langsmith
+def test_executes_code_when_needed():
+    # Test that the agent executes code when needed
+    result = agent.invoke({"messages": [("user", "What was the average return rate for FAANG stock in 2024?")]})
+    
+    # Grab all the tool calls made by the LLM
+    tool_calls = [tc['function']['name'] for m in result['messages'] if m.additional_kwargs and 'tool_calls' in m.additional_kwargs for tc in m.additional_kwargs['tool_calls'] ]
+    
+    # This will log the number of steps taken by the LLM, which we can track over time to measure performance
+    testing.log_feedback(key="num_steps", value=len(result['messages']) - 1)
+    
+    # Assert that the code tool was used
+    assert "code_tool" in tool_calls
+    
+    # Assert that the answer is within 1 of the expected value
+    assert abs(result['structured_response']['numeric_answer'] - 53) <= 1`,
+    },
+    {
+      value: "vite",
+      label: "Vitest",
+      language: "typescript",
+      caption: `Remember to place each individual test inside a describe block \n
+      \`ls.describe("Agent Tests", () => {
+        // PLACE TESTS Here
+      })\`
+      `,
+      content: `ls.test(
+    "should execute code when needed",
+    {
+      inputs: { query: "What was the average return rate for FAANG stock in 2024?" },
+      expected: { answer: 53 },
+    },
+    async ({ inputs: { query }, expected: { answer } }) => {
+      const result = await agent.invoke({
+        messages: [["user", query]],
+      });
+      
+      // Grab all the tool calls made by the LLM
+      const toolCalls = result.messages
+        .filter(m => m.additional_kwargs?.tool_calls)
+        .flatMap(m => m.additional_kwargs.tool_calls.map(tc => tc.function.name));
+
+      // This will log the number of steps taken by the LLM, which we can track over time to measure performance
+      ls.logFeedback({
+        key: "num_steps",
+        score: result.messages.length - 1, // The first message is the user message
+      });
+
+      // Assert that the tool calls include the "code_tool" function
+      expect(toolCalls).toContain("code_tool");
+
+      // Assert that the answer is within 1 of the expected answer
+      expect(Math.abs(result.structured_response.numeric_answer - answer)).toBeLessThanOrEqual(1);
+    }
+  );`,
+    },
+    {
+      value: "jest",
+      label: "Jest",
+      language: "typescript",
+      caption: `Remember to place each individual test inside a describe block \n
+      \`ls.describe("Agent Tests", () => {
+        // PLACE TESTS Here
+      })\`
+      `,
+      content: `ls.test(
+    "should execute code when needed",
+    {
+      inputs: { query: "What was the average return rate for FAANG stock in 2024?" },
+      expected: { answer: 53 },
+    },
+    async ({ inputs: { query }, expected: { answer } }) => {
+      const result = await agent.invoke({
+        messages: [["user", query]],
+      });
+
+      // Grab all the tool calls made by the LLM
+      const toolCalls = result.messages
+        .filter(m => m.additional_kwargs?.tool_calls)
+        .flatMap(m => m.additional_kwargs.tool_calls.map(tc => tc.function.name));
+
+      // This will log the number of steps taken by the LLM, which we can track over time to measure performance
+      ls.logFeedback({
+        key: "num_steps",
+        score: result.messages.length - 1, // The first message is the user message
+      });
+
+      // Assert that the tool calls include the "code_tool" function
+      expect(toolCalls).toContain("code_tool");
+
+      // Assert that the answer is within 1 of the expected answer
+      expect(Math.abs(result.structured_response.numeric_answer - answer)).toBeLessThanOrEqual(1);
+    }
+  );`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+## Run tests
