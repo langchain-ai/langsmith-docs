@@ -403,7 +403,7 @@ ls.describe("generate sql demo", () => {
     async ({ inputs, referenceOutputs }) => {
       return { sql: "SELECT * FROM users;" }
     },
-  )
+  );
 });
 ```
 
@@ -412,6 +412,39 @@ However keep in mind if you do this that if your test fails to complete due to a
 ## Trace intermediate calls
 
 LangSmith will automatically trace any traceable intermediate calls that happen in the course of test case execution.
+
+## Focusing or skipping tests
+
+You can chain the Vitest/Jest `.skip` and `.only` methods on `ls.test()` and `ls.describe()`:
+
+```ts
+import * as ls from "langsmith/vitest";
+// import * as ls from "langsmith/jest";
+
+ls.describe("generate sql demo", () => {
+  ls.test.skip(
+    "offtopic input",
+    {
+      inputs: { userQuery: "..." },
+      referenceOutputs: { sql: "..." }
+    },
+    async ({ inputs, referenceOutputs }) => {
+      return { sql: "SELECT * FROM users;" }
+    },
+  );
+  ls.test.only(
+    "other",
+    {
+      inputs: { userQuery: "..." },
+      referenceOutputs: { sql: "..." }
+    },
+    async ({ inputs, referenceOutputs }) => {
+      return { sql: "SELECT * FROM users;" }
+    },
+  );
+});
+```
+
 
 ## Dry-run mode
 
