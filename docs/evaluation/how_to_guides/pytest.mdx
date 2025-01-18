@@ -20,7 +20,7 @@ For extra features like rich terminal outputs and test caching install with `pip
 
 :::info For JS/TS
 
-The JS/TS SDK has an analogous Jest/Vitest/Bun integration.
+The JS/TS SDK has an analogous [Vitest/Jest integration](./vitest_jest).
 
 :::
 
@@ -118,7 +118,7 @@ def test_foo() -> None:
     assert True
 ```
 
-Runnig this test will create/update an example with name "test_foo", inputs `{"a": 1, "b": 2}`, reference outputs `{"foo": "bar"}` and trace a run with outputs `{"foo": "baz"}`.
+Running this test will create/update an example with name "test_foo", inputs `{"a": 1, "b": 2}`, reference outputs `{"foo": "bar"}` and trace a run with outputs `{"foo": "baz"}`.
 
 Another way to define example inputs and reference outputs is via pytest fixtures/parametrizations.
 By default any arguments to your test function will be logged as inputs on the corresponding example.
