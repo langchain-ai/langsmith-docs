@@ -12,7 +12,7 @@ Compared to the `evaluate()` evaluation flow, this is useful when:
 
 - Each example requires different evaluation logic
 - You want to assert binary expectations, and both track these assertions in LangSmith and raise assertion errors locally (e.g. in CI pipelines)
-- You want to take advantage of mocks, watch mode, local results, or other features of the Jest/Vitest ecosystem
+- You want to take advantage of mocks, watch mode, local results, or other features of the Vitest/Jest ecosystem
 
 :::info Installation
 
@@ -168,7 +168,7 @@ Finally, add the following to the `scripts` field in your `package.json` to run 
 
 ## Define and run evals
 
-You can now define evals as tests using familiar Jest/Vitest syntax, with a few caveats:
+You can now define evals as tests using familiar Vitest/Jest syntax, with a few caveats:
 
 - You should import `describe` and `test` from the `langsmith/jest` or `langsmith/vitest` entrypoint
 - You must wrap your test cases in a `describe` block
