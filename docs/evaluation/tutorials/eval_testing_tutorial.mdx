@@ -361,8 +361,12 @@ The first test will be a simple check that the agent does not use tools on irrel
     ],
 )
 def test_no_tools_on_unrelated_query(query):
+    testing.log_inputs({"query": query})
     # Test that the agent does not use tools on unrelated queries
     result = agent.invoke({"messages": [("user", query)]})
+    testing.log_outputs({"result": result})
+    
+    testing.log_reference_outputs({"numMessages": 2})
     
     # Check that the flow was HUMAN -> AI FINAL RESPONSE (no tools called)
     assert len(result['messages']) == 2`,
@@ -383,6 +387,7 @@ def test_no_tools_on_unrelated_query(query):
     "should not use tools on unrelated query: %s",
     async ({ inputs: { query }, expected: { numMessages } }) => {
       const result = await agent.invoke({ messages: [["user", query]] });
+      ls.logOutputs(result);
       
       // Check that the flow was HUMAN -> AI FINAL RESPONSE (no tools called)
       expect(result.messages).toHaveLength(numMessages);
@@ -405,6 +410,7 @@ def test_no_tools_on_unrelated_query(query):
     "should not use tools on unrelated query: %s",
     async ({ inputs: { query }, expected: { numMessages } }) => {
       const result = await agent.invoke({ messages: [["user", query]] });
+      ls.logOutputs(result);
       
       // Check that the flow was HUMAN -> AI FINAL RESPONSE (no tools called)
       expect(result.messages).toHaveLength(numMessages);
@@ -427,8 +433,13 @@ For tool calling, we are going to verify that the agent calls the correct tool w
       language: "python",
       content: `@pytest.mark.langsmith
 def test_searches_for_correct_ticker():
+    user_query = "What is the price of Aple?"
+    testing.log_inputs({"user_query": user_query})
     # Test that the agent searches for the correct ticker
-    result = agent.invoke({"messages": [("user", "What is the price of Aple?")]})
+    result = agent.invoke({"messages": [("user", user_query)]})
+    testing.log_outputs({"result": result})
+    
+    testing.log_reference_outputs({"ticker": "AAPL", "numMessages": 4})
     
     # The agent should have made a single tool call to the ticker tool
     ticker = json.loads(result['messages'][1].additional_kwargs['tool_calls'][0]['function']['arguments'])["query"]["ticker"]
@@ -459,6 +470,8 @@ def test_searches_for_correct_ticker():
         messages: [["user", query]],
       });
       
+      ls.logOutputs(result);
+      
       // The agent should have made a single tool call to the ticker tool
       const toolCalls = result.messages[1].additional_kwargs?.tool_calls || [];
       const tickerQuery = JSON.parse(toolCalls[0].function.arguments).query.ticker;
@@ -491,6 +504,8 @@ def test_searches_for_correct_ticker():
         messages: [["user", query]],
       });
       
+      ls.logOutputs(result);
+      
       // The agent should have made a single tool call to the ticker tool
       const toolCalls = result.messages[1].additional_kwargs?.tool_calls || [];
       const tickerQuery = JSON.parse(toolCalls[0].function.arguments).query.ticker;
@@ -520,8 +535,14 @@ calculations, and also log the total number of steps taken so we can track over 
       language: "python",
       content: `@pytest.mark.langsmith
 def test_executes_code_when_needed():
+    user_query = "What was the average return rate for FAANG stock in 2024?"
+    testing.log_inputs({"user_query": user_query})
+    
     # Test that the agent executes code when needed
-    result = agent.invoke({"messages": [("user", "What was the average return rate for FAANG stock in 2024?")]})
+    result = agent.invoke({"messages": [("user", user_query)]})
+    testing.log_outputs({"result": result})
+    
+    testing.log_reference_outputs({"answer": 53})
     
     # Grab all the tool calls made by the LLM
     tool_calls = [tc['function']['name'] for m in result['messages'] if m.additional_kwargs and 'tool_calls' in m.additional_kwargs for tc in m.additional_kwargs['tool_calls'] ]
@@ -555,6 +576,8 @@ def test_executes_code_when_needed():
         messages: [["user", query]],
       });
       
+      ls.logOutputs(result);
+      
       // Grab all the tool calls made by the LLM
       const toolCalls = result.messages
         .filter(m => m.additional_kwargs?.tool_calls)
@@ -593,6 +616,8 @@ def test_executes_code_when_needed():
       const result = await agent.invoke({
         messages: [["user", query]],
       });
+      
+      ls.logOutputs(result);
 
       // Grab all the tool calls made by the LLM
       const toolCalls = result.messages
@@ -617,4 +642,172 @@ def test_executes_code_when_needed():
   groupId="client-language"
 />
 
+### Test 4: LLM as a judge
+
+For LLM as a judge, we are going to ensure that the agent's answer is grounded in the search results.
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Pytest",
+      language: "python",
+      content: `judge_llm = ChatOpenAI(model="gpt-4o")
+
+@pytest.mark.langsmith
+def test_grounded_in_the_source():
+    # Test that the agent is grounded in the source
+    user_query = "How did Nvidia stock do in 2024 according to analysts?"
+    t.log_inputs({"user_query": user_query})
+    
+    result = agent.invoke({"messages": [("user", user_query)]})    
+    t.log_outputs({"result": result})
+
+    # Grab all the search calls made by the LLM
+    tavily_tool_message_indices = []
+    for i, m in enumerate(result['messages']):
+        if m.additional_kwargs and 'tool_calls' in m.additional_kwargs and 
+        m.additional_kwargs['tool_calls'][0]['function']['name'] == 'tavily_search_results_json':
+            tavily_tool_message_indices.append(i+1)
+
+    documents = "\\n".join([m.content for i,m in enumerate(result['messages']) if i in tavily_tool_message_indices])
+
+    with testing.trace_feedback():
+        instructions = (
+            "Return 1 if the ANSWER is grounded in the DOCUMENTS"
+            "Return 0 if the ANSWER is not grounded in the DOCUMENTS"
+        )
+
+        grade = judge_llm.invoke([
+            {"role": "system", "content": instructions},
+            {"role": "user", "content": f"ANSWER: {result['structured_response']['text_answer']}\\nDOCUMENTS: {documents}"},
+        ])
+
+        score = int(grade.content)
+        testing.log_feedback(key="groundedness", score=score)
+    assert score
+`,
+    },
+    {
+      value: "vitest",
+      label: "Vitest",
+      language: "typescript",
+      content: `// THIS CODE GOES OUTSIDE THE TEST - IT IS JUST A HELPER FUNCTION
+const judgeLLM = new ChatOpenAI({ model: "gpt-4o" });
+
+const groundedEvaluator = async (params: {
+    answer: string;
+    referenceDocuments: string, 
+  }) => {
+    const instructions = [
+      "Return 1 if the ANSWER is grounded in the DOCUMENTS",
+      "Return 0 if the ANSWER is not grounded in the DOCUMENTS",
+    ].join("\\n");
+    const grade = await judgeLLM.invoke([
+      { role: "system", content: instructions },
+      { role: "user", content: \`ANSWER: \${params.answer}\\nDOCUMENTS: \${params.referenceDocuments}\` },
+    ]);
+
+    const score = parseInt(grade.content.toString());
+    return { key: "groundedness", score };
+  };
+  
+  // THIS CODE GOES INSIDE THE TEST
+  ls.test(
+    "grounded in the source",
+    {
+      inputs: { query: "How did Nvidia stock do in 2024 according to analysts?" },
+    },
+    async ({ inputs: { query } }) => {
+      const result = await agent.invoke({
+        messages: [{ role: "user", content: query }],
+      });
+
+      const wrappedEvaluator = ls.wrapEvaluator(groundedEvaluator);
+
+      await wrappedEvaluator({
+        answer: result.structuredResponse.text_answer ?? "",
+        referenceDocuments: result.structuredResponse.reasoning,
+      })
+
+      ls.logOutputs(result);
+    });`,
+    },
+    {
+      value: "jest",
+      label: "Jest",
+      language: "typescript",
+      content: `// THIS CODE GOES OUTSIDE THE TEST - IT IS JUST A HELPER FUNCTION
+const judgeLLM = new ChatOpenAI({ model: "gpt-4o" });
+
+const groundedEvaluator = async (params: {
+    answer: string;
+    referenceDocuments: string,
+  }) => {
+    const instructions = [
+      "Return 1 if the ANSWER is grounded in the DOCUMENTS",
+      "Return 0 if the ANSWER is not grounded in the DOCUMENTS",
+    ].join("\\n");
+    const grade = await judgeLLM.invoke([
+      { role: "system", content: instructions },
+      { role: "user", content: \`ANSWER: \${params.answer}\\nDOCUMENTS: \${params.referenceDocuments}\` },
+    ]);
+
+    const score = parseInt(grade.content.toString());
+    return { key: "groundedness", score };
+  };
+  
+  // THIS CODE GOES INSIDE THE TEST
+  ls.test(
+    "grounded in the source",
+    {
+      inputs: { query: "How did Nvidia stock do in 2024 according to analysts?" },
+    },
+    async ({ inputs: { query } }) => {
+      const result = await agent.invoke({
+        messages: [{ role: "user", content: query }],
+      });
+
+      const wrappedEvaluator = ls.wrapEvaluator(groundedEvaluator);
+
+      await wrappedEvaluator({
+        answer: result.structuredResponse.text_answer ?? "",
+        referenceDocuments: result.structuredResponse.reasoning,
+      })
+
+      ls.logOutputs(result);
+    });`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
 ## Run tests
+
+### Config file for Vitest
+
+### Config file for Jest
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Pytest",
+      language: "bash",
+      content: `pytest --output='ls' tests`,
+    },
+    {
+      value: "vitest",
+      label: "Vitest",
+      language: "bash",
+      content: `yarn eval:vitest`,
+    },
+    {
+      value: "jest",
+      label: "Jest",
+      language: "bash",
+      content: `yarn eval:jest`,
+    },
+  ]}
+  groupId="client-language"
+/>
