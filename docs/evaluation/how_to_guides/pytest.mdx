@@ -10,19 +10,17 @@ Compared to the default `evaluate()` evaluation flow, this is useful when:
 - You want to assert binary expectations, and both track these assertions in LangSmith and raise assertion errors locally (e.g. in CI pipelines)
 - You want pytest-like terminal outputs
 
-:::info Installation
-
-Requires Python SDK version `langsmith>=0.3`.
-
-For extra features like rich terminal outputs and test caching install with `pip install -U "langsmith[pytest]"`.
-
-:::
-
 :::info For JS/TS
 
 The JS/TS SDK has an analogous [Vitest/Jest integration](./vitest_jest).
 
 :::
+
+## Installation
+
+This functionality requires Python SDK version `langsmith>=0.3`.
+
+For extra features like [rich terminal outputs](./pytest#rich-outputs) and [test caching](./pytest#caching) install with `pip install -U "langsmith[pytest]"`.
 
 ## Define and run tests
 
