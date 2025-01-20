@@ -56,6 +56,10 @@ def generate_sql(user_query: str) -> str:
 import pytest
 from langsmith import testing as t
 
+def is_valid_sql(query: str) -> bool:
+    """Return True if the query is valid SQL."""
+    return True  # Dummy implementation
+
 @pytest.mark.langsmith  # <-- Mark as a LangSmith test case
 def test_sql_generation_select_all() -> None:
     user_query = "Get all users from the customers table"
@@ -66,8 +70,10 @@ def test_sql_generation_select_all() -> None:
 
     expected = "SELECT * FROM customers;"
     t.log_reference_outputs({"sql": expected})  # <-- Log example reference outputs, optional
+    
+    t.log_feedback(key="valid_sql", score=is_valid_sql(sql))  # <-- Log feedback, optional
 
-    assert sql == expected  # <-- Test result automatically logged under 'pass' feedback key
+    assert sql == expected  # <-- Test pass/fail status automatically logged to LangSmith under 'pass' feedback key
 ```
 
 When you run this test it will have a default `pass` boolean feedback key based on the test case passing / failing.
@@ -88,7 +94,7 @@ LANGSMITH_TEST_SUITE='SQL app tests' pytest tests/
 Each time you run this test suite, LangSmith:
 - creates a [dataset](../concepts/#datasets) for each test file. If a dataset for this test file already exists it will be updated
 - creates an [experiment](../concepts/#experiment) in each created/updated dataset
-- creates an experiment row for each test case
+- creates an experiment row for each test case, with the inputs, outputs, reference outputs and feedback you've logged
 - collects the pass/fail rate under the `pass` feedback key for each test case
 
 Here's what a test suite dataset looks like:
@@ -99,7 +105,7 @@ And what an experiment against that test suite looks like:
 
 ![Experiment](./static/simple-pytest.png)
 
-## Trace inputs, outputs, and reference outputs
+## Log inputs, outputs, and reference outputs
 
 Every time we run a test we're syncing it to a dataset example and tracing it as a run.
 There's a few different ways that we can trace the example inputs and reference outputs and the run outputs.
@@ -118,7 +124,9 @@ def test_foo() -> None:
     assert True
 ```
 
-Runnig this test will create/update an example with name "test_foo", inputs `{"a": 1, "b": 2}`, reference outputs `{"foo": "bar"}` and trace a run with outputs `{"foo": "baz"}`.
+Running this test will create/update an example with name "test_foo", inputs `{"a": 1, "b": 2}`, reference outputs `{"foo": "bar"}` and trace a run with outputs `{"foo": "baz"}`.
+
+**NOTE**: If you run any of `log_inputs`, `log_outputs`, or `log_reference_outputs` twice the previous values will be overwritten.
 
 Another way to define example inputs and reference outputs is via pytest fixtures/parametrizations.
 By default any arguments to your test function will be logged as inputs on the corresponding example.
@@ -144,10 +152,10 @@ def test_cd(c: int, d: int) -> None:
 
 This will create/sync an example with name "test_cd", inputs `{"c": 5}` and reference outputs `{"d": 6}`, and run output `{"d": 10}`.
 
-## Trace feedback
+## Log feedback
 
 By default LangSmith collects the pass/fail rate under the `pass` feedback key for each test case.
-You can add additional feedback with `log_feedback`:
+You can add additional feedback with `log_feedback`.
 
 ```python
 import openai
@@ -191,6 +199,9 @@ def test_offtopic_input() -> None:
 
 Note the use of the `trace_feedback()` context manager. This makes it so that the LLM-as-judge call is traced separately from the rest of the test case. 
 Instead of showing up in the main test case run it will instead show up in the trace for the `correct` feedback key.
+
+**NOTE**: Make sure that the `log_feedback` call associated with the feedback trace occurs inside the `trace_feedback` context.
+This way we'll be able to associate the feedback with the trace, and when seeing the feedback in the UI you'll be able to click on it to see the trace that generated it.
 
 ## Trace intermediate calls
 
@@ -290,6 +301,9 @@ You'll get a nice table per test suite that updates live as the results are uplo
 Some important notes for using this feature:
 - Make sure you've installed `pip install -U "langsmith[pytest]"`
 - Rich outputs do not currently work with `pytest-xdist`
+
+**NOTE**: The custom output removes all the standard pytest outputs.
+If you're trying to debug some unexpected behavior it's often better to show the regular pytest outputs so to get full error traces.
 
 ## Dry-run mode
 
