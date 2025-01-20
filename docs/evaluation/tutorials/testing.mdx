@@ -1,4 +1,5 @@
 import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 import {
   CodeTabs,
@@ -8,9 +9,9 @@ import {
 
 # Add evals to your app using Pytest or Vitest/Jest
 
-This tutorial will show you how to use LangSmith's testing frameworks in both Python and JS/TS to test your LLM applications.
-We will be testing a React agent that answers financial data questions related to publicly traded stocks.
-This tutorial will use LangGraph for agent orchestration, but this tutorial will work for other frameworks with minor modifications too!
+This tutorial will show you how to use LangSmith's testing frameworks in both Python and JS/TS to write evals for your LLM application.
+In this tutorial, we will be creating and testing a ReAct agent that answers financial data questions related to publicly traded stocks.
+This tutorial uses [LangGraph](https://langchain-ai.github.io/langgraph/tutorials/introduction/) for agent orchestration, [OpenAI's GPT-4o](https://platform.openai.com/docs/models#gpt-4o), [Tavily](https://tavily.com/) for search, [E2B's](https://e2b.dev/) code interpreter and [Polygon](https://polygon.io/stocks) to retrieve stock data but it can be adapted for other frameworks, models and tools with minor modifications. Tavily, E2B and Polygon are free to sign up for. 
 
 ## Setup
 
@@ -36,7 +37,7 @@ First, install the packages required for making the agent:
   groupId="client-language"
 />
 
-Next, add the installs for the testing framework:
+Next, install the testing framework:
 
 <CodeTabs
   tabs={[
@@ -64,7 +65,7 @@ Next, add the installs for the testing framework:
 
 ### Environment Variables
 
-Set the following environment variables (all of the API keys are free except for OpenAI):
+Set the following environment variables:
 
 ```bash
 export OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
@@ -165,7 +166,7 @@ const codeTool = tool(
 
 #### Stock Information Tool
 
-We will use Polygon for the stock information tool.
+We will use Polygon to get real-time data about stocks.
 
 <CodeTabs
   tabs={[
@@ -243,7 +244,7 @@ const tickerTool = tool(async (query): Promise<string> =>
 
 ### Define agent
 
-Now that we have defined all of our tools, we can use `create_react_agent`/`createReactAgent` to create our agent.
+Now that we have defined all of our tools, we can use LangGraph's [`create_react_agent`](https://langchain-ai.github.io/langgraph/reference/prebuilt/)/[`createReactAgent`](https://langchain-ai.github.io/langgraphjs/reference/functions/langgraph_prebuilt.createReactAgent.html) to create our agent.
 
 <CodeTabs
   tabs={[
@@ -307,7 +308,7 @@ that involve using all of the tools.
 
 ### Setup test file
 
-Before we write any test, we need to set up our test file and add the imports needed at the top of the file.
+We need to first set up a test file and add the imports needed at the top of the file.
 
 <CodeTabs
   tabs={[
@@ -434,7 +435,7 @@ For tool calling, we are going to verify that the agent calls the correct tool w
       language: "python",
       content: `@pytest.mark.langsmith
 def test_searches_for_correct_ticker():
-    user_query = "What is the price of Aple?"
+    user_query = "What is the price of Apple?"
     testing.log_inputs({"user_query": user_query})
     # Test that the agent searches for the correct ticker
     result = agent.invoke({"messages": [("user", user_query)]})
@@ -643,9 +644,9 @@ def test_executes_code_when_needed():
   groupId="client-language"
 />
 
-### Test 4: LLM as a judge
+### Test 4: LLM-as-a-judge
 
-For LLM as a judge, we are going to ensure that the agent's answer is grounded in the search results.
+We are going to ensure that the agent's answer is grounded in the search results by running an LLM-as-a-judge evaluation.
 In order to trace the LLM as a judge call separately from our agent, we will use the LangSmith provided `trace_feedback` context manager
 in Python and `wrapEvaluator` function in JS/TS.
 
@@ -792,37 +793,52 @@ const groundedEvaluator = async (params: {
 
 ## Run tests
 
-### Config file for Vitest
+Once you have setup your config files (if you are using Vitest or Jest), you can run your tests using the following commands:
 
-Before running your tests with Vitest, you need to create a `ls.vitest.config.ts` file with the following base config:
+<details>
+<summary>Config files for Vitest/Jest</summary>
+<Tabs
+  defaultValue="vitest"
+  values={[
+    { label: 'Vitest', value: 'vitest' },
+    { label: 'Jest', value: 'jest' }
+  ]}
+>
+<TabItem value="vitest">
 
-```typescript
+```typescript title="ls.vitest.config.ts"
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  test: {
+  test: { 
     include: ["**/*.eval.?(c|m)[jt]s"],
     reporters: ["langsmith/vitest/reporter"],
     setupFiles: ["dotenv/config"],
   },
 });
 ```
+</TabItem>
 
-### Config file for Jest
+<TabItem value="jest">
 
-Before running your tests with Jest, you need to create a `ls.jest.config.ts` file with the following base config:
+```typescript title="ls.jest.config.ts"
+require('dotenv').config();
 
-```typescript
 module.exports = {
-  testMatch: ["**/*.eval.?(c|m)[jt]s"],
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  testMatch: [
+    '<rootDir>/tests/jest/**/*.jest.eval.ts'
+  ],
+  testPathIgnorePatterns: [
+    '<rootDir>/tests/vitest/.*.vitest.eval.ts$'
+  ],
   reporters: ["langsmith/jest/reporter"],
-  setupFiles: ["dotenv/config"],
 };
 ```
-
-### Execute tests
-
-Once you have setup your config files (if you are using Vitest or Jest), you can run your tests using the following commands:
+</TabItem>
+</Tabs>
+</details>
 
 <CodeTabs
   tabs={[
