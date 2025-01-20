@@ -24,7 +24,7 @@ First, install the packages required for making the agent:
       value: "python",
       label: "Python",
       language: "bash",
-      content: `pip install -U langchain_community langchain_openai langgraph openai e2b_code_interpreter`,
+      content: `pip install -U langgraph langchain-openai langchain-community e2b-code-interpreter`,
     },
     {
       value: "typescript",
@@ -44,7 +44,7 @@ Next, add the installs for the testing framework:
       value: "python",
       label: "Pytest",
       language: "bash",
-      content: `pip install -U langsmith pytest`,
+      content: `# Make sure you have langsmith>=0.3\npip install -U "langsmith[pytest]"`,
     },
     {
       value: "vitest",
@@ -67,10 +67,10 @@ Next, add the installs for the testing framework:
 Set the following environment variables (all of the API keys are free except for OpenAI):
 
 ```bash
-OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
-TAVILY_API_KEY=<YOUR_TAVILY_API_KEY>
-E2B_API_KEY=<YOUR_E2B_API_KEY>
-POLYGON_API_KEY=<YOUR_POLYGON_API_KEY>
+export OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
+export TAVILY_API_KEY=<YOUR_TAVILY_API_KEY>
+export E2B_API_KEY=<YOUR_E2B_API_KEY>
+export POLYGON_API_KEY=<YOUR_POLYGON_API_KEY>
 ```
 
 ## Create your app
