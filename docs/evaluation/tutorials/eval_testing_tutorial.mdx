@@ -1,4 +1,5 @@
 import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 import {
   CodeTabs,
@@ -792,37 +793,52 @@ const groundedEvaluator = async (params: {
 
 ## Run tests
 
-### Config file for Vitest
+Once you have setup your config files (if you are using Vitest or Jest), you can run your tests using the following commands:
 
-Before running your tests with Vitest, you need to create a `ls.vitest.config.ts` file with the following base config:
+<details>
+<summary>Config files for Vitest/Jest</summary>
+<Tabs
+  defaultValue="vitest"
+  values={[
+    { label: 'Vitest', value: 'vitest' },
+    { label: 'Jest', value: 'jest' }
+  ]}
+>
+<TabItem value="vitest">
 
-```typescript
+```typescript title="ls.vitest.config.ts"
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  test: {
+  test: { 
     include: ["**/*.eval.?(c|m)[jt]s"],
     reporters: ["langsmith/vitest/reporter"],
     setupFiles: ["dotenv/config"],
   },
 });
 ```
+</TabItem>
 
-### Config file for Jest
+<TabItem value="jest">
 
-Before running your tests with Jest, you need to create a `ls.jest.config.ts` file with the following base config:
+```typescript title="ls.jest.config.ts"
+require('dotenv').config();
 
-```typescript
 module.exports = {
-  testMatch: ["**/*.eval.?(c|m)[jt]s"],
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  testMatch: [
+    '<rootDir>/tests/jest/**/*.jest.eval.ts'
+  ],
+  testPathIgnorePatterns: [
+    '<rootDir>/tests/vitest/.*.vitest.eval.ts$'
+  ],
   reporters: ["langsmith/jest/reporter"],
-  setupFiles: ["dotenv/config"],
 };
 ```
-
-### Execute tests
-
-Once you have setup your config files (if you are using Vitest or Jest), you can run your tests using the following commands:
+</TabItem>
+</Tabs>
+</details>
 
 <CodeTabs
   tabs={[
