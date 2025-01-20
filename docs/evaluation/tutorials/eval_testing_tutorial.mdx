@@ -243,7 +243,7 @@ const tickerTool = tool(async (query): Promise<string> =>
 
 ### Define agent
 
-Now that we have defined all of our tools, we can use `create_react_agent`/`createReactAgent` to create our agent.
+Now that we have defined all of our tools, we can use LangGraph's [`create_react_agent`](https://langchain-ai.github.io/langgraph/reference/prebuilt/)/[`createReactAgent`](https://langchain-ai.github.io/langgraphjs/reference/functions/langgraph_prebuilt.createReactAgent.html) to create our agent.
 
 <CodeTabs
   tabs={[
@@ -307,7 +307,7 @@ that involve using all of the tools.
 
 ### Setup test file
 
-Before we write any test, we need to set up our test file and add the imports needed at the top of the file.
+We need to first set up a test file and add the imports needed at the top of the file.
 
 <CodeTabs
   tabs={[
@@ -434,7 +434,7 @@ For tool calling, we are going to verify that the agent calls the correct tool w
       language: "python",
       content: `@pytest.mark.langsmith
 def test_searches_for_correct_ticker():
-    user_query = "What is the price of Aple?"
+    user_query = "What is the price of Apple?"
     testing.log_inputs({"user_query": user_query})
     # Test that the agent searches for the correct ticker
     result = agent.invoke({"messages": [("user", user_query)]})
@@ -643,9 +643,9 @@ def test_executes_code_when_needed():
   groupId="client-language"
 />
 
-### Test 4: LLM as a judge
+### Test 4: LLM-as-a-judge
 
-For LLM as a judge, we are going to ensure that the agent's answer is grounded in the search results.
+We are going to ensure that the agent's answer is grounded in the search results by running an LLM-as-a-judge evaluation.
 In order to trace the LLM as a judge call separately from our agent, we will use the LangSmith provided `trace_feedback` context manager
 in Python and `wrapEvaluator` function in JS/TS.
 
