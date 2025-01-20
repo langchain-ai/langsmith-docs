@@ -50,6 +50,7 @@ Evaluate and improve your application before deploying it.
 Run evals using your favorite testing tools:
 
 - [Run evals with pytest (beta)](./how_to_guides/pytest)
+- [Run evals with Vitest/Jest (beta)](./how_to_guides/vitest_jest)
 
 ## Online evaluation
 
