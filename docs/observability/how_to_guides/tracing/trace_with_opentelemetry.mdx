@@ -40,7 +40,7 @@ OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>"
 
 ```bash
 OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
-OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>,LANGSMITH_PROJECT=<project name>"
+OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>,Langsmith-Project=<project name>"
 ```
 
 ### 2. Log a trace
@@ -136,7 +136,7 @@ TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>
 #### **Optional: Specify a custom project name other than "default"**
 
 ```bash
-TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>,LANGSMITH_PROJECT=<langsmith_project_name>
+TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>,Langsmith-Project=<langsmith_project_name>
 ```
 
 ### 2. Initialize the SDK
