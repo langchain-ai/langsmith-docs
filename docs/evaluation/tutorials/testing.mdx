@@ -156,7 +156,7 @@ const searchTool = new TavilySearchResults({
 
 // Define code tool
 const codeTool = tool(
-  async (input): Promise<string> => {
+  async (input) => {
     const sbx = await Sandbox.create();
     const execution = await sbx.runCode(input.code);
     if (execution.error) {
@@ -189,7 +189,7 @@ const TickerToolInputSchema = z.object({
 const rest = restClient(process.env.POLYGON_API_KEY);
 
 // Define stock ticker tool
-const tickerTool = tool(async (query): Promise<string> => 
+const tickerTool = tool(async (query) => 
   {
     const parsed = TickerToolInputSchema.parse(query);
     const result = await rest.stocks.aggregates(
@@ -291,7 +291,7 @@ from langsmith import testing as t`,
       caption: "Name your test file \`agent.vitest.eval.ts\`",
       content: `import { expect } from "vitest";
 import * as ls from "langsmith/vitest";
-import agent from "../../src/agent"; // import from wherever your agent is defined
+import agent from "../agent"; // import from wherever your agent is defined
 
 // Optional, but recommended to group tests together
 ls.describe("Agent Tests", () => {
@@ -305,7 +305,7 @@ ls.describe("Agent Tests", () => {
       caption: "Name your test file \`agent.jest.eval.ts\`",
       content: `import { expect } from "@jest/globals";
 import * as ls from "langsmith/jest";
-import agent from "../../src/agent"; // import from wherever your agent is defined
+import agent from "../agent"; // import from wherever your agent is defined
 
 // Optional, but recommended to group tests together
 ls.describe("Agent Tests", () => {
@@ -920,7 +920,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 
 const codeTool = tool(
-  async (input): Promise<string> => {
+  async (input) => {
     const sbx = await Sandbox.create();
     const execution = await sbx.runCode(input.code);
     if (execution.error) {
@@ -952,7 +952,7 @@ const TickerToolInputSchema = z.object({
 
 const rest = restClient(process.env.POLYGON_API_KEY);
 
-const tickerTool = tool(async (query): Promise<string> => 
+const tickerTool = tool(async (query) => 
   {
     const parsed = TickerToolInputSchema.parse(query);
     const result = await rest.stocks.aggregates(
@@ -1157,7 +1157,7 @@ def test_grounded_in_source_info() -> None:
       language: "typescript",
       content: `import { expect } from "vitest";
 import * as ls from "langsmith/vitest";
-import agent from "../../src/agent";
+import agent from "../agent";
 import { AIMessage, ToolMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 
@@ -1271,7 +1271,7 @@ ls.describe("Agent Tests", () => {
       language: "typescript",
       content: `import { expect } from "@jest/globals";
 import * as ls from "langsmith/jest";
-import agent from "../../src/agent";
+import agent from "../agent";
 import { AIMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
 
