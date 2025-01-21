@@ -7,13 +7,15 @@ import {
   python,
 } from "@site/src/components/InstructionsWithCode";
 
-# Add evals to your app using Pytest or Vitest/Jest
+# Test a ReAct agent with Pytest/Vitest and LangSmith
 
-This tutorial will show you how to use LangSmith's testing frameworks in both Python and JS/TS to write evals for your LLM application.
-In this tutorial, we will be creating and testing a ReAct agent that answers financial data questions related to publicly traded stocks.
-This tutorial uses [LangGraph](https://langchain-ai.github.io/langgraph/tutorials/introduction/) for agent orchestration, [OpenAI's GPT-4o](https://platform.openai.com/docs/models#gpt-4o), [Tavily](https://tavily.com/) for search, [E2B's](https://e2b.dev/) code interpreter and [Polygon](https://polygon.io/stocks) to retrieve stock data but it can be adapted for other frameworks, models and tools with minor modifications. Tavily, E2B and Polygon are free to sign up for. 
+This tutorial will show you how to use LangSmith's integrations with popular testing tools Pytest and Vitest/Jest to evaluate your LLM application.
+We will create a ReAct agent that answers questions about publicly traded stocks and write a comprehensive test suite for it.
 
 ## Setup
+
+This tutorial uses [LangGraph](https://langchain-ai.github.io/langgraph/tutorials/introduction/) for agent orchestration, [OpenAI's GPT-4o](https://platform.openai.com/docs/models#gpt-4o), [Tavily](https://tavily.com/) for search, [E2B's](https://e2b.dev/) code interpreter, and [Polygon](https://polygon.io/stocks) to retrieve stock data but it can be adapted for other frameworks, models and tools with minor modifications. 
+Tavily, E2B and Polygon are free to sign up for. 
 
 ### Installation
 
@@ -25,7 +27,7 @@ First, install the packages required for making the agent:
       value: "python",
       label: "Python",
       language: "bash",
-      content: `pip install -U langgraph langchain-openai langchain-community e2b-code-interpreter`,
+      content: `pip install -U langgraph langchain langchain-openai langchain-community e2b-code-interpreter`,
     },
     {
       value: "typescript",
@@ -68,6 +70,9 @@ Next, install the testing framework:
 Set the following environment variables:
 
 ```bash
+export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY=<YOUR_LANGSMITH_API_KEY>
+
 export OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
 export TAVILY_API_KEY=<YOUR_TAVILY_API_KEY>
 export E2B_API_KEY=<YOUR_E2B_API_KEY>
@@ -91,26 +96,18 @@ We will use Tavily for the search tool.
 
 <CodeTabs
   tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "python",
-      content: `from langchain_community.tools import TavilySearchResults
-search_tool = TavilySearchResults(
-    max_results=5,
-    include_raw_content=True,
-)`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "typescript",
-      content: `import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
+      python`
+    from langchain_community.tools import TavilySearchResults
+
+    search_tool = TavilySearchResults(
+        max_results=5,
+        include_raw_content=True,
+    )`,
+      typescript`import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
       
 const searchTool = new TavilySearchResults({
     maxResults: 5,
 });`,
-    },
   ]}
   groupId="client-language"
 />
@@ -121,19 +118,16 @@ We will use E2B for the code interpreter tool.
 
 <CodeTabs
   tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "python",
-      content: `from e2b_code_interpreter import Sandbox
-def code_tool(code: str) -> str:
-    """Execute python code and return the result."""
-    sbx = Sandbox()
-    execution = sbx.run_code(code) 
-    if execution.error:
-        return f"Error: {execution.error}"
-    return f"Results: {execution.results}, Logs: {execution.logs}"`,
-    },
+    python`
+    from e2b_code_interpreter import Sandbox
+
+    def code_tool(code: str) -> str:
+        """Execute python code and return the result."""
+        sbx = Sandbox()
+        execution = sbx.run_code(code) 
+        if execution.error:
+            return f"Error: {execution.error}"
+        return f"Results: {execution.results}, Logs: {execution.logs}"`,
     {
       value: "typescript",
       label: "TypeScript",
@@ -170,32 +164,11 @@ We will use Polygon to get real-time data about stocks.
 
 <CodeTabs
   tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "python",
-      content: `from langchain_community.tools.polygon.aggregates import PolygonAggregates
-from langchain_community.utilities.polygon import PolygonAPIWrapper
-from typing_extensions import Annotated, TypedDict, Optional, Literal
+      python`
+        from langchain_community.tools import PolygonAggregates
+        from langchain_community.utilities.polygon import PolygonAPIWrapper
 
-class TickerToolInput(TypedDict):
-    """Input format for the ticker tool.
-    
-    The tool will pull data in aggregate blocks (timespan_multiplier * timespan) from the from_date to the to_date
-    """
-    ticker: Annotated[str, ..., "The ticker symbol of the stock"]
-    timespan: Annotated[Literal["minute", "hour", "day", "week", "month", "quarter", "year"], ..., "The size of the time window."]
-    timespan_multiplier: Annotated[int, ..., "The multiplier for the time window"]
-    from_date: Annotated[str, ..., "The date to start pulling data from, YYYY-MM-DD format - ONLY include the year month and day"]
-    to_date: Annotated[str, ..., "The date to stop pulling data, YYYY-MM-DD format - ONLY include the year month and day"]
-
-api_wrapper = PolygonAPIWrapper()
-polygon_aggregate = PolygonAggregates(api_wrapper=api_wrapper)
-
-def ticker_tool(query: TickerToolInput) -> str:
-    """Pull data for the ticker."""
-    return polygon_aggregate.invoke(query)`,
-    },
+        polygon_aggregates = PolygonAggregates(api_wrapper=PolygonAPIWrapper())`,
     {
       value: "typescript",
       label: "TypeScript",
@@ -248,28 +221,23 @@ Now that we have defined all of our tools, we can use LangGraph's [`create_react
 
 <CodeTabs
   tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "python",
-      content: `from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import create_react_agent
-from typing_extensions import Annotated, TypedDict, Optional
-      
-class AgentOutputFormat(TypedDict):
-    numeric_answer: Annotated[Optional[float], ..., "The numeric answer, if the user asked for one"]
-    text_answer: Annotated[Optional[str], ..., "The text answer, if the user asked for one"]
-    reasoning: Annotated[str, ..., "The reasoning behind the answer"]
+      python`
+    from typing import Optional
+    from typing_extensions import Annotated, TypedDict
 
-tools = [code_tool, search_tool, ticker_tool]
+    from langgraph.prebuilt import create_react_agent
+        
+    class AgentOutputFormat(TypedDict):
+        numeric_answer: Annotated[Optional[float], ..., "The numeric answer, if the user asked for one"]
+        text_answer: Annotated[Optional[str], ..., "The text answer, if the user asked for one"]
+        reasoning: Annotated[str, ..., "The reasoning behind the answer"]
 
-agent = create_react_agent(
-    model=ChatOpenAI(model="gpt-4o-mini"),
-    tools=tools,
-    response_format=AgentOutputFormat,
-    state_modifier="You are a financial expert. Respond to the users query accurately",
-)`,
-    },
+    agent = create_react_agent(
+        model="openai:gpt-4o-mini",
+        tools=[code_tool, search_tool, polygon_aggregates],
+        response_format=AgentOutputFormat,
+        state_modifier="You are a financial expert. Respond to the users query accurately",
+    )`,
     {
       value: "typescript",
       label: "TypeScript",
@@ -316,11 +284,10 @@ We need to first set up a test file and add the imports needed at the top of the
       value: "python",
       label: "Pytest",
       language: "python",
-      caption: "Name your test file \`test_evals.py\`",
-      content: `from agent import agent # import from wherever your agent is defined
+      caption: "Create a `tests/test_agent.py` file.",
+      content: `# from app import agent, polygon_aggregates, search_tool # import from wherever your agent is defined
 import pytest
-import json
-from langsmith import testing`,
+from langsmith import testing as t`,
     },
     {
       value: "vitest",
@@ -344,7 +311,7 @@ import agent from "../../src/agent"; // import from wherever your agent is defin
   groupId="client-language"
 />
 
-### Test 1: Ignore irrelevant questions
+### Test 1: Ignore off-topic questions
 
 The first test will be a simple check that the agent does not use tools on irrelevant queries.
 
@@ -355,23 +322,26 @@ The first test will be a simple check that the agent does not use tools on irrel
       label: "Pytest",
       language: "python",
       content: `@pytest.mark.langsmith
-@pytest.mark.parametrize( # Can still use all normal pytest markers
+@pytest.mark.parametrize( # <-- Can still use all normal pytest markers
     "query",
-    [
-        "Hello!",
-        "How are you doing?"
-    ],
+    ["Hello!", "How are you doing?"],
 )
-def test_no_tools_on_unrelated_query(query):
-    testing.log_inputs({"query": query})
-    # Test that the agent does not use tools on unrelated queries
-    result = agent.invoke({"messages": [("user", query)]})
-    testing.log_outputs({"result": result})
-    
-    testing.log_reference_outputs({"numMessages": 2})
-    
-    # Check that the flow was HUMAN -> AI FINAL RESPONSE (no tools called)
-    assert len(result['messages']) == 2`,
+def test_no_tools_on_offtopic_query(query: str) -> None:
+    """Test that the agent does not use tools on offtopic queries."""
+    # Log the test example
+    t.log_inputs({"query": query})
+    expected = []
+    t.log_reference_outputs({"tool_calls": expected})
+
+    # Call the agent's model node directly instead of running the ReACT loop.
+    result = agent.nodes['agent'].invoke(
+        {"messages": [{"role": "user", "content": query}]}
+    )
+    actual = result['messages'][1].tool_calls
+    t.log_outputs({"tool_calls": actual})
+
+    # Check that no tool calls were made.
+    assert actual == expected`,
     },
     {
       value: "vitest",
@@ -386,7 +356,7 @@ def test_no_tools_on_unrelated_query(query):
     { inputs: { query: "Hello!" }, expected: { numMessages: 2 } },
     { inputs: { query: "How are you doing?" }, expected: { numMessages: 2 } },
   ])(
-    "should not use tools on unrelated query: %s",
+    "should not use tools on offtopic query: %s",
     async ({ inputs: { query }, expected: { numMessages } }) => {
       const result = await agent.invoke({ messages: [{ role: "user", content: query }] });
       ls.logOutputs(result);
@@ -409,7 +379,7 @@ def test_no_tools_on_unrelated_query(query):
     { inputs: { query: "Hello!" }, expected: { numMessages: 2 } },
     { inputs: { query: "How are you doing?" }, expected: { numMessages: 2 } },
   ])(
-    "should not use tools on unrelated query: %s",
+    "should not use tools on offtopic query: %s",
     async ({ inputs: { query }, expected: { numMessages } }) => {
       const result = await agent.invoke({ messages: [{ role: "user", content: query }] });
       ls.logOutputs(result);
@@ -423,7 +393,7 @@ def test_no_tools_on_unrelated_query(query):
   groupId="client-language"
 />
 
-### Test 2: Tool calling
+### Test 2: Simple tool calling
 
 For tool calling, we are going to verify that the agent calls the correct tool with the correct parameters.
 
@@ -434,23 +404,27 @@ For tool calling, we are going to verify that the agent calls the correct tool w
       label: "Pytest",
       language: "python",
       content: `@pytest.mark.langsmith
-def test_searches_for_correct_ticker():
-    user_query = "What is the price of Apple?"
-    testing.log_inputs({"user_query": user_query})
-    # Test that the agent searches for the correct ticker
-    result = agent.invoke({"messages": [("user", user_query)]})
-    testing.log_outputs({"result": result})
-    
-    testing.log_reference_outputs({"ticker": "AAPL", "numMessages": 4})
-    
-    # The agent should have made a single tool call to the ticker tool
-    ticker = json.loads(result['messages'][1].additional_kwargs['tool_calls'][0]['function']['arguments'])["query"]["ticker"]
-    
+def test_searches_for_correct_ticker() -> None:
+    """Test that the model looks up the correct ticker on simple query.""
+    # Log the test example
+    query = "What is the price of Aple?"
+    t.log_inputs({"query": query})
+    expected = "AAPL"
+    t.log_reference_outputs({"ticker": expected})
+
+    # Call the agent's model node directly instead of running the full ReACT loop.
+    result = agent.nodes['agent'].invoke(
+        {"messages": [{"role": "user", "content": query}]}
+    )
+    tool_calls = result["messages"][1].tool_calls
+    if tool_calls[0]['name'] == polygon_aggregates.name:
+        actual = tool_calls[0]['args']['ticker']
+    else:
+        actual = None
+    t.log_outputs({"ticker": actual})
+
     # Check that the right ticker was queried
-    assert ticker == "AAPL"
-    
-    # Check that the flow was HUMAN -> AI -> TOOL -> AI FINAL RESPONSE
-    assert len(result['messages']) == 4`,
+    assert actual == expected`,
     },
     {
       value: "vitest",
@@ -524,10 +498,12 @@ def test_searches_for_correct_ticker():
   groupId="client-language"
 />
 
-### Test 3: Complex question answering
+### Test 3: Complex tool calling
 
-For answering a complex question, we are going to ensure that the agent uses the coding tool for any
-calculations, and also log the total number of steps taken so we can track over time how the performance of the agent improves.
+Some tool calls are easier to test than others. 
+With the ticker lookup, we can assert that the correct ticker is searched.
+With the coding tool, the inputs and outputs of the tool are much less constrained, and there are lots of ways to get to the right answer.
+In this case, it's simpler to test that the tool is used correctly by running the full agent and asserting that it both calls the coding tool and that it ends up with the right answer.
 
 <CodeTabs
   tabs={[
@@ -536,25 +512,29 @@ calculations, and also log the total number of steps taken so we can track over 
       label: "Pytest",
       language: "python",
       content: `@pytest.mark.langsmith
-def test_executes_code_when_needed():
-    user_query = "What was the average return rate for FAANG stock in 2024?"
-    testing.log_inputs({"user_query": user_query})
+def test_executes_code_when_needed() -> None:
+    query = "What was the average return rate for FAANG stock in 2024?"
+    t.log_inputs({"query": query})
+    expected = 53
+    t.log_reference_outputs({"response": expected})
     
     # Test that the agent executes code when needed
     result = agent.invoke({"messages": [("user", user_query)]})
-    testing.log_outputs({"result": result})
-    
-    testing.log_reference_outputs({"answer": 53})
+    t.log_outputs({"result": result['structured_response'].get("numeric_answer")})
     
     # Grab all the tool calls made by the LLM
-    tool_calls = [tc['function']['name'] for m in result['messages'] if m.additional_kwargs and 'tool_calls' in m.additional_kwargs for tc in m.additional_kwargs['tool_calls'] ]
+    tool_calls = [tc['name'] for msg in result['messages'] for tc in getattr(msg, "tool_calls", [])]
     
-    # This will log the number of steps taken by the LLM, which we can track over time to measure performance
-    testing.log_feedback(key="num_steps", value=len(result['messages']) - 1)
+    # This will log the number of steps taken by the agent, which is useful for
+    # determining how efficiently the agent gets to an answer.
+    t.log_feedback(key="num_steps", value=len(result['messages']) - 1)
     
     # Assert that the code tool was used
-    assert "code_tool" in tool_calls
-    
+    assert "code_tools" in tool_calls
+
+    # Assert that a numeric answer was provided:
+    assert result['structured_response'].get('numeric_answer') is not None
+
     # Assert that the answer is within 1 of the expected value
     assert abs(result['structured_response']['numeric_answer'] - 53) <= 1`,
     },
@@ -656,41 +636,53 @@ in Python and `wrapEvaluator` function in JS/TS.
       value: "python",
       label: "Pytest",
       language: "python",
-      content: `judge_llm = ChatOpenAI(model="gpt-4o")
+      content: `from typing_extensions import Annotated, TypedDict
+      
+class Grade(TypedDict):
+    """Evaluate the groundedness of an answer in source documents."""
+    score: Annotated[bool, ..., "Return True if the answer is fully frounded in the source documents, otherwise False."]
+
+judge_llm = init_chat_model("gpt-4o").with_structured_output(Grade)
 
 @pytest.mark.langsmith
-def test_grounded_in_the_source():
-    # Test that the agent is grounded in the source
-    user_query = "How did Nvidia stock do in 2024 according to analysts?"
-    t.log_inputs({"user_query": user_query})
+def test_grounded_in_source_info() -> None:
+    """Test that response is grounded in the tool outputs."""
+    query = "How did Nvidia stock do in 2024 according to analysts?"
+    t.log_inputs({"query": query})
     
-    result = agent.invoke({"messages": [("user", user_query)]})    
-    t.log_outputs({"result": result})
+    result = agent.invoke({"messages": [{"role": "user", "content": query})]})    
 
     # Grab all the search calls made by the LLM
-    tavily_tool_message_indices = []
-    for i, m in enumerate(result['messages']):
-        if m.additional_kwargs and 'tool_calls' in m.additional_kwargs and 
-        m.additional_kwargs['tool_calls'][0]['function']['name'] == 'tavily_search_results_json':
-            tavily_tool_message_indices.append(i+1)
+    search_results = "\\n\\n".join(
+        msg.content 
+        for msg in result["messages"] 
+        if msg.type == "tool" and msg.name == search_tool.name
+    )
+    t.log_outputs({
+        "response": result["structured_response"].get("text_answer"), 
+        "search_results": search_results
+    }) 
 
-    documents = "\\n".join([m.content for i,m in enumerate(result['messages']) if i in tavily_tool_message_indices])
-
-    with testing.trace_feedback():
+    # Trace the feedback LLM run separately from the agent run.
+    with t.trace_feedback():
         # Instructions for the LLM judge
         instructions = (
-            "Return 1 if the ANSWER is grounded in the DOCUMENTS"
-            "Return 0 if the ANSWER is not grounded in the DOCUMENTS"
+            "Grade the following ANSWER. "
+            "The ANSWER should be fully grounded in (i.e. supported by) the source DOCUMENTS. "
+            "Return True if the ANSWER is fully grounded in the DOCUMENTS. "
+            "Return False if the ANSWER is not grounded in the DOCUMENTS."
+        )
+        answer_and_docs = (
+            f"ANSWER: {result['structured_response'].get("text_answer", "")}\\n"
+            f"DOCUMENTS:\\n{search_results}"
         )
 
         # Run the judge LLM
         grade = judge_llm.invoke([
             {"role": "system", "content": instructions},
-            {"role": "user", "content": f"ANSWER: {result['structured_response']['text_answer']}\\nDOCUMENTS: {documents}"},
+            {"role": "user", "content": answer_and_docs},
         ])
-
-        score = int(grade.content)
-        testing.log_feedback(key="groundedness", score=score)
+        t.log_feedback(key="groundedness", score=grade.score)
     assert score
 `,
     },
@@ -922,7 +914,7 @@ class AgentOutputFormat(TypedDict):
     text_answer: Annotated[Optional[str], ..., "The text answer, if the user asked for one"]
     reasoning: Annotated[str, ..., "The reasoning behind the answer"]
 
-tools = [code_tool, search_tool, ticker_tool]
+tools = [code_tool, search_tool, polygon_aggregates]
 
 agent = create_react_agent(
     model=ChatOpenAI(model="gpt-4o-mini"),
@@ -1033,31 +1025,37 @@ export default agent;`,
       language: "python",
       content: `from agent import agent
 import pytest
-import json
-from langsmith import testing
-from langchain_openai import ChatOpenAI
+from langsmith import testing as t
+from langchain import init_chat_model
 
 @pytest.mark.langsmith
 @pytest.mark.parametrize(
-    "query",
-    [
-        "Hello!",
-        "How are you doing?"
-    ],
+    "question", ["Hello!", "How are you doing?"],
 )
-def test_no_tools_on_unrelated_query(query):
-    # Test that the agent does not use tools on unrelated queries
-    result = agent.invoke({"messages": [("user", query)]})
+def test_no_tools_on_offtopic_query(question: str) -> None:
+    """Test that the agent does not use tools on offtopic queries."""
+    result = agent.invoke({"messages": [("user", question)]})
     # first human message and then the AI response
     assert len(result['messages']) == 2
 
 @pytest.mark.langsmith
-def test_searches_for_correct_ticker():
-    # Test that the agent searches for the correct ticker
-    result = agent.invoke({"messages": [("user", "What is the price of Aple?")]})
-    ticker = json.loads(result['messages'][1].additional_kwargs['tool_calls'][0]['function']['arguments'])["query"]["ticker"]
-    assert ticker == "AAPL"
-    assert len(result['messages']) == 4
+def test_looks_up_correct_ticker():
+    """Test that the agent gets the price of the correct ticker."""
+    question = "What is the price of Aple?"
+    t.log_inputs({"question": question})
+    expected = "AAPL"
+    t.log_reference_outputs({"ticker": expected})
+
+    result = agent.invoke({"messages": [{"role": "user", "content": question}]})
+    for msg in result['messages'][1:]:
+        if hasattr(msg, "tool_calls") and any(tc['name'] == )
+    actual = result['messages'][1].tool_calls[0]['args']["query"]["ticker"]
+
+    t.log_outputs({"ticker": actual})
+
+    t.log_feedback(key="num_messages", score=len(result['messages']))
+
+    assert actual == expected
 
 
 @pytest.mark.langsmith
@@ -1065,11 +1063,11 @@ def test_executes_code_when_needed():
     # Test that the agent executes code when needed
     result = agent.invoke({"messages": [("user", "What was the average return rate for FAANG stock in 2024?")]})
     tool_calls = [tc['function']['name'] for m in result['messages'] if m.additional_kwargs and 'tool_calls' in m.additional_kwargs for tc in m.additional_kwargs['tool_calls'] ]
-    testing.log_feedback(key="num_steps", score=len(result['messages']) - 1)
+    t.log_feedback(key="num_steps", score=len(result['messages']) - 1)
     assert "code_tool" in tool_calls
     assert abs(result['structured_response']['numeric_answer'] - 53) <= 1
 
-judge_llm = ChatOpenAI(model="gpt-4o")
+judge_llm = init_chat_model("gpt-4o")
 
 @pytest.mark.langsmith
 def test_grounded_in_the_source():
@@ -1083,7 +1081,7 @@ def test_grounded_in_the_source():
 
     documents = "\\n".join([m.content for i,m in enumerate(result['messages']) if i in tavily_tool_message_indices])
 
-    with testing.trace_feedback():
+    with t.trace_feedback():
         instructions = (
             "Return 1 if the ANSWER is grounded in the DOCUMENTS"
             "Return 0 if the ANSWER is not grounded in the DOCUMENTS"
@@ -1095,7 +1093,7 @@ def test_grounded_in_the_source():
         ])
 
         score = int(grade.content)
-        testing.log_feedback(key="groundedness", score=score)
+        t.log_feedback(key="groundedness", score=score)
     assert score`,
     },
     {
@@ -1132,7 +1130,7 @@ ls.describe("Agent Tests", () => {
     { inputs: { query: "Hello!" }, referenceOutputs: { numMessages: 2 } },
     { inputs: { query: "How are you doing?" }, referenceOutputs: { numMessages: 2 } },
   ])(
-    "should not use tools on unrelated query: %s",
+    "should not use tools on offtopic query: %s",
     async ({ inputs: { query }, referenceOutputs: { numMessages } }) => {
       const result = await agent.invoke({
         messages: [{ role: "user", content: query }],
@@ -1246,7 +1244,7 @@ ls.describe("Agent Tests", () => {
     { inputs: { query: "Hello!" }, referenceOutputs: { numMessages: 2 } },
     { inputs: { query: "How are you doing?" }, referenceOutputs: { numMessages: 2 } },
   ])(
-    "should not use tools on unrelated query: %s",
+    "should not use tools on offtopic query: %s",
     async ({ inputs: { query }, referenceOutputs: { numMessages } }) => {
       const result = await agent.invoke({
         messages: [{ role: "user", content: query }],
