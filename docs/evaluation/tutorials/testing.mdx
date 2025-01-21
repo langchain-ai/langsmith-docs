@@ -90,52 +90,71 @@ First we are going to define the tools we are going to use in our agent. There a
 - A code interpreter tool using E2B
 - A stock information tool using Polygon
 
-#### Search Tool
-
-We will use Tavily for the search tool.
-
 <CodeTabs
   tabs={[
-      python`
-    from langchain_community.tools import TavilySearchResults
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `from langchain_community.tools import TavilySearchResults
+from e2b_code_interpreter import Sandbox
+from langchain_community.tools.polygon.aggregates import PolygonAggregates
+from langchain_community.utilities.polygon import PolygonAPIWrapper
+from typing_extensions import Annotated, TypedDict, Optional, Literal
+     
+# Define search tool 
+search_tool = TavilySearchResults(
+    max_results=5,
+    include_raw_content=True,
+)
 
-    search_tool = TavilySearchResults(
-        max_results=5,
-        include_raw_content=True,
-    )`,
-      typescript`import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
-      
-const searchTool = new TavilySearchResults({
-    maxResults: 5,
-});`,
-  ]}
-  groupId="client-language"
-/>
+# Define code tool
+def code_tool(code: str) -> str:
+    """Execute python code and return the result."""
+    sbx = Sandbox()
+    execution = sbx.run_code(code) 
+    if execution.error:
+        return f"Error: {execution.error}"
+    return f"Results: {execution.results}, Logs: {execution.logs}"
 
-#### Code Interpreter Tool
+# Define input schema for stock ticker tool
+class TickerToolInput(TypedDict):
+    """Input format for the ticker tool.
+    
+    The tool will pull data in aggregate blocks (timespan_multiplier * timespan) from the from_date to the to_date
+    """
+    ticker: Annotated[str, ..., "The ticker symbol of the stock"]
+    timespan: Annotated[Literal["minute", "hour", "day", "week", "month", "quarter", "year"], ..., "The size of the time window."]
+    timespan_multiplier: Annotated[int, ..., "The multiplier for the time window"]
+    from_date: Annotated[str, ..., "The date to start pulling data from, YYYY-MM-DD format - ONLY include the year month and day"]
+    to_date: Annotated[str, ..., "The date to stop pulling data, YYYY-MM-DD format - ONLY include the year month and day"]
 
-We will use E2B for the code interpreter tool.
+api_wrapper = PolygonAPIWrapper()
+polygon_aggregate = PolygonAggregates(api_wrapper=api_wrapper)
 
-<CodeTabs
-  tabs={[
-    python`
-    from e2b_code_interpreter import Sandbox
-
-    def code_tool(code: str) -> str:
-        """Execute python code and return the result."""
-        sbx = Sandbox()
-        execution = sbx.run_code(code) 
-        if execution.error:
-            return f"Error: {execution.error}"
-        return f"Results: {execution.results}, Logs: {execution.logs}"`,
+# Define stock ticker tool
+def ticker_tool(query: TickerToolInput) -> str:
+    """Pull data for the ticker."""
+    return polygon_aggregate.invoke(query)`,
+    },
     {
       value: "typescript",
       label: "TypeScript",
       language: "typescript",
-      content: `import { Sandbox } from "@e2b/code-interpreter";
+      content: `import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
+import { Sandbox } from "@e2b/code-interpreter";
+import { tool } from "@langchain/core/tools";
+import { z } from "zod";
+import { restClient } from "@polygon.io/client-js";
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 
+// Define search tool
+const searchTool = new TavilySearchResults({
+    maxResults: 5,
+});
+
+// Define code tool
 const codeTool = tool(
   async (input): Promise<string> => {
     const sbx = await Sandbox.create();
@@ -152,31 +171,9 @@ const codeTool = tool(
       code: z.string().describe("The python code to execute"),
     }),
   }
-);`,
-    },
-  ]}
-  groupId="client-language"
-/>
+);
 
-#### Stock Information Tool
-
-We will use Polygon to get real-time data about stocks.
-
-<CodeTabs
-  tabs={[
-      python`
-        from langchain_community.tools import PolygonAggregates
-        from langchain_community.utilities.polygon import PolygonAPIWrapper
-
-        polygon_aggregates = PolygonAggregates(api_wrapper=PolygonAPIWrapper())`,
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "typescript",
-      content: `import { restClient } from "@polygon.io/client-js";
-import { tool } from "@langchain/core/tools";
-import { z } from "zod";
-
+// Define input schema for stock ticker tool
 const TickerToolInputSchema = z.object({
   ticker: z.string().describe("The ticker symbol of the stock"),
   timespan: z.enum(["minute", "hour", "day", "week", "month", "quarter", "year"]).describe("The size of the time window."),
@@ -189,9 +186,9 @@ const TickerToolInputSchema = z.object({
     .describe("The date to stop pulling data, YYYY-MM-DD format - ONLY include the year, month, and day"),
 });
 
-
 const rest = restClient(process.env.POLYGON_API_KEY);
 
+// Define stock ticker tool
 const tickerTool = tool(async (query): Promise<string> => 
   {
     const parsed = TickerToolInputSchema.parse(query);
@@ -283,7 +280,7 @@ We need to first set up a test file and add the imports needed at the top of the
       label: "Pytest",
       language: "python",
       caption: "Create a `tests/test_agent.py` file.",
-      content: `# from app import agent, polygon_aggregates, search_tool # import from wherever your agent is defined
+      content: `from app import agent, polygon_aggregates, search_tool # import from wherever your agent is defined
 import pytest
 from langsmith import testing as t`,
     },
@@ -294,7 +291,12 @@ from langsmith import testing as t`,
       caption: "Name your test file \`agent.vitest.eval.ts\`",
       content: `import { expect } from "vitest";
 import * as ls from "langsmith/vitest";
-import agent from "../../src/agent"; // import from wherever your agent is defined`
+import agent from "../../src/agent"; // import from wherever your agent is defined
+
+// Optional, but recommended to group tests together
+ls.describe("Agent Tests", () => {
+  // PLACE TESTS Here
+});`
     },
     {
       value: "jest",
@@ -303,7 +305,12 @@ import agent from "../../src/agent"; // import from wherever your agent is defin
       caption: "Name your test file \`agent.jest.eval.ts\`",
       content: `import { expect } from "@jest/globals";
 import * as ls from "langsmith/jest";
-import agent from "../../src/agent"; // import from wherever your agent is defined`,
+import agent from "../../src/agent"; // import from wherever your agent is defined
+
+// Optional, but recommended to group tests together
+ls.describe("Agent Tests", () => {
+  // PLACE TESTS Here
+});`,
     },
   ]}
   groupId="client-language"
@@ -345,11 +352,6 @@ def test_no_tools_on_offtopic_query(query: str) -> None:
       value: "vitest",
       label: "Vitest",
       language: "typescript",
-      caption: `Remember to place each individual test inside a describe block \n
-      \`ls.describe("Agent Tests", () => {
-        // PLACE TESTS Here
-      })\`
-      `,
       content: `ls.test.each([
     { inputs: { query: "Hello!" }, expected: { numMessages: 2 } },
     { inputs: { query: "How are you doing?" }, expected: { numMessages: 2 } },
@@ -368,11 +370,6 @@ def test_no_tools_on_offtopic_query(query: str) -> None:
       value: "jest",
       label: "Jest",
       language: "typescript",
-      caption: `Remember to place each individual test inside a describe block \n
-      \`ls.describe("Agent Tests", () => {
-        // PLACE TESTS Here
-      })\`
-      `,
       content: `ls.test.each([
     { inputs: { query: "Hello!" }, expected: { numMessages: 2 } },
     { inputs: { query: "How are you doing?" }, expected: { numMessages: 2 } },
@@ -405,7 +402,7 @@ For tool calling, we are going to verify that the agent calls the correct tool w
 def test_searches_for_correct_ticker() -> None:
     """Test that the model looks up the correct ticker on simple query."""
     # Log the test example
-    query = "What is the price of Aple?"
+    query = "What is the price of Apple?"
     t.log_inputs({"query": query})
     expected = "AAPL"
     t.log_reference_outputs({"ticker": expected})
@@ -428,15 +425,10 @@ def test_searches_for_correct_ticker() -> None:
       value: "vitest",
       label: "Vitest",
       language: "typescript",
-      caption: `Remember to place each individual test inside a describe block \n
-      \`ls.describe("Agent Tests", () => {
-        // PLACE TESTS Here
-      })\`
-      `,
       content: `ls.test(
     "should search for correct ticker",
     {
-      inputs: { query: "What is the price of Aple?" },
+      inputs: { query: "What is the price of Apple?" },
       expected: { numMessages: 4 },
     },
     async ({ inputs: { query }, expected: { numMessages } }) => {
@@ -462,15 +454,10 @@ def test_searches_for_correct_ticker() -> None:
       value: "jest",
       label: "Jest",
       language: "typescript",
-      caption: `Remember to place each individual test inside a describe block \n
-      \`ls.describe("Agent Tests", () => {
-        // PLACE TESTS Here
-      })\`
-      `,
       content: `ls.test(
     "should search for correct ticker",
     {
-      inputs: { query: "What is the price of Aple?" },
+      inputs: { query: "What is the price of Apple?" },
       expected: { numMessages: 4 },
     },
     async ({ inputs: { query }, expected: { numMessages } }) => {
@@ -549,11 +536,6 @@ def test_executes_code_when_needed() -> None:
       value: "vitest",
       label: "Vitest",
       language: "typescript",
-      caption: `Remember to place each individual test inside a describe block \n
-      \`ls.describe("Agent Tests", () => {
-        // PLACE TESTS Here
-      })\`
-      `,
       content: `ls.test(
     "should execute code when needed",
     {
@@ -590,11 +572,6 @@ def test_executes_code_when_needed() -> None:
       value: "jest",
       label: "Jest",
       language: "typescript",
-      caption: `Remember to place each individual test inside a describe block \n
-      \`ls.describe("Agent Tests", () => {
-        // PLACE TESTS Here
-      })\`
-      `,
       content: `ls.test(
     "should execute code when needed",
     {
@@ -763,10 +740,13 @@ const groundedEvaluator = async (params: {
     answer: string;
     referenceDocuments: string,
   }) => {
+    // Instructions for the LLM judge
     const instructions = [
       "Return 1 if the ANSWER is grounded in the DOCUMENTS",
       "Return 0 if the ANSWER is not grounded in the DOCUMENTS",
     ].join("\\n");
+    
+    // Run the judge LLM
     const grade = await judgeLLM.invoke([
       { role: "system", content: instructions },
       { role: "user", content: \`ANSWER: \${params.answer}\\nDOCUMENTS: \${params.referenceDocuments}\` },
@@ -1059,7 +1039,7 @@ def test_no_tools_on_offtopic_query(query: str) -> None:
 def test_searches_for_correct_ticker() -> None:
     """Test that the model looks up the correct ticker on simple query."""
     # Log the test example
-    query = "What is the price of Aple?"
+    query = "What is the price of Apple?"
     t.log_inputs({"query": query})
     expected = "AAPL"
     t.log_reference_outputs({"ticker": expected})
@@ -1218,7 +1198,7 @@ ls.describe("Agent Tests", () => {
   ls.test(
     "should search for correct ticker",
     {
-      inputs: { query: "What is the price of Aple?" },
+      inputs: { query: "What is the price of Apple?" },
       referenceOutputs: { numMessages: 4 },
     },
     async ({ inputs: { query }, referenceOutputs: { numMessages } }) => {
@@ -1332,7 +1312,7 @@ ls.describe("Agent Tests", () => {
   ls.test(
     "should search for correct ticker",
     {
-      inputs: { query: "What is the price of Aple?" },
+      inputs: { query: "What is the price of Apple?" },
       referenceOutputs: { numMessages: 4 },
     },
     async ({ inputs: { query }, referenceOutputs: { numMessages } }) => {
