@@ -27,6 +27,7 @@ const sidebars = {
       type: "category",
       label: "Observability",
       items: [
+        "observability/index",
         {
           type: "category",
           label: "Tutorials",
@@ -67,7 +68,7 @@ const sidebars = {
           link: { type: "doc", id: "observability/concepts/index" },
         },
       ],
-      link: { type: "doc", id: "observability/tutorials/index" },
+      link: { type: "doc", id: "observability/index" },
     },
     {
       type: "category",
