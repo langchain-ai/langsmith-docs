@@ -1,0 +1,234 @@
+---
+sidebar_label: Quick Start (SDK)
+sidebar_position: 0
+table_of_contents: true
+---
+
+import {
+  CodeTabs,
+  python,
+  typescript,
+  ShellBlock,
+} from "@site/src/components/InstructionsWithCode";
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
+
+# Prompt Engineering Quick Start (SDK)
+
+This quick start will get you up and running with prompt engineering in LangSmith. We will walk through how
+to create, test, and iterate on prompts in LangSmith.
+
+:::info QuickStart
+This tutorial uses the SDK for prompt engineering, if you are interested in using the UI instead, read [this guide](./quickstart_ui).
+:::
+
+## 1. Setup
+
+First, install the required packages:
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "bash",
+      content: `pip install -qU langsmith openai langchain_core`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "bash",
+      content: `yarn add langsmith @langchain/core langchain/hub openai`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+Next, make sure you have signed up for a valid [LangSmith](https://langsmith.com) account, and set your api key:
+
+```bash
+LANGSMITH_API_KEY = '<your_api_key>'
+```
+
+## 2. Create a prompt
+
+To create a prompt in LangSmith, define the list of messages you want in your prompt and then wrap them using the `ChatPromptTemplate` function.
+Then all you have to do is call `push_prompt/pushPrompt` to send your prompt to LangSmith!
+
+<CodeTabs
+   tabs={[
+     {
+       value: "python",
+       label: "Python",
+       language: "python",
+       content: `from langsmith import Client
+from langchain_core.prompts import ChatPromptTemplate
+
+# Connect to the LangSmith client
+
+client = Client()
+
+# Define the prompt
+
+prompt = ChatPromptTemplate([
+("system", "You are a helpful chatbot."),
+("user", "{question}"),
+])
+
+# Push the prompt
+
+client.push_prompt("my-prompt", object=prompt)`,
+     },
+     {
+       value: "typescript",
+       label: "TypeScript",
+       language: "typescript",
+       content: `import { Client } from "langsmith";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+
+// Connect to the LangSmith client
+const client = new Client();
+
+// Define the prompt
+const prompt = ChatPromptTemplate.fromMessages([
+["system", "You are a helpful chatbot."],
+["user", "{question}"]
+]);
+
+// Push the prompt
+await client.pushPrompt("my-prompt", {
+object: prompt
+});`,
+},
+]}
+groupId="client-language"
+/>
+
+## 3. Test a prompt
+
+To test a prompt, you need to pull the prompt, invoke it with the input values you want to test and then convert the formatted prompt to the format
+your LLM or application expects. In this tutorial we will use OpenAI, but you can use whichever LLM you want.
+
+<CodeTabs
+   tabs={[
+     {
+       value: "python",
+       label: "Python",
+       language: "python",
+       content: `from langsmith import Client
+from openai import OpenAI
+from langchain_core.messages import convert_to_openai_messages
+
+# Connect to LangSmith and OpenAI
+
+client = Client()
+oai_client = OpenAI()
+
+# Pull the prompt to use
+
+# You can also specify a specific commit by passing the commit hash "my-prompt:<commit-hash>"
+
+prompt = client.pull_prompt("my-prompt")
+
+# Since our prompt only has one variable we could also pass in the value directly
+
+# The code below is equivalent to formatted_prompt = prompt.invoke("What is the color of the sky?")
+
+formatted_prompt = prompt.invoke({"question": "What is the color of the sky?"})
+
+# Test the prompt
+
+response = oai_client.chat.completions.create(
+model="gpt-4o",
+messages=convert_to_openai_messages(formatted_prompt.messages),
+)`,
+     },
+     {
+       value: "typescript",
+       label: "TypeScript",
+       language: "typescript",
+       content: `import { OpenAI } from "openai";
+import { pull } from "langchain/hub"
+import { convertPromptToOpenAI } from "@langchain/openai";
+
+// Connect to LangSmith and OpenAI
+const oaiClient = new OpenAI();
+
+// Pull the prompt to use
+// You can also specify a specific commit by passing the commit hash "my-prompt:<commit-hash>"
+const prompt = await pull("my-prompt");
+
+// Format the prompt with the question
+const formattedPrompt = await prompt.invoke({ question: "What is the color of the sky?" });
+
+// Test the prompt
+const response = await oaiClient.chat.completions.create({
+model: "gpt-4o",
+messages: convertPromptToOpenAI(formattedPrompt).messages,
+});`,
+},
+]}
+groupId="client-language"
+/>
+
+## 4. Iterate on a prompt
+
+To add a new commit to a prompt, you can use the same `push_prompt/pushPrompt` methods as
+when you first created the prompt.
+
+ <CodeTabs
+   tabs={[
+     {
+       value: "python",
+       label: "Python",
+       language: "python",
+       content: `from langsmith import Client
+from langchain_core.prompts import ChatPromptTemplate
+
+# Connect to the LangSmith client
+
+client = Client()
+
+# Define the prompt to update
+
+new_prompt = ChatPromptTemplate([
+("system", "You are a helpful chatbot. Respond in Spanish."),
+("user", "{question}"),
+])
+
+# Push the updated prompt making sure to use the correct prompt name
+
+# Tags can help you remember specific versions in your commit history
+
+client.push_prompt("my-prompt", object=new_prompt, tags=["Spanish"])`,
+     },
+     {
+       value: "typescript",
+       label: "TypeScript",
+       language: "typescript",
+       content: `import { Client } from "langsmith";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+
+// Connect to the LangSmith client
+const client = new Client();
+
+// Define the prompt
+const newPrompt = ChatPromptTemplate.fromMessages([
+["system", "You are a helpful chatbot. Speak in Spanish."],
+["user", "{question}"]
+]);
+
+// Push the updated prompt making sure to use the correct prompt name
+// Tags can help you remember specific versions in your commit history
+await client.pushPrompt("my-prompt", {
+object: newPrompt,
+tags: ["Spanish"]
+});`,
+},
+]}
+groupId="client-language"
+/>
+
+## 5. Next steps
+
+- Learn more about the prompt hub in [these how-to guides](./how_to_guides/prompts/index#prompt-hub)
+- Learn more about the playground in [these how-to guides](./how_to_guides/playground/index#playground)

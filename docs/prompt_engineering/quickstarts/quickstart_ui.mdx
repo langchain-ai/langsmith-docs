@@ -1,0 +1,59 @@
+---
+sidebar_label: Quick Start (UI)
+sidebar_position: 0
+table_of_contents: true
+---
+
+import {
+  CodeTabs,
+  python,
+  typescript,
+  ShellBlock,
+} from "@site/src/components/InstructionsWithCode";
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
+
+# Prompt Engineering Quick Start (UI)
+
+This quick start will get you up and running with prompt engineering in LangSmith. We will walk through how
+to create, test, and iterate on prompts in LangSmith.
+
+:::info QuickStart
+This tutorial uses the UI for prompt engineering, if you are interested in using the SDK instead, read [this guide](./quickstart_sdk).
+:::
+
+## 1. Setup
+
+The only setup needed for this guide is to make sure you have signed up for a valid [LangSmith](https://langsmith.com) account.
+
+## 2. Create a prompt
+
+To create a prompt in LangSmith, navigate to the **Prompts** section of the left-hand sidebar and click on the “+ New Prompt” button.
+You can then modify the prompt by editing/adding messages and input variables.
+Once you have made your desired changes you can click the “Save” button to save your prompt for future use.
+
+![](./static/create_prompt_ui.gif)
+
+## 3. Test a prompt
+
+To test a prompt, simply navigate to the **Playground** in the left-hand sidebar and then open the prompt you wish to test.
+After selecting the prompt input the values you want to test over.
+If you are interested in testing over a dataset instead of individual examples, check out [this guide](./how_to_guides/playground/testing_over_dataset).
+
+![](./static/test_prompt_ui.gif)
+
+## 4. Iterate on a prompt
+
+LangSmith makes it easy to iterate on prompts with your entire team. Anyone in your workspace can select a prompt to iterate on in the playground and once they are happy with their changes they can simply save it as a new commit.
+
+To learn more about iterating on your prompts in LangSmith, you can read [this guide](../concepts/index#prompt-canvas).
+
+![](./static/save_prompt_commit_ui.gif)
+
+You can also tag specific commits to mark important moments in your commit history:
+
+![](./static/tag_prompt_ui.gif)
+
+## 5. Next steps
+
+- Learn more about the prompt hub in [these how-to guides](./how_to_guides/prompts/index#prompt-hub)
+- Learn more about the playground in [these how-to guides](./how_to_guides/playground/index#playground)
