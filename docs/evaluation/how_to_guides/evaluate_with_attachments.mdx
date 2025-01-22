@@ -107,7 +107,7 @@ if (!response.ok) {
 const pdfArrayBuffer = await fetchArrayBuffer(pdfUrl);
 const wavArrayBuffer = await fetchArrayBuffer(wavUrl);
 const pngArrayBuffer = await fetchArrayBuffer(pngUrl);\n
-// Create the LangSmith client (Ensure LANGCHAIN_API_KEY is set in env)
+// Create the LangSmith client (Ensure LANGSMITH_API_KEY is set in env)
 const langsmithClient = new Client();\n
 // Create a unique dataset name
 const datasetName = "attachment-test-dataset:" + uuid4().substring(0, 8);\n
@@ -240,11 +240,12 @@ def file_qa(inputs, attachments): # Read the audio bytes from the reader and enc
 `,
 `The target function you are evaluating must have two positional arguments in order to consume the attachments associated with the example, the first must be called \`inputs\` and the second must be called \`attachments\`.
 - The \`inputs\` argument is a dictionary that contains the input data for the example, excluding the attachments.
-- The \`attachments\` argument is a dictionary that maps the attachment name to a dictionary containing a presigned url and a reader of the bytes content of the file. Either can be used to read the bytes of the file:
+- The \`attachments\` argument is a dictionary that maps the attachment name to a dictionary containing a presigned url, mime_type, and a reader of the bytes content of the file. You can use either the presigned url or the reader to get the file contents.
 Each value in the attachments dictionary is a dictionary with the following structure:
 \`\`\`
 {
       "presigned_url": str,
+      "mime_type": str,
       "reader": BinaryIO
 }
 \`\`\`
@@ -315,8 +316,9 @@ image_answer: imageCompletion.choices[0].message.content,
     `In the TypeScript SDK, the \`config\` argument is used to pass in the attachments to the target function if \`includeAttachments\` is set to \`true\`.\n
 The \`config\` will contain \`attachments\` which is an object mapping the attachment name to an object of the form:\n
 \`\`\`
-{\n
+{
 presigned_url: string,
+mime_type: string,
 }
 \`\`\``
 ),

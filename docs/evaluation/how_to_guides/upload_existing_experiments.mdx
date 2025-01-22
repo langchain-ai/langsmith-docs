@@ -195,7 +195,7 @@ body = {
 resp = requests.post(
     "https://api.smith.langchain.com/api/v1/datasets/upload-experiment",
     json=body,
-    headers={"x-api-key": os.environ["LANGCHAIN_API_KEY"]}
+    headers={"x-api-key": os.environ["LANGSMITH_API_KEY"]}
 )
 print(resp.json())
 ```
