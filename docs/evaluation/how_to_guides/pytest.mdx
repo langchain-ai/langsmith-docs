@@ -25,9 +25,12 @@ The JS/TS SDK has an analogous [Vitest/Jest integration](./vitest_jest).
 
 ## Installation
 
-This functionality requires Python SDK version `langsmith>=0.3`.
+This functionality requires Python SDK version `langsmith>=0.3.1`.
 
-For extra features like [rich terminal outputs](./pytest#rich-outputs) and [test caching](./pytest#caching) install with `pip install -U "langsmith[pytest]"`.
+For extra features like [rich terminal outputs](./pytest#rich-outputs) and [test caching](./pytest#caching) install:
+```bash
+pip install -U "langsmith[pytest]"
+```
 
 ## Define and run tests
 
@@ -70,11 +73,11 @@ def test_sql_generation_select_all() -> None:
     user_query = "Get all users from the customers table"
     t.log_inputs({"user_query": user_query})  # <-- Log example inputs, optional
 
-    sql = generate_sql(user_query)
-    t.log_outputs({"sql": sql})  # <-- Log run outputs, optional
-
     expected = "SELECT * FROM customers;"
     t.log_reference_outputs({"sql": expected})  # <-- Log example reference outputs, optional
+
+    sql = generate_sql(user_query)
+    t.log_outputs({"sql": sql})  # <-- Log run outputs, optional
     
     t.log_feedback(key="valid_sql", score=is_valid_sql(sql))  # <-- Log feedback, optional
 
@@ -131,7 +134,7 @@ def test_foo() -> None:
 
 Running this test will create/update an example with name "test_foo", inputs `{"a": 1, "b": 2}`, reference outputs `{"foo": "bar"}` and trace a run with outputs `{"foo": "baz"}`.
 
-**NOTE**: If you run any of `log_inputs`, `log_outputs`, or `log_reference_outputs` twice the previous values will be overwritten.
+**NOTE**: If you run `log_inputs`, `log_outputs`, or `log_reference_outputs` twice, the previous values will be overwritten.
 
 Another way to define example inputs and reference outputs is via pytest fixtures/parametrizations.
 By default any arguments to your test function will be logged as inputs on the corresponding example.
