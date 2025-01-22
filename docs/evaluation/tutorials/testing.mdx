@@ -521,7 +521,7 @@ def test_executes_code_when_needed() -> None:
 
     # This will log the number of steps taken by the agent, which is useful for
     # determining how efficiently the agent gets to an answer.
-    t.log_feedback(key="num_steps", value=len(result["messages"]) - 1)
+    t.log_feedback(key="num_steps", score=len(result["messages"]) - 1)
 
     # Assert that the code tool was used
     assert "code_tool" in tool_calls
