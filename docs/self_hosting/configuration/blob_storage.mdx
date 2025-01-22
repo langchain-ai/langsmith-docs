@@ -6,11 +6,11 @@ import {
 
 # Enable blob storage
 
-By default, LangSmith stores run inputs, outputs, and errors in ClickHouse. In addition, LangSmith will store run manifests in Postgres. If you so choose, you can instead store this information in blob storage, which has a couple of notable benefits:
+By default, LangSmith stores run inputs, outputs, errors, manifests, extras, and events in ClickHouse. If you so choose, you can instead store this information in blob storage, which has a couple of notable benefits:
 
-1. In high trace environments, inputs, outputs, errors, and manifests may balloon the size of your databases.
+1. In high trace environments, inputs, outputs, errors, manifests, extras, and events may balloon the size of your databases.
 1. If using LangSmith Managed ClickHouse, you may want sensitive information in blob storage that resides in your environment.
-   To alleviate this, LangSmith supports storing run manifests, inputs, outputs, and errors in an external blob storage system.
+   To alleviate this, LangSmith supports storing run inputs, outputs, errors, manifests, extras, events, and attachments in an external blob storage system.
 
 ## Requirements
 
