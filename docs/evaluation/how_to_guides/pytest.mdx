@@ -314,23 +314,9 @@ LANGSMITH_TEST_TRACKING=false pytest tests/
 
 The tests will run as normal, but the experiment logs will not be sent to LangSmith.
 
-## Legacy
+## Expectations 
 
-#### `@test` / `@unit` decorator
-
-The legacy method for marking test cases is using the `@test` or `@unit` decorators:
-
-```python
-from langsmith import test
-
-@test
-def test_foo() -> None:
-    pass
-```
-
-#### Expectations 
-
-LangSmith provides an `expect` utility to help define expectations about your LLM output. For example:
+LangSmith provides an [expect](https://docs.smith.langchain.com/reference/python/_expect/langsmith._expect._Expect#langsmith._expect._Expect) utility to help define expectations about your LLM output. For example:
 
 ```python
 from langsmith import expect
@@ -376,3 +362,17 @@ This test case will be assigned 4 scores:
 4. The overall test pass/fail score (binary)
 
 The `expect` utility is modeled off of [Jest](https://jestjs.io/docs/expect)'s expect API, with some off-the-shelf functionality to make it easier to grade your LLMs.
+
+## Legacy
+
+#### `@test` / `@unit` decorator
+
+The legacy method for marking test cases is using the `@test` or `@unit` decorators:
+
+```python
+from langsmith import test
+
+@test
+def test_foo() -> None:
+    pass
+```
