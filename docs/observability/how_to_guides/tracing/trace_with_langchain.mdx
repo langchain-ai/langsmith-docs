@@ -64,7 +64,7 @@ chain.invoke({"question": "Am I using a callback?", "context": "I'm using a call
 from langchain_core.tracers.context import tracing_v2_enabled
 with tracing_v2_enabled():
     chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})\n
-# This will NOT be traced (assuming LANGCHAIN_TRACING_V2 is not set)
+# This will NOT be traced (assuming LANGSMITH_TRACING is not set)
 chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced"})`),
     TypeScriptBlock(`// You can configure a LangChainTracer instance to trace a specific invocation.
 import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";\n
@@ -84,11 +84,15 @@ await chain.invoke(
 
 ### Statically
 
-As mentioned in the [tracing conceptual guide](../../concepts) LangSmith uses the concept of a Project to group traces. If left unspecified, the tracer project is set to default. You can set the `LANGCHAIN_PROJECT` environment variable to configure a custom project name for an entire application run. This should be done before executing your application.
+As mentioned in the [tracing conceptual guide](../../concepts) LangSmith uses the concept of a Project to group traces. If left unspecified, the tracer project is set to default. You can set the `LANGSMITH_PROJECT` environment variable to configure a custom project name for an entire application run. This should be done before executing your application.
 
 ```shell
-export LANGCHAIN_PROJECT=my-project
+export LANGSMITH_PROJECT=my-project
 ```
+
+:::warning SDK compatibility in JS
+The `LANGSMITH_PROJECT` flag is only supported in JS SDK versions >= 0.2.16, use `LANGCHAIN_PROJECT` instead if you are using an older version.
+:::
 
 ### Dynamically
 
@@ -317,10 +321,10 @@ try {
 
 As mentioned in other guides, the following environment variables allow you to configure tracing enabled, the api endpoint, the api key, and the tracing project:
 
-- `LANGCHAIN_TRACING_V2`
-- `LANGCHAIN_API_KEY`
-- `LANGCHAIN_ENDPOINT`
-- `LANGCHAIN_PROJECT`
+- `LANGSMITH_TRACING`
+- `LANGSMITH_API_KEY`
+- `LANGSMITH_ENDPOINT`
+- `LANGSMITH_PROJECT`
 
 However, in some environments, it is not possible to set environment variables. In these cases, you can set the tracing configuration programmatically.
 
