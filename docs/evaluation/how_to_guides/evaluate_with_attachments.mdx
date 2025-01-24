@@ -48,7 +48,7 @@ png_url = "https://www.w3.org/Graphics/PNG/nurbcup2si.png"\n
 pdf_bytes = requests.get(pdf_url).content
 wav_bytes = requests.get(wav_url).content
 png_bytes = requests.get(png_url).content\n
-# Define the LANGCHAIN_API_KEY environment variable with your API key
+# Define the LANGSMITH_API_KEY environment variable with your API key
 langsmith_client = Client()\n
 dataset_name = "attachment-test-dataset:" + str(uuid.uuid4())[0:8]\n
 dataset = langsmith_client.create_dataset(
@@ -104,7 +104,7 @@ if (!response.ok) {
 const pdfArrayBuffer = await fetchArrayBuffer(pdfUrl);
 const wavArrayBuffer = await fetchArrayBuffer(wavUrl);
 const pngArrayBuffer = await fetchArrayBuffer(pngUrl);\n
-// Create the LangSmith client (Ensure LANGCHAIN_API_KEY is set in env)
+// Create the LangSmith client (Ensure LANGSMITH_API_KEY is set in env)
 const langsmithClient = new Client();\n
 // Create a unique dataset name
 const datasetName = "attachment-test-dataset:" + uuid4().substring(0, 8);\n

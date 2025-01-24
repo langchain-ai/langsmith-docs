@@ -47,13 +47,13 @@ First, let's set our environment variables:
     python`
         import os
 
-        os.environ["LANGCHAIN_TRACING_V2"] = "true"
-        os.environ["LANGCHAIN_API_KEY"] = "YOUR LANGCHAIN API KEY"
+        os.environ["LANGSMITH_TRACING"] = "true"
+        os.environ["LANGSMITH_API_KEY"] = "YOUR LANGSMITH API KEY"
         os.environ["OPENAI_API_KEY"] = "YOUR OPENAI API KEY"
     `,
     typescript`
-        process.env.LANGCHAIN_TRACING_V2 = "true";
-        process.env.LANGCHAIN_API_KEY = "YOUR LANGCHAIN API KEY";
+        process.env.LANGSMITH_TRACING = "true";
+        process.env.LANGSMITH_API_KEY = "YOUR LANGSMITH API KEY";
         process.env.OPENAI_API_KEY = "YOUR OPENAI API KEY";
     `,
   ]}
