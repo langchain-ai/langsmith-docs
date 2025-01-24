@@ -14,8 +14,7 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Prompt Engineering Quick Start (UI)
 
-This quick start will get you up and running with prompt engineering in LangSmith. We will walk through how
-to create, test, and iterate on prompts in LangSmith.
+This quick start will walk through how to create, test, and iterate on prompts in LangSmith.
 
 :::info QuickStart
 This tutorial uses the UI for prompt engineering, if you are interested in using the SDK instead, read [this guide](./quickstart_sdk).
@@ -29,21 +28,36 @@ The only setup needed for this guide is to make sure you have signed up for a va
 
 To create a prompt in LangSmith, navigate to the **Prompts** section of the left-hand sidebar and click on the “+ New Prompt” button.
 You can then modify the prompt by editing/adding messages and input variables.
-Once you have made your desired changes you can click the “Save” button to save your prompt for future use.
 
 ![](./static/create_prompt_ui.gif)
 
 ## 3. Test a prompt
 
-To test a prompt, simply navigate to the **Playground** in the left-hand sidebar and then open the prompt you wish to test.
-After selecting the prompt input the values you want to test over.
-If you are interested in testing over a dataset instead of individual examples, check out [this guide](./how_to_guides/playground/testing_over_dataset).
+To test a prompt, navigate to the **Playground** in the left-hand sidebar and then open the prompt you wish to test.
+Set the model configuration you want to use, add the prompt input values you want to test over, and then click "Start".
+To learn about more options for configuring your prompt in the playground, check out this [guide](./how_to_guides/playground/managing_model_configurations).
+If you are interested in testing how your prompt performs over a dataset instead of individual examples, read [this page](./how_to_guides/playground/testing_over_dataset).
 
 ![](./static/test_prompt_ui.gif)
 
-## 4. Iterate on a prompt
+## 4. Save a prompt
 
-LangSmith makes it easy to iterate on prompts with your entire team. Anyone in your workspace can select a prompt to iterate on in the playground and once they are happy with their changes they can simply save it as a new commit.
+One you have run some tests and made your desired changes to your prompt you can click the “Save” button to save your prompt for future use.
+
+![](./static/save_prompt_ui.gif)
+
+## 5. Iterate on a prompt
+
+LangSmith makes it easy to iterate on prompts with your entire team. Members of your workspace can select a prompt to iterate on in the playground,
+and once they are happy with their changes, they can simply save it as a new commit.
+
+To improve your prompts:
+
+- We recommend referencing the documentation provided by your model provider for best practices in prompt creation,
+  such as [Best practices for prompt engineering with the OpenAI API](https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api) and [Gemini’s Introduction to prompt design](https://ai.google.dev/gemini-api/docs/prompting-intro).
+
+- To help with iterating on your prompts in LangSmith, we've created Prompt Canvas — an interactive tool to build and optimize your prompts.
+  Learn about how to use [Prompt Canvas](https://blog.langchain.dev/introducing-prompt-canvas/).
 
 To learn more about iterating on your prompts in LangSmith, you can read [this guide](../concepts/index#prompt-canvas).
 
@@ -53,7 +67,7 @@ You can also tag specific commits to mark important moments in your commit histo
 
 ![](./static/tag_prompt_ui.gif)
 
-## 5. Next steps
+## 6. Next steps
 
-- Learn more about the prompt hub in [these how-to guides](./how_to_guides/prompts/index#prompt-hub)
-- Learn more about the playground in [these how-to guides](./how_to_guides/playground/index#playground)
+- Learn more about how to store and manage prompts using the Prompt Hub in [these how-to guides](./how_to_guides/prompts/index#prompt-hub)
+- Learn more about how to use the playground for prompt engineering in [these how-to guides](./how_to_guides/playground/index#playground)

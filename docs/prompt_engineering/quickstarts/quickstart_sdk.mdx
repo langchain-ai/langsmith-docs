@@ -14,8 +14,8 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Prompt Engineering Quick Start (SDK)
 
-This quick start will get you up and running with prompt engineering in LangSmith. We will walk through how
-to create, test, and iterate on prompts in LangSmith.
+Using the SDK allows you to easily create, test, and iterate on prompts with other developers in your team.
+This quick start will walk through how to create, test, and iterate on prompts using the SDK.
 
 :::info QuickStart
 This tutorial uses the SDK for prompt engineering, if you are interested in using the UI instead, read [this guide](./quickstart_ui).
@@ -51,8 +51,9 @@ LANGSMITH_API_KEY = '<your_api_key>'
 
 ## 2. Create a prompt
 
-To create a prompt in LangSmith, define the list of messages you want in your prompt and then wrap them using the `ChatPromptTemplate` function.
-Then all you have to do is call `push_prompt/pushPrompt` to send your prompt to LangSmith!
+To create a prompt in LangSmith, define the list of messages you want in your prompt and then wrap them using the
+[`ChatPromptTemplate`](https://python.langchain.com/api_reference/core/prompts/langchain_core.prompts.chat.ChatPromptTemplate.html)/[`ChatPromptTemplate`](https://v03.api.js.langchain.com/classes/_langchain_core.prompts.ChatPromptTemplate.html) function.
+Then all you have to do is call [`push_prompt`](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.push_prompt)/[`pushPrompt`](https://langsmith-docs-7jgx2bq8f-langchain.vercel.app/reference/js/classes/client.Client#pushprompt) to send your prompt to LangSmith!
 
 <CodeTabs
    tabs={[
@@ -172,7 +173,7 @@ groupId="client-language"
 
 ## 4. Iterate on a prompt
 
-To add a new commit to a prompt, you can use the same `push_prompt/pushPrompt` methods as
+To add a new commit to a prompt, you can use the same [`push_prompt`](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.push_prompt)/[`pushPrompt`](https://langsmith-docs-7jgx2bq8f-langchain.vercel.app/reference/js/classes/client.Client#pushprompt) methods as
 when you first created the prompt.
 
  <CodeTabs
@@ -230,5 +231,5 @@ groupId="client-language"
 
 ## 5. Next steps
 
-- Learn more about the prompt hub in [these how-to guides](./how_to_guides/prompts/index#prompt-hub)
-- Learn more about the playground in [these how-to guides](./how_to_guides/playground/index#playground)
+- Learn more about how to store and manage prompts using the Prompt Hub in [these how-to guides](./how_to_guides/prompts/index#prompt-hub)
+- Learn more about how to use the playground for prompt engineering in [these how-to guides](./how_to_guides/playground/index#playground)
