@@ -229,6 +229,14 @@
     {
       "source": "/observability/how_to_guides/monitoring/:path*",
       "destination": "/observability/how_to_guides/:path*"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/prompts/:path*",
+      "destination": "/prompt_engineering/how_to_guides/:path*"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/playground/:path*",
+      "destination": "/prompt_engineering/how_to_guides/:path*"
     }
   ],
   "builds": [
