@@ -221,6 +221,14 @@
     {
       "source": "/evaluation/how_to_guides/unit_testing(/?)",
       "destination": "/evauation/how_to_guides/pytest"
+    },
+    {
+      "source": "/observability/how_to_guides/tracing/:path*",
+      "destination": "/observability/how_to_guides/:path*"
+    },
+    {
+      "source": "/observability/how_to_guides/monitoring/:path*",
+      "destination": "/observability/how_to_guides/:path*"
     }
   ],
   "builds": [
