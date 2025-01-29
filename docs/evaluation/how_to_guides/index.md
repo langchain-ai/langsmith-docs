@@ -45,17 +45,19 @@ Evaluate and improve your application before deploying it.
 - [Print detailed logs (Python only)](../../observability/how_to_guides/tracing/output_detailed_logs)
 - [Run an evaluation locally (beta, Python only)](./how_to_guides/local)
 
-## Unit testing
+## Testing integrations
 
-Unit test your system to identify bugs and regressions.
+Run evals using your favorite testing tools:
 
-- [Unit test applications (Python only)](./how_to_guides/unit_testing)
+- [Run evals with pytest (beta)](./how_to_guides/pytest)
+- [Run evals with Vitest/Jest (beta)](./how_to_guides/vitest_jest)
 
 ## Online evaluation
 
 Evaluate and monitor your system's live performance on production data.
 
-- [Set up an online evaluator](../../observability/how_to_guides/monitoring/online_evaluations)
+- [Set up an LLM-as-judge online evaluator](../../observability/how_to_guides/monitoring/online_evaluations#configure-llm-as-judge-evaluators)
+- [Set up a custom code online evaluator](../../observability/how_to_guides/monitoring/online_evaluations#configure-custom-code-evaluators)
 - [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
 
 ## Automatic evaluation

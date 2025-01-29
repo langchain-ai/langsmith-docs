@@ -25,9 +25,9 @@ Using LangSmith Managed Clickhouse with your Self-Hosted LangSmith instance is f
 
 This [reference doc](../reference/data_formats/run_data_format) explains the format we use to store runs (spans), which are the building blocks of traces.
 
-Our definition of sensitive information as it relates to application data are `inputs`, `outputs`, and `errors` of a run, since these fields can contain prompts and completions from LLMs.
+Our definition of sensitive information as it relates to application data are `inputs`, `outputs`, `errors`, `manifests`, `extras`, and `events` of a run, since these fields can contain prompts and completions from LLMs.
 
-With LangSmith-managed ClickHouse, we store `inputs`, `outputs`, and `errors` in cloud object storage (S3 or GCS) within your cloud and store the rest of the run data in ClickHouse. This ensures that sensitive information doesn't leave your VPC.
+With LangSmith-managed ClickHouse, we store `inputs`, `outputs`, `errors`, `manifests`, `extras`, and `events` in cloud object storage (S3 or GCS) within your cloud and store the rest of the run data in ClickHouse. This ensures that sensitive information doesn't leave your VPC.
 
 :::
 

@@ -15,10 +15,11 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
 
 Quickly iterate on prompts and models in the LangSmith Playground.
 
+- [Iterate on your prompts with the Prompt Canvas](./how_to_guides/playground/prompt_canvas)
 - [Run the playground against a custom LangServe model server](./how_to_guides/playground/custom_endpoint)
 - [Run the playground against an OpenAI-compliant model provider/proxy](./how_to_guides/playground/custom_openai_compliant_model)
 - [Use custom TLS certificates](./how_to_guides/playground/custom_tls_certificates)
-- [Manage model configurations](./how_to_guides/playground/managing_model_configurations)
+- [Manage prompt settings](./how_to_guides/playground/managing_model_configurations)
 - [Testing over a dataset](./how_to_guides/playground/testing_over_dataset)
 
 ## Few shot prompting

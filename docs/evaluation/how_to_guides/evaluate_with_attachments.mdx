@@ -37,17 +37,18 @@ All of the below features are available in the following SDK versions:
 <CodeTabs
   tabs={[
     PythonBlock(`import requests
-import uuid\n
+import uuid
+from pathlib import Path\n
 from langsmith import Client
 from langsmith.schemas import ExampleUploadWithAttachments, Attachment\n
 # Publicly available test files
 pdf_url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-wav_url = "https://openaiassets.blob.core.windows.net/$web/API/docs/audio/alloy.wav"
-png_url = "https://www.w3.org/Graphics/PNG/nurbcup2si.png"\n
+wav_url = "https://openaiassets.blob.core.windows.net/$web/API/docs/audio/alloy.wav"\n
+
 # Fetch the files as bytes\n
 pdf_bytes = requests.get(pdf_url).content
-wav_bytes = requests.get(wav_url).content
-png_bytes = requests.get(png_url).content\n
+wav_bytes = requests.get(wav_url).content\n
+
 # Define the LANGCHAIN_API_KEY environment variable with your API key
 langsmith_client = Client()\n
 dataset_name = "attachment-test-dataset:" + str(uuid.uuid4())[0:8]\n
@@ -70,20 +71,22 @@ example = ExampleUploadWithAttachments(
     },
     attachments={
         "my_pdf": ("application/pdf", pdf_bytes),
-        "my_wav": ("audio/wav", wav_bytes),
-        "my_img": Attachment(mime_type="image/png", data=png_bytes)
+        "my_wav": Attachment(mime_type="audio/wav", data=wav_bytes),
+        "my_img": ("image/png", Path(__file__).parent / "my_img.png")
     },
 )\n
 # Upload the examples with attachments
-langsmith_client.upload_examples_multipart(dataset_id=dataset.id, uploads=[example])
+# Must pass the dangerously_allow_filesystem flag to allow file paths
+langsmith_client.upload_examples_multipart(dataset_id=dataset.id, uploads=[example], dangerously_allow_filesystem=True)
 `,
         `In the Python SDK, you can use the \`upload_examples_multipart\` method to upload examples with attachments.\n
 Note that this is a different method from the standard \`create_examples\` method, which currently not support attachments.\n
 Utilize the \`ExampleUploadWithAttachments\` type to define examples with attachments.\n
 Each \`Attachment\` requires:
 - \`mime_type\` (str): The MIME type of the file (e.g., \`"image/png"\`).
-- \`data\` (bytes): The binary content of the file.\n
-  You can also define an attachment with a tuple tuple of the form \`(mime_type, data)\` for convenience.
+- \`data\` (bytes | Path): The binary content of the file, or the file path.\n
+  You can also define an attachment with a tuple tuple of the form \`(mime_type, data)\` for convenience. \n
+  Note that to use the file path instead of the raw bytes, you need to set the \`dangerously_allow_filesystem\` option to \`True\`.\n
   `
 ),
     TypeScriptBlock(`import { Client } from "langsmith";
@@ -104,7 +107,7 @@ if (!response.ok) {
 const pdfArrayBuffer = await fetchArrayBuffer(pdfUrl);
 const wavArrayBuffer = await fetchArrayBuffer(wavUrl);
 const pngArrayBuffer = await fetchArrayBuffer(pngUrl);\n
-// Create the LangSmith client (Ensure LANGCHAIN_API_KEY is set in env)
+// Create the LangSmith client (Ensure LANGSMITH_API_KEY is set in env)
 const langsmithClient = new Client();\n
 // Create a unique dataset name
 const datasetName = "attachment-test-dataset:" + uuid4().substring(0, 8);\n
@@ -147,7 +150,9 @@ Note that this is a different method from the standard \`createExamples\` method
 Each attachment requires either a \`Uint8Array\` or an \`ArrayBuffer\` as the data type.\n
 
 - \`Uint8Array\`: Useful for handling binary data directly.
-- \`ArrayBuffer\`: Represents fixed-length binary data, which can be converted to \`Uint8Array\` as needed.\n`),
+- \`ArrayBuffer\`: Represents fixed-length binary data, which can be converted to \`Uint8Array\` as needed.\n
+Note that you cannot directly pass in a file path in the TypeScript SDK, as accessing local files is not supported in all runtime environments.\n
+`),
   ]}
   groupId="client-language"
   />
@@ -235,11 +240,12 @@ def file_qa(inputs, attachments): # Read the audio bytes from the reader and enc
 `,
 `The target function you are evaluating must have two positional arguments in order to consume the attachments associated with the example, the first must be called \`inputs\` and the second must be called \`attachments\`.
 - The \`inputs\` argument is a dictionary that contains the input data for the example, excluding the attachments.
-- The \`attachments\` argument is a dictionary that maps the attachment name to a dictionary containing a presigned url and a reader of the bytes content of the file. Either can be used to read the bytes of the file:
+- The \`attachments\` argument is a dictionary that maps the attachment name to a dictionary containing a presigned url, mime_type, and a reader of the bytes content of the file. You can use either the presigned url or the reader to get the file contents.
 Each value in the attachments dictionary is a dictionary with the following structure:
 \`\`\`
 {
       "presigned_url": str,
+      "mime_type": str,
       "reader": BinaryIO
 }
 \`\`\`
@@ -310,8 +316,9 @@ image_answer: imageCompletion.choices[0].message.content,
     `In the TypeScript SDK, the \`config\` argument is used to pass in the attachments to the target function if \`includeAttachments\` is set to \`true\`.\n
 The \`config\` will contain \`attachments\` which is an object mapping the attachment name to an object of the form:\n
 \`\`\`
-{\n
+{
 presigned_url: string,
+mime_type: string,
 }
 \`\`\``
 ),

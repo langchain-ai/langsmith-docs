@@ -39,14 +39,16 @@ We also do not support moving from OAuth Mode with client secret to OAuth mode w
 
 <CodeTabs
   tabs={[
-    HelmBlock(`config:
-  authType: mixed
-  hostname: https://langsmith.example.com
-  oauth:
-    enabled: true
-    oauthClientId: \<YOUR CLIENT ID\>
-    oauthClientSecret: \<YOUR CLIENT SECRET\>
-    oauthIssuerUrl: \<YOUR DISCOVERY URL\>`),
+    HelmBlock(
+      `config:
+    authType: mixed
+    hostname: https://langsmith.example.com
+    oauth:
+      enabled: true
+      oauthClientId: \<YOUR CLIENT ID\>
+      oauthClientSecret: \<YOUR CLIENT SECRET\>
+      oauthIssuerUrl: \<YOUR DISCOVERY URL\>`
+    ),
     DockerBlock(
       `# In your .env file
 AUTH_TYPE=mixed
@@ -107,11 +109,13 @@ There are a couple of requirements for using OAuth SSO with LangSmith:
 
 <CodeTabs
   tabs={[
-    HelmBlock(`config:
-  oauth:
-    enabled: true
-    oauthClientId: \<YOUR CLIENT ID\>
-    oauthIssuerUrl: \<YOUR DISCOVERY URL\>`),
+    HelmBlock(
+      `config:
+    oauth:
+      enabled: true
+      oauthClientId: \<YOUR CLIENT ID\>
+      oauthIssuerUrl: \<YOUR DISCOVERY URL\>`
+    ),
     DockerBlock(
       `# In your .env file
 AUTH_TYPE=oauth

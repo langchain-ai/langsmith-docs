@@ -87,7 +87,7 @@
       "destination": "/old/category/proxy/:path*"
     },
     {
-      "source": "/category/release-notes", 
+      "source": "/category/release-notes",
       "destination": "/self_hosting/release_notes"
     },
     {
@@ -187,37 +187,41 @@
       "destination": "/prompt_engineering/tutorials/optimize_classifier"
     },
     {
-        "source": "/evaluation/how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-particular-version-of-a-dataset",
-        "destination": "/evaluation/how_to_guides/evaluation/dataset_version"
+      "source": "/evaluation/how_to_guides/evaluation/evaluate_llm_application#evaluate-on-a-particular-version-of-a-dataset",
+      "destination": "/evaluation/how_to_guides/evaluation/dataset_version"
     },
     {
-        "source": "/evaluation/how_to_guides/evaluation/:path*",
-        "destination": "/evaluation/how_to_guides/:path*"
+      "source": "/evaluation/how_to_guides/evaluation/:path*",
+      "destination": "/evaluation/how_to_guides/:path*"
     },
     {
-        "source": "/evaluation/how_to_guides/datasets/:path*",
-        "destination": "/evaluation/how_to_guides/:path*"
+      "source": "/evaluation/how_to_guides/datasets/:path*",
+      "destination": "/evaluation/how_to_guides/:path*"
     },
     {
-        "source": "/evaluation/how_to_guides/human_feedback/:path*",
-        "destination": "/evaluation/how_to_guides/:path*"
+      "source": "/evaluation/how_to_guides/human_feedback/:path*",
+      "destination": "/evaluation/how_to_guides/:path*"
     },
     {
-        "source": "/reference/python(/?)",
-        "destination": "/reference/python/reference"
+      "source": "/reference/python(/?)",
+      "destination": "/reference/python/reference"
     },
     {
-        "source": "/reference/sdk_reference(/?)",
-        "destination": "/reference/"
+      "source": "/reference/sdk_reference(/?)",
+      "destination": "/reference/"
     },
     {
       "source": "/administration/pricing",
       "destination": "https://www.langchain.com/pricing-langsmith"
-  },    
-  {
-     "source": "/pricing/plans",
-     "destination": "https://www.langchain.com/pricing-langsmith"
-  }
+    },    
+    {
+      "source": "/pricing/plans",
+      "destination": "https://www.langchain.com/pricing-langsmith"
+    },
+    {
+      "source": "/evaluation/how_to_guides/unit_testing(/?)",
+      "destination": "/evauation/how_to_guides/pytest"
+    }
   ],
   "builds": [
     {
