@@ -21,6 +21,11 @@ If you're already familiar with the observability SDK, or are interested in trac
 LLM calls you can skip to the [next steps section](#next-steps),
 or check out the [how-to guides](../observability/how_to_guides).
 
+:::tip Trace LangChain or LangGraph Applications
+If you are using [LangChain](https://python.langchain.com/docs/introduction/) or [LangGraph](https://langchain-ai.github.io/langgraph/), which both integrate seamlessly with LangSmith,
+you can get started by reading the guides for tracing with [LangChain](./observability/how_to_guides/tracing/trace_with_langchain) or tracing with [LangGraph](./observability/how_to_guides/tracing/trace_with_langgraph).
+:::
+
 ## 1. Install Dependencies
 
 <CodeTabs
@@ -49,8 +54,8 @@ To create an API key head to the <RegionalUrl text='LangSmith settings page' suf
 
 <CodeTabs
   tabs={[
-    ShellBlock(`export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY="<your-langchain-api-key>"
+    ShellBlock(`export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY="<your-langsmith-api-key>"
 # The example uses OpenAI, but it's not necessary if your code uses another LLM provider
 export OPENAI_API_KEY="<your-openai-api-key>"`),
   ]}
@@ -130,7 +135,7 @@ it has an LLM call!
 
 ## 5. Trace OpenAI calls
 
-The first thing you might want to trace is all your OpenAI calls. LangSmith makes this easy with the `wrap_openai/wrapOpenAI` wrappers.
+The first thing you might want to trace is all your OpenAI calls. LangSmith makes this easy with the [`wrap_openai`](https://docs.smith.langchain.com/reference/python/wrappers/langsmith.wrappers._openai.wrap_openai_)/[`wrapOpenAI`](https://docs.smith.langchain.com/reference/js/functions/wrappers_openai.wrapOpenAI) wrappers.
 All you have to do is modify your code to use the wrapped client instead of using the `OpenAI` client directly.
 
 <CodeTabs
@@ -213,7 +218,7 @@ This will produce a trace of just the OpenAI call in LangSmith's default tracing
 
 ## 6. Trace entire application
 
-You can also use the `traceable` decorator to trace your entire application instead of just the LLM calls.
+You can also use the [`traceable`](https://docs.smith.langchain.com/reference/python/run_helpers/langsmith.run_helpers.traceable)/[`traceable`](https://langsmith-docs-bdk0fivr6-langchain.vercel.app/reference/js/functions/traceable.traceable) decorator to trace your entire application instead of just the LLM calls.
 
 <CodeTabs
   groupId="client-language"
@@ -293,9 +298,8 @@ This will produce a trace of just the entire pipeline (with the OpenAI call as a
 Congratulations! If you've made it this far, you're well on your way to being an expert in observability with LangSmith.
 Here are some topics you might want to explore next:
 
-- [Trace a `LangChain` application](./observability/how_to_guides/tracing/trace_with_langchain)
-- [Trace a `LangGraph` application](./observability/how_to_guides/tracing/trace_with_langgraph)
 - [Trace multiturn conversations](./observability/how_to_guides/monitoring/threads)
 - [Send traces to a specific project](./observability/how_to_guides/tracing/log_traces_to_project)
+- [Filter traces in a project](./observability/how_to_guides/monitoring/filter_traces_in_application)
 
 Or you can visit the [how-to guides page](./observability/how_to_guides) to find out about all the things you can do with LangSmith observability.
