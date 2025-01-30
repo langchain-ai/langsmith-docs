@@ -172,7 +172,16 @@ groupId="client-language"
 
 ## 4. Iterate on a prompt
 
-To add a new commit to a prompt, you can use the same [`push_prompt`](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.push_prompt)/[`pushPrompt`](https://langsmith-docs-7jgx2bq8f-langchain.vercel.app/reference/js/classes/client.Client#pushprompt) methods as
+LangSmith makes it easy to iterate on prompts with your entire team. Members of your workspace can select a prompt to iterate on, and once they are happy with their changes, they can simply save it as a new commit.
+
+To improve your prompts:
+
+- We recommend referencing the documentation provided by your model provider for best practices in prompt creation,
+  such as [Best practices for prompt engineering with the OpenAI API](https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api) and [Gemini’s Introduction to prompt design](https://ai.google.dev/gemini-api/docs/prompting-intro).
+
+- To help with iterating on your prompts in LangSmith, we've created Prompt Canvas — an interactive tool to build and optimize your prompts. Learn about how to use [Prompt Canvas](../concepts#prompt-canvas).
+
+To add a new commit to a prompt, you can use the same [`push_prompt`](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.push_prompt) (Python) or [`pushPrompt`](https://langsmith-docs-7jgx2bq8f-langchain.vercel.app/reference/js/classes/client.Client#pushprompt) (TypeScript) methods as
 when you first created the prompt.
 
  <CodeTabs
