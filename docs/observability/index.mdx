@@ -135,7 +135,7 @@ it has an LLM call!
 
 ## 5. Trace OpenAI calls
 
-The first thing you might want to trace is all your OpenAI calls. LangSmith makes this easy with the [`wrap_openai`](https://docs.smith.langchain.com/reference/python/wrappers/langsmith.wrappers._openai.wrap_openai_)/[`wrapOpenAI`](https://docs.smith.langchain.com/reference/js/functions/wrappers_openai.wrapOpenAI) wrappers.
+The first thing you might want to trace is all your OpenAI calls. LangSmith makes this easy with the [`wrap_openai`](https://docs.smith.langchain.com/reference/python/wrappers/langsmith.wrappers._openai.wrap_openai_) (Python) or [`wrapOpenAI`](https://docs.smith.langchain.com/reference/js/functions/wrappers_openai.wrapOpenAI) (TypeScript) wrappers.
 All you have to do is modify your code to use the wrapped client instead of using the `OpenAI` client directly.
 
 <CodeTabs
