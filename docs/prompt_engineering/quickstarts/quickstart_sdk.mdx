@@ -14,7 +14,7 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Prompt Engineering Quick Start (SDK)
 
-This quick start will walk through how to create, test, and iterate on prompts using the SDK.
+This quick start will walk through how to create, test, and iterate on prompts using the SDK. In this tutorial we will use OpenAI, but you can use whichever LLM you want.
 
 :::info QuickStart
 This tutorial uses the SDK for prompt engineering, if you are interested in using the UI instead, read [this guide](./quickstart_ui).
@@ -42,10 +42,12 @@ First, install the required packages:
   groupId="client-language"
 />
 
-Next, make sure you have signed up for a [LangSmith](https://langsmith.com) account, then [create](./administration/how_to_guides/organization_management/create_account_api_key#create-an-api-key) and set your API key:
+Next, make sure you have signed up for a [LangSmith](https://langsmith.com) account, then [create](./administration/how_to_guides/organization_management/create_account_api_key#create-an-api-key) and set your API key.
+You will also want to sign up for an OpenAI API key to run the code in this tutorial.
 
 ```bash
 LANGSMITH_API_KEY = '<your_api_key>'
+OPENAI_API_KEY = '<your_api_key>'
 ```
 
 ## 2. Create a prompt
@@ -105,8 +107,8 @@ groupId="client-language"
 
 ## 3. Test a prompt
 
-To test a prompt, you need to pull the prompt, invoke it with the input values you want to test and then call the model with those input values. 
-your LLM or application expects. In this tutorial we will use OpenAI, but you can use whichever LLM you want.
+To test a prompt, you need to pull the prompt, invoke it with the input values you want to test and then call the model with those input values.
+your LLM or application expects.
 
 <CodeTabs
    tabs={[
