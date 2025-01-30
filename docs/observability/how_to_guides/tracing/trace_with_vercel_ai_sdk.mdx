@@ -204,7 +204,7 @@ import { generateText } from "ai";
 
 interface Env {
   OPENAI_API_KEY: string;
-  LANGSMITH_TRACING_V2: string;
+  LANGSMITH_TRACING: string;
   LANGSMITH_ENDPOINT: string;
   LANGSMITH_API_KEY: string;
 }
@@ -218,9 +218,9 @@ const handler = {
       model,
       prompt: "Tell me a joke",
       experimental_telemetry: AISDKExporter.getSettings({
-        // As `process.env.LANGSMITH_TRACING_V2` is undefined in Cloudflare Workers,
+        // As `process.env.LANGSMITH_TRACING` is undefined in Cloudflare Workers,
         // we need to check the environment variable directly.
-        isEnabled: env.LANGSMITH_TRACING_V2 === "true",
+        isEnabled: env.LANGSMITH_TRACING === "true",
       }),
     });
 

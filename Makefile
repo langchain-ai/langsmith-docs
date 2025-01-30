@@ -10,7 +10,8 @@ build-api-ref:
 	. .venv/bin/activate
 	$(PYTHON) -m pip install --upgrade pip
 	$(PYTHON) -m pip install --upgrade uv
-	cd langsmith-sdk && ../$(PYTHON) -m uv pip install -r python/docs/requirements.txt
+	$(PYTHON) -m uv pip install -r langsmith-sdk/python/docs/requirements.txt
+	$(PYTHON) -m uv pip install -e langsmith-sdk/python
 	$(PYTHON) langsmith-sdk/python/docs/create_api_rst.py
 	LC_ALL=C $(PYTHON) -m sphinx -T -E -b html -d langsmith-sdk/python/docs/_build/doctrees -c langsmith-sdk/python/docs langsmith-sdk/python/docs langsmith-sdk/python/docs/_build/html -j auto
 	$(PYTHON) langsmith-sdk/python/docs/scripts/custom_formatter.py langsmith-sdk/docs/_build/html/

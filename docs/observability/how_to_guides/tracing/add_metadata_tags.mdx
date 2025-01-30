@@ -30,7 +30,7 @@ messages = [
 # highlight-next-line
 # You can set metadata & tags **statically** when decorating a function
 # Use the @traceable decorator with tags and metadata
-# Ensure that the LANGCHAIN_TRACING_V2 environment variables are set for @traceable to work
+# Ensure that the LANGSMITH_TRACING environment variables are set for @traceable to work
 @ls.traceable(
     run_type="llm",
     name="OpenAI Call Decorator",

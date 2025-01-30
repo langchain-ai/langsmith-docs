@@ -14,7 +14,7 @@ This guide assumes you have already deployed a self-hosted LangSmith instance. I
 
 ### Configuring the application you want to use with LangSmith
 
-There are two main interfaces you can use to interact with LangSmith, the LangSmith UI and the LangSmith API.
+LangSmith has a single API for interacting with both the hub and the LangSmith backend.
 
 1. Once you have deployed your instance, you can access the LangSmith UI at `http://<host>`.
 2. The LangSmith API will be available at `http://<host>/api/v1`
@@ -34,15 +34,6 @@ import langsmith
 langsmith_client = langsmith.Client(
     api_key='<api_key>',
     api_url='http://<host>/api/v1',
-)
-
-# Deprecated, you can use the Langsmith client for all interactions
-import langchainhub
-
-# Deprecated, use langsmith.Client instead
-langchainhub.Client(
-    api_key='<api_key>',
-    api_url='http://<host>/api/v1'
 )
 ```
 
