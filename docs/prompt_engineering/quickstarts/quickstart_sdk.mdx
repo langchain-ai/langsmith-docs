@@ -51,7 +51,7 @@ LANGSMITH_API_KEY = '<your_api_key>'
 ## 2. Create a prompt
 
 To create a prompt in LangSmith, define the list of messages you want in your prompt and then wrap them using the
-[`ChatPromptTemplate`](https://python.langchain.com/api_reference/core/prompts/langchain_core.prompts.chat.ChatPromptTemplate.html)/[`ChatPromptTemplate`](https://v03.api.js.langchain.com/classes/_langchain_core.prompts.ChatPromptTemplate.html) function.
+`ChatPromptTemplate` function ([Python](https://python.langchain.com/api_reference/core/prompts/langchain_core.prompts.chat.ChatPromptTemplate.html)) or [TypeScript](https://v03.api.js.langchain.com/classes/_langchain_core.prompts.ChatPromptTemplate.html) function.
 Then all you have to do is call [`push_prompt`](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.push_prompt)/[`pushPrompt`](https://langsmith-docs-7jgx2bq8f-langchain.vercel.app/reference/js/classes/client.Client#pushprompt) to send your prompt to LangSmith!
 
 <CodeTabs
