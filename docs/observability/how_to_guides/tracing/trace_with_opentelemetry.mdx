@@ -17,7 +17,7 @@ This guide will walk through examples on how to achieve this.
 
 This first section covers how to use a standard OpenTelemetry client to log traces to LangSmith.
 
-### 0. Installation
+### 1. Installation
 
 Install the OpenTelemetry SDK, OpenTelemetry exporter packages, as well as the OpenAI package:
 
@@ -27,7 +27,7 @@ pip install opentelemetry-sdk
 pip install opentelemetry-exporter-otlp
 ```
 
-### 1. Configure your environment
+### 2. Configure your environment
 
 Setup environment variables for the endpoint, substitute your specific values:
 
@@ -43,7 +43,7 @@ OTEL_EXPORTER_OTLP_ENDPOINT=https://api.smith.langchain.com/otel
 OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>,Langsmith-Project=<project name>"
 ```
 
-### 2. Log a trace
+### 3. Log a trace
 
 This code sets up an OTEL tracer and exporter that will send traces to LangSmith. It then
 calls OpenAI and sends the required OpenTelemetry attributes.
@@ -117,14 +117,14 @@ To see what integrations are supported by the Traceloop SDK, see the [Traceloop 
 
 To get started, follow these steps:
 
-### 0. Installation
+### 1. Installation
 
 ```bash
 pip install traceloop-sdk
 pip install openai
 ```
 
-### 1. Configure your environment
+### 2. Configure your environment
 
 Setup environment variables:
 
@@ -139,7 +139,7 @@ TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>
 TRACELOOP_HEADERS=x-api-key=<your_langsmith_api_key>,Langsmith-Project=<langsmith_project_name>
 ```
 
-### 2. Initialize the SDK
+### 3. Initialize the SDK
 
 To use the SDK, you need to initialize it before logging traces:
 
@@ -148,7 +148,7 @@ from traceloop.sdk import Traceloop
 Traceloop.init()
 ```
 
-### 3. Log a trace
+### 4. Log a trace
 
 Here is a complete example using an OpenAI chat completion:
 
@@ -175,3 +175,127 @@ print(completion.choices[0].message)
 ```
 
 You should see a trace in your LangSmith dashboard [like this one](https://smith.langchain.com/public/106f5bed-edca-4357-91a5-80089252c9ed/r).
+
+## Logging Traces from other frameworks
+
+With OpenTelemetry, you can log traces from multiple other frameworks to LangSmith.
+Below is an example of tracing CrewAI to LangSmith, you can find a full list of supported
+frameworks [here](https://docs.arize.com/phoenix/tracing/integrations-tracing). To make this example
+work with other frameworks, you just need to change the instrumentor to match the framework.
+
+### 1. Installation
+
+First, install the required packages:
+
+```bash
+pip install -qU arize-phoenix-otel openinference-instrumentation-crewai crewai crewai-tools
+```
+
+### 2. Configure your environment
+
+Next, set the following environment variables:
+
+```bash
+OPENAI_API_KEY=<your_openai_api_key>
+SERPER_API_KEY=<your_serper_api_key>
+```
+
+### 3. Set up the instrumentor
+
+Before running any application code let's set up our instrumentor (you can replace this with any of the frameworks supported [here](https://docs.arize.com/phoenix/tracing/integrations-tracing))
+
+```python
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+
+# Add LangSmith API Key for tracing
+LANGSMITH_API_KEY = "YOUR_API_KEY"
+# Set the endpoint for OTEL collection
+ENDPOINT = "https://api.smith.langchain.com/otel/v1/traces"
+# Select the project to trace to
+LANGSMITH_PROJECT = "YOUR_PROJECT_NAME"
+
+# Create the OTLP exporter
+otlp_exporter = OTLPSpanExporter(
+    endpoint=ENDPOINT,
+    headers={"x-api-key": LANGSMITH_API_KEY, "Langsmith-Project": LANGSMITH_PROJECT}
+)
+
+# Set up the trace provider
+provider = TracerProvider()
+processor = BatchSpanProcessor(otlp_exporter)
+provider.add_span_processor(processor)
+
+# Now instrument CrewAI
+from openinference.instrumentation.crewai import CrewAIInstrumentor
+CrewAIInstrumentor().instrument(tracer_provider=provider)
+```
+
+### 4. Log a trace
+
+Now, you can run a CrewAI workflow and the trace will automatically be logged to LangSmith
+
+```python
+from crewai import Agent, Task, Crew, Process
+from crewai_tools import SerperDevTool
+
+search_tool = SerperDevTool()
+
+# Define your agents with roles and goals
+researcher = Agent(
+  role='Senior Research Analyst',
+  goal='Uncover cutting-edge developments in AI and data science',
+  backstory="""You work at a leading tech think tank.
+  Your expertise lies in identifying emerging trends.
+  You have a knack for dissecting complex data and presenting actionable insights.""",
+  verbose=True,
+  allow_delegation=False,
+  # You can pass an optional llm attribute specifying what model you wanna use.
+  # llm=ChatOpenAI(model_name="gpt-3.5", temperature=0.7),
+  tools=[search_tool]
+)
+writer = Agent(
+  role='Tech Content Strategist',
+  goal='Craft compelling content on tech advancements',
+  backstory="""You are a renowned Content Strategist, known for your insightful and engaging articles.
+  You transform complex concepts into compelling narratives.""",
+  verbose=True,
+  allow_delegation=True
+)
+
+# Create tasks for your agents
+task1 = Task(
+  description="""Conduct a comprehensive analysis of the latest advancements in AI in 2024.
+  Identify key trends, breakthrough technologies, and potential industry impacts.""",
+  expected_output="Full analysis report in bullet points",
+  agent=researcher
+)
+
+task2 = Task(
+  description="""Using the insights provided, develop an engaging blog
+  post that highlights the most significant AI advancements.
+  Your post should be informative yet accessible, catering to a tech-savvy audience.
+  Make it sound cool, avoid complex words so it doesn't sound like AI.""",
+  expected_output="Full blog post of at least 4 paragraphs",
+  agent=writer
+)
+
+# Instantiate your crew with a sequential process
+crew = Crew(
+  agents=[researcher, writer],
+  tasks=[task1, task2],
+  verbose= False,
+  process = Process.sequential
+)
+
+# Get your crew to work!
+result = crew.kickoff()
+
+print("######################")
+print(result)
+```
+
+You should see a trace in your LangSmith project that looks like this:
+
+![](./static/trace_arize.png)
