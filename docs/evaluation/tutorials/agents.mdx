@@ -35,8 +35,8 @@ def _set_env(var: str) -> None:
     if not os.environ.get(var):
         os.environ[var] = getpass.getpass(f"Set {var}: ")
 
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-_set_env("LANGCHAIN_API_KEY")
+os.environ["LANGSMITH_TRACING"] = "true"
+_set_env("LANGSMITH_API_KEY")
 _set_env("OPENAI_API_KEY")
 #endregion
 ```

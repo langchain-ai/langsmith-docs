@@ -44,15 +44,15 @@ To create an API key head to the <RegionalUrl text='Settings page' suffix='/sett
 
 <CodeTabs
   tabs={[
-    ShellBlock(`export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY="<your-langchain-api-key>"
+    ShellBlock(`export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY="<your-langchain-api-key>"
 # The example uses OpenAI, but it's not necessary in general
 export OPENAI_API_KEY="<your-openai-api-key>"`),
   ]}
   groupId="client-language"
 />
 
-## 3. Import dependencies
+## 4. Import dependencies
 
 <CodeTabs
   tabs={[
@@ -85,7 +85,7 @@ const openai = new OpenAI();`,
   groupId="client-language"
 />
 
-## 4. Create a dataset
+## 5. Create a dataset
 
 <CodeTabs
   tabs={[
@@ -164,7 +164,7 @@ await client.createExamples({
 groupId="client-language"
 />
 
-## 5. Define what you're evaluating
+## 6. Define what you're evaluating
 
 <CodeTabs
   tabs={[
@@ -204,7 +204,7 @@ async function target(inputs: string): Promise<{ response: string }> {
   groupId="client-language"
 />
 
-## 6. Define evaluator
+## 7. Define evaluator
 
 <CodeTabs
   tabs={[
@@ -289,7 +289,7 @@ async function accuracy({
   groupId="client-language"
 />
 
-## 7. Run and view results
+## 8. Run and view results
 
 <CodeTabs tabs={[
   
