@@ -427,3 +427,11 @@ div[class^='announcementBar_'] {
   background-color: #d0c9feff;
   font-weight: bold;
 }
+
+.no-highlight > .menu__list-item-collapsible:hover {
+  background: var(--ifm-menu-color-background-hover) !important;
+}
+
+.no-highlight > .menu__list-item-collapsible {
+  background: transparent !important;
+}
