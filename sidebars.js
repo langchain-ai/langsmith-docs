@@ -27,6 +27,7 @@ const sidebars = {
       type: "category",
       label: "Observability",
       items: [
+        "observability/index",
         {
           type: "category",
           label: "Tutorials",
@@ -67,7 +68,7 @@ const sidebars = {
           link: { type: "doc", id: "observability/concepts/index" },
         },
       ],
-      link: { type: "doc", id: "observability/tutorials/index" },
+      link: { type: "doc", id: "observability/index" },
     },
     {
       type: "category",
@@ -122,6 +123,19 @@ const sidebars = {
       items: [
         {
           type: "category",
+          label: "Quickstarts",
+          collapsible: true,
+          items: [
+            "prompt_engineering/quickstarts/quickstart_ui",
+            "prompt_engineering/quickstarts/quickstart_sdk",
+          ],
+          link: {
+            type: "doc",
+            id: "prompt_engineering/quickstarts/quickstart_ui",
+          },
+        },
+        {
+          type: "category",
           label: "Tutorials",
           collapsible: false,
           items: [
@@ -160,7 +174,7 @@ const sidebars = {
           link: { type: "doc", id: "prompt_engineering/concepts/index" },
         },
       ],
-      link: { type: "doc", id: "prompt_engineering/tutorials/index" },
+      link: { type: "doc", id: "prompt_engineering/quickstarts/quickstart_ui" },
     },
     "langgraph_cloud",
     {
