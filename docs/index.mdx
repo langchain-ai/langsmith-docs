@@ -187,7 +187,7 @@ import { EvaluationResult, evaluate } from "langsmith/evaluation";
       const exactMatch = async ({ outputs, referenceOutputs }: {
         outputs?: Record<string, any>;
         referenceOutputs?: Record<string, any>;
-      }): Promise<EvaulationResult> => {
+      }): Promise<EvaluationResult> => {
         return {
           key: "exact_match",
           score: outputs?.response === referenceOutputs?.response,
