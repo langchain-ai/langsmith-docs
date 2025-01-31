@@ -296,10 +296,10 @@ LANGSMITH_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests
 
 ## Rich outputs
 
-If you'd like to see a rich display of the LangSmith results of your test run you can specify `--output='ls'`:
+If you'd like to see a rich display of the LangSmith results of your test run you can specify `--langsmith-output`:
 
 ```bash
-pytest --output='ls' tests
+pytest --langsmith-output tests
 ```
 
 You'll get a nice table per test suite that updates live as the results are uploaded to LangSmith:
