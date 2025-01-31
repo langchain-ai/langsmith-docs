@@ -22,7 +22,7 @@ If you are using LangChain modules within LangGraph, you only need to set a few 
 
 This guide will walk through a basic example. For more detailed information on configuration, see the [Trace With LangChain](./trace_with_langchain) guide.
 
-### 0. Installation
+### 1. Installation
 
 Install the LangGraph library and the OpenAI integration for Python and JS (we use the OpenAI integration for the code snippets below).
 
@@ -30,11 +30,11 @@ For a full list of packages available, see the [LangChain Python docs](https://p
 
 <LangGraphInstallationCodeTabs />
 
-### 1. Configure your environment
+### 2. Configure your environment
 
 <ConfigureLangChainEnvironmentCodeTabs />
 
-### 2. Log a trace
+### 3. Log a trace
 
 Once you've set up your environment, you can call LangChain runnables as normal.
 LangSmith will infer the proper tracing config:
@@ -53,17 +53,17 @@ If you do so, LangSmith will automatically nest traces from those wrapped method
 
 Here's an example. You can also see this page for more information.
 
-### 0. Installation
+### 1. Installation
 
 Install the LangGraph library and the OpenAI SDK for Python and JS (we use the OpenAI integration for the code snippets below).
 
 <LangGraphWithoutLangChainInstallationCodeTabs />
 
-### 1. Configure your environment
+### 2. Configure your environment
 
 <ConfigureLangChainEnvironmentCodeTabs />
 
-### 2. Log a trace
+### 3. Log a trace
 
 Once you've set up your environment, [wrap or decorate the custom functions/SDKs](./annotate_code#use-traceable--traceable) you want to trace.
 LangSmith will then infer the proper tracing config:
