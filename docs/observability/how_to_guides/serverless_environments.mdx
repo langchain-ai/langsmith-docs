@@ -14,7 +14,7 @@ To make sure this occurs, you can either:
   - Note that this is named differently from the [environment variable](https://js.langchain.com/docs/how_to/callbacks_serverless) in LangChain.js because LangSmith can be used without LangChain.
 - Pass a custom client into your traced runs and `await` the `client.awaitPendingTraceBatches();` method.
 
-Here's an example of using `awaitPendingTraceBatches` alongside the [`traceable`](/observability/how_to_guides/tracing/annotate_code) method:
+Here's an example of using `awaitPendingTraceBatches` alongside the [`traceable`](/observability/how_to_guides/annotate_code) method:
 
 ```ts
 import { Client } from "langsmith";

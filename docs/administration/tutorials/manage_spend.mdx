@@ -129,7 +129,7 @@ of LangSmith's built in ability to do server side sampling for extended data ret
 Choosing the right percentage of runs to sample depends on your use case. We will arbitrarily pick 10% of runs here, but will
 leave it to the user to find the right value that balances collecting rare events and cost constraints.
 
-LangSmith automatically upgrades the data retention for any trace that matches a run rule in our automations product (see our [run rules docs](../../observability/how_to_guides/monitoring/rules)). On the
+LangSmith automatically upgrades the data retention for any trace that matches a run rule in our automations product (see our [run rules docs](../../observability/how_to_guides/rules)). On the
 projects page, click `Rules -> Add Rule`, and configure the rule as follows:
 
 ![](./static/P2SampleTraces.png)
@@ -140,7 +140,7 @@ be thought of as a tree of runs making up an API call. When a run rule matches a
 upgrades to be retained for 400 days.
 
 Therefore, to make sure we have the proper sampling rate on traces, we take advantage of the
-[filtering](../../observability/how_to_guides/monitoring/rules#step-2-define-the-filter) functionality of run rules.
+[filtering](../../observability/how_to_guides/rules#step-2-define-the-filter) functionality of run rules.
 
 We add add a filter condition to only match the "root" run in the run tree. This is distinct per trace, so our 10% sampling
 will upgrade 10% of traces, rather 10% of runs, which could correspond to more than 10% of traces. If desired, we can optionally add

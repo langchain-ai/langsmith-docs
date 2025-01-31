@@ -41,7 +41,7 @@ For the full list of available transformations, see [our reference](/reference/e
 :::note
 If you plan to collect production traces in your dataset from LangChain
 [ChatModels](https://python.langchain.com/docs/concepts/chat_models/)
-or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_guides/tracing/annotate_code#wrap-the-openai-client), we offer a prebuilt Chat Model schema that converts messages and tools into industry standard openai formats that can be used downstream with any model for testing. You can also customize the template settings to match your use case.
+or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_guides/annotate_code#wrap-the-openai-client), we offer a prebuilt Chat Model schema that converts messages and tools into industry standard openai formats that can be used downstream with any model for testing. You can also customize the template settings to match your use case.
 
 Please see the [dataset transformations reference](/reference/evaluation/dataset_transformations) for more information.
 :::
@@ -57,7 +57,7 @@ through our tracing projects to find the runs we want to add to the dataset. The
 
 :::tip
 An extremely powerful technique to build datasets is to drill-down into the most interesting traces, such as traces that were tagged with poor user feedback, and add them to a dataset.
-For tips on how to filter traces, see the [filtering traces](../../../observability/how_to_guides/monitoring/filter_traces_in_application) guide.
+For tips on how to filter traces, see the [filtering traces](../../../observability/how_to_guides/filter_traces_in_application) guide.
 :::
 
 There are two ways to add data from tracing projects to datasets.
@@ -78,7 +78,7 @@ the run before adding it to the dataset.
 
 ### Automatically add runs to a dataset
 
-You can use [run rules](../../../observability/how_to_guides/monitoring/rules) to automatically add traces to a dataset based on certain conditions. For example, you could add all traces that have a certain tag to a dataset.
+You can use [run rules](../../../observability/how_to_guides/rules) to automatically add traces to a dataset based on certain conditions. For example, you could add all traces that have a certain tag to a dataset.
 
 ### Add runs from an annotation queue
 
