@@ -26,6 +26,7 @@ const sidebars = {
     {
       type: "category",
       label: "Observability",
+      className: "no-highlight",
       items: [
         "observability/index",
         {
@@ -73,6 +74,7 @@ const sidebars = {
     {
       type: "category",
       label: "Evaluation",
+      className: "no-highlight",
       items: [
         "evaluation/index",
         {
@@ -120,10 +122,12 @@ const sidebars = {
     {
       type: "category",
       label: "Prompt Engineering",
+      className: "no-highlight",
       items: [
         {
           type: "category",
           label: "Quickstarts",
+          className: "no-highlight",
           collapsible: true,
           items: [
             "prompt_engineering/quickstarts/quickstart_ui",
