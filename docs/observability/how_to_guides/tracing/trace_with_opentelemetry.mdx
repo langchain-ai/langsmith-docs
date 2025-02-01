@@ -176,9 +176,9 @@ print(completion.choices[0].message)
 
 You should see a trace in your LangSmith dashboard [like this one](https://smith.langchain.com/public/106f5bed-edca-4357-91a5-80089252c9ed/r).
 
-## Logging Traces from other frameworks
+## Tracing using the Arize SDK
 
-With OpenTelemetry, you can log traces from multiple other frameworks to LangSmith.
+With the Arize SDK and OpenTelemetry, you can log traces from multiple other frameworks to LangSmith.
 Below is an example of tracing CrewAI to LangSmith, you can find a full list of supported
 frameworks [here](https://docs.arize.com/phoenix/tracing/integrations-tracing). To make this example
 work with other frameworks, you just need to change the instrumentor to match the framework.
