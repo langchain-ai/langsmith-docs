@@ -107,7 +107,7 @@ const config = {
       },
       announcementBar: {
         content:
-          'Learn the essentials of LangSmith in the new Introduction to LangSmith course! <a href="https://academy.langchain.com/courses/intro-to-langsmith" target="_blank" rel="noopener noreferrer"> Enroll for free. </a>',
+          'Building agents? Join us at <a href="https://interrupt.langchain.com/" target="_blank" rel="noopener noreferrer"> Interrupt: The Agent AI Conference by LangChain</a> on May 13 & 14 in San Francisco!',
       },
       prism: {
         theme: {
