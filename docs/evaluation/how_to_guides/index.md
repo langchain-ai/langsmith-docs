@@ -71,6 +71,7 @@ Set up evaluators that automatically run for all experiments against a dataset.
 
 Use the UI & API to understand your experiment results.
 
+- [Analyze a single experiment](./how_to_guides/analyze_single_experiment)
 - [Compare experiments with the comparison view](./how_to_guides/compare_experiment_results)
 - [Filter experiments](./how_to_guides/filter_experiments_ui)
 - [View pairwise experiments](./how_to_guides/evaluate_pairwise#view-pairwise-experiments)
