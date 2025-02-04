@@ -630,7 +630,7 @@ class Grade(TypedDict):
     score: Annotated[
         bool,
         ...,
-        "Return True if the answer is fully frounded in the source documents, otherwise False.",
+        "Return True if the answer is fully grounded in the source documents, otherwise False.",
     ]
 
 judge_llm = init_chat_model("gpt-4o").with_structured_output(Grade)
@@ -644,7 +644,7 @@ def test_grounded_in_source_info() -> None:
     result = agent.invoke({"messages": [{"role": "user", "content": query}]})
 
     # Grab all the search calls made by the LLM
-    search_results = "\n\n".join(
+    search_results = "\\n\\n".join(
         msg.content
         for msg in result["messages"]
         if msg.type == "tool" and msg.name == search_tool.name
@@ -666,8 +666,8 @@ def test_grounded_in_source_info() -> None:
             "Return False if the ANSWER is not grounded in the DOCUMENTS."
         )
         answer_and_docs = (
-            f"ANSWER: {result['structured_response'].get('text_answer', '')}\n"
-            f"DOCUMENTS:\n{search_results}"
+            f"ANSWER: {result['structured_response'].get('text_answer', '')}\\n"
+            f"DOCUMENTS:\\n{search_results}"
         )
 
         # Run the judge LLM
@@ -836,7 +836,7 @@ module.exports = {
       value: "python",
       label: "Pytest",
       language: "bash",
-      content: `pytest --output=ls tests`,
+      content: `pytest --langsmith-output tests`,
     },
     {
       value: "vitest",
@@ -1100,7 +1100,7 @@ class Grade(TypedDict):
     score: Annotated[
         bool,
         ...,
-        "Return True if the answer is fully frounded in the source documents, otherwise False.",
+        "Return True if the answer is fully grounded in the source documents, otherwise False.",
     ]
 
 judge_llm = init_chat_model("gpt-4o").with_structured_output(Grade)
@@ -1114,7 +1114,7 @@ def test_grounded_in_source_info() -> None:
     result = agent.invoke({"messages": [{"role": "user", "content": query}]})
 
     # Grab all the search calls made by the LLM
-    search_results = "\n\n".join(
+    search_results = "\\n\\n".join(
         msg.content
         for msg in result["messages"]
         if msg.type == "tool" and msg.name == search_tool.name
@@ -1136,8 +1136,8 @@ def test_grounded_in_source_info() -> None:
             "Return False if the ANSWER is not grounded in the DOCUMENTS."
         )
         answer_and_docs = (
-            f"ANSWER: {result['structured_response'].get('text_answer', '')}\n"
-            f"DOCUMENTS:\n{search_results}"
+            f"ANSWER: {result['structured_response'].get('text_answer', '')}\\n"
+            f"DOCUMENTS:\\n{search_results}"
         )
 
         # Run the judge LLM
