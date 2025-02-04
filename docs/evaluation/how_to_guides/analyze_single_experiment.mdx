@@ -6,8 +6,9 @@ sidebar_position: 1
 After running an experiment, you can use LangSmith's experiment view to analyze the results and draw insights about how your experiment performed.
 
 This guide will walk you through viewing the results of an experiment and highlights the features available in the experiments view. 
+
 ## Open the experiment view
-To open the experiment view, select an experiment from the "Experiments" tab from a given dataset page.
+To open the experiment view, select the relevant Dataset from the Dataset & Experiments page and then select the experiment you want to view.
 
 ![Open experiment view](./static/select_experiment.png)
 
@@ -20,17 +21,17 @@ In the columns dropdown, you can choose which columns to hide and which to show.
 
 ![Experiment view](./static/experiment_view.png)
 
-## Sort and filter
-To sort or filter feedback scores, you can use the actions in the column headers.
-
-![Sort and filter](./static/sort_filter.png)
-
 ## Heatmap view
 The experiment view defaults to a heatmap view, where feedback scores for each run are highlighted in a color.
 Red indicates a lower score, while green indicates a higher score.
 The heatmap visualization makes it easy to identify patterns, spot outliers, and understand score distributions across your dataset at a glance.
 
 ![Heatmap view](./static/heatmap.png)
+
+## Sort and filter
+To sort or filter feedback scores, you can use the actions in the column headers.
+
+![Sort and filter](./static/sort_filter.png)
 
 ## Table views
 Depending on the view most useful for your analysis, you can change the formatting of the table by toggling between a compact view, a full, view, and a diff view. 
@@ -43,11 +44,9 @@ Depending on the view most useful for your analysis, you can change the formatti
 ## View the traces
 Hover over any of the output cells, and click on the trace icon to view the trace for that run. This will open up a trace in the side panel.
 
-![View trace](./static/view_trace.png)
-
 To view the entire tracing project, click on the "View Project" button in the top right of the header.
 
-![View trace project](./static/view_trace_project.png)
+![View trace](./static/view_trace.png)
 
 ## View evaluator runs
 For evaluator scores, you can view the source run by hovering over the evaluator score cell and clicking on the arrow icon. This will open up a trace in the side panel. If you're running a LLM-as-a-judge evaluator, you can view the prompt used for the evaluator in this run. 
