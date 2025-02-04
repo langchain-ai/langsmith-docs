@@ -13,7 +13,7 @@ To open the experiment view, select the relevant Dataset from the Dataset & Expe
 ![Open experiment view](./static/select_experiment.png)
 
 ## View experiment results
-This table displays your experiment results. This includes the input, output, and reference output for each [example](./evaluation/concepts#examples) in the dataset.  It also shows each configured feedback key in separate columns alongside its corresponding feedback score.
+This table displays your experiment results. This includes the input, output, and reference output for each [example](/evaluation/concepts#examples) in the dataset.  It also shows each configured feedback key in separate columns alongside its corresponding feedback score.
 
 Out of the box metrics (latency, status, cost, and token count) will also be displayed in individual columns.
 
@@ -50,12 +50,12 @@ To view the entire tracing project, click on the "View Project" button in the to
 
 ## View evaluator runs
 For evaluator scores, you can view the source run by hovering over the evaluator score cell and clicking on the arrow icon. This will open up a trace in the side panel. If you're running a LLM-as-a-judge evaluator, you can view the prompt used for the evaluator in this run. 
-If your experiment has [repetitions](./evaluation/concepts#repetitions), you can click on the aggregate average score to find links to all of the individual runs.
+If your experiment has [repetitions](/evaluation/concepts#repetitions), you can click on the aggregate average score to find links to all of the individual runs.
 
 ![View evaluator runs](./static/evaluator_run.png)
 
 ## Repetitions
-If you've run your experiment with [repetitions](./evaluation/concepts#repetitions), there will be arrows in the output results column so you can view outputs in the table. To view each run from the repetition, hover over the output cell and click the expanded view.
+If you've run your experiment with [repetitions](/evaluation/concepts#repetitions), there will be arrows in the output results column so you can view outputs in the table. To view each run from the repetition, hover over the output cell and click the expanded view.
 
 When you run an experiment with repetitions, LangSmith displays the average for each feedback score in the table. Click on the feedback score to view the feedback scores from individual runs, or to view the standard deviation across repetitions. 
 
