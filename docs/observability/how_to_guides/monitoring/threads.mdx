@@ -44,7 +44,8 @@ langsmith_client = Client()
 # Config used for this example
 
 langsmith_project = "foobar"
-trace_id = "bar"
+# highlight-next-line
+session_id = "thread-id-1"
 langsmith_extra={"project_name": langsmith_project, "metadata":{"session_id": session_id}}
 
 # gets a history of all LLM calls in the thread to construct conversation history
