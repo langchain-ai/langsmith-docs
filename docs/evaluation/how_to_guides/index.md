@@ -42,7 +42,7 @@ Evaluate and improve your application before deploying it.
 
 - [Evaluate with repetitions](./how_to_guides/repetition)
 - [Handle model rate limits](./how_to_guides/rate_limiting)
-- [Print detailed logs (Python only)](../../observability/how_to_guides/tracing/output_detailed_logs)
+- [Print detailed logs (Python only)](../../observability/how_to_guides/output_detailed_logs)
 - [Run an evaluation locally (beta, Python only)](./how_to_guides/local)
 
 ## Testing integrations
@@ -56,8 +56,8 @@ Run evals using your favorite testing tools:
 
 Evaluate and monitor your system's live performance on production data.
 
-- [Set up an LLM-as-judge online evaluator](../../observability/how_to_guides/monitoring/online_evaluations#configure-llm-as-judge-evaluators)
-- [Set up a custom code online evaluator](../../observability/how_to_guides/monitoring/online_evaluations#configure-custom-code-evaluators)
+- [Set up an LLM-as-judge online evaluator](../../observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators)
+- [Set up a custom code online evaluator](../../observability/how_to_guides/online_evaluations#configure-custom-code-evaluators)
 - [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
 
 ## Automatic evaluation
