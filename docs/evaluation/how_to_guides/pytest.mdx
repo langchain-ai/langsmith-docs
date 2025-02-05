@@ -25,7 +25,7 @@ The JS/TS SDK has an analogous [Vitest/Jest integration](./vitest_jest).
 
 ## Installation
 
-This functionality requires Python SDK version `langsmith>=0.3.1`.
+This functionality requires Python SDK version `langsmith>=0.3.4`.
 
 For extra features like [rich terminal outputs](./pytest#rich-outputs) and [test caching](./pytest#caching) install:
 ```bash
@@ -296,11 +296,13 @@ LANGSMITH_TEST_CACHE=tests/cassettes ptw tests/my_llm_tests
 
 ## Rich outputs
 
-If you'd like to see a rich display of the LangSmith results of your test run you can specify `--output='ls'`:
+If you'd like to see a rich display of the LangSmith results of your test run you can specify `--langsmith-output`:
 
 ```bash
-pytest --output='ls' tests
+pytest --langsmith-output tests
 ```
+
+**Note:** This flag used to be `--output=langsmith` in `langsmith<=0.3.3` but was updated to avoid collisions with other pytest plugins.
 
 You'll get a nice table per test suite that updates live as the results are uploaded to LangSmith:
 
