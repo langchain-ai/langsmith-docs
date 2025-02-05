@@ -13,6 +13,11 @@ import {
 
 # Annotate code for tracing
 
+:::note
+If you've decided you no longer want to trace your runs, you can remove the `LANGSMITH_TRACING` environment variable.
+Note that this does not affect the `RunTree` objects or API users, as these are meant to be low-level and not affected by the tracing toggle.
+:::
+
 There are several ways to log traces to LangSmith.
 
 :::tip
