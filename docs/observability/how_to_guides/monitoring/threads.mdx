@@ -56,6 +56,7 @@ runs = [r for r in langsmith_client.list_runs(project_name=project_name, filter=
     # The current state of the conversation
     return runs[0].inputs['messages'] + [runs[0].outputs['choices'][0]['message']]
 
+# if an existing conversation is continued, this function looks up the current run’s metadata to get the session_id, calls get_thread_history, and appends the new user question before making a call to the chat model
 @traceable(name="Chat Bot")
 def chat_pipeline(question: str, get_chat_history: bool = False): # Whether to continue an existing thread or start a new one
 if get_chat_history:
