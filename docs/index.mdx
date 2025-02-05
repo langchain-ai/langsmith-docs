@@ -1,215 +1,63 @@
 ---
-sidebar_label: Quick Start
+sidebar_label: Get Started
 sidebar_position: 1
 table_of_contents: true
 ---
-
-import Tabs from "@theme/Tabs";
-import CodeBlock from "@theme/CodeBlock";
-import {
-  CodeTabs,
-  typescript,
-  python,
-} from "@site/src/components/InstructionsWithCode";
-import {
-  LangChainInstallationCodeTabs,
-  LangChainQuickStartCodeTabs,
-  ConfigureEnvironmentCodeTabs,
-  RunTreeQuickStartCodeTabs,
-  ConfigureSDKEnvironmentCodeTabs,
-  PythonSDKTracingCode,
-  TypeScriptSDKTracingCode,
-} from "@site/src/components/QuickStart";
-import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
-import DocCardList from "@theme/DocCardList";
-import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Get started with LangSmith
 
 **LangSmith** is a platform for building production-grade LLM applications.
 It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence.
-With LangSmith you can:
 
-- **Trace LLM Applications**: Gain visibility into LLM calls and other parts of your application's logic.
-- **Evaluate Performance**: Compare results across models, prompts, and architectures to identify what works best.
-- **Improve Prompts**: Quickly refine prompts to achieve more accurate and reliable results.
+<div style={{ display: 'flex', alignItems: 'center', gap: '20px', margin: '20px 0' }}>
+  <div style={{ maxWidth: '60%' }}>
+    ![](./static/ls-diagram.png)
+  </div>
+  <div style={{ flex: 1 }}>
+    <h3 style={{ color: '#1a73e8', marginTop: 0 }}>[Observability](./observability)</h3>
+
+    Analyze traces in LangSmith and configure metrics, dashboards, alerts based on these.
+
+    <h3 style={{ color: '#1a73e8', marginTop: 0 }}>[Evals](./evaluation)</h3>
+
+    Evaluate your application over production traffic — score application performance and get human feedback on your data.
+
+    <h3 style={{ color: '#1a73e8', marginTop: 0 }}>[Prompt Engineering](./prompt_engineering/quickstarts/quickstart_ui)</h3>
+
+    Iterate on prompts, with automatic version control and collaboration features.
+
+  </div>
+</div>
 
 :::tip LangSmith + LangChain OSS
 
 LangSmith integrates seamlessly with LangChain's open source frameworks [`langchain`](https://python.langchain.com) and [`langgraph`](https://langchain-ai.github.io/langgraph/), with no extra instrumentation needed.
 
 If you're already using either of these, see the how-to guide for [setting up LangSmith with LangChain](./observability/how_to_guides/tracing/trace_with_langchain) or [setting up LangSmith with LangGraph](https://docs.smith.langchain.com/observability/how_to_guides/tracing/trace_with_langgraph).
-
 :::
 
-LangSmith is a **standalone platform** that can be used on it's own no matter how you're creating your LLM applicatons.
+## Observability
 
-In this tutorial, we'll walk you though logging your first trace in LangSmith using the LangSmith SDK and running an evaluation to measure the performance of your application. This example uses the OpenAI API, however you can use your provider of choice.
+Observability is important for any software application, but especially so for LLM applications. LLMs are non-deterministic by nature, meaning they can produce unexpected results. This makes them trickier than normal to debug.
 
-## 1. Install LangSmith
+This is where LangSmith can help! LangSmith has LLM-native observability, allowing you to get meaningful insights from your application. LangSmith’s observability features have you covered throughout all stages of application development - from prototyping, to beta testing, to production.
 
-<CodeTabs
-  tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "bash",
-      content: `pip install -U langsmith openai`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "bash",
-      content: `yarn add langsmith openai`,
-    },
-  ]}
-  groupId="client-language"
-/>
+- Get started by [adding tracing](./observability) to your application.
+- [Create dashboards](./observability/how_to_guides/monitoring/dashboards) to view key metrics like RPS, error rates and costs.
 
-## 2. Create an API key
+## Evals
 
-To create an API key head to the <RegionalUrl text='Settings page' suffix='/settings' />. Then click **Create API Key.**
+The quality and development speed of AI applications depends on high-quality evaluation datasets and metrics to test and optimize your applications on. The LangSmith SDK and UI make building and running high-quality evaluations easy.
 
-## 3. Set up your environment
+- Get started by [creating your first evaluation](./evaluation).
+- Quickly assess the performance of your application using our [off-the-shelf evaluators (Python only)](https://docs.smith.langchain.com/evaluation/how_to_guides/use_langchain_off_the_shelf_evaluators) as a starting point.
+- [Analyze results](./evaluation/how_to_guides#analyzing-experiment-results) of evaluations in the LangSmith UI and [compare results](https://docs.smith.langchain.com/evaluation/how_to_guides/compare_experiment_results) over time.
+- Easily collect [human feedback](./evaluation/how_to_guides#annotation-queues-and-human-feedback) on your data to improve your application.
 
-<ConfigureSDKEnvironmentCodeTabs />
+## Prompt Engineering
 
-## 4. Log your first trace
+While traditional software applications are built by writing code, AI applications involve writing prompts to instruct the LLM on what to do. LangSmith provides a set of tools designed to enable and facilitate prompt engineering to help you find the perfect prompt for your application.
 
-We provide multiple ways to log traces to LangSmith. Below, we'll highlight
-how to use `traceable()`. See more on the [Annotate code for tracing](./observability/how_to_guides/tracing/annotate_code) page.
-
-<CodeTabs
-  tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "python",
-      content: PythonSDKTracingCode(),
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "typescript",
-      content: TypeScriptSDKTracingCode(),
-    },
-  ]}
-  groupId="client-language"
-/>
-
-Learn more about tracing in the observability [tutorials](./observability/tutorials), [conceptual guide](./observability/concepts) and [how-to guides](./observability/how_to_guides/index.md).
-
-## 5. View your trace
-
-By default, the trace will be logged to the project with the name `default`. You should see the following [sample output trace](https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r) logged using the above code.
-
-## 6. Run your first evaluation
-
-[Evaluations](./evaluation/concepts) help assess application performance by testing the application against a given set of inputs. Evaluations require a system to test, data to serve as test cases, and evaluators to grade the results.
-
-Here we are running an evaluation against a sample dataset using a simple custom evaluator that checks if the real output exactly matches our gold-standard output.
-
-<CodeTabs
-  tabs={[
-    python`
-        from langsmith import Client, traceable
-
-        client = Client()
-
-        # Define dataset: these are your test cases
-        dataset = client.create_dataset(
-            "Sample Dataset",
-            description="A sample dataset in LangSmith.",
-        )
-
-        client.create_examples(
-            inputs=[
-                {"postfix": "to LangSmith"},
-                {"postfix": "to Evaluations in LangSmith"},
-            ],
-            outputs=[
-                {"response": "Welcome to LangSmith"},
-                {"response": "Welcome to Evaluations in LangSmith"},
-            ],
-            dataset_id=dataset.id,
-        )
-
-        # Define an interface to your application (tracing optional)
-        @traceable
-        def dummy_app(inputs: dict) -> dict:
-            return {"response": "Welcome " + inputs["postfix"]}
-
-        # Define your evaluator(s)
-        def exact_match(outputs: dict, reference_outputs: dict) -> bool:
-            return outputs["response"] == reference_outputs["response"]
-
-        # Run the evaluation
-        experiment_results = client.evaluate(
-            dummy_app, # Your AI system goes here
-            data=dataset, # The data to predict and grade over
-            evaluators=[exact_match], # The evaluators to score the results
-            experiment_prefix="sample-experiment", # The name of the experiment
-            metadata={"version": "1.0.0", "revision_id": "beta"}, # Metadata about the experiment
-            max_concurrency=4,  # Add concurrency.
-        )
-
-        # Analyze the results via the UI or programmatically
-        # If you have 'pandas' installed you can view the results as a
-        # pandas DataFrame by uncommenting below:
-
-        # experiment_results.to_pandas()
-
-`,
-    typescript`
-import { Client } from "langsmith";
-import { EvaluationResult, evaluate } from "langsmith/evaluation";
-
-      const client = new Client();
-
-      // Define dataset: these are your test cases
-      const datasetName = "Sample Dataset";
-      const dataset = await client.createDataset(datasetName, {
-        description: "A sample dataset in LangSmith.",
-      });
-      await client.createExamples({
-        inputs: [
-          { postfix: "to LangSmith" },
-          { postfix: "to Evaluations in LangSmith" },
-        ],
-        outputs: [
-          { response: "Welcome to LangSmith" },
-          { response: "Welcome to Evaluations in LangSmith" },
-        ],
-        datasetId: dataset.id,
-      });
-
-      // Define your evaluator(s)
-      const exactMatch = async ({ outputs, referenceOutputs }: {
-        outputs?: Record<string, any>;
-        referenceOutputs?: Record<string, any>;
-      }): Promise<EvaulationResult> => {
-        return {
-          key: "exact_match",
-          score: outputs?.response === referenceOutputs?.response,
-        };
-      };
-
-      // Run the evaluation
-      const experimentResults = await evaluate(
-        (inputs: { postfix: string }) => ({ response: \`Welcome $\{inputs.postfix\}\` }),
-        {
-          data: datasetName,
-          evaluators: [exactMatch],
-          metadata: { version: "1.0.0", revision_id: "beta" },
-          maxConcurrency: 4,
-        }
-      );
-    `,
-
-]}
-groupId="client-language"
-/>
-
-- Click the link printed out by your evaluation run to access the LangSmith experiments UI,
-  and explore the results of your evaluation.
-- Learn more about evaluation in the [tutorials](./evaluation/tutorials), [conceptual guide](./evaluation/concepts), and [how-to guides](./evaluation/how_to_guides/index.md).
+- Get started by [creating your first prompt](./prompt_engineering/tutorials/optimize_classifier).
+- Iterate on models and prompts using the [Playground](./prompt_engineering/how_to_guides#playground).
+- [Manage prompts programmatically](https://docs.smith.langchain.com/prompt_engineering/how_to_guides/prompts/manage_prompts_programatically) in your application.
