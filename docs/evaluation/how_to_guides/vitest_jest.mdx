@@ -576,6 +576,41 @@ ls.describe("generate sql demo", () => {
 });
 ```
 
+## Configuring test suites
+
+You can configure test suites with values like metadata or a custom client by passing an extra argument to
+`ls.describe()` for the full suite or by passing a `config` field into `ls.test()` for individual tests:
+
+```ts
+ls.describe("test suite name", () => {
+  ls.test(
+    "test name",
+    {
+    inputs: { ... },
+    referenceOutputs: { ... },
+    // Extra config for the test run
+    config: { tags: [...], metadata: { ... } }
+  },
+  {
+    name: "test name",
+    tags: ["tag1", "tag2"],
+    skip: true,
+    only: true,
+    }
+  );
+}, {
+  testSuiteName: "overridden value",
+  metadata: { ... },
+  // Custom client
+  client: new Client(),
+});
+```
+
+The test suite will also automatically extract environment variables from `process.env.ENVIRONMENT`, `process.env.NODE_ENV` and
+`process.env.LANGSMITH_ENVIRONMENT` and set them as metadata on created experiments. You can then filter experiments by metadata in LangSmith's UI.
+
+See [the API refs](https://docs.smith.langchain.com/reference/js/functions/vitest.describe) for a full list of configuration options.
+
 ## Dry-run mode
 
 If you want to run the tests without syncing the results to LangSmith, you can set omit your LangSmith tracing environment variables or set
