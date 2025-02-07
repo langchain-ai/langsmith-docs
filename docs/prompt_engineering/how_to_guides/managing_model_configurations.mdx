@@ -66,3 +66,15 @@ Tools enable your LLM to perform tasks like searching the web, looking up inform
 ## Prompt Formatting
 
 For information on chat and completion prompts, see [here](../concepts#chat-vs-completion). For information about prompt templating and using variables, see [here](../concepts#f-string-vs-mustache).
+
+## Extra Parameters
+
+The **Extra Parameters** field allows you to pass additional model parameters that aren't directly supported in the LangSmith interface. This is particularly useful in two scenarios:
+
+1. When model providers release new parameters that haven't yet been integrated into the LangSmith interface. You can specify these parameters in JSON format to use them right away.
+
+![Extra Params](./static/extra_params.png)
+
+2. When troubleshooting parameter-related errors in the playground. If you receive an error about unnecessary parameters (more common when using LangChainJS for run tracing), you can use this field to remove the extra parameters.
+
+![Extra Params](./static/extra_params_error.png)
