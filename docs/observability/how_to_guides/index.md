@@ -9,7 +9,6 @@ Set up LangSmith tracing to get visibility into your production applications.
 ### Basic configuration
 
 - [Set your tracing project](./how_to_guides/log_traces_to_project)
-- [Enable or disable tracing](./how_to_guides/toggle_tracing)
 - [Trace any Python or JS Code](./how_to_guides/annotate_code)
 - [Trace using the LangSmith REST API](./how_to_guides/trace_with_api)
 - [Trace without environment variables](./how_to_guides/trace_without_env_vars)
