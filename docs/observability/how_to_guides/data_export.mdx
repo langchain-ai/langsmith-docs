@@ -67,9 +67,38 @@ curl --request POST \
 
 Use the returned `id` to reference this destination in subsequent bulk export operations.
 
-#### GCS XML S3 compatible bucket
+**If you receive an error while creating a destination, see [debug destination errors](#debugging-destination-errors) for details on how to debug this.**
 
-Here is an example of what to use for `endpoint_url` if you wanted to use the GCS XML API which is compatible with S3:
+#### AWS S3 bucket
+
+For AWS S3, you can leave off the `endpoint_url` and supply the region that matches the region of your bucket.
+
+```bash
+curl --request POST \
+  --url 'https://api.smith.langchain.com/api/v1/bulk-exports/destinations' \
+  --header 'Content-Type: application/json' \
+  --header 'X-API-Key: YOUR_API_KEY' \
+  --header 'X-Tenant-Id: YOUR_WORKSPACE_ID' \
+  --data '{
+    "destination_type": "s3",
+    "display_name": "My AWS S3 Destination",
+    "config": {
+      "bucket_name": "my_bucket",
+      "prefix": "data_exports",
+      "region": "us-east-1",
+    },
+    "credentials": {
+      "access_key_id": "YOUR_S3_ACCESS_KEY_ID",
+      "secret_access_key": "YOUR_S3_SECRET_ACCESS_KEY"
+    }
+  }'
+```
+
+#### Google GCS XML S3 compatible bucket
+
+When using Google's GCS bucket, you need to use the XML S3 compatible API, and supply the `endpoint_url`
+which is typically `https://storage.googleapis.com`.  
+Here is an example of the API request when using the GCS XML API which is compatible with S3:
 
 ```bash
 curl --request POST \
@@ -221,7 +250,59 @@ You can query the data from S3 in-memory with SQL using DuckDB. See [S3 import D
 
 ## Error Handling
 
+### Debugging Destination Errors
+
+The destinations API endpoint will validate that the destination and credentials are valid and that write access is
+is present for the bucket.
+
+If you receive an error, and would like to debug this error, you can use the [AWS CLI](https://aws.amazon.com/cli/)
+to test the connectivity to the bucket. You should be able to write a file with the CLI using the same
+data that you supplied to the destinations API above.
+
+**AWS S3:**
+
+```bash
+aws configure
+
+# set the same access key credentials and region as you used for the destination
+> AWS Access Key ID: <access_key_id>
+> AWS Secret Access Key: <secret_access_key>
+> Default region name [us-east-1]: <region>
+
+# List buckets
+aws s3 ls /
+
+# test write permissions
+touch ./test.txt
+aws s3 cp ./test.txt s3://<bucket-name>/tmp/test.txt
+```
+
+**GCS Compatible Buckets:**
+
+You will need to supply the endpoint_url with `--endpoint-url` option.  
+For GCS, the `endpoint_url` is typically `https://storage.googleapis.com`:
+
+```bash
+aws configure
+
+# set the same access key credentials and region as you used for the destination
+> AWS Access Key ID: <access_key_id>
+> AWS Secret Access Key: <secret_access_key>
+> Default region name [us-east-1]: <region>
+
+# List buckets
+aws s3 --endpoint-url=<endpoint_url> ls /
+
+# test write permissions
+touch ./test.txt
+aws s3 --endpoint-url=<endpoint_url> cp ./test.txt s3://<bucket-name>/tmp/test.txt
+```
+
+### Monitoring Runs
+
 You can monitor your runs using the [List Runs API](#list-runs-for-an-export). If this is a known error, this will be added to the `errors` field of the run.
+
+### Common Errors
 
 Here are some common errors:
 
