@@ -279,7 +279,7 @@ ls.describe("generate sql demo", () => {
     async ({ inputs, referenceOutputs }) => {
       const sql = await generateSql(inputs.userQuery);
       ls.logOutputs({ sql }); // <-- Log run outputs, optional
-      expect(sql).toEqual(referenceOutputs.sql); // <-- Assertion result logged under 'pass' feedback key
+      expect(sql).toEqual(referenceOutputs?.sql); // <-- Assertion result logged under 'pass' feedback key
     }
   );
 });
@@ -397,7 +397,7 @@ const myEvaluator = async (params: {
       },
       {
         role: "user",
-        content: `ACTUAL: ${outputs.sql}\nEXPECTED: ${referenceOutputs.sql}`,
+        content: `ACTUAL: ${outputs.sql}\nEXPECTED: ${referenceOutputs?.sql}`,
       },
     ],
   });
