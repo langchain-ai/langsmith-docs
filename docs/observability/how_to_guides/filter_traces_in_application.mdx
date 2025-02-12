@@ -8,11 +8,11 @@ sidebar_position: 1
 
 Before diving into this content, it might be helpful to read the following to gain familiarity with the concepts mentioned here:
 
-- [Conceptual guide on tracing](../../concepts)
+- [Conceptual guide on tracing](../concepts)
 
 :::
 
-This page contains a series of guides for how to filter runs in the application. For a guide on how to accomplish something similar programmatically, please see [this guide](../tracing/export_traces).
+This page contains a series of guides for how to filter runs in the application. For a guide on how to accomplish something similar programmatically, please see [this guide](./export_traces).
 Being able to accurately filter runs is important for both manual inspection and setting up automations.
 
 ## Create a filter
@@ -29,7 +29,7 @@ You can also define a filter from the `Filter Shortcuts` on the sidebar. This co
 ## Filter for intermediate runs (spans)
 
 In order to filter for intermediate runs (spans), you first need to remove the default filter of `IsRoot` is `true`. After that, you can apply any filter you wish. A common way to do this is to filter by name for sub runs.
-This relies on good naming, or tagging for all parts of your pipeline. To learn more, you can check out [this guide](../tracing/add_metadata_tags)
+This relies on good naming, or tagging for all parts of your pipeline. To learn more, you can check out [this guide](./add_metadata_tags)
 
 ## Advanced: filter for intermediate runs (spans) on properties of the root
 
