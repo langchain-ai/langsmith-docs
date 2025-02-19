@@ -388,6 +388,7 @@ If you are using the LangSmith SDK standalone, you can use the `flush` method be
 client = Client()\n
 @traceable(client=client)
 async def my_traced_func():
+    # Your code here...
     pass\n
 try:
     await my_traced_func()
