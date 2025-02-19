@@ -117,6 +117,10 @@ You can also filter for runs that neither have a specific key nor a specific val
 
 ![Filtering](./static/negative_filtering_3.png)
 
+Finally, you can also filter for runs that do not have a specific key but have a specific value. To find runs where there is no `phone` key but there is a value of `1234567890` for some other key, set the `Key` operator to `is not` with key `phone`, and the `Value` operator to `is` with value `1234567890`.
+
+![Filtering](./static/negative_filtering_4.png)
+
 Note that you can use `does not match` operator instead of `is not` to perform a substring match.
 
 ## Saved filters
