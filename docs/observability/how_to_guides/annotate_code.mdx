@@ -373,4 +373,49 @@ class MyClass:
 MyClass(13).combine(29)
 ```
 
+## Ensure all traces are submitted before exiting
+
+LangSmith's tracing is done in a background thread to avoid obstructing your production application. This means that your process may end before all traces are successfully posted to LangSmith.
+Here are some options for ensuring all traces are submitted before exiting your application.
+
+### Using the LangSmith SDK
+
+If you are using the LangSmith SDK standalone, you can use the `flush` method before exit:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import Client\n
+client = Client()\n
+@traceable(client=client)
+async def my_traced_func():
+    # Your code here...
+    pass\n
+try:
+    await my_traced_func()
+finally:
+    await client.flush()`),
+    TypeScriptBlock(`import { Client } from "langsmith";
+
+const langsmithClient = new Client({});
+
+const myTracedFunc = traceable(
+async () => {
+// Your code here...
+},
+{ client: langsmithClient }
+);
+
+try {
+await myTracedFunc();
+} finally {
+await langsmithClient.flush();
+}`),
+]}
+groupId="client-language"
+/>
+
+### Using LangChain
+
+If you are using LangChain, please refer to our [LangChain tracing guide](./trace_with_langchain#ensure-all-traces-are-submitted-before-exiting).
+
 If you prefer a video tutorial, check out the [Tracing Basics video](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.
