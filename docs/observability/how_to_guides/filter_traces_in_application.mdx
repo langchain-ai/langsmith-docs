@@ -101,6 +101,24 @@ You can add multiple key-value filters to create more complex queries. You can a
 
 ![Filtering](./static/search_kv_filter_shortcut.png)
 
+## Negative filtering on key-value pairs
+
+Different types of negative filtering can be applied to `Metadata`, `Input KV`, and `Output KV` (KV is short for Key-Value) fields to exclude specific runs from your results.
+
+For example, to find all runs where the metadata key `phone` is not equal to `1234567890`, set the `Metadata`'s `Key` operator to `is` and `Key` field to `phone`, then set the `Value` operator to `is not` and the `Value` field to `1234567890`. This will match all runs that have a metadata key `phone` with any value except `1234567890`.
+
+![Filtering](./static/negative_filtering_1.png)
+
+To find runs that don't have a specific metadata key, set the `Key` operator to `is not`. For example, setting the `Key` operator to `is not` with `phone` as the key will match all runs that don't have a `phone` field in their metadata.
+
+![Filtering](./static/negative_filtering_2.png)
+
+You can also filter for runs that neither have a specific key nor a specific value. To find runs where the metadata has neither the key `phone` nor any field with the value `1234567890`, set the `Key` operator to `is not` with key `phone`, and the `Value` operator to `is not` with value `1234567890`.
+
+![Filtering](./static/negative_filtering_3.png)
+
+Note that you can use `does not match` operator instead of `is not` to perform a substring match.
+
 ## Saved filters
 
 You can save filters to be reused in the future. Saved filters are associated with a trace project not across all trace projects. They can help you organize your traces and find relevant traces more easily.
