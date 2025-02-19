@@ -384,18 +384,15 @@ If you are using the LangSmith SDK standalone, you can use the `flush` method be
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import Client
-
-client = Client()
-
+    PythonBlock(`from langsmith import Client\n
+client = Client()\n
 @traceable(client=client)
-async def my_traced_func(): # Your code here...
-pass
-
+async def my_traced_func():
+    pass\n
 try:
-await my_traced_func()
+    await my_traced_func()
 finally:
-await client.flush()`),
+    await client.flush()`),
     TypeScriptBlock(`import { Client } from "langsmith";
 
 const langsmithClient = new Client({});
