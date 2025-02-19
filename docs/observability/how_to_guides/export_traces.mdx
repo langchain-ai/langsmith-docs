@@ -475,30 +475,33 @@ You can use negative filtering on metadata, input, and output key-value pairs to
   filter="and(neq(metadata_key, 'conversation_id'))"
   )
 
-  # Find all runs where the conversation_id in metadata is not "a1b2c3d4-e5f6-7890"
-  client.list_runs(
-  project_name="default",
-  filter="and(eq(metadata_key, 'conversation_id'), neq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
-  )
+# Find all runs where the conversation_id in metadata is not "a1b2c3d4-e5f6-7890"
 
-  # Find all runs where there is no "conversation_id" metadata key and the "a1b2c3d4-e5f6-7890" value is not present
-  client.list_runs(
-  project_name="default",
-  filter="and(neq(metadata_key, 'conversation_id'), neq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
-  )
+client.list_runs(
+project_name="default",
+filter="and(eq(metadata_key, 'conversation_id'), neq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
+)
 
-  # Find all runs where the conversation_id metadata key is not present but the "a1b2c3d4-e5f6-7890" value is present
-  client.list_runs(
-  project_name="default",
-  filter="and(neq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
-  )`
+# Find all runs where there is no "conversation_id" metadata key and the "a1b2c3d4-e5f6-7890" value is not present
+
+client.list_runs(
+project_name="default",
+filter="and(neq(metadata_key, 'conversation_id'), neq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
+)
+
+# Find all runs where the conversation_id metadata key is not present but the "a1b2c3d4-e5f6-7890" value is present
+
+client.list_runs(
+project_name="default",
+filter="and(neq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
+)`
   ),
     TypeScriptBlock(`
-    // Find all runs where the metadata does not contain a "conversation_id" key
-    client.listRuns({
-      projectName: 'default',
-      filter: \`and(neq(metadata_key, 'conversation_id'))\`
-    });
+// Find all runs where the metadata does not contain a "conversation_id" key
+client.listRuns({
+projectName: 'default',
+filter: \`and(neq(metadata_key, 'conversation_id'))\`
+});
 
     // Find all runs where the conversation_id in metadata is not "a1b2c3d4-e5f6-7890"
     client.listRuns({
@@ -517,8 +520,9 @@ You can use negative filtering on metadata, input, and output key-value pairs to
       projectName: 'default',
           filter: \`and(neq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))\`
         });`),
-  ]}
-  groupId="client-language"
+
+]}
+groupId="client-language"
 />
 
 ### Combine multiple filters
