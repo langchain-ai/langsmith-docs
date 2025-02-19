@@ -46,7 +46,7 @@ View and interact with your traces to debug your applications.
 
 - [Filter traces in a project](./how_to_guides/filter_traces_in_application)
 - [Save a filter for your project](./how_to_guides/filter_traces_in_application#saved-filters)
-- [Export traces using the SDK (low volume)](./how_to_guides/export_traces)
+- [Query / Export traces using the SDK (low volume)](./how_to_guides/export_traces)
 - [Bulk exporting traces (high volume)](./how_to_guides/data_export)
 - [Share or unshare a trace publicly](./how_to_guides/share_trace)
 - [Compare traces](./how_to_guides/compare_traces)
