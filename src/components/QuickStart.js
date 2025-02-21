@@ -158,9 +158,9 @@ export function ConfigureSDKEnvironmentCodeTabs({}) {
   return (
     <CodeTabs
       tabs={[
-        ShellBlock(`export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-
+        ShellBlock(`export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY=<your-api-key>
+# This example uses OpenAI, but you can use any LLM provider of choice
 export OPENAI_API_KEY=<your-openai-api-key>`),
       ]}
       groupId="client-language"
@@ -172,11 +172,10 @@ export function ConfigureEnvironmentCodeTabs({}) {
   return (
     <CodeTabs
       tabs={[
-        ShellBlock(`export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-
-# The below examples use the OpenAI API, though it's not necessary in general
-export OPENAI_API_KEY=<your-openai-api-key>`),
+        ShellBlock(`export LANGSMITH_TRACING=true
+          export LANGSMITH_API_KEY=<your-api-key>
+          # This example uses OpenAI, but you can use any LLM provider of choice
+          export OPENAI_API_KEY=<your-openai-api-key>`),
       ]}
       groupId="client-language"
     />
@@ -252,9 +251,9 @@ chain.invoke({"question": question, "context": context})`}
 }
 
 export function ConfigureLangChainEnvironmentCodeTabs() {
-  const envVars = `export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-# The below examples use the OpenAI API, though it's not necessary in general
+  const envVars = `export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY=<your-api-key>
+# This example uses OpenAI, but you can use any LLM provider of choice
 export OPENAI_API_KEY=<your-openai-api-key>`;
   const typescriptFootnote = `If you are using LangChain.js with LangSmith and are not in a serverless environment, we also recommend setting the following explicitly to reduce latency:
 
