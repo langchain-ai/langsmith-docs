@@ -120,7 +120,10 @@ export LANGSMITH_API_KEY=<your-api-key>
 export LANGSMITH_PROJECT=default
 ```
 
-:::warning SDK compatibility in JS
+:::note
+
+You may see these variables referenced as `LANGCHAIN_*` in other places. These are all equivalent, however the best practice is to use `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT`.
+
 The `LANGSMITH_PROJECT` flag is only supported in JS SDK versions >= 0.2.16, use `LANGCHAIN_PROJECT` instead if you are using an older version.
 :::
 
