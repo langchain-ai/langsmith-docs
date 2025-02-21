@@ -54,6 +54,13 @@ If your experiment has [repetitions](/evaluation/concepts#repetitions), you can 
 
 ![View evaluator runs](./static/evaluator_run.png)
 
+## Group results by metadata
+You can add metadata to examples to categorize and organize them. For example, if you're evaluating factual accuracy on a question answering dataset, the metadata might include which subject area each question belongs to. Metadata can be added either [via the UI](./manage_datasets_in_application#edit-example-metadata) or [via the SDK](./manage_datasets_programmatically#update-single-example).
+
+To analyze results by metadata, use the "Group by" dropdown in the top right corner of the experiment view and select your desired metadata key. This displays average feedback scores, latency, total tokens, and cost for each metadata group.
+
+![Group by](./static/group_by.gif)
+
 ## Repetitions
 If you've run your experiment with [repetitions](/evaluation/concepts#repetitions), there will be arrows in the output results column so you can view outputs in the table. To view each run from the repetition, hover over the output cell and click the expanded view.
 
