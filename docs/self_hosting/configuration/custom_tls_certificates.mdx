@@ -1,24 +1,12 @@
----
-sidebar_position: 3
----
+# Use custom TLS certificates for model providers
+:::note Select providers only
 
-# Use custom TLS certificates
+This feature is currently only available for the following model providers:
+- Azure OpenAI
+- OpenAI
+- Custom (our custom model server). Refer to the [custom model server documentation](/prompt_engineering/how_to_guides/custom_endpoint) for more information.
 
-:::note Self-hosted enterprise only (version 0.6 and later)
-
-This feature is only available for self-hosted enterprise customers, starting from version 0.6.
-
-If you are interested in this plan, please contact sales@langchain.dev for more information.
-
-:::
-
-:::note Azure OpenAI only
-
-This feature is currently only available for the Azure OpenAI model provider. More model providers will be supported in the future.
-
-This will currently only affect model invocations through the **LangSmith Playground**, not [**Online Evaluation**](../../../observability/how_to_guides/online_evaluations).
-The TLS certificates will apply to all Azure Deployment configurations in the playground.
-
+These TLS settings will apply to all invocations of the selected model providers including when used through Online Evaluation.
 :::
 
 You can use custom TLS certificates to connect to model providers in the LangSmith playground. This is useful if you are using a self-signed certificate, a certificate from a custom certificate authority or mutual TLS authentication.
