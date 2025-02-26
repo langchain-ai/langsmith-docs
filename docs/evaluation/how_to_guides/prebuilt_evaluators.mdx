@@ -6,11 +6,7 @@ import {
 
 # How to use prebuilt evaluators
 
-:::tip
-For the older version of this page, see [here](./use_langchain_off_the_shelf_evaluators_old).
-:::
-
-LangSmith integrates with the open-source [`openevals`](https://github.com/langchain-ai/openevals) and [`agentevals`](https://github.com/langchain-ai/agentevals) packages
+LangSmith integrates with the open-source [`openevals`](https://github.com/langchain-ai/openevals) package
 to provide a suite of prebuilt, readymade evaluators that you can use right away as starting points for evaluation.
 
 
@@ -21,7 +17,7 @@ See the [openevals](https://github.com/langchain-ai/openevals) and [agentevals](
 
 ## Setup
 
-You'll need to install the `openevals` and `agentevals` packages to use these evaluators.
+You'll need to install the `openevals` package to use the pre-built LLM-as-a-judge evaluator.
 
 <CodeTabs
   tabs={[
@@ -48,12 +44,12 @@ export OPENAI_API_KEY="your_openai_api_key"
 ```
 
 We'll also use LangSmith's [pytest](./pytest) integration for Python and [Vitest/Jest](./vitest_jest) for TypeScript to run our evals.
-`openevals` and `agentevals` also integrate seamlessly with the [`evaluate`](https://docs.smith.langchain.com/reference/python/evaluation/langsmith.evaluation._runner.evaluate) method as well.
+`openevals` also integrates seamlessly with the [`evaluate`](https://docs.smith.langchain.com/reference/python/evaluation/langsmith.evaluation._runner.evaluate) method as well.
 See the [appropriate guides](/evaluation/how_to_guides#testing-integrations) for setup instructions.
 
 ## Running an evaluator
 
-The general flow is simple: import the evaluator or factory function from `openevals` or `agentevals` as appropriate, then run it within your
+The general flow is simple: import the evaluator or factory function from `openevals`, then run it within your
 test file with inputs, outputs, and reference outputs. LangSmith will automatically log the evaluator's results as feedback.
 
 Note that not all evaluators will require each parameter (the exact match evaluator only requires outputs and reference outputs, for example).
@@ -141,7 +137,7 @@ The `feedback_key`/`feedbackKey` parameter will be used as the name of the feedb
 
 Running the eval in your terminal will result in something like the following:
 
-<img src="./static/prebuilt_eval_result.png" alt="Prebuilt evaluator terminal result" />
+![Prebuilt evaluator terminal result](./static/prebuilt_eval_result.png)
 
 You can also pass prebuilt evaluators directly into the `evaluate` method if you have already created a dataset in LangSmith.
 If using Python, this requires `langsmith>=0.3.11`:
