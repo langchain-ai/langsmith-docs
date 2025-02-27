@@ -39,6 +39,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Troubleshoot trace testing](./how_to_guides/nest_traces)
 - [Upload files with traces](./how_to_guides/upload_files_with_traces)
 - [Print out logs from the LangSmith SDK (Python Only)](./how_to_guides/output_detailed_logs)
+- [Troubleshooting: Missing or Misrouted Traces](./how_to_guides/toubleshooting_variable_caching)
 
 ## Tracing projects UI & API
 
