@@ -6,7 +6,7 @@ import {
 
 # Toubleshooting variable caching
 
-If you’re not seeing traces in your tracing project or notice traces logged to the wrong project/workspace, the issue might be due to LangSmith’s default variable caching. This is especially common when running LangSmith within a Jupyter notebook. Follow these steps to diagnose and resolve the issue:
+If you’re not seeing traces in your tracing project or notice traces logged to the wrong project/workspace, the issue might be due to LangSmith’s default environment variable caching. This is especially common when running LangSmith within a Jupyter notebook. Follow these steps to diagnose and resolve the issue:
 
 ## 1. Verify Your Environment Variables
 
@@ -21,7 +21,7 @@ print(utils.get_env_var("LANGSMITH_ENDPOINT"))
 print(utils.get_env_var("LANGSMITH_API_KEY"))
 ```
 
-If the output does not match what’s defined in your .env file, it’s likely due to variable caching.
+If the output does not match what’s defined in your .env file, it’s likely due to environment variable caching.
 
 ## 2. Clear the cache
 
@@ -38,7 +38,7 @@ Reload your environment variables from the .env file by executing:
 ```python
 from dotenv import load_dotenv
 import os
-load_dotenv()
+load_dotenv(<path to .env file>, override=True)
 ```
 
 After reloading, your environment variables should be set correctly.
