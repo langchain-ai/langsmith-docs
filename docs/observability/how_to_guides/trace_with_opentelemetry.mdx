@@ -107,6 +107,33 @@ if __name__ == "__main__":
 
 You should see a trace in your LangSmith dashboard [like this one](https://smith.langchain.com/public/4f2890b1-f105-44aa-a6cf-c777dcc27a37/r).
 
+## Supported OpenTelemetry Attribute Mapping
+
+When sending traces to LangSmith via OpenTelemetry, the following attributes are mapped to LangSmith fields. These mappings are based on [OTel GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/).
+
+| OpenTelemetry Attribute            | LangSmith Field                       | Notes                                                                        |
+| ---------------------------------- | ------------------------------------- | ---------------------------------------------------------------------------- |
+| `langsmith.trace.name`             | Run Name                              | Overrides the span name for the run                                          |
+| `langsmith.span.kind`              | Run Type                              | Values: `llm`, `chain`, `tool`, `retriever`, `embedding`, `prompt`, `parser` |
+| `gen_ai.system`                    | `metadata.ls_provider`                | The GenAI system (e.g., "openai", "anthropic")                               |
+| `gen_ai.prompt.{n}.role`           | `inputs.messages[n].role`             | Role for the nth input message                                               |
+| `gen_ai.prompt.{n}.content`        | `inputs.messages[n].content`          | Content for the nth input message                                            |
+| `gen_ai.completion.{n}.role`       | `outputs.messages[n].role`            | Role for the nth output message                                              |
+| `gen_ai.completion.{n}.content`    | `outputs.messages[n].content`         | Content for the nth output message                                           |
+| `gen_ai.request.model`             | `invocation_params.model`             | The model name used for the request                                          |
+| `gen_ai.response.model`            | `invocation_params.model`             | The model name returned in the response                                      |
+| `gen_ai.request.temperature`       | `invocation_params.temperature`       | Temperature setting                                                          |
+| `gen_ai.request.top_p`             | `invocation_params.top_p`             | Top-p sampling setting                                                       |
+| `gen_ai.request.max_tokens`        | `invocation_params.max_tokens`        | Maximum tokens setting                                                       |
+| `gen_ai.request.frequency_penalty` | `invocation_params.frequency_penalty` | Frequency penalty setting                                                    |
+| `gen_ai.request.presence_penalty`  | `invocation_params.presence_penalty`  | Presence penalty setting                                                     |
+| `gen_ai.usage.prompt_tokens`       | `usage_metadata.input_tokens`         | Number of input tokens used                                                  |
+| `gen_ai.usage.completion_tokens`   | `usage_metadata.output_tokens`        | Number of output tokens used                                                 |
+| `gen_ai.usage.total_tokens`        | `usage_metadata.total_tokens`         | Total number of tokens used                                                  |
+| `input.value`                      | `inputs`                              | Full input value, can be string or JSON                                      |
+| `output.value`                     | `outputs`                             | Full output value, can be string or JSON                                     |
+| `langsmith.metadata.{key}`         | `metadata.{key}`                      | Custom metadata                                                              |
+
 ## Logging Traces with the Traceloop SDK
 
 The Traceloop SDK is an OpenTelemetry compatible SDK that covers a range of models, vector databases and frameworks.
