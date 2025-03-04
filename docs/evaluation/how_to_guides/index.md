@@ -12,6 +12,7 @@ Evaluate and improve your application before deploying it.
 
 ### Run an evaluation
 
+- [Define a target function to evaluate](./how_to_guides/define_target)
 - [Run an evaluation with the SDK](./how_to_guides/evaluate_llm_application)
 - [Run an evaluation asynchronously](./how_to_guides/async)
 - [Run an evaluation comparing two experiments](./how_to_guides/evaluate_pairwise)
