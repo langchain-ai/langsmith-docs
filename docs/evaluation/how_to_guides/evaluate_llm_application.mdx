@@ -117,10 +117,15 @@ We need a [Dataset](../concepts#datasets) to evaluate our application on. Our da
       
       dataset_name = "Toxic Queries"
       dataset = ls_client.create_dataset(dataset_name=dataset_name)
+      examples = [
+        {
+          "inputs": {"text": text},
+          "outputs": {"label": label}
+        } for text, label in labeled_texts
+      ]
       ls_client.create_examples(
-        inputs=[{"text": text} for text, _ in labeled_texts], 
-        outputs=[{"label": label} for _, label in labeled_texts], 
         dataset_id=dataset.id,
+        examples=examples
       )
     `,
     typescript`
@@ -285,10 +290,15 @@ _If you've annotated your code for tracing, you can open the trace of each row i
       
       dataset_name = "Toxic Queries"
       dataset = ls_client.create_dataset(dataset_name=dataset_name)
+      examples = [
+        {
+          "inputs": {"text": text},
+          "outputs": {"label": label}
+        } for text, label in labeled_texts
+      ]
       ls_client.create_examples(
-        inputs=[{"text": text} for text, _ in labeled_texts], 
-        outputs=[{"label": label} for _, label in labeled_texts], 
         dataset_id=dataset.id,
+        examples=examples,
       )
 
       # Step 3. Define an evaluator

@@ -108,19 +108,21 @@ from langsmith import Client
 
 client = Client()
 
- Create a dataset
-examples = [
-    ("Harrison", "Hello Harrison"),
-    ("Ankush", "Hello Ankush"),
-]
+# Create a dataset
 
 dataset_name = "HelloDataset"
 dataset = client.create_dataset(dataset_name=dataset_name)
-inputs, outputs = zip(
-    *[({"input": text}, {"expected": result}) for text, result in examples]
-)
-client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
-```
+examples = [
+  {
+    "inputs": {"input": "Harrison"},
+    "outputs": {"expected": "Hello Harrison"},
+  },
+  {
+    "inputs": {"input": "Ankush"},
+    "outputs": {"expected": "Hello Ankush"},
+  },
+]
+client.create_examples(dataset_id=dataset.id, examples=examples)
 
 Next, we will create an experiment, retrieve the experiment name from the result of `evaluate`, then fetch the performance metrics for the experiment.
 

@@ -54,12 +54,9 @@ list 5 concrete questions that should be investigated to determine if the idea i
 
         ls_client = Client()
 
-        examples = ["universal basic income", "nuclear fusion", "hyperloop", "nuclear powered rockets"]
         dataset = ls_client.create_dataset("research ideas")
-        ls_client.create_examples(
-            dataset_name=dataset.name,
-            inputs=[{"idea": e} for e in examples,
-        )
+        examples = [{"inputs": {"idea": e}} for e in ["universal basic income", "nuclear fusion", "hyperloop", "nuclear powered rockets"]]
+        ls_client.create_examples(dataset_id=dataset.id, examples=examples)
 
         # Can equivalently use the 'aevaluate' function directly:
         # from langsmith import aevaluate

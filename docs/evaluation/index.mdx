@@ -96,28 +96,28 @@ content: `# For other dataset creation methods, see:
 # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
 # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
 
-# Create inputs and reference outputs
-examples = [
-    (
-        "Which country is Mount Kilimanjaro located in?",
-        "Mount Kilimanjaro is located in Tanzania.",
-    ),
-    (
-        "What is Earth's lowest point?",
-        "Earth's lowest point is The Dead Sea.",
-    ),
-]
-
-inputs = [{"question": input_prompt} for input_prompt, _ in examples]
-outputs = [{"answer": output_answer} for _, output_answer in examples]
 
 # Programmatically create a dataset in LangSmith
 dataset = client.create_dataset(
     dataset_name="Sample dataset", description="A sample dataset in LangSmith."
 )
 
+# Create examples
+examples = [
+    {
+      "question": "Which country is Mount Kilimanjaro located in?",
+      "answer": "Mount Kilimanjaro is located in Tanzania.",
+      "dataset_id": dataset.id
+    },
+    {
+        "question": "What is Earth's lowest point?",
+        "answer": "Earth's lowest point is The Dead Sea.",
+        "dataset_id": dataset.id
+    },
+]
+
 # Add examples to the dataset
-client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+client.create_examples(examples)
 `,
     },
     {
@@ -128,36 +128,27 @@ client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
 // https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically 
 // https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
     
-// Create inputs and reference outputs
-const examples: [string, string][] = [
-  [
-    "Which country is Mount Kilimanjaro located in?",
-    "Mount Kilimanjaro is located in Tanzania.",
-  ],
-  [
-    "What is Earth's lowest point?",
-    "Earth's lowest point is The Dead Sea.",
-  ],
-];
-
-const inputs = examples.map(([inputPrompt]) => ({
-  question: inputPrompt,
-}));
-const outputs = examples.map(([, outputAnswer]) => ({
-  answer: outputAnswer,
-}));
-
 // Programmatically create a dataset in LangSmith
 const dataset = await client.createDataset("Sample dataset", {
   description: "A sample dataset in LangSmith.",
-});
+});    
+
+// Create examples
+const examples: Record<string, string>[] = [
+  {
+    question: "Which country is Mount Kilimanjaro located in?",
+    answer: "Mount Kilimanjaro is located in Tanzania.",
+    dataset_id: dataset.id
+  },
+  {
+    question: "What is Earth's lowest point?",
+    answer: "Earth's lowest point is The Dead Sea.",
+    dataset_id: dataset.id
+  },
+];
 
 // Add examples to the dataset
-await client.createExamples({
-  inputs,
-  outputs,
-  datasetId: dataset.id,
-});
+await client.createExamples(examples);
 `,
 },
 ]}
