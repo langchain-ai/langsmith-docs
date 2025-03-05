@@ -463,6 +463,68 @@ runs based on a conversation ID in this way, you can search for that ID in the m
   groupId="client-language"
 />
 
+### Negative filtering on key-value pairs
+
+You can use negative filtering on metadata, input, and output key-value pairs to exclude specific runs from your results. Here are some examples for metadata key-value pairs but the same logic applies to input and output key-value pairs.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`# Find all runs where the metadata does not contain a "conversation_id" key
+  client.list_runs(
+  project_name="default",
+  filter="and(neq(metadata_key, 'conversation_id'))"
+  )
+
+# Find all runs where the conversation_id in metadata is not "a1b2c3d4-e5f6-7890"
+
+client.list_runs(
+project_name="default",
+filter="and(eq(metadata_key, 'conversation_id'), neq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
+)
+
+# Find all runs where there is no "conversation_id" metadata key and the "a1b2c3d4-e5f6-7890" value is not present
+
+client.list_runs(
+project_name="default",
+filter="and(neq(metadata_key, 'conversation_id'), neq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
+)
+
+# Find all runs where the conversation_id metadata key is not present but the "a1b2c3d4-e5f6-7890" value is present
+
+client.list_runs(
+project_name="default",
+filter="and(neq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))"
+)`
+  ),
+    TypeScriptBlock(`
+// Find all runs where the metadata does not contain a "conversation_id" key
+client.listRuns({
+projectName: 'default',
+filter: \`and(neq(metadata_key, 'conversation_id'))\`
+});
+
+    // Find all runs where the conversation_id in metadata is not "a1b2c3d4-e5f6-7890"
+    client.listRuns({
+      projectName: 'default',
+      filter: \`and(eq(metadata_key, 'conversation_id'), neq(metadata_value, 'a1b2c3d4-e5f6-7890'))\`
+    });
+
+    // Find all runs where there is no "conversation_id" metadata key and the "a1b2c3d4-e5f6-7890" value is not present
+    client.listRuns({
+      projectName: 'default',
+      filter: \`and(neq(metadata_key, 'conversation_id'), neq(metadata_value, 'a1b2c3d4-e5f6-7890'))\`
+    });
+
+    // Find all runs where the conversation_id metadata key is not present but the "a1b2c3d4-e5f6-7890" value is present
+    client.listRuns({
+      projectName: 'default',
+          filter: \`and(neq(metadata_key, 'conversation_id'), eq(metadata_value, 'a1b2c3d4-e5f6-7890'))\`
+        });`),
+
+]}
+groupId="client-language"
+/>
+
 ### Combine multiple filters
 
 If you want to combine multiple conditions to refine your search, you can use the `and` operator along with other

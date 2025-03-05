@@ -57,6 +57,18 @@ You will need to provide several parameters to your LangSmith installation to co
 - Password: The password to use to connect to the ClickHouse database
 - Cluster (Optional): The name of the ClickHouse cluster if using an external Clickhouse cluster. When set, LangSmith will run migrations on the cluster and replicate data across instances.
 
+:::warning
+Important considerations for clustered deployments:
+
+- Clustered setups must be configured on a fresh schema - existing standalone ClickHouse instances cannot be converted to clustered mode.
+- Clustering is only supported with externally managed ClickHouse deployments. It is not compatible with bundled ClickHouse installations as these do not include required ZooKeeper configurations.
+- When using a clustered deployment, LangSmith will automatically:
+  - Run database migrations across all nodes in the cluster
+  - Configure tables for data replication across the cluster
+
+Note that while data is replicated across nodes, LangSmith does not configure distributed tables or handle query routing - queries will be directed to the specified host. You will need to handle any load balancing or query distribution at the infrastructure level if desired.
+:::
+
 ## Configuration
 
 With these parameters in hand, you can configure your LangSmith instance to use the provisioned ClickHouse database. You can do this by modifying the `config.yaml` file for your LangSmith Helm Chart installation or the `.env` file for your Docker installation.
@@ -92,15 +104,3 @@ CLICKHOUSE_CLUSTER=my_cluster_name # Optional: Set this if using an external Cli
 />
 
 Once configured, you should be able to reinstall your LangSmith instance. If everything is configured correctly, your LangSmith instance should now be using your external ClickHouse database.
-
-:::note
-Important considerations for clustered deployments:
-
-- Clustered setups must be configured on a fresh schema - existing standalone ClickHouse instances cannot be converted to clustered mode.
-- Clustering is only supported with externally managed ClickHouse deployments. It is not compatible with bundled ClickHouse installations as these do not include required ZooKeeper configurations.
-- When using a clustered deployment, LangSmith will automatically:
-  - Run database migrations across all nodes in the cluster
-  - Configure tables for data replication across the cluster
-
-Note that while data is replicated across nodes, LangSmith does not configure distributed tables or handle query routing - queries will be directed to the specified host. You will need to handle any load balancing or query distribution at the infrastructure level if desired.
-:::

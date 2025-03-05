@@ -237,6 +237,10 @@
     {
       "source": "/prompt_engineering/how_to_guides/playground/:path*",
       "destination": "/prompt_engineering/how_to_guides/:path*"
+    },
+    {
+      "source": "/evaluation/how_to_guides/use_langchain_off_the_shelf_evaluators",
+      "destination": "/evaluation/how_to_guides/prebuilt_evaluators"
     }
   ],
   "builds": [

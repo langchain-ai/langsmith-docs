@@ -39,6 +39,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Troubleshoot trace testing](./how_to_guides/nest_traces)
 - [Upload files with traces](./how_to_guides/upload_files_with_traces)
 - [Print out logs from the LangSmith SDK (Python Only)](./how_to_guides/output_detailed_logs)
+- [Troubleshooting: Missing or Misrouted Traces](./how_to_guides/toubleshooting_variable_caching)
 
 ## Tracing projects UI & API
 
@@ -46,7 +47,7 @@ View and interact with your traces to debug your applications.
 
 - [Filter traces in a project](./how_to_guides/filter_traces_in_application)
 - [Save a filter for your project](./how_to_guides/filter_traces_in_application#saved-filters)
-- [Export traces using the SDK (low volume)](./how_to_guides/export_traces)
+- [Query / Export traces using the SDK (low volume)](./how_to_guides/export_traces)
 - [Bulk exporting traces (high volume)](./how_to_guides/data_export)
 - [Share or unshare a trace publicly](./how_to_guides/share_trace)
 - [Compare traces](./how_to_guides/compare_traces)
