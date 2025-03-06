@@ -28,7 +28,7 @@ Evaluate and improve your application before deploying it.
 - [Define an LLM-as-a-judge evaluator](./how_to_guides/llm_as_judge)
 - [Define a pairwise evaluator](./how_to_guides/evaluate_pairwise)
 - [Define a summary evaluator](./how_to_guides/summary)
-- [Use an off-the-shelf evaluator via the SDK (Python only)](./how_to_guides/use_langchain_off_the_shelf_evaluators)
+- [Use prebuilt evaluators](./how_to_guides/prebuilt_evaluators)
 - [Evaluate an application's intermediate steps](./how_to_guides/evaluate_on_intermediate_steps)
 - [Return multiple metrics in one evaluator](./how_to_guides/multiple_scores)
 - [Return categorical vs numerical metrics](./how_to_guides/metric_type)
