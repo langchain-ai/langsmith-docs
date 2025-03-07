@@ -1,0 +1,230 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+
+# Defining a Target Function
+
+Before running an evaluation, you need to define a target function. There are typically a few different types of target function, which we cover in this guide.
+However, don't feel limited by these options - you can define your own target function as needed!
+
+## A single LLM call
+
+Evaluating a single LLM call has many practical uses. You can use it to do the following:
+
+- Evaluate a single step of your larger agent, for example the routing step
+- Evaluate a model's capabilities on a specific task, for example tool calling or hallucination
+
+:::note API Key
+Make sure you have set your `OPENAI_API_KEY` in your environment variables.
+:::
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    {
+      value: "langchain-python",
+      label: "With LangChain (Python)",
+      language: "python",
+      content: `from langchain_openai import ChatOpenAI
+
+# This is the function you will evaluate
+def target(inputs: dict) -> dict:
+    # This assumes your dataset has inputs with a \`messages\` key
+    messages = inputs["messages"]
+    response = ChatOpenAI(model="gpt-4o-mini").invoke(messages)
+    return {"answer": response.content}
+      `
+    },
+    {
+      value: "no-langchain-python",
+      label: "Without LangChain (Python)",
+      language: "python",
+      content: `from openai import OpenAI
+
+client = OpenAI()
+
+# This is the function you will evaluate
+def target(inputs: dict) -> dict:
+    # This assumes your dataset has inputs with a \`messages\` key
+    messages = inputs["messages"]
+    response = client.chat.completions.create(
+        messages=messages,
+        model="gpt-4o-mini",
+    )
+    return {"answer": response.choices[0].message.content}
+      `
+    },
+    {
+      value: "langchain-typescript",
+      label: "With LangChain (TypeScript)",
+      language: "typescript",
+      content: `
+        import { ChatOpenAI } from '@langchain/openai';
+
+        // This is the function you will evaluate
+        const target = async(inputs: dict) => {
+            // This assumes your dataset has inputs with a \`messages\` key
+            const messages = inputs.messages;
+            const response = await ChatOpenAI(model="gpt-4o-mini").invoke(messages);
+            return {"answer": response.content};
+        }
+      `
+    },
+    {
+      value: "no-langchain-typescript",
+      label: "Without LangChain (TypeScript)",
+      language: "typescript",
+      content: `import OpenAI from 'openai';
+
+        const client = new OpenAI();
+
+        // This is the function you will evaluate
+        const target = async(inputs: dict) => {
+            // This assumes your dataset has inputs with a \`messages\` key
+            const messages = inputs.messages;
+            const response = await client.chat.completions.create({
+                messages: messages,
+                model: 'gpt-4o-mini',
+            });
+            return { answer: response.choices[0].message.content };
+        }
+      `
+    }
+]}
+/>
+
+## A non-LLM component of your system
+
+Sometimes, you may want to evaluate a step of your application that doesn't involve an LLM at all. This includes but is not limited to:
+
+- Retrieval step in a RAG application
+- Execution of a tool (for example a tool that calls slack or sends an email)
+
+In this example we will show how to test a tool you have written for your agent. This is a simple example with just a calculator tool,
+but we can extend this to testing the functionality of any tool. We highly recommend testing ALL your tools in order to eliminate them
+as a potential source of error in your application.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `def calculator_tool(operation: str, number1: float, number2: float) -> str:
+    if operation == "add":
+        return str(number1 + number2)
+    elif operation == "subtract":
+        return str(number1 - number2)
+    elif operation == "multiply":
+        return str(number1 * number2)
+    elif operation == "divide":
+        return str(number1 / number2)
+
+# This is the function you will evaluate
+def target(inputs: dict) -> dict:
+    # This assumes your dataset has inputs with \`operation\`, \`num1\`, and \`num2\` keys
+    operation = inputs["operation"]
+    number1 = inputs["num1"]
+    number2 = inputs["num2"]
+    response = calculator_tool(operation, number1, number2)
+    return {"answer": response}
+      `
+    },
+    {
+      value: "typescript",
+      label: "JavaScript/TypeScript",
+      language: "typescript",
+      content: `        
+        const calculatorTool =  async ({ operation, number1, number2 }) => {
+            // Functions must return strings
+            if (operation === "add") {
+            return String(number1 + number2);
+            } else if (operation === "subtract") {
+            return String(number1 - number2);
+            } else if (operation === "multiply") {
+            return String(number1 * number2);
+            } else if (operation === "divide") {
+            return String(number1 / number2);
+            } else {
+            throw new Error("Invalid operation.");
+            }
+        };
+        
+        // This is the function you will evaluate
+        const target = async(inputs: dict) => {
+            // This assumes your dataset has inputs with \`operation\`, \`num1\`, and \`num2\` keys
+            const response = await calculatorTool.invoke({
+                operation: inputs.operation,
+                number1: inputs.num1,
+                number2: inputs.num2,
+            });
+            return {"answer": response};
+        }
+      `
+    }
+]}
+/>
+
+## An application or agent
+
+Once you are done testing the individual components of your system, it is good practice to test your entire system end to end.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "python",
+      content: `from my_agent import agent
+        
+# This is the function you will evaluate
+def target(inputs: dict) -> dict:
+    # This assumes your dataset has inputs with a \`messages\` key
+    messages = inputs["messages"]
+    # Replace \`invoke\` with whatever you use to call your agent
+    response = agent.invoke({"messages": messages})
+    # This assumes your agent output is in the right format
+    return response
+      `
+    },
+    {
+      value: "typescript",
+      label: "JavaScript/TypeScript",
+      language: "typescript",
+      content: `
+        import { agent } from 'my_agent';
+
+        // This is the function you will evaluate
+        const target = async(inputs: dict) => {
+            // This assumes your dataset has inputs with a \`messages\` key
+            const messages = inputs.messages;
+            // Replace \`invoke\` with whatever you use to call your agent
+            const response = await agent.invoke({ messages: messages })
+            // This assumes your agent output is in the right format
+            return response;
+        }
+
+      `
+    }
+]}
+/>
+
+
+:::tip Passing LangGraph Agents as Target
+If you have a LangGraph agent that accepts the inputs defined in your dataset, you can treat it as a target function itself:
+
+```python
+from my_agent import agent
+from langsmith import Client
+
+client = Client()
+client.evaluate(
+    target=agent,
+    ...
+)
+```
+:::
