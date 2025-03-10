@@ -224,12 +224,17 @@ We are building a very simple dataset with a couple of examples to evaluate the 
 
       if not ls_client.has_dataset(dataset_name=dataset_name):
           dataset = ls_client.create_dataset(dataset_name=dataset_name)
+          examples = [
+            {
+              "inputs": {"question": "What is LangChain?"},
+            },
+            {
+              "inputs": {"question": "What is LangSmith?"},
+            }
+          ]
           ls_client.create_examples(
-            inputs=[
-                {"question": "What is LangChain?"},
-                {"question": "What is LangSmith?"},
-            ],
-            dataset_id=dataset.id
+            dataset_id=dataset.id,
+            examples=examples
           )
     `,
     typescript`

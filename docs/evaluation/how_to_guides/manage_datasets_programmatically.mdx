@@ -28,11 +28,27 @@ If creating a single example, you can use the `create_example`/`createExample` m
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith import Client\n
-example_inputs = [
-  ("What is the largest mammal?", "The blue whale"),
-  ("What do mammals and birds have in common?", "They are both warm-blooded"),
-  ("What are reptiles known for?", "Having scales"),
-  ("What's the main characteristic of amphibians?", "They live both in water and on land"),
+examples = [
+  {
+    "inputs": {"question": "What is the largest mammal?"},
+    "outputs": {"answer": "The blue whale"},
+    "metadata": {"source": "Wikipedia"},
+  },
+  {
+    "inputs": {"question": "What do mammals and birds have in common?"},
+    "outputs": {"answer": "They are both warm-blooded"},
+    "metadata": {"source": "Wikipedia"},
+  },
+  {
+    "inputs": {"question": "What are reptiles known for?"},
+    "outputs": {"answer": "Having scales"},
+    "metadata": {"source": "Wikipedia"},
+  },
+  {
+    "inputs": {"question": "What's the main characteristic of amphibians?"},
+    "outputs": {"answer": "They live both in water and on land"},
+    "metadata": {"source": "Wikipedia"},
+  },
 ]\n
 client = Client()
 dataset_name = "Elementary Animal Questions"\n
@@ -42,14 +58,9 @@ dataset = client.create_dataset(
     dataset_name=dataset_name, description="Questions and answers about animal phylogenetics.",
 )\n
 # Prepare inputs, outputs, and metadata for bulk creation
-inputs = [{"question": input_prompt} for input_prompt, _ in example_inputs]
-outputs = [{"answer": output_answer} for _, output_answer in example_inputs]
-metadata = [{"source": "Wikipedia"} for _ in example_inputs]\n
 client.create_examples(
-    inputs=inputs,
-    outputs=outputs,
-    metadata=metadata,
     dataset_id=dataset.id,
+    examples=examples
 )`),
     TypeScriptBlock(`import { Client } from "langsmith";\n
 const client = new Client();\n
@@ -102,13 +113,11 @@ runs = client.list_runs(
 )\n
 dataset = client.create_dataset(dataset_name, description="An example dataset")\n
 # Prepare inputs and outputs for bulk creation
-inputs = [run.inputs for run in runs]
-outputs = [run.outputs for run in runs]\n
+examples = [{"inputs": run.inputs, "outputs": run.outputs} for run in runs]\n
 # Use the bulk create_examples method
 client.create_examples(
-    inputs=inputs,
-    outputs=outputs,
     dataset_id=dataset.id,
+    examples=examples
 )`),
     TypeScriptBlock(`import { Client, Run } from "langsmith";
 const client = new Client();\n
