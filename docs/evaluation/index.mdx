@@ -14,7 +14,7 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Evaluation Quick Start
 
-This quick start will get you up and running with our evaluation SDK and Experiments UI.
+This quick start will get you up and running with our evaluation SDK and experiments UI.
 
 ## 1. Install Dependencies
 
@@ -46,6 +46,7 @@ To create an API key head to the <RegionalUrl text='Settings page' suffix='/sett
   tabs={[
     ShellBlock(`export LANGSMITH_TRACING=true
 export LANGSMITH_API_KEY="<your-langchain-api-key>"
+
 # The example uses OpenAI, but it's not necessary in general
 export OPENAI_API_KEY="<your-openai-api-key>"`),
   ]}
@@ -105,19 +106,17 @@ dataset = client.create_dataset(
 # Create examples
 examples = [
     {
-      "question": "Which country is Mount Kilimanjaro located in?",
-      "answer": "Mount Kilimanjaro is located in Tanzania.",
-      "dataset_id": dataset.id
+        "inputs": {"question": "Which country is Mount Kilimanjaro located in?"},
+        "outputs": {"answer": "Mount Kilimanjaro is located in Tanzania."},
     },
     {
-        "question": "What is Earth's lowest point?",
-        "answer": "Earth's lowest point is The Dead Sea.",
-        "dataset_id": dataset.id
+        "inputs": {"question": "What is Earth's lowest point?"},
+        "outputs": {"answer": "Earth's lowest point is The Dead Sea."},
     },
 ]
 
 # Add examples to the dataset
-client.create_examples(examples)
+client.create_examples(dataset_id=dataset.id, examples=examples)
 `,
     },
     {
@@ -128,27 +127,36 @@ client.create_examples(examples)
 // https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically 
 // https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
     
+// Create inputs and reference outputs
+const examples: [string, string][] = [
+  [
+    "Which country is Mount Kilimanjaro located in?",
+    "Mount Kilimanjaro is located in Tanzania.",
+  ],
+  [
+    "What is Earth's lowest point?",
+    "Earth's lowest point is The Dead Sea.",
+  ],
+];
+
+const inputs = examples.map(([inputPrompt]) => ({
+  question: inputPrompt,
+}));
+const outputs = examples.map(([, outputAnswer]) => ({
+  answer: outputAnswer,
+}));
+
 // Programmatically create a dataset in LangSmith
 const dataset = await client.createDataset("Sample dataset", {
   description: "A sample dataset in LangSmith.",
-});    
-
-// Create examples
-const examples: Record<string, string>[] = [
-  {
-    question: "Which country is Mount Kilimanjaro located in?",
-    answer: "Mount Kilimanjaro is located in Tanzania.",
-    dataset_id: dataset.id
-  },
-  {
-    question: "What is Earth's lowest point?",
-    answer: "Earth's lowest point is The Dead Sea.",
-    dataset_id: dataset.id
-  },
-];
+});
 
 // Add examples to the dataset
-await client.createExamples(examples);
+await client.createExamples({
+  inputs,
+  outputs,
+  datasetId: dataset.id,
+});
 `,
 },
 ]}
@@ -168,8 +176,8 @@ def target(inputs: dict) -> dict:
     response = openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            { "role": "system", "content": "Answer the following question accurately" },
-            { "role": "user", "content": inputs["question"] },
+            {"role": "system", "content": "Answer the following question accurately"},
+            {"role": "user", "content": inputs["question"]},
         ],
     )
     return { "response": response.choices[0].message.content.strip() }
@@ -220,7 +228,7 @@ def accuracy(outputs: dict, reference_outputs: dict) -> bool:
     response = openai_client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
-            { "role": "system", "content": instructions },
+            {"role": "system", "content": instructions},
             {
                 "role": "user",
                 "content": f"""Ground Truth answer: {reference_outputs["answer"]}; 

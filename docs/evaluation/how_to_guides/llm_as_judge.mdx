@@ -58,8 +58,11 @@ for the answer is logically valid and consistent with question and the answer.\\
         return {"answer": "hmm i'm not sure", "reasoning": "i didn't understand the question"}
 
       ls_client = Client()
-      examples = [{"inputs": {"question": "how will the universe end"}}, {"inputs": {"question": "are we alone"}}]
       dataset = ls_client.create_dataset("big questions")
+      examples = [
+        {"inputs": {"question": "how will the universe end"}},
+        {"inputs": {"question": "are we alone"}},
+      ]
       ls_client.create_examples(dataset_id=dataset.id, examples=examples)
 
       results = evaluate(

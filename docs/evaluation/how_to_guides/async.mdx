@@ -49,14 +49,22 @@ list 5 concrete questions that should be investigated to determine if the idea i
             return response.choices[0].message.content
 
         # Evaluator functions can be sync or async
-        def concise(inputs: dict, output: dict) -> bool:
-            return len(output["output"]) < 3 * len(inputs["idea"])
+        def concise(inputs: dict, outputs: dict) -> bool:
+            return len(outputs["output"]) < 3 * len(inputs["idea"])
 
         ls_client = Client()
 
+        ideas = [
+            "universal basic income", 
+            "nuclear fusion", 
+            "hyperloop", 
+            "nuclear powered rockets",
+        ]
         dataset = ls_client.create_dataset("research ideas")
-        examples = [{"inputs": {"idea": e}} for e in ["universal basic income", "nuclear fusion", "hyperloop", "nuclear powered rockets"]]
-        ls_client.create_examples(dataset_id=dataset.id, examples=examples)
+        ls_client.create_examples(
+            dataset_name=dataset.name,
+            examples=[{"inputs": {"idea": i}} for i in ideas],
+        )
 
         # Can equivalently use the 'aevaluate' function directly:
         # from langsmith import aevaluate
