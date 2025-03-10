@@ -71,5 +71,5 @@ Leverage LangSmith's powerful monitoring, automation, and online evaluation feat
 ## Human feedback
 
 - [Log user feedback](../evaluation/how_to_guides/attach_user_feedback)
-- [Set up a new feedback criteria](../evaluation//how_to_guides/set_up_feedback_criteria)
+- [Set up a new feedback criteria](../evaluation/how_to_guides/set_up_feedback_criteria)
 - [Annotate traces inline in the UI](../evaluation/how_to_guides/annotate_traces_inline)
