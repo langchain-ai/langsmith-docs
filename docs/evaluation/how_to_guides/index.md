@@ -78,6 +78,7 @@ Use the UI & API to understand your experiment results.
 - [Fetch experiment results in the SDK](./how_to_guides/fetch_perf_metrics_experiment)
 - [Upload experiments run outside of LangSmith with the REST API](./how_to_guides/upload_existing_experiments)
 - [Download experiment results as a CSV](./how_to_guides/download_experiment_results_as_csv)
+- [Renaming an experiment](./how_to_guides/renaming_experiment)
 
 ## Dataset management
 
