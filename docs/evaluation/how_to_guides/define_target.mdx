@@ -76,20 +76,20 @@ def target(inputs: dict) -> dict:
       language: "typescript",
       caption: "Set env var `OPENAI_API_KEY` and install `openai` and `langsmith`.",
       content: `import OpenAI from 'openai';
-	import { wrapOpenAI } from "langsmith/wrappers";
+import { wrapOpenAI } from "langsmith/wrappers";
 
-        const client = wrapOpenAI(new OpenAI());
+const client = wrapOpenAI(new OpenAI());
 
-        // This is the function you will evaluate.
-        const target = async(inputs) => {
-            // This assumes your dataset has inputs with a \`messages\` key
-            const messages = inputs.messages;
-            const response = await client.chat.completions.create({
-                messages: messages,
-                model: 'gpt-4o-mini',
-            });
-            return { answer: response.choices[0].message.content };
-        }
+// This is the function you will evaluate.
+const target = async(inputs) => {
+    // This assumes your dataset has inputs with a \`messages\` key
+    const messages = inputs.messages;
+    const response = await client.chat.completions.create({
+        messages: messages,
+        model: 'gpt-4o-mini',
+    });
+    return { answer: response.choices[0].message.content };
+}
       `
     },
     {
@@ -114,15 +114,16 @@ def target(inputs: dict) -> dict:
       language: "typescript",
       caption: "Set env var `OPENAI_API_KEY` and install `@langchain/openai`.",
       content: `
-        import { ChatOpenAI } from '@langchain/openai';
+import { ChatOpenAI } from '@langchain/openai';
 
-        // This is the function you will evaluate.
-        const target = async(inputs) => {
-            // This assumes your dataset has inputs with a \`messages\` key
-            const messages = inputs.messages;
-            const response = await ChatOpenAI(model="gpt-4o-mini").invoke(messages);
-            return {"answer": response.content};
-        }
+// This is the function you will evaluate.
+const target = async(inputs) => {
+    // This assumes your dataset has inputs with a \`messages\` key
+    const messages = inputs.messages;
+    const model = new ChatOpenAI({ model: "gpt-4o-mini" });
+    const response = await model.invoke(messages);
+    return {"answer": response.content};
+}
       `
     }
 ]}
@@ -175,33 +176,33 @@ def target(inputs: dict) -> dict:
       label: "TypeScript",
       language: "typescript",
       content: `import { traceable } from "langsmith/traceable";
- 
-	// Optionally wrap in 'traceable' to trace all invocations of this function. 
-        const calculatorTool =  traceable( async ({ operation, number1, number2 }) => {
-            // Functions must return strings
-            if (operation === "add") {
-            return String(number1 + number2);
-            } else if (operation === "subtract") {
-            return String(number1 - number2);
-            } else if (operation === "multiply") {
-            return String(number1 * number2);
-            } else if (operation === "divide") {
-            return String(number1 / number2);
-            } else {
-            throw new Error("Invalid operation.");
-            }
-        });
-        
-        // This is the function you will evaluate.
-        const target = async(inputs) => {
-            // This assumes your dataset has inputs with \`operation\`, \`num1\`, and \`num2\` keys
-            const result = await calculatorTool.invoke({
-                operation: inputs.operation,
-                number1: inputs.num1,
-                number2: inputs.num2,
-            });
-            return {"result": result};
-        }
+
+// Optionally wrap in 'traceable' to trace all invocations of this function. 
+const calculatorTool = traceable(async ({ operation, number1, number2 }) => {
+  // Functions must return strings
+  if (operation === "add") {
+    return (number1 + number2).toString();
+  } else if (operation === "subtract") {
+    return (number1 - number2).toString();
+  } else if (operation === "multiply") {
+    return (number1 * number2).toString();
+  } else if (operation === "divide") {
+    return (number1 / number2).toString();
+  } else {
+    throw new Error("Invalid operation.");
+  }
+});
+
+// This is the function you will evaluate.
+const target = async (inputs) => {
+  // This assumes your dataset has inputs with \`operation\`, \`num1\`, and \`num2\` keys
+  const result = await calculatorTool.invoke({
+    operation: inputs.operation,
+    number1: inputs.num1,
+    number2: inputs.num2,
+  });
+  return { result };
+}
       `
     }
 ]}
@@ -235,23 +236,21 @@ def target(inputs: dict) -> dict:
       label: "TypeScript",
       language: "typescript",
       content: `
-        import { agent } from 'my_agent';
+import { agent } from 'my_agent';
 
-        // This is the function you will evaluate.
-        const target = async(inputs) => {
-            // This assumes your dataset has inputs with a \`messages\` key
-            const messages = inputs.messages;
-            // Replace \`invoke\` with whatever you use to call your agent
-            const response = await agent.invoke({ messages: messages })
-            // This assumes your agent output is in the right format
-            return response;
-        }
-
-      `
+// This is the function you will evaluate.
+const target = async(inputs) => {
+  // This assumes your dataset has inputs with a \`messages\` key
+  const messages = inputs.messages;
+  // Replace \`invoke\` with whatever you use to call your agent
+  const response = await agent.invoke({ messages });
+  // This assumes your agent output is in the right format
+  return response;
+}
+`
     }
 ]}
 />
-
 
 :::tip LangGraph / LangChain targets
 If you have a LangGraph/LangChain agent that accepts the inputs defined in your dataset and that returns the output format you want to use in your evaluators, you can pass that object in as the target directly:
@@ -261,6 +260,6 @@ from my_agent import agent
 from langsmith import Client
 
 client = Client()
-client.evaluate(agent ...)
+client.evaluate(agent, ...)
 ```
 :::
