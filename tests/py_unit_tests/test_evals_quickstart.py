@@ -11,7 +11,7 @@ def test_code_block_0():
     # The input to the function will be the inputs dictionary for each example.
     def predict(inputs: dict) -> dict:
         messages = [{"role": "user", "content": inputs["question"]}]
-        response = openai_client.chat.completions.create(messages=messages, model="gpt-3.5-turbo")
+        response = openai_client.chat.completions.create(messages=messages, model="gpt-4o-mini")
         return {"output": response}
     from langsmith.schemas import Run, Example
     
@@ -58,7 +58,7 @@ def test_code_block_1():
     from langchain_core.prompts import ChatPromptTemplate
     from langchain_openai import ChatOpenAI
     
-    llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     prompt = ChatPromptTemplate.from_messages([("human", "Spit some bars about {question}.")])
     chain = prompt | llm | StrOutputParser()
     def predict(inputs: dict) -> dict:
@@ -124,7 +124,7 @@ def test_code_block_2():
         return "You can do it!"
     
     tools = [get_encouragement]
-    llm = ChatOpenAI(model="gpt-3.5-turbo")
+    llm = ChatOpenAI(model="gpt-4o-mini")
     
     def predict(inputs: dict) -> dict:
         agent = create_openai_functions_agent(
@@ -177,7 +177,7 @@ def test_code_block_2():
 def test_code_block_3():
     from langchain_openai import ChatOpenAI
     
-    llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
     def predict(inputs: dict):
         return {"output": llm.invoke(inputs['question']).content}
     from langsmith.schemas import Run, Example

@@ -1,211 +1,64 @@
 ---
-sidebar_label: Quick Start
+sidebar_label: Get Started
 sidebar_position: 1
 table_of_contents: true
 ---
 
-import Tabs from "@theme/Tabs";
-import CodeBlock from "@theme/CodeBlock";
-import {
-  CodeTabs,
-  PythonBlock,
-  TypeScriptBlock,
-} from "@site/src/components/InstructionsWithCode";
-import {
-  LangChainInstallationCodeTabs,
-  LangChainQuickStartCodeTabs,
-  ConfigureEnvironmentCodeTabs,
-  RunTreeQuickStartCodeTabs,
-  ConfigureSDKEnvironmentCodeTabs,
-  PythonSDKTracingCode,
-  TypeScriptSDKTracingCode,
-} from "@site/src/components/QuickStart";
-import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
-import DocCardList from "@theme/DocCardList";
+# Get started with LangSmith
 
-# Getting started with LangSmith
+**LangSmith** is a platform for building production-grade LLM applications.
+It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence.
 
-## Introduction
+<div style={{ display: 'flex', alignItems: 'center', gap: '20px', margin: '20px 0' }}>
+  <div style={{ maxWidth: '60%' }}>
+    ![](./static/ls-diagram.png)
+  </div>
+  <div style={{ flex: 1 }}>
+    <h3 style={{ color: '#1a73e8', marginTop: 0 }}>[Observability](./observability)</h3>
 
-**LangSmith** is a platform for building production-grade LLM applications. It allows you to closely monitor and evaluate your application, so you can ship quickly and with confidence. Use of LangChain is not necessary - LangSmith works on its own!
+    Analyze traces in LangSmith and configure metrics, dashboards, alerts based on these.
 
-## Install LangSmith
+    <h3 style={{ color: '#1a73e8', marginTop: 0 }}>[Evals](./evaluation)</h3>
 
-We offer Python and Typescript SDKs for all your LangSmith needs.
+    Evaluate your application over production traffic — score application performance and get human feedback on your data.
 
-<CodeTabs
-  tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "bash",
-      content: `pip install -U langsmith`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "bash",
-      content: `yarn add langchain langsmith`,
-    },
-  ]}
-  groupId="client-language"
-/>
+    <h3 style={{ color: '#1a73e8', marginTop: 0 }}>[Prompt Engineering](./prompt_engineering/quickstarts/quickstart_ui)</h3>
 
-## Create an API key
+    Iterate on prompts, with automatic version control and collaboration features.
 
-To create an API key head to the [Settings page](https://smith.langchain.com/settings). Then click **Create API Key.**
+  </div>
+</div>
 
-## Setup your environment
+:::tip LangSmith + LangChain OSS
 
-<ConfigureSDKEnvironmentCodeTabs />
+LangSmith is framework-agnostic — it can be used with or without LangChain's open source frameworks [`langchain`](https://python.langchain.com) and [`langgraph`](https://langchain-ai.github.io/langgraph/).
 
-## Log your first trace
+If you are using either of these, you can enable LangSmith tracing with a single environment variable.
+For more see the how-to guide for [setting up LangSmith with LangChain](./observability/how_to_guides/trace_with_langchain) or [setting up LangSmith with LangGraph](https://docs.smith.langchain.com/observability/how_to_guides/tracing/trace_with_langgraph).
+:::
 
-We provide multiple ways to log traces to LangSmith. Below, we'll highlight
-how to use `traceable`. See more on the [Integrations](./tracing/integrations/index.mdx) page.
+## Observability
 
-<CodeTabs
-  tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "python",
-      content: PythonSDKTracingCode(),
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "typescript",
-      content: TypeScriptSDKTracingCode(),
-    },
-  ]}
-  groupId="client-language"
-/>
+Observability is important for any software application, but especially so for LLM applications. LLMs are non-deterministic by nature, meaning they can produce unexpected results. This makes them trickier than normal to debug.
 
-- View a [sample output trace](https://smith.langchain.com/public/b37ca9b1-60cd-4a2a-817e-3c4e4443fdc0/r).
-- Learn more about tracing on the [tracing page](./tracing/index.mdx).
+This is where LangSmith can help! LangSmith has LLM-native observability, allowing you to get meaningful insights from your application. LangSmith’s observability features have you covered throughout all stages of application development - from prototyping, to beta testing, to production.
 
-## Create your first evaluation
+- Get started by [adding tracing](./observability) to your application.
+- [Create dashboards](./observability/how_to_guides/dashboards) to view key metrics like RPS, error rates and costs.
 
-Evalution requires a system to test, [data](./evaluation/faq/index.mdx) to serve as test cases, and optionally evaluators to grade the results. Here we use a built-in accuracy evaluator.
+## Evals
 
-<CodeTabs
-  tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "python",
-      content: `from langsmith import Client
-from langsmith.evaluation import evaluate\n
-client = Client()\n
-# Define dataset: these are your test cases
-dataset_name = "Sample Dataset"
-dataset = client.create_dataset(dataset_name, description="A sample dataset in LangSmith.")
-client.create_examples(
-    inputs=[
-        {"postfix": "to LangSmith"},
-        {"postfix": "to Evaluations in LangSmith"},
-    ],
-    outputs=[
-        {"output": "Welcome to LangSmith"},
-        {"output": "Welcome to Evaluations in LangSmith"},
-    ],
-    dataset_id=dataset.id,
-)\n
-# Define your evaluator
-def exact_match(run, example):
-    return {"score": run.outputs["output"] == example.outputs["output"]}\n
-experiment_results = evaluate(
-    lambda input: "Welcome " + input['postfix'], # Your AI system goes here
-    data=dataset_name, # The data to predict and grade over
-    evaluators=[exact_match], # The evaluators to score the results
-    experiment_prefix="sample-experiment", # The name of the experiment
-    metadata={
-      "version": "1.0.0",
-      "revision_id": "beta"
-    },
-)
-`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "typescript",
-      content: `import { Client, Run, Example } from 'langsmith';
-import { runOnDataset } from 'langchain/smith';
-import { EvaluationResult } from 'langsmith/evaluation';\n
-const client = new Client();\n
-// Define dataset: these are your test cases
-const datasetName = "Sample Dataset";
-const dataset = await client.createDataset(datasetName, {
-    description: "A sample dataset in LangSmith."
-});
-await client.createExamples({
-    inputs: [
-        { postfix: "to LangSmith" },
-        { postfix: "to Evaluations in LangSmith" },
-    ],
-    outputs: [
-        { output: "Welcome to LangSmith" },
-        { output: "Welcome to Evaluations in LangSmith" },
-    ],
-    datasetId: dataset.id,
-});\n
-// Define your evaluator
-const exactMatch = async ({ run, example }: { run: Run; example?: Example; }): Promise<EvaluationResult> => {
-    return {
-        key: 'exact_match',
-        score: run.outputs?.output === example?.outputs?.output ? 1 : 0,
-    };
-};\n
-await runOnDataset(
-    (input: { postfix: string }) => ({ output: \`Welcome $\{input.postfix\}\` }), // Your AI system goes here
-    datasetName, // The data to predict and grade over
-    {
-        evaluationConfig: { customEvaluators: [exactMatch] },
-        projectMetadata: {
-            version: "1.0.0",
-            revision_id: "beta",
-        },
-    }
-);`,
-    },
-  ]}
-  groupId="client-language"
-/>
+The quality and development speed of AI applications depends on high-quality evaluation datasets and metrics to test and optimize your applications on. The LangSmith SDK and UI make building and running high-quality evaluations easy.
 
-- See more on the [evaluation quick start page](./evaluation/quickstart.mdx).
+- Get started by [creating your first evaluation](./evaluation).
+- Quickly assess the performance of your application using our [off-the-shelf evaluators](https://docs.smith.langchain.com/evaluation/how_to_guides/prebuilt_evaluators) as a starting point.
+- [Analyze results](./evaluation/how_to_guides#analyzing-experiment-results) of evaluations in the LangSmith UI and [compare results](https://docs.smith.langchain.com/evaluation/how_to_guides/compare_experiment_results) over time.
+- Easily collect [human feedback](./evaluation/how_to_guides#annotation-queues-and-human-feedback) on your data to improve your application.
 
-## Next Steps
+## Prompt Engineering
 
-Check out the following sections to learn more about LangSmith:
+While traditional software applications are built by writing code, AI applications involve writing prompts to instruct the LLM on what to do. LangSmith provides a set of tools designed to enable and facilitate prompt engineering to help you find the perfect prompt for your application.
 
-- **[User Guide](./user_guide.mdx)**: Learn about the workflows LangSmith supports at each stage of the LLM application lifecycle.
-- **[Pricing](/pricing)**: Learn about the pricing model for LangSmith.
-- **[Self-Hosting](./self_hosting)**: Learn about self-hosting options for LangSmith.
-- **[Tracing](./tracing/index.mdx)**: Learn about the tracing capabilities of LangSmith.
-- **[Evaluation](./evaluation/index.mdx)**: Learn about the evaluation capabilities of LangSmith.
-
-## Additional Resources
-
-- **[LangSmith Cookbook](https://github.com/langchain-ai/langsmith-cookbook/tree/main)**: A collection of tutorials and end-to-end walkthroughs using LangSmith.
-- **[LangChain Python](https://python.langchain.com/)**: Docs for the Python LangChain library.
-- **[LangChain Python API Reference](https://api.python.langchain.com/)**: documentation to review the core APIs of LangChain.
-- **[LangChain JS](https://js.langchain.com/docs/)**: Docs for the TypeScript LangChain library
-- **[Discord](https://discord.gg/6adMQxSpJS)**: Join us on our Discord to discuss all things LangChain!
-
-## FAQ
-
-### How do I migrate projects between organizations?
-
-Currently we do not support project migration betwen organizations. While you can manually imitate this by reading and writing runs and datasets using the SDK (see the querying runs and traces guide [here](./tracing/faq/querying_traces.mdx)), it will be fastest to create a new project within your organization and go from there.
-
-### Why aren't my runs aren't showing up in my project?
-
-If you aren't seeing any warnings when running your application, it may be that you are still using an API key from your "personal" organization. Check your most recent runs there to confirm by selecting your `Personal` tenant in the [settings](https://smith.langchain.com/settings) page and then viewing your [projects](https://smith.langchain.com/projects).
-
-If you're still running into issues, please reach out to us at <a href="mailto:support@langchain.dev">support@langchain.dev</a>.
-
-### My team deals with sensitive data that cannot be logged. How can I ensure that only my team can access it?
-
-If you are interested in a private deployment of LangSmith or if you need to self-host, please reach out to us at <a href="mailto:sales@langchain.dev">sales@langchain.dev</a>. Self-hosting LangSmith requires an annual enterprise license that also comes with support and formalized access to the LangChain team.
+- Get started by [creating your first prompt](./prompt_engineering/tutorials/optimize_classifier).
+- Iterate on models and prompts using the [Playground](./prompt_engineering/how_to_guides#playground).
+- [Manage prompts programmatically](https://docs.smith.langchain.com/prompt_engineering/how_to_guides/prompts/manage_prompts_programatically) in your application.

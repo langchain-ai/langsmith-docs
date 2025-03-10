@@ -1,142 +1,346 @@
 ---
-sidebar_label: Overview
+sidebar_label: Quick Start
 sidebar_position: 0
+table_of_contents: true
 ---
 
-import ThemedImage from "@theme/ThemedImage";
+import {
+  CodeTabs,
+  python,
+  typescript,
+  ShellBlock,
+} from "@site/src/components/InstructionsWithCode";
+import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
-# Evaluation Overview
+# Evaluation Quick Start
 
-## What are evaluations?
+This quick start will get you up and running with our evaluation SDK and Experiments UI.
 
-Evaluations allow you to understand the performance of your LLM application over time. At its core, an evaluation is a function that takes in a set of inputs and outputs from your chain, agent, or model,
-and returns a score (or multiple scores). This score may be based on comparing the outputs with reference outputs (e.g. with string matching or using an LLM as a judge).
-However, there are also evaluators that don't require a reference output - for example, one that checks if the output is valid JSON, which is a common requirement in LLM applications.
-LangSmith allows you to run evaluations on your application via `Datasets`, which are made up of `Examples`.
+## 1. Install Dependencies
 
-## Components of an evaluation pipeline
-
-The following diagram outlines the building blocks for evaluations in LangSmith. `Datasets` define the inputs over which you run your chain, model, or agent (the `Task`),
-and optionally the reference outputs against which your evaluator will compare the outputs of your `Task`. These datasets can be from any number of sources -
-you might manually curate them, collect them from user input/feedback, or generate them via LLM. Your `Evaluator` can be any arbitrary function which returns a score
-based on the inputs and outputs of your `Task`, and the reference output if desired. You can also use [one of LangSmith's off-the-shelf
-evaluators](evaluation/faq/evaluator-implementations) to get started quickly!
-
-<ThemedImage
-  alt="LangSmith Primitives"
-  sources={{
-    light: require("./static/langsmith_summary.png").default,
-    dark: require("./static/langsmith_summary_dark.png").default,
-  }}
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      language: "bash",
+      content: `pip install -U langsmith openai pydantic`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      language: "bash",
+      content: `yarn add langsmith openai zod`,
+    },
+  ]}
+  groupId="client-language"
 />
 
-## Datasets
+## 2. Create an API key
 
-`Datasets` are collections of `Examples`, the core building block for the evaluation workflow in LangSmith.
-Examples provide the inputs over which you will be running your pipeline,
-and, if applicable, the outputs that you will be comparing against.
-All examples in a given dataset should follow the same schema. Examples contain an `"inputs"` dict and an `"output"` dict,
-along with (optionally) a `metadata` dict.
+To create an API key head to the <RegionalUrl text='Settings page' suffix='/settings' />. Then click **Create API Key.**
 
-![Example](static/sample_langsmith_example.png)
+## 3. Set up your environment
 
-<div
-  style={{
-    display: "flex",
-    flexDirection: "column",
-    textAlign: "center",
-    fontSize: "14px",
-    marginTop: "-15px",
-    marginBottom: "30px",
-  }}
->
-  An Example in the LangSmith UI
-</div>
-
-A single run of all your example inputs through your `Task` is called an `Experiment`. In LangSmith, you can easily view all the experiments that are associated
-with your dataset, and track your application's performance over time!
-
-![Dataset](static/sample_langsmith_dataset.png)
-
-<div
-  style={{
-    display: "flex",
-    flexDirection: "column",
-    textAlign: "center",
-    fontSize: "14px",
-    marginTop: "-15px",
-    marginBottom: "30px",
-  }}
->
-  A Dataset in the LangSmith UI
-</div>
-
-### Creating Datasets
-
-Datasets in LangSmith can be created in two main ways:
-
-- [In the LangSmith SDK](evaluation/faq/manage-datasets#how-to-manage-datasets-programmatically) with `create_dataset`.
-- [In the LangSmith UI](evaluation/faq/manage-datasets) by clicking "New Dataset" from the [LangSmith datasets page](https://smith.langchain.com/datasets). These can
-  be uploaded as a CSV, or you can manually create examples in the UI.
-
-### Types of Datasets
-
-Dataset types communicate common input and output schemas. There are three types of datasets in LangSmith: `kv`, `llm`, and `chat`. `kv` datasets are the default type, and are
-sufficient for almost all use-cases. `llm` and `chat` datasets can be useful to conveniently export datasets into known fine-tuning formats.
-
-- `kv`: In `kv` datasets, inputs and outputs can be arbitrary key-value pairs. These are useful when evaluating chains and agents that require
-  multiple inputs or that return multiple outputs.
-  The tradeoff with these datasets is that running evaluations on them can be a bit more involved. If there are multiple keys, you will have to manually specify the `prepare_data`
-  function in any off-the-shelf evaluators so they know what information to consider in generating a score.
-- `llm`: `llm` datasets correspond to the string inputs and outputs from the "completion" style LLMS (string in, string out). The `"inputs"` dictionary contains a single `"input"` key mapped to a single prompt string. Similarly, the `"outputs"` dictionary contains a single `"output"` key mapped to a single response string.
-- `chat`: `chat` datasets correspond to messages and generations from LLMs that expect structured "chat" messages as inputs and outputs. Each example row
-  expects an `"inputs"` dictionary containing a single `"input"` key mapped to a list of serialized chat messages. The `"outputs"` dictionary contains a single `"output"` key mapped to a single list of serialized chat messages.
-
-## Evaluators
-
-Evaluators are functions that help score how well your system did on a particular example. When running an evaluation,
-your example inputs are run through your `Task` to produce `Runs`, which are then passed into your evaluator along with the `Example`.
-The function then returns an `EvaluationResult`, which specifies your metric name and score. Evaluations in LangSmith are run via the `evaluate()` function.
-The following diagram gives an overview of the data flow in an evaluation:
-
-<ThemedImage
-  alt="LangSmith Evaluations"
-  sources={{
-    light: require("./static/langsmith_app_flow.png").default,
-    dark: require("./static/langsmith_app_flow_dark.png").default,
-  }}
+<CodeTabs
+  tabs={[
+    ShellBlock(`export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY="<your-langchain-api-key>"
+# The example uses OpenAI, but it's not necessary in general
+export OPENAI_API_KEY="<your-openai-api-key>"`),
+  ]}
+  groupId="client-language"
 />
-<div style={{ marginBottom: "30px" }} />
 
-The inputs to an evaluator consist of:
+## 4. Import dependencies
 
-1. An `Example` - the inputs for your pipeline and optionally the reference outputs or labels
-2. A `Run` - observed output gathered from running the inputs through the `Task`
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      content: `from langsmith import wrappers, Client
+from pydantic import BaseModel, Field
+from openai import OpenAI
 
-An evaluator will then return an `EvaluationResult` (or similarly shaped dictionary), which is made up of:
+client = Client()
+openai_client = wrappers.wrap_openai(OpenAI())`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `import { Client } from "langsmith";
+import OpenAI from "openai";
+import { z } from "zod";
+import { zodResponseFormat } from "openai/helpers/zod";
+import type { EvaluationResult } from "langsmith/evaluation";
+import { evaluate } from "langsmith/evaluation";   
 
-- `key`: The name the metric being evaluated
-- `score`: The value of the metric on this example
-- `comment`: the reasoning trajectory or other string information motivating the score
 
-### Types of Evaluators
+const client = new Client();
 
-The evaluator itself can be any arbitrary function. There are a few different types of evaluators that are commonly used:
+const openai = new OpenAI();`,
+    },
+  ]}
+  groupId="client-language"
+/>
 
-- **Heuristics**: A heuristic evaluator is a hard-coded function that does some computation to determine a score. For example, you might write an
-  evaluator that checks whether the output of the system is an empty string, or determines if it is valid JSON. These would be considered **reference-free** evaluators,
-  as they don't consider any example output when making their decision. You might also want to check that the output of the system matches the reference output exactly,
-  which would be considered a **ground truth** evaluator because it compares the output to a reference. See [How to create custom evaluators](evaluation/faq/custom-evaluators).
-- **LLM-as-judge**: An LLM-as-judge evaluator uses an LLM to score system output. For example, you might want to check whether your system is outputting
-  offensive content. This is **reference-free**, as there is no comparison to an example output. You might also want to check whether the system output has the same
-  meaning as the example output, which would be a **ground truth** evaluator. To get started with LLM-as-a-judge, try out LangSmith's [off-the-shelf evaluators](evaluation/faq/evaluator-implementations)!
-- **Human**: You can also evaluate your runs manually. This can be done in LangSmith [via the SDK](tracing/faq/logging_feedback#capturing-feedback-programmatically),
-  or [in the LangSmith UI](tracing/faq/logging_feedback#annotating-traces-with-feedback).
+## 5. Create a dataset
+
+<CodeTabs
+  tabs={[
+    {
+value: "python",
+label: "Python",
+content: `# For other dataset creation methods, see:
+# https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
+# https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
+
+# Create inputs and reference outputs
+examples = [
+    (
+        "Which country is Mount Kilimanjaro located in?",
+        "Mount Kilimanjaro is located in Tanzania.",
+    ),
+    (
+        "What is Earth's lowest point?",
+        "Earth's lowest point is The Dead Sea.",
+    ),
+]
+
+inputs = [{"question": input_prompt} for input_prompt, _ in examples]
+outputs = [{"answer": output_answer} for _, output_answer in examples]
+
+# Programmatically create a dataset in LangSmith
+dataset = client.create_dataset(
+    dataset_name="Sample dataset", description="A sample dataset in LangSmith."
+)
+
+# Add examples to the dataset
+client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `
+// For other dataset creation methods, see: 
+// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically 
+// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
+    
+// Create inputs and reference outputs
+const examples: [string, string][] = [
+  [
+    "Which country is Mount Kilimanjaro located in?",
+    "Mount Kilimanjaro is located in Tanzania.",
+  ],
+  [
+    "What is Earth's lowest point?",
+    "Earth's lowest point is The Dead Sea.",
+  ],
+];
+
+const inputs = examples.map(([inputPrompt]) => ({
+  question: inputPrompt,
+}));
+const outputs = examples.map(([, outputAnswer]) => ({
+  answer: outputAnswer,
+}));
+
+// Programmatically create a dataset in LangSmith
+const dataset = await client.createDataset("Sample dataset", {
+  description: "A sample dataset in LangSmith.",
+});
+
+// Add examples to the dataset
+await client.createExamples({
+  inputs,
+  outputs,
+  datasetId: dataset.id,
+});
+`,
+},
+]}
+groupId="client-language"
+/>
+
+## 6. Define what you're evaluating
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      content: `# Define the application logic you want to evaluate inside a target function
+# The SDK will automatically send the inputs from the dataset to your target function
+def target(inputs: dict) -> dict:
+    response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            { "role": "system", "content": "Answer the following question accurately" },
+            { "role": "user", "content": inputs["question"] },
+        ],
+    )
+    return { "response": response.choices[0].message.content.strip() }
+  `},
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `// Define the application logic you want to evaluate inside a target function
+// The SDK will automatically send the inputs from the dataset to your target function
+async function target(inputs: string): Promise<{ response: string }> {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: "Answer the following question accurately" },
+      { role: "user", content: inputs },
+    ],
+  });
+  return { response: response.choices[0].message.content?.trim() || "" };
+}
+`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+## 7. Define evaluator
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      content: `# Define instructions for the LLM judge evaluator
+instructions = """Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
+- False: No conceptual match and similarity
+- True: Most or full conceptual match and similarity
+- Key criteria: Concept should match, not exact wording.
+"""
+
+# Define output schema for the LLM judge
+class Grade(BaseModel):
+    score: bool = Field(
+        description="Boolean that indicates whether the response is accurate relative to the reference answer"
+    )
+
+# Define LLM judge that grades the accuracy of the response relative to reference output
+def accuracy(outputs: dict, reference_outputs: dict) -> bool:
+    response = openai_client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            { "role": "system", "content": instructions },
+            {
+                "role": "user",
+                "content": f"""Ground Truth answer: {reference_outputs["answer"]}; 
+                Student's Answer: {outputs["response"]}"""
+            },
+        ],
+        response_format=Grade,
+    )
+    return response.choices[0].message.parsed.score`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `// Define instructions for the LLM judge evaluator
+const instructions = \`Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
+- False: No conceptual match and similarity
+- True: Most or full conceptual match and similarity
+- Key criteria: Concept should match, not exact wording.
+\`;
+
+// Define context for the LLM judge evaluator
+const context = \`Ground Truth answer: {reference}; Student's Answer: {prediction}\`;
+
+// Define output schema for the LLM judge
+const ResponseSchema = z.object({
+  score: z
+    .boolean()
+    .describe(
+      "Boolean that indicates whether the response is accurate relative to the reference answer"
+    ),
+});
+
+// Define LLM judge that grades the accuracy of the response relative to reference output
+async function accuracy({
+  outputs,
+  referenceOutputs,
+}: {
+  outputs?: Record<string, string>;
+  referenceOutputs?: Record<string, string>;
+}): Promise<EvaluationResult> {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: instructions },
+      { role: "user", content: context.replace("{prediction}", outputs?.answer || "").replace("{reference}", referenceOutputs?.answer || "") }
+    ],
+    response_format: zodResponseFormat(ResponseSchema, "response")
+  });
+
+  return {
+    key: "accuracy",
+    score: ResponseSchema.parse(JSON.parse(response.choices[0].message.content || "")).score,
+  };
+}`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+## 8. Run and view results
+
+<CodeTabs tabs={[
+  
+  {
+    value: "python",
+    label: "Python",
+    content: `# After running the evaluation, a link will be provided to view the results in langsmith
+experiment_results = client.evaluate(
+    target,
+    data="Sample dataset",
+    evaluators=[
+        accuracy,
+        # can add multiple evaluators here
+    ],
+    experiment_prefix="first-eval-in-langsmith",
+    max_concurrency=2,
+)
+`},
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `// After running the evaluation, a link will be provided to view the results in langsmith
+await evaluate(
+  (exampleInput) => {
+    return target(exampleInput.question);
+  },
+  {
+    data: "Sample dataset",
+    evaluators: [
+      accuracy,
+      // can add multiple evaluators here
+    ],
+    experimentPrefix: "first-eval-in-langsmith",
+    maxConcurrency: 2,
+  }
+);
+`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+Click the link printed out by your evaluation run to access the LangSmith Experiments UI, and explore the results of your evaluation.
+
+![](./how_to_guides/static/view_experiment.gif)
 
 ## Next steps
 
-To get started with code, check out the [Quick Start Guide](evaluation/quickstart).
+For conceptual explanations see the [Conceptual guide](./evaluation/concepts).
+See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
+For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
+For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
 
-If you want to learn how to accomplish a particular task, check out our comprehensive [How-To Guides](evaluation/faq)
-
-For a higher-level set of recommendations on how to think about testing and evaluating your LLM app, check out the [evaluation recommendations](evaluation/recommendations) page.
+If you prefer video tutorials, check out the [Datasets, Evaluators, and Experiments videos](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.

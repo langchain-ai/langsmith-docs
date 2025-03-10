@@ -9,6 +9,7 @@
 .cache-loader
 docs/api
 src/supabase.d.ts
+versioned_docs/version-old/cookbook
 
 # Misc
 .DS_Store
@@ -28,3 +29,4 @@ __pycache__
 .idea
 
 .yarn/cache
+.vercel

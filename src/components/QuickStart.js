@@ -19,7 +19,7 @@ const client = wrapOpenAI(new OpenAI());
 const pipeline = traceable(async (user_input) => {
     const result = await client.chat.completions.create({
         messages: [{ role: "user", content: user_input }],
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
     });
     return result.choices[0].message.content;
 });
@@ -92,7 +92,7 @@ post_run(child_run_id, "OpenAI Call", "llm", {"messages": messages}, parent_run_
 
 # Generate a completion
 client = openai.Client()
-chat_completion = client.chat.completions.create(model="gpt-3.5-turbo", messages=messages)
+chat_completion = client.chat.completions.create(model="gpt-4o-mini", messages=messages)
 
 # End runs
 patch_run(child_run_id, chat_completion.dict())
@@ -103,15 +103,14 @@ patch_run(parent_run_id, {"answer": chat_completion.choices[0].message.content})
 
 export const PythonSDKTracingCode = () =>
   `import openai
-from langsmith.wrappers import wrap_openai
-from langsmith import traceable\n
+from langsmith import wrappers, traceable\n
 # Auto-trace LLM calls in-context
-client = wrap_openai(openai.Client())\n
+client = wrappers.wrap_openai(openai.Client())\n
 @traceable # Auto-trace this function
 def pipeline(user_input: str):
     result = client.chat.completions.create(
         messages=[{"role": "user", "content": user_input}],
-        model="gpt-3.5-turbo"
+        model="gpt-4o-mini"
     )
     return result.choices[0].message.content\n
 pipeline("Hello, world!")
@@ -159,10 +158,9 @@ export function ConfigureSDKEnvironmentCodeTabs({}) {
   return (
     <CodeTabs
       tabs={[
-        ShellBlock(`export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-
-# The below examples use the OpenAI API, though it's not necessary in general
+        ShellBlock(`export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY=<your-api-key>
+# This example uses OpenAI, but you can use any LLM provider of choice
 export OPENAI_API_KEY=<your-openai-api-key>`),
       ]}
       groupId="client-language"
@@ -174,11 +172,10 @@ export function ConfigureEnvironmentCodeTabs({}) {
   return (
     <CodeTabs
       tabs={[
-        ShellBlock(`export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-
-# The below examples use the OpenAI API, though it's not necessary in general
-export OPENAI_API_KEY=<your-openai-api-key>`),
+        ShellBlock(`export LANGSMITH_TRACING=true
+          export LANGSMITH_API_KEY=<your-api-key>
+          # This example uses OpenAI, but you can use any LLM provider of choice
+          export OPENAI_API_KEY=<your-openai-api-key>`),
       ]}
       groupId="client-language"
     />
@@ -194,7 +191,7 @@ const prompt = ChatPromptTemplate.fromMessages([
   ["system", "You are a helpful assistant. Please respond to the user's request only based on the given context."],
   ["user", "Question: {question}\\nContext: {context}"],
 ]);
-const model = new ChatOpenAI({ modelName: "gpt-3.5-turbo" });
+const model = new ChatOpenAI({ modelName: "gpt-4o-mini" });
 const outputParser = new StringOutputParser();
 
 const chain = prompt.pipe(model).pipe(outputParser);
@@ -234,7 +231,7 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", "You are a helpful assistant. Please respond to the user's request only based on the given context."),
     ("user", "Question: {question}\\nContext: {context}")
 ])
-model = ChatOpenAI(model="gpt-3.5-turbo")
+model = ChatOpenAI(model="gpt-4o-mini")
 output_parser = StrOutputParser()
 
 chain = prompt | model | output_parser
@@ -254,9 +251,9 @@ chain.invoke({"question": question, "context": context})`}
 }
 
 export function ConfigureLangChainEnvironmentCodeTabs() {
-  const envVars = `export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>
-# The below examples use the OpenAI API, though it's not necessary in general
+  const envVars = `export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY=<your-api-key>
+# This example uses OpenAI, but you can use any LLM provider of choice
 export OPENAI_API_KEY=<your-openai-api-key>`;
   const typescriptFootnote = `If you are using LangChain.js with LangSmith and are not in a serverless environment, we also recommend setting the following explicitly to reduce latency:
 
@@ -309,7 +306,7 @@ def my_chat_bot(prompt: str) -> Iterable[str]:
         {"role": "user", "content": prompt},
     ]
     chunks = client.chat.completions.create(
-        model="gpt-3.5-turbo", messages=messages, stream=True
+        model="gpt-4o-mini", messages=messages, stream=True
     )
     for chunk in chunks:
         yield chunk.choices[0].delta.content\n\n
@@ -356,7 +353,7 @@ def llm_chain(user_input: str, **kwargs: Any) -> str:
 def my_chat_model(messages: List[Dict], temperature: float = 0.0, **kwargs: Any):
     """Call a chat model."""
     return client.chat.completions.create(
-        model="gpt-3.5-turbo", messages=messages, temperature=temperature, **kwargs
+        model="gpt-4o-mini", messages=messages, temperature=temperature, **kwargs
     )\n\n
 @traceable(run_type="chain")
 def llm_chat_chain(user_input: str, **kwargs: Any) -> str:

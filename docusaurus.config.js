@@ -5,6 +5,11 @@ require("dotenv").config();
 // Note: type annotations allow type checking and IDEs autocompletion
 // eslint-disable-next-line import/no-extraneous-dependencies
 
+const prism = require("prism-react-renderer");
+
+const baseLightCodeBlockTheme = prism.themes.vsLight;
+const baseDarkCodeBlockTheme = prism.themes.vsDark;
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "🦜️🛠️ LangSmith",
@@ -35,18 +40,17 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          lastVersion: "2.0",
+          lastVersion: "current",
           versions: {
             current: {
-              label: "old",
-              path: "old",
-              badge: false,
-              banner: "unmaintained",
-            },
-            "2.0": {
               label: "stable",
-              banner: "none",
               badge: false,
+            },
+            old: {
+              label: "old",
+              banner: "unmaintained",
+              badge: false,
+              path: "old",
             },
           },
           sidebarPath: require.resolve("./sidebars.js"),
@@ -63,17 +67,23 @@ const config = {
               (i) => !(i.type === "doc" && i.id.split("/").at(-1) === "index")
             );
 
-            sidebarItems.forEach((subItem) => {
+            sidebarItems = sidebarItems.map((subItem) => {
+              const newItem = { ...subItem };
+
               // This allows breaking long sidebar labels into multiple lines
               // by inserting a zero-width space after each slash.
               if (
-                "label" in subItem &&
-                subItem.label &&
-                subItem.label.includes("/")
+                "label" in newItem &&
+                newItem.label &&
+                newItem.label.includes("/")
               ) {
                 // eslint-disable-next-line no-param-reassign
-                subItem.label = subItem.label.replace(/\//g, "/\u200B");
+                newItem.label = newItem.label.replace(/\//g, "/\u200B");
               }
+              if (args.item.className) {
+                newItem.className = args.item.className;
+              }
+              return newItem;
             });
             return sidebarItems;
           },
@@ -88,17 +98,24 @@ const config = {
       }),
     ],
   ],
-
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       colorMode: {
-        disableSwitch: true,
+        disableSwitch: false,
         respectPrefersColorScheme: true,
       },
+      announcementBar: {
+        content:
+          'Join us at <a href="https://interrupt.langchain.com/" target="_blank" rel="noopener noreferrer"> Interrupt: The Agent AI Conference by LangChain</a> on May 13 & 14 in San Francisco!',
+      },
       prism: {
-        theme: require("prism-react-renderer/themes/vsLight"),
-        darkTheme: require("prism-react-renderer/themes/vsDark"),
+        theme: {
+          ...baseLightCodeBlockTheme,
+        },
+        darkTheme: {
+          ...baseDarkCodeBlockTheme,
+        },
       },
       image: "img/langsmith-preview.png",
       navbar: {
@@ -121,9 +138,23 @@ const config = {
             position: "right",
           },
           {
-            href: "https://api.smith.langchain.com/redoc",
-            label: "Go to API Docs",
+            type: "dropdown",
+            label: "API Reference",
             position: "left",
+            items: [
+              {
+                label: "REST",
+                href: "https://api.smith.langchain.com/redoc",
+              },
+              {
+                label: "Python",
+                to: "https://docs.smith.langchain.com/reference/python",
+              },
+              {
+                label: "JS/TS",
+                to: "https://docs.smith.langchain.com/reference/js",
+              },
+            ],
           },
         ],
       },
