@@ -6,6 +6,7 @@ import {
 
 # How to define a target function to evaluate
 
+## Target function signature
 In order to evaluate an application in code, we need a way to run the application. When using [evaluate()](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.evaluate) we'll do this by passing in a _target function_ argument. This is a function that takes in a dataset [Example's](../concepts#examples) inputs and returns the application output as a dict. Within this function we can call our application however we'd like. We can also format the output however we'd like. The key is that any evaluator functions we define should work with the output format we return in our target function.
 
 ```python
@@ -35,11 +36,11 @@ results = client.evaluate(
 :::tip Automatic tracing
 
 `evaluate()` will automatically trace your target function.
-This means that if you run any traceable code within your target function, this will also be traced as child runs of the target function.
+This means that if you run any traceable code within your target function, this will also be traced as child runs of the target trace.
 
 :::
 
-## Example: single LLM call
+## Example: Single LLM call
 
 When we're iterating on a prompt or comparing models it can be useful to evaluate a single LLM call:
 
@@ -127,14 +128,14 @@ def target(inputs: dict) -> dict:
 ]}
 />
 
-## Example: non-LLM component of your system
+## Example: Non-LLM component
 
-Sometimes, you may want to evaluate a step of your application that doesn't involve an LLM at all. This includes but is not limited to:
+Sometimes, you may want to evaluate a step of your application that doesn't involve an LLM. This includes but is not limited to:
 
-- Retrieval step in a RAG application
-- Execution of a tool (for example a research tool)
+- A retrieval step in a RAG application
+- Execution of a tool
 
-In this example we will show how to test a simple calculator tool. In practice 
+In this example we show how to test a simple calculator tool. In practice evaluations are useful for components that have more complex and hard-to-unit-test behavior, like a retriever or an online research tool.
 
 <CodeTabs
   groupId="client-language"
@@ -173,8 +174,10 @@ def target(inputs: dict) -> dict:
       value: "typescript",
       label: "TypeScript",
       language: "typescript",
-      content: `        
-        const calculatorTool =  async ({ operation, number1, number2 }) => {
+      content: `import { traceable } from "langsmith/traceable";
+ 
+	// Optionally wrap in 'traceable' to trace all invocations of this function. 
+        const calculatorTool =  traceable( async ({ operation, number1, number2 }) => {
             // Functions must return strings
             if (operation === "add") {
             return String(number1 + number2);
@@ -187,10 +190,10 @@ def target(inputs: dict) -> dict:
             } else {
             throw new Error("Invalid operation.");
             }
-        };
+        });
         
         // This is the function you will evaluate.
-        const target = async(inputs: dict) => {
+        const target = async(inputs) => {
             // This assumes your dataset has inputs with \`operation\`, \`num1\`, and \`num2\` keys
             const result = await calculatorTool.invoke({
                 operation: inputs.operation,
@@ -204,9 +207,9 @@ def target(inputs: dict) -> dict:
 ]}
 />
 
-## Example: application or agent
+## Example: Application or agent
 
-Once you are done testing the individual components of your system, it is good practice to test your entire system end to end.
+Certain aspects of an application's performance can only be tested in an end-to-end manner.
 
 <CodeTabs
   groupId="client-language"
@@ -235,7 +238,7 @@ def target(inputs: dict) -> dict:
         import { agent } from 'my_agent';
 
         // This is the function you will evaluate.
-        const target = async(inputs: dict) => {
+        const target = async(inputs) => {
             // This assumes your dataset has inputs with a \`messages\` key
             const messages = inputs.messages;
             // Replace \`invoke\` with whatever you use to call your agent
@@ -250,17 +253,14 @@ def target(inputs: dict) -> dict:
 />
 
 
-:::tip Passing LangGraph Agents as Target
-If you have a LangGraph agent that accepts the inputs defined in your dataset, you can treat it as a target function itself:
+:::tip LangGraph / LangChain targets
+If you have a LangGraph/LangChain agent that accepts the inputs defined in your dataset and that returns the output format you want to use in your evaluators, you can pass that object in as the target directly:
 
 ```python
 from my_agent import agent
 from langsmith import Client
 
 client = Client()
-client.evaluate(
-    target=agent,
-    ...
-)
+client.evaluate(agent ...)
 ```
 :::
