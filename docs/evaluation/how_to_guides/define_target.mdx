@@ -4,52 +4,65 @@ import {
   typescript,
 } from "@site/src/components/InstructionsWithCode";
 
-# Defining a Target Function
+# How to define a target function to evaluate
 
-Before running an evaluation, you need to define a target function. There are typically a few different types of target function, which we cover in this guide.
-However, don't feel limited by these options - you can define your own target function as needed!
+In order to evaluate an application in code, we need a way to run the application. When using [evaluate()](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.evaluate) we'll do this by passing in a _target function_ argument. This is a function that takes in a dataset [Example's](../concepts#examples) inputs and returns the application output as a dict. Within this function we can call our application however we'd like. We can also format the output however we'd like. The key is that any evaluator functions we define should work with the output format we return in our target function.
 
-## A single LLM call
+```python
+from langsmith import Client
 
-Evaluating a single LLM call has many practical uses. You can use it to do the following:
+# 'inputs' will come from your dataset.
+def dummy_target(inputs: dict) -> dict:
+    return {"foo": 1, "bar": "two"}
 
-- Evaluate a single step of your larger agent, for example the routing step
-- Evaluate a model's capabilities on a specific task, for example tool calling or hallucination
+# 'inputs' will come from your dataset.
+# 'outputs' will come from your target function.
+def evaluator_one(inputs: dict, outputs: dict) -> bool:
+    return outputs["foo"] == 2
 
-:::note API Key
-Make sure you have set your `OPENAI_API_KEY` in your environment variables.
+def evaluator_two(inputs: dict, outputs: dict) -> bool:
+    return len(outputs["bar"]) < 3
+
+client = Client()
+results = client.evaluate(
+    dummy_target,  # <-- target function
+    data="your-dataset-name",
+    evaluators=[evaluator_one, evaluator_two], 
+    ...
+)
+```
+
+:::tip Automatic tracing
+
+`evaluate()` will automatically trace your target function.
+This means that if you run any traceable code within your target function, this will also be traced as child runs of the target function.
+
 :::
+
+## Example: single LLM call
+
+When we're iterating on a prompt or comparing models it can be useful to evaluate a single LLM call:
 
 <CodeTabs
   groupId="client-language"
   tabs={[
     {
-      value: "langchain-python",
-      label: "With LangChain (Python)",
-      language: "python",
-      content: `from langchain_openai import ChatOpenAI
-
-# This is the function you will evaluate
-def target(inputs: dict) -> dict:
-    # This assumes your dataset has inputs with a \`messages\` key
-    messages = inputs["messages"]
-    response = ChatOpenAI(model="gpt-4o-mini").invoke(messages)
-    return {"answer": response.content}
-      `
-    },
-    {
       value: "no-langchain-python",
-      label: "Without LangChain (Python)",
+      label: "Python",
       language: "python",
-      content: `from openai import OpenAI
+      caption: "Set env var `OPENAI_API_KEY` and install deps `pip install -U openai langsmith`.",
+      content: `from langsmith import wrappers
+from openai import OpenAI
 
-client = OpenAI()
+# Optionally wrap the OpenAI client to automatically 
+# trace all model calls.
+oai_client = wrappers.wrap_openai(OpenAI())
 
-# This is the function you will evaluate
 def target(inputs: dict) -> dict:
-    # This assumes your dataset has inputs with a \`messages\` key
+    # This assumes your dataset has inputs with a 'messages' key.
+    # You can update to match your dataset schema.
     messages = inputs["messages"]
-    response = client.chat.completions.create(
+    response = oai_client.chat.completions.create(
         messages=messages,
         model="gpt-4o-mini",
     )
@@ -57,31 +70,17 @@ def target(inputs: dict) -> dict:
       `
     },
     {
-      value: "langchain-typescript",
-      label: "With LangChain (TypeScript)",
-      language: "typescript",
-      content: `
-        import { ChatOpenAI } from '@langchain/openai';
-
-        // This is the function you will evaluate
-        const target = async(inputs: dict) => {
-            // This assumes your dataset has inputs with a \`messages\` key
-            const messages = inputs.messages;
-            const response = await ChatOpenAI(model="gpt-4o-mini").invoke(messages);
-            return {"answer": response.content};
-        }
-      `
-    },
-    {
       value: "no-langchain-typescript",
-      label: "Without LangChain (TypeScript)",
+      label: "TypeScript",
       language: "typescript",
+      caption: "Set env var `OPENAI_API_KEY` and install `openai` and `langsmith`.",
       content: `import OpenAI from 'openai';
+	import { wrapOpenAI } from "langsmith/wrappers";
 
-        const client = new OpenAI();
+        const client = wrapOpenAI(new OpenAI());
 
-        // This is the function you will evaluate
-        const target = async(inputs: dict) => {
+        // This is the function you will evaluate.
+        const target = async(inputs) => {
             // This assumes your dataset has inputs with a \`messages\` key
             const messages = inputs.messages;
             const response = await client.chat.completions.create({
@@ -91,20 +90,51 @@ def target(inputs: dict) -> dict:
             return { answer: response.choices[0].message.content };
         }
       `
+    },
+    {
+      value: "langchain-python",
+      label: "Python (LangChain)",
+      language: "python",
+      caption: "Set env var `OPENAI_API_KEY` and install deps `pip install -U langchain[openai]`.",
+      content: `from langchain.chat_models import init_chat_model
+
+llm = init_chat_model("openai:gpt-4o-mini")
+
+def target(inputs: dict) -> dict:
+    # This assumes your dataset has inputs with a \`messages\` key
+    messages = inputs["messages"]
+    response = llm.invoke(messages)
+    return {"answer": response.content}
+      `
+    },
+    {
+      value: "langchain-typescript",
+      label: "TypeScript (LangChain)",
+      language: "typescript",
+      caption: "Set env var `OPENAI_API_KEY` and install `@langchain/openai`.",
+      content: `
+        import { ChatOpenAI } from '@langchain/openai';
+
+        // This is the function you will evaluate.
+        const target = async(inputs) => {
+            // This assumes your dataset has inputs with a \`messages\` key
+            const messages = inputs.messages;
+            const response = await ChatOpenAI(model="gpt-4o-mini").invoke(messages);
+            return {"answer": response.content};
+        }
+      `
     }
 ]}
 />
 
-## A non-LLM component of your system
+## Example: non-LLM component of your system
 
 Sometimes, you may want to evaluate a step of your application that doesn't involve an LLM at all. This includes but is not limited to:
 
 - Retrieval step in a RAG application
-- Execution of a tool (for example a tool that calls slack or sends an email)
+- Execution of a tool (for example a research tool)
 
-In this example we will show how to test a tool you have written for your agent. This is a simple example with just a calculator tool,
-but we can extend this to testing the functionality of any tool. We highly recommend testing ALL your tools in order to eliminate them
-as a potential source of error in your application.
+In this example we will show how to test a simple calculator tool. In practice 
 
 <CodeTabs
   groupId="client-language"
@@ -113,7 +143,11 @@ as a potential source of error in your application.
       value: "python",
       label: "Python",
       language: "python",
-      content: `def calculator_tool(operation: str, number1: float, number2: float) -> str:
+      content: `from langsmith import traceable
+
+# Optionally decorate with '@traceable' to trace all invocations of this function.
+@traceable
+def calculator_tool(operation: str, number1: float, number2: float) -> str:
     if operation == "add":
         return str(number1 + number2)
     elif operation == "subtract":
@@ -122,20 +156,22 @@ as a potential source of error in your application.
         return str(number1 * number2)
     elif operation == "divide":
         return str(number1 / number2)
+    else:
+        raise ValueError(f"Unrecognized operation: {operation}.")
 
-# This is the function you will evaluate
+# This is the function you will evaluate.
 def target(inputs: dict) -> dict:
-    # This assumes your dataset has inputs with \`operation\`, \`num1\`, and \`num2\` keys
+    # This assumes your dataset has inputs with \`operation\`, \`num1\`, and \`num2\` keys.
     operation = inputs["operation"]
     number1 = inputs["num1"]
     number2 = inputs["num2"]
-    response = calculator_tool(operation, number1, number2)
-    return {"answer": response}
+    result = calculator_tool(operation, number1, number2)
+    return {"result": result}
       `
     },
     {
       value: "typescript",
-      label: "JavaScript/TypeScript",
+      label: "TypeScript",
       language: "typescript",
       content: `        
         const calculatorTool =  async ({ operation, number1, number2 }) => {
@@ -153,22 +189,22 @@ def target(inputs: dict) -> dict:
             }
         };
         
-        // This is the function you will evaluate
+        // This is the function you will evaluate.
         const target = async(inputs: dict) => {
             // This assumes your dataset has inputs with \`operation\`, \`num1\`, and \`num2\` keys
-            const response = await calculatorTool.invoke({
+            const result = await calculatorTool.invoke({
                 operation: inputs.operation,
                 number1: inputs.num1,
                 number2: inputs.num2,
             });
-            return {"answer": response};
+            return {"result": result};
         }
       `
     }
 ]}
 />
 
-## An application or agent
+## Example: application or agent
 
 Once you are done testing the individual components of your system, it is good practice to test your entire system end to end.
 
@@ -181,7 +217,7 @@ Once you are done testing the individual components of your system, it is good p
       language: "python",
       content: `from my_agent import agent
         
-# This is the function you will evaluate
+# This is the function you will evaluate.
 def target(inputs: dict) -> dict:
     # This assumes your dataset has inputs with a \`messages\` key
     messages = inputs["messages"]
@@ -193,12 +229,12 @@ def target(inputs: dict) -> dict:
     },
     {
       value: "typescript",
-      label: "JavaScript/TypeScript",
+      label: "TypeScript",
       language: "typescript",
       content: `
         import { agent } from 'my_agent';
 
-        // This is the function you will evaluate
+        // This is the function you will evaluate.
         const target = async(inputs: dict) => {
             // This assumes your dataset has inputs with a \`messages\` key
             const messages = inputs.messages;
