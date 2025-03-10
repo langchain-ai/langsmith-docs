@@ -98,7 +98,7 @@ There are a number of ways to define and run evaluators:
 - **Custom code**: Define [custom evaluators](/evaluation/how_to_guides/custom_evaluator) as Python or TypeScript functions and run them client-side using the SDKs or server-side via the UI.
 - **Built-in evaluators**: LangSmith has a number of built-in evaluators that you can configure and run via the UI.
 
-You can run evaluators using the LangSmith SDK ([Python](https://docs.smith.langchain.com/reference/python) and [TypeScript](https://docs.smith.langchain.com/reference/js)), via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground), or by configuring [Rules](../../observability/how_to_guides/monitoring/rules) to automatically run them on particular tracing projects or datasets.
+You can run evaluators using the LangSmith SDK ([Python](https://docs.smith.langchain.com/reference/python) and [TypeScript](https://docs.smith.langchain.com/reference/js)), via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground), or by configuring [Rules](../../observability/how_to_guides/rules) to automatically run them on particular tracing projects or datasets.
 
 #### Evaluation techniques
 
@@ -139,11 +139,15 @@ Learn [how run pairwise evaluations](/evaluation/how_to_guides/evaluate_pairwise
 
 Each time we evaluate an application on a dataset, we are conducting an experiment.
 An experiment contains the results of running a specific version of your application on the dataset.
+To understand how to use the LangSmith experiment view, see [how to analyze experiment results](/evaluation/how_to_guides/analyze_single_experiment).
+
+![Experiment view](./static/experiment_view.png)
+
 Typically, we will run multiple experiments on a given dataset, testing different configurations of our application (e.g., different prompts or LLMs).
 In LangSmith, you can easily view all the experiments associated with your dataset.
 Additionally, you can [compare multiple experiments in a comparison view](/evaluation/how_to_guides/compare_experiment_results).
 
-![Example](./static/comparing_multiple_experiments.png)
+![Comparison view](./static/comparison_view.png)
 
 ## Annotation queues
 
@@ -162,7 +166,7 @@ It is offline because we're evaluating on a pre-compiled set of data.
 An online evaluation, on the other hand, is one in which we evaluate a deployed application's outputs on real traffic, in near realtime.
 Offline evaluations are used for testing a version(s) of your application pre-deployment.
 
-You can run offline evaluations client-side using the LangSmith SDK ([Python](https://docs.smith.langchain.com/reference/python) and [TypeScript](https://docs.smith.langchain.com/reference/js)). You can run them server-side via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground) or by configuring [automations](/observability/how_to_guides/monitoring/rules) to run certain evaluators on every new experiment against a specific dataset.
+You can run offline evaluations client-side using the LangSmith SDK ([Python](https://docs.smith.langchain.com/reference/python) and [TypeScript](https://docs.smith.langchain.com/reference/js)). You can run them server-side via the [Prompt Playground](../../prompt_engineering/concepts#prompt-playground) or by configuring [automations](/observability/how_to_guides/rules) to run certain evaluators on every new experiment against a specific dataset.
 
 ![Offline](./static/offline.png)
 
@@ -191,7 +195,7 @@ Often these are triggered when you are making app updates (e.g. updating models 
 LangSmith's comparison view has native support for regression testing, allowing you to quickly see examples that have changed relative to the baseline.
 Regressions are highlighted red, improvements green.
 
-![Regression](./static/regression.png)
+![Comparison view](./static/comparison_view.png)
 
 ### Backtesting
 
@@ -397,3 +401,36 @@ If ground truth reference labels are provided, then it's common to simply define
 | Precision | Standard definition | Yes                    | No            | No                |
 | Recall    | Standard definition | Yes                    | No            | No                |
 
+
+## Experiment configuration
+
+LangSmith supports a number of experiment configurations which make it easier to run your evals in the manner you want.
+
+### Repetitions
+
+By passing the `num_repitions` argument to `evaluate` / `aevaluate`, you can specify how many times to repeat the experiment on your data.
+Repeating the experiment involves both rerunning the target function and rerunning the evaluators. Running an experiment multiple times can
+be helpful since the LLM outputs are not deterministic and can differ from one repetition to the next. By running multiple repetitions, you can
+get a more accurate estimate of the performance of your system.
+
+### Concurrency
+
+By passing the `max_concurrency` argument to `evaluate` / `aevaluate`, you can specify the concurrency of your experiment. The
+`max_concurrency` argument has slightly different semantics depending on whether you are using `evaluate` or `aevaluate`.
+
+#### `evaluate`
+
+The `max_concurrency` argument to `evaluate` specifies the maximum number of concurrent threads to use when running the experiment.
+This is both for when running your target function as well as your evaluators.
+
+#### `aevaluate`
+
+The `max_concurrency` argument to `aevaluate` is fairly similar to `evaluate`, but instead uses a semaphore to limit the number of
+concurrent tasks that can run at once. `aevaluate` works by creating a task for each example in the dataset. Each task consists of running the target function
+as well as all of the evaluators on that specific example. The `max_concurrency` argument specifies the maximum number of concurrent tasks, or put another way - examples,
+to run at once.
+
+### Caching
+
+Lastly, you can also cache the API calls made in your experiment by setting the `LANGSMITH_CACHE_PATH` to a valid folder on your device with write access.
+This will cause the API calls made in your experiment to be cached to disk, meaning future experiments that make the same API calls will be greatly sped up.

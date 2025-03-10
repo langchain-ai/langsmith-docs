@@ -36,6 +36,7 @@ We also do not support moving from OAuth Mode with client secret to OAuth mode w
 - You must provide the `OIDC`, `email`, and `profile` scopes to LangSmith. We use these to fetch the necessary user information and email for your users.
 - You will need to set the callback URL in your IdP to `http://<host>/api/v1/oauth/custom-oidc/callback`, where host is the domain or IP you have provisioned for your LangSmith instance. This is where your IdP will redirect the user after they have authenticated.
 - You will need to provide the `oauthClientId`, `oauthClientSecret`, `hostname`, and `oauthIssuerUrl` in your `values.yaml` file. This is where you will configure your LangSmith instance.
+- Some IdPs may require the `offline_access` scope to be provided to LangSmith. This is used to refresh the user's token when it expires.
 
 <CodeTabs
   tabs={[
@@ -47,7 +48,8 @@ We also do not support moving from OAuth Mode with client secret to OAuth mode w
       enabled: true
       oauthClientId: \<YOUR CLIENT ID\>
       oauthClientSecret: \<YOUR CLIENT SECRET\>
-      oauthIssuerUrl: \<YOUR DISCOVERY URL\>`
+      oauthIssuerUrl: \<YOUR DISCOVERY URL\>
+      oauthScopes: "email,profile,openid"`
     ),
     DockerBlock(
       `# In your .env file
@@ -56,6 +58,7 @@ LANGSMITH_URL=https://langsmith.example.com
 OAUTH_CLIENT_ID=your-client-id
 OAUTH_CLIENT_SECRET=your-client-secret
 OAUTH_ISSUER_URL=https://your-issuer-url
+OAUTH_SCOPES=email,profile,openid
     `
     ),
   ]}

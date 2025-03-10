@@ -11,7 +11,7 @@ you to automatically collect human corrections on evaluator prompts, which are t
 :::tip Recommended Reading
 Before learning how to create few-shot evaluators, it might be helpful to learn how to setup automations (both online and offline) and how to leave corrections on evaluator scores:
 
-- [Set up online evaluations](../../../observability/how_to_guides/monitoring/online_evaluations)
+- [Set up online evaluations](../../../observability/how_to_guides/online_evaluations)
 - [Bind an evaluator to a dataset in the UI (offline evaluation)](./bind_evaluator_to_dataset)
 - [Audit evaluator scores](./audit_evaluator_scores)
 
@@ -24,7 +24,7 @@ The default maximum few-shot examples to use in the prompt is 5. Examples are pu
 
 :::
 
-When creating an [online](../../../observability/how_to_guides/monitoring/online_evaluations) or [offline](./bind_evaluator_to_dataset) evaluator - from a tracing project or a dataset, respectively - you will see the option to use corrections as few-shot examples. Note that these types of evaluators
+When creating an [online](../../../observability/how_to_guides/online_evaluations) or [offline](./bind_evaluator_to_dataset) evaluator - from a tracing project or a dataset, respectively - you will see the option to use corrections as few-shot examples. Note that these types of evaluators
 are only supported when using mustache prompts - you will not be able to click this option if your prompt uses f-string formatting. When you select this,
 we will auto-create a few-shot prompt for you. Each individual few-shot example will be formatted according to this prompt, and inserted into your main prompt in place of the `{{Few-shot examples}}`
 template variable which will be auto-added above. Your few-shot prompt should contain the same variables as your main prompt, plus a `few_shot_explanation` and a score variable which should have the same name
