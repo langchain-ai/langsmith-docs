@@ -6,6 +6,13 @@ For conceptual explanations see the [Conceptual guide](./concepts).
 For end-to-end walkthroughs see [Tutorials](./tutorials).
 For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
 
+## Key features
+- Create a dataset [with the SDK](./how_to_guides/manage_datasets_programmatically#create-a-dataset) or [from the UI](./how_to_guides/manage_datasets_in_application#set-up-your-dataset)
+- Run offline evaluations [with the SDK](./how_to_guides/evaluate_llm_application) or [from the UI](./how_to_guides/run_evaluation_from_prompt_playground)
+- Run online evaluations with [LLM-as-judge](../../observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators) and [custom code](../../observability/how_to_guides/online_evaluations#configure-custom-code-evaluators) evaluators
+- [Log user feedback](./how_to_guides/attach_user_feedback) from your app
+- Log expert feedback [with annotation queues](./how_to_guides/annotation_queues)
+
 ## Offline evaluation
 
 Evaluate and improve your application before deploying it.
@@ -47,7 +54,7 @@ Evaluate and improve your application before deploying it.
 
 ## Testing integrations
 
-Run evals using your favorite testing tools:
+Run evals using your favorite testing tools.
 
 - [Run evals with pytest (beta)](./how_to_guides/pytest)
 - [Run evals with Vitest/Jest (beta)](./how_to_guides/vitest_jest)
@@ -78,6 +85,7 @@ Use the UI & API to understand your experiment results.
 - [Fetch experiment results in the SDK](./how_to_guides/fetch_perf_metrics_experiment)
 - [Upload experiments run outside of LangSmith with the REST API](./how_to_guides/upload_existing_experiments)
 - [Download experiment results as a CSV](./how_to_guides/download_experiment_results_as_csv)
+- [Audit and correct evaluator scores](./how_to_guides/audit_evaluator_scores)
 
 ## Dataset management
 
@@ -99,7 +107,7 @@ Manage datasets in LangSmith used by your evaluations.
 Collect feedback from subject matter experts and users to improve your applications.
 
 - [Use annotation queues](./how_to_guides/annotation_queues)
-- [Capture user feedback from your application to traces](./how_to_guides/attach_user_feedback)
+- [Log user feedback](./how_to_guides/attach_user_feedback)
 - [Set up a new feedback criteria](./how_to_guides/set_up_feedback_criteria)
-- [Annotate traces inline](./how_to_guides/annotate_traces_inline)
+- [Annotate traces inline in the UI](./how_to_guides/annotate_traces_inline)
 - [Audit and correct evaluator scores](./how_to_guides/audit_evaluator_scores)
