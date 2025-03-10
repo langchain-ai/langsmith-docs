@@ -1089,6 +1089,8 @@ While end-to-end tests give you the most signal about your agents performance, f
 In our case, a crucial part of our agent is that it routes the user's intention correctly into either the "refund" path or the "question answering" path. Let's create a dataset and run some evaluations to directly stress test this one component.
 
 # Create dataset
+
+```python
 #region
 examples = [
     {"inputs": {"messages": [{"role": "user", "content": "i bought some tracks recently and i dont like them"}]}, "outputs": {"route": "refund_agent"}},
