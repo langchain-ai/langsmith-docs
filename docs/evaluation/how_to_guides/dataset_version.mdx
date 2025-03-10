@@ -1,0 +1,65 @@
+import {
+  CodeTabs,
+  python,
+  typescript,
+} from "@site/src/components/InstructionsWithCode";
+
+# How to evaluate on a specific dataset version
+
+:::tip Recommended reading
+
+Before diving into this content, it might be helpful to read the [guide on versioning datasets](./version_datasets).
+Additionally, it might be helpful to read the [guide on fetching examples](./manage_datasets_programmatically#fetch-examples).
+
+:::
+
+## Using `list_examples`
+
+You can take advantage of the fact that `evaluate` / `aevaluate` allows passing in an iterable of examples to evaluate on a particular version of a dataset.
+Simply use `list_examples` / `listExamples` to fetch examples from a particular version tag using `as_of` / `asOf` and pass that in to the `data` argument.
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    python`
+      from langsmith import Client
+
+      ls_client = Client()
+
+      # Assumes actual outputs have a 'class' key.
+      # Assumes example outputs have a 'label' key.
+      def correct(outputs: dict, reference_outputs: dict) -> bool:
+        return outputs["class"] == reference_outputs["label"]
+
+      results = ls_client.evaluate(
+          lambda inputs: {"class": "Not toxic"},
+          # Pass in filtered data here:
+          # highlight-next-line
+          data=ls_client.list_examples(
+            # highlight-next-line
+            dataset_name="Toxic Queries",
+            # highlight-next-line
+            as_of="latest",  # specify version here
+            # highlight-next-line
+          ),
+          evaluators=[correct],
+      )
+    `,
+    typescript`
+      import { evaluate } from "langsmith/evaluation";
+
+      await evaluate((inputs) => labelText(inputs["input"]), {
+        data: langsmith.listExamples({
+          datasetName: datasetName,
+          asOf: "latest",
+        }),
+        evaluators: [correctLabel],
+      });
+    `,
+
+]}
+/>
+
+## Related
+
+- Learn more about how to fetch views of a dataset [here](./manage_datasets_programmatically#fetch-datasets)

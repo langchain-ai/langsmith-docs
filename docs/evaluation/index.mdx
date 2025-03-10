@@ -1,6 +1,6 @@
 ---
 sidebar_label: Quick Start
-sidebar_position: 1
+sidebar_position: 0
 table_of_contents: true
 ---
 
@@ -8,28 +8,15 @@ import {
   CodeTabs,
   python,
   typescript,
-  PythonBlock,
   ShellBlock,
-  TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
-import {
-  LangChainInstallationCodeTabs,
-  LangChainQuickStartCodeTabs,
-  ConfigureEnvironmentCodeTabs,
-  RunTreeQuickStartCodeTabs,
-  ConfigureSDKEnvironmentCodeTabs,
-  PythonSDKTracingCode,
-  TypeScriptSDKTracingCode,
-} from "@site/src/components/QuickStart";
-import { ClientInstallationCodeTabs } from "@site/src/components/ClientInstallation";
-import DocCardList from "@theme/DocCardList";
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Evaluation Quick Start
 
 This quick start will get you up and running with our evaluation SDK and Experiments UI.
 
-## 1. Install LangSmith
+## 1. Install Dependencies
 
 <CodeTabs
   tabs={[
@@ -37,13 +24,13 @@ This quick start will get you up and running with our evaluation SDK and Experim
       value: "python",
       label: "Python",
       language: "bash",
-      content: `pip install -U langsmith`,
+      content: `pip install -U langsmith openai pydantic`,
     },
     {
       value: "typescript",
       label: "TypeScript",
       language: "bash",
-      content: `yarn add langsmith`,
+      content: `yarn add langsmith openai zod`,
     },
   ]}
   groupId="client-language"
@@ -57,67 +44,303 @@ To create an API key head to the <RegionalUrl text='Settings page' suffix='/sett
 
 <CodeTabs
   tabs={[
-    ShellBlock(`export LANGCHAIN_TRACING_V2=true
-export LANGCHAIN_API_KEY=<your-api-key>`),
+    ShellBlock(`export LANGSMITH_TRACING=true
+export LANGSMITH_API_KEY="<your-langchain-api-key>"
+# The example uses OpenAI, but it's not necessary in general
+export OPENAI_API_KEY="<your-openai-api-key>"`),
   ]}
   groupId="client-language"
 />
 
-## 4. Run your evaluation
+## 4. Import dependencies
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langsmith import evaluate, Client
-from langsmith.schemas import Example, Run\n
-# 1. Create and/or select your dataset
+    {
+      value: "python",
+      label: "Python",
+      content: `from langsmith import wrappers, Client
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
 client = Client()
-dataset = client.clone_public_dataset("https://smith.langchain.com/public/a63525f9-bdf2-4512-83e3-077dc9417f96/d")\n
-# 2. Define an evaluator
-# For more info on defining evaluators, see: https://docs.smith.langchain.com/evaluation/how_to_guides/evaluation/evaluate_llm_application#use-custom-evaluators
-def is_concise_enough(root_run: Run, example: Example) -> dict:
-    score = len(root_run.outputs["output"]) < 3 \* len(example.outputs["answer"])
-    return {"key": "is_concise", "score": int(score)}\n
-# 3. Run an evaluation
-evaluate(
-    lambda x: x["question"] + "is a good question. I don't know the answer.",
-    data=dataset.name,
-    evaluators=[is_concise_enough],
-    experiment_prefix="my first experiment "
-)
-`),
-    TypeScriptBlock(`import { Client } from "langsmith";
-import { evaluate } from "langsmith/evaluation";
+openai_client = wrappers.wrap_openai(OpenAI())`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `import { Client } from "langsmith";
+import OpenAI from "openai";
+import { z } from "zod";
+import { zodResponseFormat } from "openai/helpers/zod";
 import type { EvaluationResult } from "langsmith/evaluation";
-import type { Run, Example } from "langsmith/schemas";\n
-// 1. Define a dataset
+import { evaluate } from "langsmith/evaluation";   
+
+
 const client = new Client();
-const datasetName = "my first dataset"
-const dataset = await client.clonePublicDataset(
-"https://smith.langchain.com/public/a63525f9-bdf2-4512-83e3-077dc9417f96/d",
-{ datasetName: datasetName }
-)\n
-// 2. Define an evaluator
-function isConcise(rootRun: Run, example: Example): EvaluationResult {
-const score = rootRun.outputs?.outputs.length < 3 \* example.outputs?.answer.length;
-return { key: "is_concise", score: score };
-}\n
-// 3. Run an evaluation
-// For more info on evaluators, see: https://docs.smith.langchain.com/concepts/evaluation#evaluators
-await evaluate(
-(exampleInput) => {
-return {
-answer: exampleInput.question + " Good question. I don't know the answer"
-};
-}, {
-data: datasetName,
-evaluators: [isConcise],
-experimentPrefix: "my first experiment ",
-});`),
+
+const openai = new OpenAI();`,
+    },
   ]}
   groupId="client-language"
 />
 
-## 5. View Experiments UI
+## 5. Create a dataset
 
-Click the link printed out by your evaluation run to access the LangSmith experiments UI,
-and explore the results of your evaluation.
+<CodeTabs
+  tabs={[
+    {
+value: "python",
+label: "Python",
+content: `# For other dataset creation methods, see:
+# https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
+# https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
+
+# Create inputs and reference outputs
+examples = [
+    (
+        "Which country is Mount Kilimanjaro located in?",
+        "Mount Kilimanjaro is located in Tanzania.",
+    ),
+    (
+        "What is Earth's lowest point?",
+        "Earth's lowest point is The Dead Sea.",
+    ),
+]
+
+inputs = [{"question": input_prompt} for input_prompt, _ in examples]
+outputs = [{"answer": output_answer} for _, output_answer in examples]
+
+# Programmatically create a dataset in LangSmith
+dataset = client.create_dataset(
+    dataset_name="Sample dataset", description="A sample dataset in LangSmith."
+)
+
+# Add examples to the dataset
+client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `
+// For other dataset creation methods, see: 
+// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically 
+// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
+    
+// Create inputs and reference outputs
+const examples: [string, string][] = [
+  [
+    "Which country is Mount Kilimanjaro located in?",
+    "Mount Kilimanjaro is located in Tanzania.",
+  ],
+  [
+    "What is Earth's lowest point?",
+    "Earth's lowest point is The Dead Sea.",
+  ],
+];
+
+const inputs = examples.map(([inputPrompt]) => ({
+  question: inputPrompt,
+}));
+const outputs = examples.map(([, outputAnswer]) => ({
+  answer: outputAnswer,
+}));
+
+// Programmatically create a dataset in LangSmith
+const dataset = await client.createDataset("Sample dataset", {
+  description: "A sample dataset in LangSmith.",
+});
+
+// Add examples to the dataset
+await client.createExamples({
+  inputs,
+  outputs,
+  datasetId: dataset.id,
+});
+`,
+},
+]}
+groupId="client-language"
+/>
+
+## 6. Define what you're evaluating
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      content: `# Define the application logic you want to evaluate inside a target function
+# The SDK will automatically send the inputs from the dataset to your target function
+def target(inputs: dict) -> dict:
+    response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            { "role": "system", "content": "Answer the following question accurately" },
+            { "role": "user", "content": inputs["question"] },
+        ],
+    )
+    return { "response": response.choices[0].message.content.strip() }
+  `},
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `// Define the application logic you want to evaluate inside a target function
+// The SDK will automatically send the inputs from the dataset to your target function
+async function target(inputs: string): Promise<{ response: string }> {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: "Answer the following question accurately" },
+      { role: "user", content: inputs },
+    ],
+  });
+  return { response: response.choices[0].message.content?.trim() || "" };
+}
+`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+## 7. Define evaluator
+
+<CodeTabs
+  tabs={[
+    {
+      value: "python",
+      label: "Python",
+      content: `# Define instructions for the LLM judge evaluator
+instructions = """Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
+- False: No conceptual match and similarity
+- True: Most or full conceptual match and similarity
+- Key criteria: Concept should match, not exact wording.
+"""
+
+# Define output schema for the LLM judge
+class Grade(BaseModel):
+    score: bool = Field(
+        description="Boolean that indicates whether the response is accurate relative to the reference answer"
+    )
+
+# Define LLM judge that grades the accuracy of the response relative to reference output
+def accuracy(outputs: dict, reference_outputs: dict) -> bool:
+    response = openai_client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            { "role": "system", "content": instructions },
+            {
+                "role": "user",
+                "content": f"""Ground Truth answer: {reference_outputs["answer"]}; 
+                Student's Answer: {outputs["response"]}"""
+            },
+        ],
+        response_format=Grade,
+    )
+    return response.choices[0].message.parsed.score`,
+    },
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `// Define instructions for the LLM judge evaluator
+const instructions = \`Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
+- False: No conceptual match and similarity
+- True: Most or full conceptual match and similarity
+- Key criteria: Concept should match, not exact wording.
+\`;
+
+// Define context for the LLM judge evaluator
+const context = \`Ground Truth answer: {reference}; Student's Answer: {prediction}\`;
+
+// Define output schema for the LLM judge
+const ResponseSchema = z.object({
+  score: z
+    .boolean()
+    .describe(
+      "Boolean that indicates whether the response is accurate relative to the reference answer"
+    ),
+});
+
+// Define LLM judge that grades the accuracy of the response relative to reference output
+async function accuracy({
+  outputs,
+  referenceOutputs,
+}: {
+  outputs?: Record<string, string>;
+  referenceOutputs?: Record<string, string>;
+}): Promise<EvaluationResult> {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: instructions },
+      { role: "user", content: context.replace("{prediction}", outputs?.answer || "").replace("{reference}", referenceOutputs?.answer || "") }
+    ],
+    response_format: zodResponseFormat(ResponseSchema, "response")
+  });
+
+  return {
+    key: "accuracy",
+    score: ResponseSchema.parse(JSON.parse(response.choices[0].message.content || "")).score,
+  };
+}`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+## 8. Run and view results
+
+<CodeTabs tabs={[
+  
+  {
+    value: "python",
+    label: "Python",
+    content: `# After running the evaluation, a link will be provided to view the results in langsmith
+experiment_results = client.evaluate(
+    target,
+    data="Sample dataset",
+    evaluators=[
+        accuracy,
+        # can add multiple evaluators here
+    ],
+    experiment_prefix="first-eval-in-langsmith",
+    max_concurrency=2,
+)
+`},
+    {
+      value: "typescript",
+      label: "TypeScript",
+      content: `// After running the evaluation, a link will be provided to view the results in langsmith
+await evaluate(
+  (exampleInput) => {
+    return target(exampleInput.question);
+  },
+  {
+    data: "Sample dataset",
+    evaluators: [
+      accuracy,
+      // can add multiple evaluators here
+    ],
+    experimentPrefix: "first-eval-in-langsmith",
+    maxConcurrency: 2,
+  }
+);
+`,
+    },
+  ]}
+  groupId="client-language"
+/>
+
+Click the link printed out by your evaluation run to access the LangSmith Experiments UI, and explore the results of your evaluation.
+
+![](./how_to_guides/static/view_experiment.gif)
+
+## Next steps
+
+For conceptual explanations see the [Conceptual guide](./evaluation/concepts).
+See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
+For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
+For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
+
+If you prefer video tutorials, check out the [Datasets, Evaluators, and Experiments videos](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.

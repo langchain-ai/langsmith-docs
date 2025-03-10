@@ -11,7 +11,7 @@ Please read the [LangSmith architectural overview](./architectural_overview) and
 
 :::
 
-As mentioned in previous guides, LangSmith uses Clickhouse as the primary storage engine for traces and feedback.
+As mentioned in previous guides, LangSmith uses Clickhouse as the primary storage engine for **traces** and **feedback**.
 For easier management and scaling, it is recommended to connect a self-hosted LangSmith instance to an external Clickhouse instance. LangSmith-managed ClickHouse is an option that allows you to use a fully managed ClickHouse instance that is monitored and maintained by the LangSmith team.
 
 ## Architecture Overview
@@ -23,12 +23,16 @@ Using LangSmith Managed Clickhouse with your Self-Hosted LangSmith instance is f
 
 :::note More on sensitive information
 
+Clickhouse stores **runs** and **feedback** data.
+
+This [reference doc](../reference/data_formats/feedback_data_format) explains the format we use to store feedback, which is the LangSmith's way of representing evaluation scores and annotations on runs.
 This [reference doc](../reference/data_formats/run_data_format) explains the format we use to store runs (spans), which are the building blocks of traces.
 
-Our definition of sensitive information as it relates to application data are `inputs`, `outputs`, and `errors` of a run, since these fields can contain prompts and completions from LLMs.
+Our definition of sensitive information as it relates to application data are `inputs`, `outputs`, `errors`, `manifests`, `extras`, and `events` of a **run**, since these fields can contain prompts and completions from LLMs.
 
-With LangSmith-managed ClickHouse, we store `inputs`, `outputs`, and `errors` in cloud object storage (S3 or GCS) within your cloud and store the rest of the run data in ClickHouse. This ensures that sensitive information doesn't leave your VPC.
+With LangSmith-managed ClickHouse, we store `inputs`, `outputs`, `errors`, `manifests`, `extras`, and `events` in cloud object storage (S3 or GCS) within your cloud and store the rest of the run data in ClickHouse. This ensures that sensitive information doesn't leave your VPC.
 
+Please note, ALL **feedback** data is stored in ClickHouse. Please do not send sensitive information in feedback (scores and annotations/comments) or in any other **run** fields that are mentioned above.
 :::
 
 - The LangSmith team will monitor your ClickHouse instance and ensure that it is running smoothly. This allows us to track metrics like run-ingestion delay and query performance.

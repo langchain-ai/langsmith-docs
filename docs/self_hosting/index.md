@@ -22,7 +22,9 @@ Step-by-step guides that cover the installation, configuration, and scaling of y
   - [Blob storage](./self_hosting/configuration/blob_storage): Configure LangSmith to use blob storage.
   - [TTLs](./self_hosting/configuration/ttl): Configure LangSmith to use TTLs.
 - [Usage](./self_hosting/usage): How to use your self-hosted instance of LangSmith.
+- [Organization Charts](./self_hosting/organization_charts): View trace counts for your organization and workspaces.
 - [Upgrades](./self_hosting/upgrades): How to upgrade your self-hosted instance of LangSmith.
+- [Egress for Subscription Metrics and Operational Metadata](./self_hosting/egress): Egress requirements for Subscription Metrics and Operational Metadata.
 - [Release notes](./self_hosting/release_notes): The latest release notes for LangSmith.
 - - [Week of August 26, 2024 - LangSmith v0.7](./self_hosting/release_notes#week-of-august-26-2024---langsmith-v07): Release notes for version 0.7 of LangSmith.
   - [Week of June 17, 2024 - LangSmith v0.6](./self_hosting/release_notes#week-of-june-17-2024---langsmith-v05): Release notes for version 0.6 of LangSmith.

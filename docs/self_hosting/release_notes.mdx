@@ -1,6 +1,6 @@
 ---
 sidebar_label: Release notes (self-hosted)
-sidebar_position: 7
+sidebar_position: 8
 ---
 
 # LangSmith Release Notes
@@ -38,7 +38,7 @@ This release adds a number of new features, improves the performance of the Thre
 ### Infrastructure Changes
 
 - Added a Helm configuration option for Time To Live for traces. When set, this setting will apply only to net-new ingested traces and by changing this setting, _traces will be automatically and irrevocably deleted from Clickhouse after expiration of the TTL._ For more details see [TTL and Data Retention](./configuration/ttl). You may also need to change/audit your project default TTL settings.
-- Added configuration option to enable `blobStorage`. This will move run inputs, outputs, and errors to blob storage to lower load on ClickHouse/reduce disk usage. Currently only S3 and GCP are supported. For more details see [Enable Blob Storage](./configuration/blob_storage).
+- Added configuration option to enable `blobStorage`. This will move run inputs, outputs, errors, manifests, extras, and events to blob storage to lower load on ClickHouse/reduce disk usage. Currently only S3 and GCP are supported. For more details see [Enable Blob Storage](./configuration/blob_storage).
 - Default Resource/Limits for all resources. Note that you may need to tweak your cluster settings.
   - By default we will use:
     - 16 CPU
@@ -81,7 +81,7 @@ LangSmith v0.6 improves run rules performance and reliability, adds support for 
 - Workspaces in LangSmith for improved collaboration & organization. [Learn More...](https://blog.langchain.dev/week-of-6-10-langchain-release-notes/#workspaces)
 - Enter the playground from scratch instead of from a trace or a prompt. [Learn More...](https://blog.langchain.dev/week-of-6-10-langchain-release-notes/#playground-from-scratch)
 - Variable mapping for online evaluator prompts. [Learn More...](https://blog.langchain.dev/week-of-6-10-langchain-release-notes/#variable-mapping)
-- Custom Model support in Playground. [Learn More...](https://docs.smith.langchain.com/how_to_guides/playground/custom_endpoint)
+- Custom Model support in Playground. [Learn More...](https://docs.smith.langchain.com/how_to_guides/custom_endpoint)
 
 ### Performance and Reliability Changes
 
@@ -101,7 +101,7 @@ LangSmith v0.6 improves run rules performance and reliability, adds support for 
 
 - Added support for Workspaces. See the [Admin concepts guide](/administration/concepts#workspaces) for more details.
 - Added global setting `orgCreationDisabled` to `values.yaml` to disable creation of new Organizations.
-- Added support for custom TLS certificates for the for the Azure OpenAI model provider. See the [how-to guide](../prompt_engineering/how_to_guides/playground/custom_tls_certificates) for more details.
+- Added support for custom TLS certificates for the Azure OpenAI model provider. See the [how-to guide](./configuration/custom_tls_certificates) for more details.
 
 ### Deprecation notices
 
