@@ -1088,16 +1088,28 @@ While end-to-end tests give you the most signal about your agents performance, f
 
 In our case, a crucial part of our agent is that it routes the user's intention correctly into either the "refund" path or the "question answering" path. Let's create a dataset and run some evaluations to directly stress test this one component.
 
-# Create dataset
-
 ```python
+# Create dataset
 #region
 examples = [
-    {"inputs": {"messages": [{"role": "user", "content": "i bought some tracks recently and i dont like them"}]}, "outputs": {"route": "refund_agent"}},
-    {"inputs": {"messages": [{"role": "user", "content": "I was thinking of purchasing some Rolling Stones tunes, any recommendations?"}]}, "outputs": {"route": "question_answering_agent"}},
-    {"inputs": {"messages": [{"role": "user", "content": "i want a refund on purchase 237"}, {"role": "assistant", "content": "I've refunded you a total of $1.98. How else can I help you today?"}, {"role": "user", "content": "did prince release any albums in 2000?"}]}, "outputs": {"route": "question_answering_agent"}},
-    {"inputs": {"messages": [{"role": "user", "content": "i purchased a cover of Yesterday recently but can't remember who it was by, which versions of it do you have?"}]}, "outputs": {"route": "question_answering_agent"}},
+    {
+        "inputs": {"messages": [{"role": "user", "content": "i bought some tracks recently and i dont like them"}]}, 
+        "outputs": {"route": "refund_agent"},
+    },
+    {
+        "inputs": {"messages": [{"role": "user", "content": "I was thinking of purchasing some Rolling Stones tunes, any recommendations?"}]}, 
+        "outputs": {"route": "question_answering_agent"},
+    },
+    {
+        "inputs": {"messages": [{"role": "user", "content": "i want a refund on purchase 237"}, {"role": "assistant", "content": "I've refunded you a total of $1.98. How else can I help you today?"}, {"role": "user", "content": "did prince release any albums in 2000?"}]}, 
+        "outputs": {"route": "question_answering_agent"},
+    },
+    {
+        "inputs": {"messages": [{"role": "user", "content": "i purchased a cover of Yesterday recently but can't remember who it was by, which versions of it do you have?"}]}, 
+        "outputs": {"route": "question_answering_agent"},
+    },
 ]
+#endregion
 
 dataset_name = "Chinook Customer Service Bot: Intent Classifier"
 #region

@@ -389,13 +389,16 @@ One way to think about different types of RAG evaluators is as a tuple of what i
 
         def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
             """An evaluator for RAG answer accuracy"""
-            answers = f"""\
+            answers = f"""\\
         QUESTION: {inputs['question']}
         GROUND TRUTH ANSWER: {reference_outputs['answer']}
         STUDENT ANSWER: {outputs['answer']}"""
 
             # Run evaluator
-            grade = grader_llm.invoke([{"role": "system", "content": correctness_instructions}, {"role": "user", "content": answers}])
+            grade = grader_llm.invoke([
+                {"role": "system", "content": correctness_instructions}, 
+                {"role": "user", "content": answers}
+            ])
             return grade["correct"]
     `,
     typescript`
@@ -494,10 +497,11 @@ Without a reference answer we can't grade accuracy, but can still grade relevanc
         # Evaluator
         def relevance(inputs: dict, outputs: dict) -> bool:
             """A simple evaluator for RAG answer helpfulness."""
-            answer = f"""\
-        QUESTION: {inputs['question']}
-        STUDENT ANSWER: {outputs['answer']}"""
-            grade = relevance_llm.invoke([{"role": "system", "content": relevance_instructions}, {"role": "user", "content": answer}])
+            answer = f"QUESTION: {inputs['question']}\\nSTUDENT ANSWER: {outputs['answer']}"
+            grade = relevance_llm.invoke([
+                {"role": "system", "content": relevance_instructions}, 
+                {"role": "user", "content": answer}
+            ])
             return grade["relevant"]
     `,
     typescript`
@@ -591,10 +595,8 @@ Another useful way to evaluate responses without needing reference answers is to
         # Evaluator
         def groundedness(inputs: dict, outputs: dict) -> bool:
             """A simple evaluator for RAG answer groundedness."""
-            doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
-            answer = f"""\
-        FACTS: {doc_string}
-        STUDENT ANSWER: {outputs['answer']}"""
+            doc_string = "\\n\\n".join(doc.page_content for doc in outputs["documents"])
+            answer = f"FACTS: {doc_string}\\nSTUDENT ANSWER: {outputs['answer']}"
             grade = grounded_llm.invoke([{"role": "system", "content": grounded_instructions}, {"role": "user", "content": answer}])
             return grade["grounded"]
     `,
@@ -688,13 +690,14 @@ Another useful way to evaluate responses without needing reference answers is to
 
         def retrieval_relevance(inputs: dict, outputs: dict) -> bool:
             """An evaluator for document relevance"""
-            doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
-            answer = f"""\
-        FACTS: {doc_string}
-        QUESTION: {inputs['question']}"""
+            doc_string = "\\n\\n".join(doc.page_content for doc in outputs["documents"])
+            answer = f"FACTS: {doc_string}\\nQUESTION: {inputs['question']}"
 
             # Run evaluator
-            grade = retrieval_relevance_llm.invoke([{"role": "system", "content": retrieval_relevance_instructions}, {"role": "user", "content": answer}])
+            grade = retrieval_relevance_llm.invoke([
+                {"role": "system", "content": retrieval_relevance_instructions}, 
+                {"role": "user", "content": answer}
+            ])
             return grade["relevant"]
     `,
     typescript`
@@ -930,7 +933,7 @@ Here's a consolidated script with all the above code:
 
         def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
             """An evaluator for RAG answer accuracy"""
-            answers = f"""\
+            answers = f"""\\
         QUESTION: {inputs['question']}
         GROUND TRUTH ANSWER: {reference_outputs['answer']}
         STUDENT ANSWER: {outputs['answer']}"""
@@ -979,9 +982,7 @@ Here's a consolidated script with all the above code:
         # Evaluator
         def relevance(inputs: dict, outputs: dict) -> bool:
             """A simple evaluator for RAG answer helpfulness."""
-            answer = f"""\
-        QUESTION: {inputs['question']}
-        STUDENT ANSWER: {outputs['answer']}"""
+            answer = f"QUESTION: {inputs['question']}\\nSTUDENT ANSWER: {outputs['answer']}"
             grade = relevance_llm.invoke(
                 [
                     {"role": "system", "content": relevance_instructions},
@@ -1025,10 +1026,8 @@ Here's a consolidated script with all the above code:
         # Evaluator
         def groundedness(inputs: dict, outputs: dict) -> bool:
             """A simple evaluator for RAG answer groundedness."""
-            doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
-            answer = f"""\
-        FACTS: {doc_string}
-        STUDENT ANSWER: {outputs['answer']}"""
+            doc_string = "\\n\\n".join(doc.page_content for doc in outputs["documents"])
+            answer = f"FACTS: {doc_string}\\nSTUDENT ANSWER: {outputs['answer']}"
             grade = grounded_llm.invoke(
                 [
                     {"role": "system", "content": grounded_instructions},
@@ -1074,10 +1073,8 @@ Here's a consolidated script with all the above code:
 
         def retrieval_relevance(inputs: dict, outputs: dict) -> bool:
             """An evaluator for document relevance"""
-            doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
-            answer = f"""\
-        FACTS: {doc_string}
-        QUESTION: {inputs['question']}"""
+            doc_string = "\\n\\n".join(doc.page_content for doc in outputs["documents"])
+            answer = f"FACTS: {doc_string}\\nQUESTION: {inputs['question']}"
 
             # Run evaluator
             grade = retrieval_relevance_llm.invoke(
