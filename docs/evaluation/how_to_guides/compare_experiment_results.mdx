@@ -8,21 +8,23 @@ Oftentimes, when you are iterating on your LLM application (such as changing the
 
 LangSmith supports a powerful comparison view that lets you hone in on key differences, regressions, and improvements between different experiments.
 
-![](./static/regression_test.gif)
+![](./static/compare.gif)
 
 ## Open the comparison view
 
-To open the comparison view, select two or more experiments from the "Experiments" tab from a given dataset page. Then, click on the "Compare" button at the bottom of the page.
+To open the experiment comparison view, click the **Dataset & Experiments** page, select the relevant Dataset,  select two or more experiments on the Experiments tab and click compare.
 
-![](./static/open_comparison_view.png)
+![](./static/compare_select.png)
 
-## Toggle different views
+## Adjust the table display
 
-You can toggle between different views by clicking on the "Display" dropdown at the top right of the page. You can toggle different views to be displayed.
+You can toggle between different views by clicking "Full" or "Compact" at the top of the page.
 
 Toggling Full Text will show the full text of the input, output and reference output for each run. If the reference output is too long to display in the table, you can click on expand to view the full content.
 
-![](./static/toggle_views.png)
+You can also select and hide individual feedback keys or individual metrics in the display settings dropdown to isolate the information you want to see.
+
+![](./static/toggle_views.gif)
 
 ## View regressions and improvements
 
@@ -37,25 +39,22 @@ Click on the regressions or improvements buttons on the top of each column to fi
 
 ![Regressions Filter](./static/filter_to_regressions.png)
 
-## Update baseline experiment
+## Update baseline experiment and metric
 
-In order to track regressions, you need a baseline experiment against which to compare. This will be automatically assigned as the first experiment in your comparison, but you can
-change it from the dropdown at the top of the page.
+In order to track regressions, you need to:
+1. Select a baseline experiment against which to compare and a metric to measure. By default, the newest experiment is selected as the baseline. 
+2. Select feedback key (evaluation metric) you want to focus compare against. One will be assigned by default, but you can adjust as needed.
+3. Configure whether a higher score is better for the selected feedback key. This preference will be stored.
+
+
 
 ![Baseline](./static/select_baseline.png)
 
-## Select feedback key
-
-You will also want to select the feedback key (evaluation metric) on which you would like focus on. This can be selected via another dropdown at the top. Again, one will be assigned by
-default, but you can adjust as needed.
-
-![Feedback](./static/select_feedback.png)
-
 ## Open a trace
 
-If tracing is enabled for the evaluation run, you can click on the trace icon in the hover state of any experiment cell to open the trace view for that run. This will open up a trace in the side panel.
+If the example you're evaluating is from an ingested [run](/observability/concepts#runs), you can hover over the output cell and click on the trace icon to open the trace view for that run. This will open up a trace in the side panel.
 
-![](./static/open_trace_comparison.png)
+![](./static/open_source_trace.png)
 
 ## Expand detailed view
 
@@ -63,24 +62,16 @@ From any cell, you can click on the expand icon in the hover state to open up a 
 
 ![](./static/expanded_view.png)
 
-## Update display settings
+## View summary charts
 
-You can adjust the display settings for comparison view by clicking on "Display" in the top right corner.
+You can also view summary charts by clicking on the "Charts" tab at the top of the page.
 
-Here, you'll be able to toggle feedback, metrics, summary charts, and expand full text.
-
-![](./static/update_display.png)
+![](./static/charts_tab.png)
 
 ## Use experiment metadata as chart labels
 
-With the summary charts enabled, you can configure the x-axis labels based on [experiment metadata](./filter_experiments_ui#background-add-metadata-to-your-experiments). First, click the three dots in the top right of the charts (note that you will only see them if your experiments have metadata attached).
+You can configure the x-axis labels for the charts based on [experiment metadata](./filter_experiments_ui#background-add-metadata-to-your-experiments).
 
-![](./static/three_dots_charts.png)
-
-Next, select a metadata key - note that this key must contain string values in order to render in the charts.
-
-![](./static/select_metadata_key.png)
-
-You will now see your metadata in the x-axis of the charts:
+Select a metadata key to see change the x-axis labels of the charts.
 
 ![](./static/metadata_in_charts.png)

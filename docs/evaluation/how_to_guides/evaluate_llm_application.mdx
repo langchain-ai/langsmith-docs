@@ -92,7 +92,7 @@ First we need an application to evaluate. Let's create a simple toxicity classif
 />
 
 We've optionally enabled tracing to capture the inputs and outputs of each step in the pipeline.
-To understand how to annotate your code for tracing, please refer to [this guide](../../../observability/how_to_guides/tracing/annotate_code).
+To understand how to annotate your code for tracing, please refer to [this guide](../../../observability/how_to_guides/annotate_code).
 
 ## Create or select a dataset
 
@@ -158,6 +158,10 @@ We need a [Dataset](../concepts#datasets) to evaluate our application on. Our da
 See [here](.#dataset-management) for more on dataset management.
 
 ## Define an evaluator
+
+:::tip
+You can also check out LangChain's open source evaluation package [openevals](https://github.com/langchain-ai/openevals) for common pre-built evaluators.
+:::
 
 [Evaluators](../concepts#evaluators) are functions for scoring your application's outputs. They take in the example inputs, actual outputs, and, when present, the reference outputs.
 Since we have labels for this task, our evaluator can directly check if the actual outputs match the reference outputs.

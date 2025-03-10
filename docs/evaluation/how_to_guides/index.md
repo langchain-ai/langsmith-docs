@@ -28,7 +28,7 @@ Evaluate and improve your application before deploying it.
 - [Define an LLM-as-a-judge evaluator](./how_to_guides/llm_as_judge)
 - [Define a pairwise evaluator](./how_to_guides/evaluate_pairwise)
 - [Define a summary evaluator](./how_to_guides/summary)
-- [Use an off-the-shelf evaluator via the SDK (Python only)](./how_to_guides/use_langchain_off_the_shelf_evaluators)
+- [Use prebuilt evaluators](./how_to_guides/prebuilt_evaluators)
 - [Evaluate an application's intermediate steps](./how_to_guides/evaluate_on_intermediate_steps)
 - [Return multiple metrics in one evaluator](./how_to_guides/multiple_scores)
 - [Return categorical vs numerical metrics](./how_to_guides/metric_type)
@@ -42,7 +42,7 @@ Evaluate and improve your application before deploying it.
 
 - [Evaluate with repetitions](./how_to_guides/repetition)
 - [Handle model rate limits](./how_to_guides/rate_limiting)
-- [Print detailed logs (Python only)](../../observability/how_to_guides/tracing/output_detailed_logs)
+- [Print detailed logs (Python only)](../../observability/how_to_guides/output_detailed_logs)
 - [Run an evaluation locally (beta, Python only)](./how_to_guides/local)
 
 ## Testing integrations
@@ -56,8 +56,8 @@ Run evals using your favorite testing tools:
 
 Evaluate and monitor your system's live performance on production data.
 
-- [Set up an LLM-as-judge online evaluator](../../observability/how_to_guides/monitoring/online_evaluations#configure-llm-as-judge-evaluators)
-- [Set up a custom code online evaluator](../../observability/how_to_guides/monitoring/online_evaluations#configure-custom-code-evaluators)
+- [Set up an LLM-as-judge online evaluator](../../observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators)
+- [Set up a custom code online evaluator](../../observability/how_to_guides/online_evaluations#configure-custom-code-evaluators)
 - [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
 
 ## Automatic evaluation
@@ -77,6 +77,7 @@ Use the UI & API to understand your experiment results.
 - [View pairwise experiments](./how_to_guides/evaluate_pairwise#view-pairwise-experiments)
 - [Fetch experiment results in the SDK](./how_to_guides/fetch_perf_metrics_experiment)
 - [Upload experiments run outside of LangSmith with the REST API](./how_to_guides/upload_existing_experiments)
+- [Download experiment results as a CSV](./how_to_guides/download_experiment_results_as_csv)
 
 ## Dataset management
 
