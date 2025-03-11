@@ -101,26 +101,42 @@ We need a [Dataset](../concepts#datasets) to evaluate our application on. Our da
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python`
+    python({ caption: "Requires `langsmith>=0.3.13`" })`
       from langsmith import Client
       
       ls_client = Client()
       
-      labeled_texts = [
-          ("Shut up, idiot", "Toxic"),
-          ("You're a wonderful person", "Not toxic"),
-          ("This is the worst thing ever", "Toxic"),
-          ("I had a great day today", "Not toxic"),
-          ("Nobody likes you", "Toxic"),
-          ("This is unacceptable. I want to speak to the manager.", "Not toxic"),
+      examples = [
+        {
+          "inputs": {"text": "Shut up, idiot"}, 
+          "outputs": {"label": "Toxic"},
+        },
+        {
+          "inputs": {"text": "You're a wonderful person"},
+          "outputs": {"label": "Not toxic"},
+        },
+        {
+          "inputs": {"text": "This is the worst thing ever"}, 
+          "outputs": {"label": "Toxic"},
+        },
+        {
+          "inputs": {"text": "I had a great day today"}, 
+          "outputs": {"label": "Not toxic"},
+        },
+        {
+          "inputs": {"text": "Nobody likes you"}, 
+          "outputs": {"label": "Toxic"},
+        },
+        {
+          "inputs": {"text": "This is unacceptable. I want to speak to the manager."},
+          "outputs": {"label": "Not toxic"},
+        },
       ]
       
-      dataset_name = "Toxic Queries"
-      dataset = ls_client.create_dataset(dataset_name=dataset_name)
+      dataset = ls_client.create_dataset(dataset_name="Toxic Queries)
       ls_client.create_examples(
-        inputs=[{"text": text} for text, _ in labeled_texts], 
-        outputs=[{"label": label} for _, label in labeled_texts], 
-        dataset_id=dataset.id,
+        dataset_id=dataset.id, 
+        examples=examples,
       )
     `,
     typescript`
@@ -169,7 +185,7 @@ Since we have labels for this task, our evaluator can directly check if the actu
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({ caption: "Requires `langsmith>=0.2.0`" })`
+    python({ caption: "Requires `langsmith>=0.3.13`" })`
       def correct(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
           return outputs["class"] == reference_outputs["label"]
     `,
@@ -205,12 +221,12 @@ The key arguments are:
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({ caption: "Requires `langsmith>=0.2.0`" })`
+    python({ caption: "Requires `langsmith>=0.3.13`" })`
       # Can equivalently use the 'evaluate' function directly:
       # from langsmith import evaluate; evaluate(...)
       results = ls_client.evaluate(
           toxicity_classifier,
-          data=dataset_name,
+          data=dataset.name,
           evaluators=[correct],
           experiment_prefix="gpt-4o-mini, baseline",  # optional, experiment name prefix
           description="Testing the baseline system.",  # optional, experiment description
@@ -248,7 +264,7 @@ _If you've annotated your code for tracing, you can open the trace of each row i
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({caption: "Requires `langsmith>=0.2.0`"})`
+    python({caption: "Requires `langsmith>=0.3.13`"})`
       from langsmith import Client, traceable, wrappers
       from openai import OpenAI
       
@@ -274,21 +290,36 @@ _If you've annotated your code for tracing, you can open the trace of each row i
       # Step 2. Create a dataset
       ls_client = Client()
       
-      labeled_texts = [
-          ("Shut up, idiot", "Toxic"),
-          ("You're a wonderful person", "Not toxic"),
-          ("This is the worst thing ever", "Toxic"),
-          ("I had a great day today", "Not toxic"),
-          ("Nobody likes you", "Toxic"),
-          ("This is unacceptable. I want to speak to the manager.", "Not toxic"),
+      dataset = ls_client.create_dataset(dataset_name="Toxic Queries)
+      examples = [
+        {
+          "inputs": {"text": "Shut up, idiot"}, 
+          "outputs": {"label": "Toxic"},
+        },
+        {
+          "inputs": {"text": "You're a wonderful person"},
+          "outputs": {"label": "Not toxic"},
+        },
+        {
+          "inputs": {"text": "This is the worst thing ever"}, 
+          "outputs": {"label": "Toxic"},
+        },
+        {
+          "inputs": {"text": "I had a great day today"}, 
+          "outputs": {"label": "Not toxic"},
+        },
+        {
+          "inputs": {"text": "Nobody likes you"}, 
+          "outputs": {"label": "Toxic"},
+        },
+        {
+          "inputs": {"text": "This is unacceptable. I want to speak to the manager."},
+          "outputs": {"label": "Not toxic"},
+        },
       ]
-      
-      dataset_name = "Toxic Queries"
-      dataset = ls_client.create_dataset(dataset_name=dataset_name)
       ls_client.create_examples(
-        inputs=[{"text": text} for text, _ in labeled_texts], 
-        outputs=[{"label": label} for _, label in labeled_texts], 
         dataset_id=dataset.id,
+        examples=examples,
       )
 
       # Step 3. Define an evaluator
@@ -299,7 +330,7 @@ _If you've annotated your code for tracing, you can open the trace of each row i
       # Client.evaluate() and evaluate() behave the same.
       results = ls_client.evaluate(
           toxicity_classifier,
-          data=dataset_name,
+          data=dataset.name,
           evaluators=[correct],
           experiment_prefix="gpt-4o-mini, simple",  # optional, experiment name prefix
           description="Testing the baseline system.",  # optional, experiment description

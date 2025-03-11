@@ -67,7 +67,7 @@ And install the dependencies we'll need:
       value: "python",
       label: "Python",
       language: "bash",
-      content: `pip install -U langsmith langchain langchain-community langchain-openai`,
+      content: `pip install -U langsmith langchain[openai] langchain-community`,
     },
     {
       value: "typescript",
@@ -260,27 +260,26 @@ Now that we've got our application, let's build a dataset to evaluate it. Our da
 
         # Define the examples for the dataset
         examples = [
-            (
-                "How does the ReAct agent use self-reflection? ",
-                "ReAct integrates reasoning and acting, performing actions - such tools like Wikipedia search API - and then observing / reasoning about the tool outputs.",
-            ),
-            (
-                "What are the types of biases that can arise with few-shot prompting?",
-                "The biases that can arise with few-shot prompting include (1) Majority label bias, (2) Recency bias, and (3) Common token bias.",
-            ),
-            (
-                "What are five types of adversarial attacks?",
-                "Five types of adversarial attacks are (1) Token manipulation, (2) Gradient based attack, (3) Jailbreak prompting, (4) Human red-teaming, (5) Model red-teaming.",
-            )
+            {
+                "inputs": {"question": "How does the ReAct agent use self-reflection? "},
+                "outputs": {"answer": "ReAct integrates reasoning and acting, performing actions - such tools like Wikipedia search API - and then observing / reasoning about the tool outputs."},
+            },
+            {
+                "inputs": {"question": "What are the types of biases that can arise with few-shot prompting?"},
+                "outputs": {"answer": "The biases that can arise with few-shot prompting include (1) Majority label bias, (2) Recency bias, and (3) Common token bias."},
+            },
+            {
+                "inputs": {"question": "What are five types of adversarial attacks?"},
+                "outputs": {"answer": "Five types of adversarial attacks are (1) Token manipulation, (2) Gradient based attack, (3) Jailbreak prompting, (4) Human red-teaming, (5) Model red-teaming."},
+            }
         ]
 
         # Create the dataset and examples in LangSmith
         dataset_name = "Lilian Weng Blogs Q&A"
         dataset = client.create_dataset(dataset_name=dataset_name)
         client.create_examples(
-            inputs=[{"question": q} for q, _ in examples], 
-            outputs=[{"answer": a} for _, a in examples], 
             dataset_id=dataset.id,
+            examples=examples
         )
     `,
     typescript`
@@ -390,13 +389,16 @@ One way to think about different types of RAG evaluators is as a tuple of what i
 
         def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
             """An evaluator for RAG answer accuracy"""
-            answers = f"""\
+            answers = f"""\\
         QUESTION: {inputs['question']}
         GROUND TRUTH ANSWER: {reference_outputs['answer']}
         STUDENT ANSWER: {outputs['answer']}"""
 
             # Run evaluator
-            grade = grader_llm.invoke([{"role": "system", "content": correctness_instructions}, {"role": "user", "content": answers}])
+            grade = grader_llm.invoke([
+                {"role": "system", "content": correctness_instructions}, 
+                {"role": "user", "content": answers}
+            ])
             return grade["correct"]
     `,
     typescript`
@@ -495,10 +497,11 @@ Without a reference answer we can't grade accuracy, but can still grade relevanc
         # Evaluator
         def relevance(inputs: dict, outputs: dict) -> bool:
             """A simple evaluator for RAG answer helpfulness."""
-            answer = f"""\
-        QUESTION: {inputs['question']}
-        STUDENT ANSWER: {outputs['answer']}"""
-            grade = relevance_llm.invoke([{"role": "system", "content": relevance_instructions}, {"role": "user", "content": answer}])
+            answer = f"QUESTION: {inputs['question']}\\nSTUDENT ANSWER: {outputs['answer']}"
+            grade = relevance_llm.invoke([
+                {"role": "system", "content": relevance_instructions}, 
+                {"role": "user", "content": answer}
+            ])
             return grade["relevant"]
     `,
     typescript`
@@ -592,10 +595,8 @@ Another useful way to evaluate responses without needing reference answers is to
         # Evaluator
         def groundedness(inputs: dict, outputs: dict) -> bool:
             """A simple evaluator for RAG answer groundedness."""
-            doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
-            answer = f"""\
-        FACTS: {doc_string}
-        STUDENT ANSWER: {outputs['answer']}"""
+            doc_string = "\\n\\n".join(doc.page_content for doc in outputs["documents"])
+            answer = f"FACTS: {doc_string}\\nSTUDENT ANSWER: {outputs['answer']}"
             grade = grounded_llm.invoke([{"role": "system", "content": grounded_instructions}, {"role": "user", "content": answer}])
             return grade["grounded"]
     `,
@@ -689,13 +690,14 @@ Another useful way to evaluate responses without needing reference answers is to
 
         def retrieval_relevance(inputs: dict, outputs: dict) -> bool:
             """An evaluator for document relevance"""
-            doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
-            answer = f"""\
-        FACTS: {doc_string}
-        QUESTION: {inputs['question']}"""
+            doc_string = "\\n\\n".join(doc.page_content for doc in outputs["documents"])
+            answer = f"FACTS: {doc_string}\\nQUESTION: {inputs['question']}"
 
             # Run evaluator
-            grade = retrieval_relevance_llm.invoke([{"role": "system", "content": retrieval_relevance_instructions}, {"role": "user", "content": answer}])
+            grade = retrieval_relevance_llm.invoke([
+                {"role": "system", "content": retrieval_relevance_instructions}, 
+                {"role": "user", "content": answer}
+            ])
             return grade["relevant"]
     `,
     typescript`
@@ -872,18 +874,18 @@ Here's a consolidated script with all the above code:
 
         # Define the examples for the dataset
         examples = [
-            (
-                "How does the ReAct agent use self-reflection? ",
-                "ReAct integrates reasoning and acting, performing actions - such tools like Wikipedia search API - and then observing / reasoning about the tool outputs.",
-            ),
-            (
-                "What are the types of biases that can arise with few-shot prompting?",
-                "The biases that can arise with few-shot prompting include (1) Majority label bias, (2) Recency bias, and (3) Common token bias.",
-            ),
-            (
-                "What are five types of adversarial attacks?",
-                "Five types of adversarial attacks are (1) Token manipulation, (2) Gradient based attack, (3) Jailbreak prompting, (4) Human red-teaming, (5) Model red-teaming.",
-            ),
+            {
+                "inputs": {"question": "How does the ReAct agent use self-reflection? "},
+                "outputs": {"answer": "ReAct integrates reasoning and acting, performing actions - such tools like Wikipedia search API - and then observing / reasoning about the tool outputs."},
+            },
+            {
+                "inputs": {"question": "What are the types of biases that can arise with few-shot prompting?"},
+                "outputs": {"answer": "The biases that can arise with few-shot prompting include (1) Majority label bias, (2) Recency bias, and (3) Common token bias."},
+            },
+            {
+                "inputs": {"question": "What are five types of adversarial attacks?"},
+                "outputs": {"answer": "Five types of adversarial attacks are (1) Token manipulation, (2) Gradient based attack, (3) Jailbreak prompting, (4) Human red-teaming, (5) Model red-teaming."},
+            },
         ]
 
         # Create the dataset and examples in LangSmith
@@ -891,9 +893,8 @@ Here's a consolidated script with all the above code:
         if not client.has_dataset(dataset_name=dataset_name):
             dataset = client.create_dataset(dataset_name=dataset_name)
             client.create_examples(
-                inputs=[{"question": q} for q, _ in examples],
-                outputs=[{"answer": a} for _, a in examples],
                 dataset_id=dataset.id,
+                examples=examples
             )
 
 
@@ -932,7 +933,7 @@ Here's a consolidated script with all the above code:
 
         def correctness(inputs: dict, outputs: dict, reference_outputs: dict) -> bool:
             """An evaluator for RAG answer accuracy"""
-            answers = f"""\
+            answers = f"""\\
         QUESTION: {inputs['question']}
         GROUND TRUTH ANSWER: {reference_outputs['answer']}
         STUDENT ANSWER: {outputs['answer']}"""
@@ -981,9 +982,7 @@ Here's a consolidated script with all the above code:
         # Evaluator
         def relevance(inputs: dict, outputs: dict) -> bool:
             """A simple evaluator for RAG answer helpfulness."""
-            answer = f"""\
-        QUESTION: {inputs['question']}
-        STUDENT ANSWER: {outputs['answer']}"""
+            answer = f"QUESTION: {inputs['question']}\\nSTUDENT ANSWER: {outputs['answer']}"
             grade = relevance_llm.invoke(
                 [
                     {"role": "system", "content": relevance_instructions},
@@ -1027,10 +1026,8 @@ Here's a consolidated script with all the above code:
         # Evaluator
         def groundedness(inputs: dict, outputs: dict) -> bool:
             """A simple evaluator for RAG answer groundedness."""
-            doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
-            answer = f"""\
-        FACTS: {doc_string}
-        STUDENT ANSWER: {outputs['answer']}"""
+            doc_string = "\\n\\n".join(doc.page_content for doc in outputs["documents"])
+            answer = f"FACTS: {doc_string}\\nSTUDENT ANSWER: {outputs['answer']}"
             grade = grounded_llm.invoke(
                 [
                     {"role": "system", "content": grounded_instructions},
@@ -1076,10 +1073,8 @@ Here's a consolidated script with all the above code:
 
         def retrieval_relevance(inputs: dict, outputs: dict) -> bool:
             """An evaluator for document relevance"""
-            doc_string = "\n\n".join(doc.page_content for doc in outputs["documents"])
-            answer = f"""\
-        FACTS: {doc_string}
-        QUESTION: {inputs['question']}"""
+            doc_string = "\\n\\n".join(doc.page_content for doc in outputs["documents"])
+            answer = f"FACTS: {doc_string}\\nQUESTION: {inputs['question']}"
 
             # Run evaluator
             grade = retrieval_relevance_llm.invoke(
