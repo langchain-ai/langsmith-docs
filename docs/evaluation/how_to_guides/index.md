@@ -87,6 +87,7 @@ Use the UI & API to understand your experiment results.
 - [Upload experiments run outside of LangSmith with the REST API](./how_to_guides/upload_existing_experiments)
 - [Download experiment results as a CSV](./how_to_guides/download_experiment_results_as_csv)
 - [Audit and correct evaluator scores](./how_to_guides/audit_evaluator_scores)
+- [Renaming an experiment](./how_to_guides/renaming_experiment)
 
 ## Dataset management
 
