@@ -10,6 +10,7 @@ For comprehensive descriptions of every class and function see the [API referenc
 - Create a dataset [with the SDK](./how_to_guides/manage_datasets_programmatically#create-a-dataset) or [from the UI](./how_to_guides/manage_datasets_in_application#set-up-your-dataset)
 - Run offline evaluations [with the SDK](./how_to_guides/evaluate_llm_application) or [from the UI](./how_to_guides/run_evaluation_from_prompt_playground)
 - Run online evaluations with [LLM-as-judge](../../observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators) and [custom code](../../observability/how_to_guides/online_evaluations#configure-custom-code-evaluators) evaluators
+- [Analyze evaluation results](./how_to_guides/analyze_single_experiment) in the UI
 - [Log user feedback](./how_to_guides/attach_user_feedback) from your app
 - Log expert feedback [with annotation queues](./how_to_guides/annotation_queues)
 
