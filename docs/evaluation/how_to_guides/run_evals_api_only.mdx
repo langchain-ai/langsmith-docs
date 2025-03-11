@@ -42,20 +42,35 @@ client = Client()
 
 #  Create a dataset
 examples = [
-    ("Shut up, idiot", "Toxic"),
-    ("You're a wonderful person", "Not toxic"),
-    ("This is the worst thing ever", "Toxic"),
-    ("I had a great day today", "Not toxic"),
-    ("Nobody likes you", "Toxic"),
-    ("This is unacceptable. I want to speak to the manager.", "Not toxic"),
+    {
+        "inputs": {"text": "Shut up, idiot"},
+        "outputs": {"label": "Toxic"},
+    },
+    {
+        "inputs": {"text": "You're a wonderful person"},
+        "outputs": {"label": "Not toxic"},
+    },
+    {
+        "inputs": {"text": "This is the worst thing ever"},
+        "outputs": {"label": "Toxic"},
+    },
+    {
+        "inputs": {"text": "I had a great day today"},
+        "outputs": {"label": "Not toxic"},
+    },
+    {
+        "inputs": {"text": "Nobody likes you"},
+        "outputs": {"label": "Toxic"},
+    },
+    {
+        "inputs": {"text": "This is unacceptable. I want to speak to the manager."},
+        "outputs": {"label": "Not toxic"},
+    },
 ]
 
 dataset_name = "Toxic Queries - API Example"
 dataset = client.create_dataset(dataset_name=dataset_name)
-inputs, outputs = zip(
-    *[({"text": text}, {"label": label}) for text, label in examples]
-)
-client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+client.create_examples(dataset_id=dataset.id, examples=examples)
 ```
 
 ## Run a single experiment

@@ -25,7 +25,7 @@ You can see how to use it [here](./evaluate_llm_application).
 <CodeTabs
   groupId="client-language"
   tabs={[
-    python({caption: "Requires `langsmith>=0.2.0`"})`
+    python({caption: "Requires `langsmith>=0.3.13`"})`
         from langsmith import wrappers, Client
         from openai import AsyncOpenAI
 
@@ -49,16 +49,21 @@ list 5 concrete questions that should be investigated to determine if the idea i
             return response.choices[0].message.content
 
         # Evaluator functions can be sync or async
-        def concise(inputs: dict, output: dict) -> bool:
-            return len(output["output"]) < 3 * len(inputs["idea"])
+        def concise(inputs: dict, outputs: dict) -> bool:
+            return len(outputs["output"]) < 3 * len(inputs["idea"])
 
         ls_client = Client()
 
-        examples = ["universal basic income", "nuclear fusion", "hyperloop", "nuclear powered rockets"]
+        ideas = [
+            "universal basic income", 
+            "nuclear fusion", 
+            "hyperloop", 
+            "nuclear powered rockets",
+        ]
         dataset = ls_client.create_dataset("research ideas")
         ls_client.create_examples(
             dataset_name=dataset.name,
-            inputs=[{"idea": e} for e in examples,
+            examples=[{"inputs": {"idea": i}} for i in ideas],
         )
 
         # Can equivalently use the 'aevaluate' function directly:
