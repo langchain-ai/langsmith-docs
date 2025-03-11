@@ -144,7 +144,7 @@ Note that you cannot directly pass in a file path in the TypeScript SDK, as acce
 :::info Uploading from filesystem
 
 Along with being passed in as bytes, attachments can be specified as paths to local files.
-To do so pass in a path for the attachment `data` value and specify arg `dangerously_allow_filesyste=True`:
+To do so pass in a path for the attachment `data` value and specify arg `dangerously_allow_filesystem=True`:
 
 ```python
 client.create_examples(..., dangerously_allow_filesystem=True)
