@@ -27,16 +27,19 @@ client = Client()
 
  Create a dataset
 examples = [
-    ("Ankush", "Hello Ankush"),
-    ("Harrison", "Hello Harrison"),
+    {
+        "inputs": {"input": "Ankush"},
+        "outputs": {"expected": "Hello Ankush"},
+    },
+    {
+        "inputs": {"input": "Harrison"},
+        "outputs": {"expected": "Hello Harrison"},
+    },
 ]
 
 dataset_name = "Hello Set"
 dataset = client.create_dataset(dataset_name=dataset_name)
-inputs, outputs = zip(
-    *[({"input": input}, {"expected": expected}) for input, expected in examples]
-)
-client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+client.create_examples(dataset_id=dataset.id, examples=examples)
 ```
 
 ## Use question and answer (correctness) evaluators

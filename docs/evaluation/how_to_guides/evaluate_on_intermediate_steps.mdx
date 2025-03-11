@@ -47,7 +47,7 @@ The below RAG pipeline consists of 1) generating a Wikipedia query given the inp
 
 <CodeTabs
   tabs={[
-    python({ caption: 'Requires `langsmith>=0.2.0`' })`
+    python({ caption: 'Requires `langsmith>=0.3.13`' })`
     import wikipedia as wp
     from openai import OpenAI
     from langsmith import traceable, wrappers
@@ -216,7 +216,7 @@ We are building a very simple dataset with a couple of examples to evaluate the 
 
 <CodeTabs
   tabs={[
-    python`
+    python({ caption: "Requires `langsmith>=0.3.13`" })`
       from langsmith import Client
       
       ls_client = Client()
@@ -224,12 +224,13 @@ We are building a very simple dataset with a couple of examples to evaluate the 
 
       if not ls_client.has_dataset(dataset_name=dataset_name):
           dataset = ls_client.create_dataset(dataset_name=dataset_name)
+          examples = [
+            {"inputs": {"question": "What is LangChain?"}},
+            {"inputs": {"question": "What is LangSmith?"}},
+          ]
           ls_client.create_examples(
-            inputs=[
-                {"question": "What is LangChain?"},
-                {"question": "What is LangSmith?"},
-            ],
-            dataset_id=dataset.id
+            dataset_id=dataset.id,
+            examples=examples,
           )
     `,
     typescript`
