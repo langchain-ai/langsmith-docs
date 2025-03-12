@@ -39,6 +39,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Troubleshoot trace testing](./how_to_guides/nest_traces)
 - [Upload files with traces](./how_to_guides/upload_files_with_traces)
 - [Print out logs from the LangSmith SDK (Python Only)](./how_to_guides/output_detailed_logs)
+- [Troubleshooting: Missing or Misrouted Traces](./how_to_guides/toubleshooting_variable_caching)
 
 ## Tracing projects UI & API
 
@@ -66,3 +67,9 @@ Leverage LangSmith's powerful monitoring, automation, and online evaluation feat
 - [Set up automation rules](./how_to_guides/rules)
 - [Set up webhook notifications for rules](./how_to_guides/webhooks)
 - [Perform online evaluations](./how_to_guides/online_evaluations)
+
+## Human feedback
+
+- [Log user feedback](../evaluation/how_to_guides/attach_user_feedback)
+- [Set up a new feedback criteria](../evaluation/how_to_guides/set_up_feedback_criteria)
+- [Annotate traces inline in the UI](../evaluation/how_to_guides/annotate_traces_inline)

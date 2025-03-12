@@ -14,7 +14,7 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Evaluation Quick Start
 
-This quick start will get you up and running with our evaluation SDK and Experiments UI.
+This quick start will get you up and running with our evaluation SDK and experiments UI.
 
 ## 1. Install Dependencies
 
@@ -46,6 +46,7 @@ To create an API key head to the <RegionalUrl text='Settings page' suffix='/sett
   tabs={[
     ShellBlock(`export LANGSMITH_TRACING=true
 export LANGSMITH_API_KEY="<your-langchain-api-key>"
+
 # The example uses OpenAI, but it's not necessary in general
 export OPENAI_API_KEY="<your-openai-api-key>"`),
   ]}
@@ -96,28 +97,26 @@ content: `# For other dataset creation methods, see:
 # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
 # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
 
-# Create inputs and reference outputs
-examples = [
-    (
-        "Which country is Mount Kilimanjaro located in?",
-        "Mount Kilimanjaro is located in Tanzania.",
-    ),
-    (
-        "What is Earth's lowest point?",
-        "Earth's lowest point is The Dead Sea.",
-    ),
-]
-
-inputs = [{"question": input_prompt} for input_prompt, _ in examples]
-outputs = [{"answer": output_answer} for _, output_answer in examples]
 
 # Programmatically create a dataset in LangSmith
 dataset = client.create_dataset(
     dataset_name="Sample dataset", description="A sample dataset in LangSmith."
 )
 
+# Create examples
+examples = [
+    {
+        "inputs": {"question": "Which country is Mount Kilimanjaro located in?"},
+        "outputs": {"answer": "Mount Kilimanjaro is located in Tanzania."},
+    },
+    {
+        "inputs": {"question": "What is Earth's lowest point?"},
+        "outputs": {"answer": "Earth's lowest point is The Dead Sea."},
+    },
+]
+
 # Add examples to the dataset
-client.create_examples(inputs=inputs, outputs=outputs, dataset_id=dataset.id)
+client.create_examples(dataset_id=dataset.id, examples=examples)
 `,
     },
     {
@@ -177,8 +176,8 @@ def target(inputs: dict) -> dict:
     response = openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            { "role": "system", "content": "Answer the following question accurately" },
-            { "role": "user", "content": inputs["question"] },
+            {"role": "system", "content": "Answer the following question accurately"},
+            {"role": "user", "content": inputs["question"]},
         ],
     )
     return { "response": response.choices[0].message.content.strip() }
@@ -229,7 +228,7 @@ def accuracy(outputs: dict, reference_outputs: dict) -> bool:
     response = openai_client.beta.chat.completions.parse(
         model="gpt-4o-mini",
         messages=[
-            { "role": "system", "content": instructions },
+            {"role": "system", "content": instructions},
             {
                 "role": "user",
                 "content": f"""Ground Truth answer: {reference_outputs["answer"]}; 
