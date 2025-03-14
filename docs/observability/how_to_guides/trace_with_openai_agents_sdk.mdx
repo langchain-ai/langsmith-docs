@@ -23,12 +23,12 @@ This will install both the LangSmith library and the OpenAI Agents SDK.
 
 ## Quick Start
 
-You can integrate LangSmith tracing with the OpenAI Agents SDK by using the `LangsmithTracingProcessor` class.
+You can integrate LangSmith tracing with the OpenAI Agents SDK by using the `OpenAIAgentsTracingProcessor` class.
 
 ```python
 import asyncio
 from agents import Agent, Runner, set_trace_processors
-from langsmith.wrappers import LangsmithTracingProcessor
+from langsmith.wrappers import OpenAIAgentsTracingProcessor
 
 async def main():
     agent = Agent(
@@ -41,7 +41,7 @@ async def main():
     print(result.final_output)
 
 if __name__ == "__main__":
-    set_trace_processors([LangsmithTracingProcessor()])
+    set_trace_processors([OpenAIAgentsTracingProcessor()])
     asyncio.run(main())
 ```
 
