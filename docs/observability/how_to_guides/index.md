@@ -13,15 +13,15 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Trace using the LangSmith REST API](./how_to_guides/trace_with_api)
 - [Trace without environment variables](./how_to_guides/trace_without_env_vars)
 
-### Trace natively supported libraries
+### Integrations
 
-- [Trace with `LangChain`](./how_to_guides/trace_with_langchain)
-- [Trace with `LangGraph`](./how_to_guides/trace_with_langgraph)
-- [Trace the OpenAI API client](./how_to_guides/annotate_code#wrap-the-openai-client)
-- [Trace with `Instructor` (Python only)](./how_to_guides/trace_with_instructor)
-- [Trace with the Vercel `AI SDK` (JS only)](./how_to_guides/trace_with_vercel_ai_sdk)
-- [Trace with OpenTelemetry](./how_to_guides/trace_with_opentelemetry)
-- [Trace with OpenAI Agent SDK](./how_to_guides/trace_with_openai_agents_sdk)
+- [LangChain OSS libraries](./how_to_guides/trace_with_langchain)
+- [LangGraph](./how_to_guides/trace_with_langgraph)
+- [OpenAI](./how_to_guides/annotate_code#wrap-the-openai-client)
+- [Instructor](./how_to_guides/trace_with_instructor)
+- [Vercel AI SDK (JS only)](./how_to_guides/trace_with_vercel_ai_sdk)
+- [OpenTelemetry](./how_to_guides/trace_with_opentelemetry)
+- [OpenAI Agent SDK (Python only)](./how_to_guides/trace_with_openai_agents_sdk)
 
 ### Advanced configuration
 
