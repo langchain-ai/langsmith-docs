@@ -96,7 +96,7 @@ frontend:
   maxBodySize: "100M"
 ```
 
-1. Apply your changes to the cluster.
+2. Apply your changes to the cluster.
 
 ### _Details: code: 497, message: default: Not enough privileges. To execute this query, it's necessary to have the grant CREATE ROW POLICY ON default.feedbacks_rmt_
 
@@ -145,14 +145,14 @@ Then take the following steps:
 docker build -t <image-name> .
 ```
 
-1. Update your `docker-compose.yaml` to use the custom image. Make sure to remove the users.xml mount point.
+2. Update your `docker-compose.yaml` to use the custom image. Make sure to remove the users.xml mount point.
 
 ```yaml
 langchain-clickhouse:
   image: <image-name>
 ```
 
-1. Restart your instance of LangSmith.
+3. Restart your instance of LangSmith.
 
 ```bash
 docker compose down --volumes
