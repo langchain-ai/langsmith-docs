@@ -81,3 +81,76 @@ docker compose exec langchain-backend migrate -source "file://clickhouse/migrati
 ```
 
 1. Rerun your upgrade/migrations.
+
+### _413 - Request Entity Too Large_
+
+This error occurs when the request size exceeds the maximum allowed size. You will need to increase the maximum request size in your Nginx configuration.
+
+#### Kubernetes
+
+1. Edit your `langsmith_config.yaml` and increase the `frontend.maxBodySize` [value](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/values.yaml#L519).
+This might look something like this:
+
+```yaml
+frontend:
+  maxBodySize: "100M"
+```
+
+1. Apply your changes to the cluster.
+
+### _Details: code: 497, message: default: Not enough privileges. To execute this query, it's necessary to have the grant CREATE ROW POLICY ON default.feedbacks_rmt_
+
+This error occurs when your user does not have the necessary permissions to create row policies in Clickhouse. When deploying the Docker deployment, you need to copy the `users.xml` file from the github repo as well.
+This adds the `<access_management>` tag to the `users.xml` file, which allows the user to create row policies. Below is the default `users.xml` file that we expect to be used.
+```
+<clickhouse>
+    <users>
+        <default>
+            <access_management>1</access_management>
+            <named_collection_control>1</named_collection_control>
+            <show_named_collections>1</show_named_collections>
+            <show_named_collections_secrets>1</show_named_collections_secrets>
+            <profile>default</profile>
+        </default>
+    </users>
+    <profiles>
+        <default>
+            <async_insert>1</async_insert>
+            <async_insert_max_data_size>2000000</async_insert_max_data_size>
+            <wait_for_async_insert>0</wait_for_async_insert>
+            <parallel_view_processing>1</parallel_view_processing>
+            <allow_simdjson>0</allow_simdjson>
+            <lightweight_deletes_sync>0</lightweight_deletes_sync>
+        </default>
+    </profiles>
+</clickhouse>
+```
+
+In some environments, your mount point may not be writable by the container. In these cases we suggest building a custom image with the `users.xml` file included.
+
+Example `Dockerfile`:
+
+```Dockerfile
+FROM clickhouse/clickhouse-server:24.8
+
+COPY ./users.xml /etc/clickhouse-server/users.d/users.xml
+```
+
+Then take the following steps:
+
+1. Build your custom image.
+```bash
+docker build -t <image-name> .
+```
+1. Update your `docker-compose.yaml` to use the custom image. Make sure to remove the users.xml mount point.
+
+```yaml
+  langchain-clickhouse:
+    image: <image-name>
+```
+1. Restart your instance of LangSmith.
+
+```bash
+docker compose down --volumes
+docker compose up
+```
