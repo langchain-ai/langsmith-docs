@@ -29,6 +29,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Set a sampling rate for traces](./how_to_guides/sample_traces)
 - [Add metadata and tags to traces](./how_to_guides/add_metadata_tags)
 - [Implement distributed tracing](./how_to_guides/distributed_tracing)
+- [Trace LangChain with OpenTelemetry](./how_to_guides/trace_langchain_with_otel)
 - [Access the current span within a traced function](./how_to_guides/access_current_span)
 - [Log multimodal traces](./how_to_guides/log_multimodal_traces)
 - [Log retriever traces](./how_to_guides/log_retriever_trace)
