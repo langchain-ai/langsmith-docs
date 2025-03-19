@@ -89,7 +89,7 @@ This error occurs when the request size exceeds the maximum allowed size. You wi
 #### Kubernetes
 
 1. Edit your `langsmith_config.yaml` and increase the `frontend.maxBodySize` [value](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/values.yaml#L519).
-This might look something like this:
+   This might look something like this:
 
 ```yaml
 frontend:
@@ -102,6 +102,7 @@ frontend:
 
 This error occurs when your user does not have the necessary permissions to create row policies in Clickhouse. When deploying the Docker deployment, you need to copy the `users.xml` file from the github repo as well.
 This adds the `<access_management>` tag to the `users.xml` file, which allows the user to create row policies. Below is the default `users.xml` file that we expect to be used.
+
 ```
 <clickhouse>
     <users>
@@ -139,15 +140,18 @@ COPY ./users.xml /etc/clickhouse-server/users.d/users.xml
 Then take the following steps:
 
 1. Build your custom image.
+
 ```bash
 docker build -t <image-name> .
 ```
+
 1. Update your `docker-compose.yaml` to use the custom image. Make sure to remove the users.xml mount point.
 
 ```yaml
-  langchain-clickhouse:
-    image: <image-name>
+langchain-clickhouse:
+  image: <image-name>
 ```
+
 1. Restart your instance of LangSmith.
 
 ```bash
