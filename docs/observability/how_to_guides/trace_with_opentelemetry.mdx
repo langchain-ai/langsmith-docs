@@ -470,7 +470,7 @@ trace.set_tracer_provider(provider)
 
 # Set environment variables for LangChain
 os.environ["LANGSMITH_OTEL_ENABLED"] = "true"
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGSMITH_TRACING"] = "true"
 
 # Create and run a LangChain application
 prompt = ChatPromptTemplate.from_template("Tell me a joke about {topic}")
