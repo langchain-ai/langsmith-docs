@@ -97,17 +97,17 @@ def service_a():
         prompt = ChatPromptTemplate.from_template("Summarize: {text}")
         model = ChatOpenAI()
         chain = prompt | model
-        
+
         # Run the chain
         result = chain.invoke({"text": "OpenTelemetry is an observability framework"})
-        
+
         # Propagate context to Service B
         headers = {}
         inject(headers)  # Inject trace context into headers
-        
+
         # Call Service B with the trace context
         response = requests.post(
-            "http://service-b.example.com/process", 
+            "http://service-b.example.com/process",
             headers=headers,
             json={"summary": result.content}
         )
@@ -122,18 +122,18 @@ app = Flask(__name__)
 def service_b_endpoint():
     # Extract the trace context from the request headers
     context = extract(request.headers)
-    
+
     with tracer.start_as_current_span("service_b_operation", context=context) as span:
         data = request.json
         summary = data.get("summary", "")
-        
+
         # Process the summary with another LLM chain
         prompt = ChatPromptTemplate.from_template("Analyze the sentiment of: {text}")
         model = ChatOpenAI()
         chain = prompt | model
-        
+
         result = chain.invoke({"text": summary})
-        
+
         return jsonify({"analysis": result.content})
 
 if __name__ == "__main__":
@@ -150,13 +150,13 @@ By default, the LangSmith OpenTelemetry exporter will send data to the LangSmith
 
 ```bash
 OTEL_EXPORTER_OTLP_ENDPOINT: Override the endpoint URL
-OTEL_EXPORTER_OTLP_HEADERS: Add custom headers (LangSmith API keys and Project are added automatically) 
+OTEL_EXPORTER_OTLP_HEADERS: Add custom headers (LangSmith API keys and Project are added automatically)
 OTEL_SERVICE_NAME: Set a custom service name (defaults to "langsmith")
 ```
 
 LangSmith uses the HTTP trace exporter by default. If you'd like to use your own tracing provider, you can either:
 
-1. Set the OTEL environment variables as shown above, or 
+1. Set the OTEL environment variables as shown above, or
 2. Set a global trace provider before initializing LangChain components, which LangSmith will detect and use instead of creating its own.
 
 ### Configuring Alternate OTLP Endpoints
@@ -274,6 +274,7 @@ print(result.content)
 ```
 
 This approach offers several advantages:
+
 - Centralized configuration for all your telemetry destinations
 - Reduced overhead in your application code
 - Better scalability and resilience
