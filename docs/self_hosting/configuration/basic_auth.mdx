@@ -8,8 +8,9 @@ import {
 
 LangSmith supports login via username/password with a few limitations:
 
-- You cannot change an existing installation from basic auth mode to OIDC or vice versa - installations must be either one or the other. **A basic auth installation requires a completely fresh installation including a separate PostgreSQL database/schema, unless migrating from an existing `None` type installation (see below).**
+- You cannot change an existing installation from basic auth mode to OAuth with PKCE (deprecated) or vice versa - installations must be either one or the other. **A basic auth installation requires a completely fresh installation including a separate PostgreSQL database/schema, unless migrating from an existing `None` type installation (see below).**
 - Users must be given their initial auto-generated password once they are invited. This password may be changed later by any Organization Admin.
+- You cannot use both basic auth and OAuth with client secret at the same time.
 
 ## Requirements and features
 
