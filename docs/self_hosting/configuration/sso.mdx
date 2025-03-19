@@ -29,6 +29,7 @@ In order to upgrade, simply remove the basic auth configuration and add the requ
 :::warning
 LangSmith does not support moving from SSO to basic auth mode in self-hosted at the moment.
 We also do not support moving from OAuth Mode with client secret to OAuth mode without a client secret and vice versa.
+Finally, we do not support having both basic auth and OAuth at the same time. Ensure you disable the basic auth configuration when enabling OAuth.
 :::
 
 - Your IdP must support the `Authorization Code` flow with `Client Secret`.
