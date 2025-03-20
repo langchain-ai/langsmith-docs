@@ -101,6 +101,77 @@ You can add multiple key-value filters to create more complex queries. You can a
 
 ![Filtering](./static/search_kv_filter_shortcut.png)
 
+## Example on filtering using output key-value pairs: filter tool calls
+
+As an example of filtering on key-value pairs, let's suppose that you wanted to filter traces for tool calls.
+
+In this case, let's assuming this is your output you want to filter for:
+
+```json
+{
+  "generations": [
+    [
+      {
+        "text": "",
+        "type": "ChatGeneration",
+        "message": {
+          "lc": 1,
+          "type": "constructor",
+          "id": [],
+          "kwargs": {
+            "type": "ai",
+            "id": "run-ca7f7531-f4de-4790-9c3e-960be7f8b109",
+            "tool_calls": [
+              {
+                "name": "Plan",
+                "args": {
+                  "steps": [
+                    "Research LangGraph's node configuration capabilities",
+                    "Investigate how to add a Python code execution node",
+                    "Find an example or create a sample implementation of a code execution node"
+                  ]
+                },
+                "id": "toolu_01XexPzAVknT3gRmUB5PK5BP",
+                "type": "tool_call"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  ],
+  "llm_output": null,
+  "run": null,
+  "type": "LLMResult"
+}
+```
+
+With the example above, the KV search will map each nested JSON path as a key-value pair that you can use to search and filter.
+
+Our system will break it into a set of key value matches:
+
+| Key                                                | Value                                                                        |
+| -------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `generations.type`                                 | `ChatGeneration`                                                             |
+| `generations.message.type`                         | `constructor`                                                                |
+| `generations.message.kwargs.type`                  | `ai`                                                                         |
+| `generations.message.kwargs.id`                    | `run-ca7f7531-f4de-4790-9c3e-960be7f8b109`                                   |
+| `generations.message.kwargs.tool_calls.name`       | `Plan`                                                                       |
+| `generations.message.kwargs.tool_calls.args.steps` | `Research LangGraph's node configuration capabilities`                       |
+| `generations.message.kwargs.tool_calls.args.steps` | `Investigate how to add a Python code execution node`                        |
+| `generations.message.kwargs.tool_calls.args.steps` | `Find an example or create a sample implementation of a code execution node` |
+| `generations.message.kwargs.tool_calls.id`         | `toolu_01XexPzAVknT3gRmUB5PK5BP`                                             |
+| `generations.message.kwargs.tool_calls.type`       | `tool_call`                                                                  |
+| `type`                                             | `LLMResult`                                                                  |
+
+To search for tool calls, you can use the following search:
+
+`generations.message.kwargs.tool_calls.type` = `tool_call`
+
+![Filtering](./static/search_kv_tool.png)
+
+This will match runs where the `tool_calls` type is `tool_call`.
+
 ## Negative filtering on key-value pairs
 
 Different types of negative filtering can be applied to `Metadata`, `Input KV`, and `Output KV` (KV is short for Key-Value) fields to exclude specific runs from your results.
