@@ -148,7 +148,7 @@ In this case, let's assume this is the output you want to filter for:
 
 With the example above, the KV search will map each nested JSON path as a key-value pair that you can use to search and filter.
 
-Our system will break it into a set of searchable key value matches:
+LangSmith will break it into the following set of searchable key value pairs:
 
 | Key                                                | Value                                                                        |
 | -------------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -164,19 +164,17 @@ Our system will break it into a set of searchable key value matches:
 | `generations.message.kwargs.tool_calls.type`       | `tool_call`                                                                  |
 | `type`                                             | `LLMResult`                                                                  |
 
-To search for specific tool calls, you can use the following search:
+To search for specific tool call, you can use the following Output KV search while removing the root runs filter:
 
 `generations.message.kwargs.tool_calls.name` = `Plan`
 
+This will match root and non-root runs where the `tool_calls` name is `Plan`.
+
 ![Filtering](./static/search_kv_tool.png)
 
-This will match root and non-roto runs where the `tool_calls` type is `tool_call`.
+If you would like to filter for all runs _whose tree contains_ the tool filter call, you can use the tree filter in the advanced filters setting:
 
-If you would like to filter for runs whose tree contains this tool filter call, you can set this filter in the advanced filters setting:
-
-
-
-
+![Filtering](./static/search_kv_tool_tree.png)
 
 ## Negative filtering on key-value pairs
 
