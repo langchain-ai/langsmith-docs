@@ -9,20 +9,16 @@ LangSmith allows you to run evaluations directly in the [prompt playground](/pro
 
 Before you run an evaluation, you need to have an [existing dataset](/evaluation/concepts#datasets). Learn how to [create a dataset from the UI](/evaluation/how_to_guides/manage_datasets_in_application#set-up-your-dataset). 
 
-If you prefer to run experiments in code, visit [run an evaluation via SDK](/evaluation/how_to_guides/evaluate_llm_application). 
+If you prefer to run experiments in code, visit [run an evaluation using the SDK](/evaluation/how_to_guides/evaluate_llm_application). 
 
-<ZoomableImage 
-  src="/evaluation/how_to_guides/static/playground_eval.png" 
-  alt="View experiment demo"
-/>
-## //to-do video
+![](./static/playground_experiment.gif)
 
 ## Create an experiment in the prompt playground
 
-1. **Navigate to the playground** by clicking on "Playground" in the sidebar. 
-2. **Add a prompt** by selecting and existing, saved a prompt or creating a new one.
+1. **Navigate to the playground** by clicking **Playground** in the sidebar. 
+2. **Add a prompt** by selecting an existing saved a prompt or creating a new one.
 2. **Select a dataset** from the **Test over dataset** dropdown
-- Note that the keys in the dataset input must match the input variables of the prompt. For example, in the above screenshot the selected dataset has inputs with the key "blog", which correctly match the input variable of the prompt. 
+- Note that the keys in the dataset input must match the input variables of the prompt. For example, in the above video the selected dataset has inputs with the key "blog", which correctly match the input variable of the prompt. 
 - There is a maximum of 15 inputs for the prompt playground allowed.
 3. **Start the experiment** by clicking on the **Start** or CMD+Enter. This will run the prompt over all the examples in the dataset and create an entry for the experiment in the dataset details page. Note that you need to commit the prompt to the prompt hub before you can start the experiment to ensure it can be referenced in the experiment. The result for each input will be streamed and displayed inline for each input in the dataset.
 4. **View the full results** by clicking **View full experiment**. This will take you to the experiment details page where you can see the results of the experiment.

@@ -1,3 +1,4 @@
+
 import {
   CodeTabs,
   python,
@@ -6,26 +7,26 @@ import {
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import '@site/src/css/custom.css';
+
 
 # How to define an LLM-as-a-judge evaluator
 
 :::info Key concepts
-
 - [LLM-as-a-judge evaluator](/evaluation/concepts#llm-as-judge)
-
 :::
 
-LLM applications can be difficult to evaluate because often they're generating conversational text for which there's no single "right" answer.
-A valuable way to evaluate such applications is to use a second LLM to judge the outputs of the first.
+LLM applications can be challenging to evaluate since they often generate conversational text with no single correct answer.
 
-In this guide, you'll learn how to define a LLM-as-a-judge evaluator for [offline evaluation](/evaluation/concepts#offline-evaluation) using the LangSmith SDK or via the UI. If you're interested in running evaluations in near-real time on your production traces, check out [set up online evaluations](/observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators). 
+This guide shows you how to define a LLM-as-a-judge evaluator for [offline evaluation](/evaluation/concepts#offline-evaluation) using either the LangSmith SDK or the UI. Note: To run evaluations in real-time on your production traces, refer to [setting up online evaluations](/observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators). 
 
-<Tabs>
+<Tabs className="interface-tabs">
   <TabItem value="sdk" label="SDK">
-  
-## LLM-as-a-judge pre-built evaluators
 
-Pre-built evaluators are a useful starting point when you are early in setting up evaluations. Check out [pre-built evaluators](./prebuilt_evaluators) for how to use pre-built evaluators with LangSmith.
+<div id="sdk-content">
+## Pre-built evaluators
+
+Pre-built evaluators are a useful starting point setting up evaluations. Refer to [pre-built evaluators](./prebuilt_evaluators) for how to use pre-built evaluators with LangSmith.
 
 ## Create your own LLM-as-a-judge evaluator
 
@@ -87,35 +88,37 @@ for the answer is logically valid and consistent with question and the answer.\\
 />
 
 See [here](./custom_evaluator) for more on how to write a custom evaluator.
+</div>
 
-  </TabItem>
+  </TabItem >
   <TabItem value="ui" label="UI">
+  <div id="ui-content">
+
+  ## Pre-built evaluators
   
-  ## LLM-as-a-judge pre-built evaluators
+  Pre-built evaluators are a useful starting point when setting up evaluations. The LangSmith UI supports the following pre-built evaluators:
   
-  Pre-built evaluators are a useful starting point when you are early in setting up evaluations. The LangSmith UI supports the following pre-built evaluators:
-  
-  - **Hallucination**: Evaluate whether an answer hallucinates facts. This evaluator takes in context (eg. documents of text), an input question and evalates whether the output includes any hallucination. 
-  - **Correctness**: Evaluate whether an answer semantically matches a reference answer. 
+  - **Hallucination**: Detect factually incorrect outputs.
+  - **Correctness**: Check semantic similarity to a reference.
   - **Conciseness**: Evaluate whether an answer is a concise response to a question. 
-  - **Code checker**: Evaluate whether code produces solves the question poised. 
+  - **Code checker**: Verify correctness of code answers.
   
-  Pre-built evaluators can be configured:
+  You can configure these evaluators::
   - When running an evaluation using the [playground](/prompt_engineering/concepts#prompt-playground)
   - As part of a dataset to [automatically run experiments over a dataset](/evaluation/how_to_guides/bind_evaluator_to_dataset)
   - When running an [online evaluation](/observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators)
   
-  Pre-built evaluators are a great starting point, and are easy to customize. By default, pre-built evaluators assume that you are running the evaluation over the full input, output and (if applicable) reference output. In order to specify specific keys to run the evaluation over, or to change the LLM-as-a-judge prompt you may edit the evaluator. See more details below. 
+  Pre-built evaluators easy to customize. By default, pre-built evaluators assume that you are running the evaluation over the full input, output and (if applicable) reference output. To specify which keys to run the evaluation over, or to change the LLM-as-a-judge prompt you can edit the evaluator. See more details below. 
   
-  ## Customize your own LLM-as-a-judge evaluator
+  ## Customize your LLM-as-a-judge evaluator
   
-  //to-do add video
+  ![](./static/playground_evaluator.gif)
   
- ### Select create your own evaluator
-  - Select the **+Evaluator** button in the playground or from a dataset
-  - Select **Add rules** from a tracing project, configure your rule and select **Apply evaluator**
+ ### Select/create the evaluator
+  - In the playground or from a dataset: Select the **+Evaluator** button
+  - From a tracing project: Select **Add rules**, configure your rule and select **Apply evaluator**
   
-  Select the **Create your on evaluator option**. Alternativley, you may start by selecting a pre-built evaluator and useing the pencil icon to edit it. 
+  Select the **Create your own evaluator option**. Alternativley, you may start by selecting a pre-built evaluator and editing it. 
   
 ### Configure the evaluator
 
@@ -125,17 +128,17 @@ Edit the prompt, a model, set of criteria to evaluate the on, and set a feedback
 
 Create a new prompt, or choose an existing prompt from the [prompt hub](/prompt_engineering/quickstarts/quickstart_ui).
 
-- **Create your own prompt**: Create a custom prompt. 
+- **Create your own prompt**: Create a custom prompt inline. 
 
-- **Pull a prompt from the prompt hub**: Use the **Select a prompt** dropdown to select from an existing prompt. You can't edit these prompts directly within the prompt editor, but you can view the prompt and the schema it uses.If the prompt is your own, you can edit it in the playground and commit the version, and then pull in your new prompt in the evaluator.
+- **Pull a prompt from the prompt hub**: Use the **Select a prompt** dropdown to select from an existing prompt. You can't edit these prompts directly within the prompt editor, but you can view the prompt and the schema it uses. To make changes, edit the prompt in the playground and commit the version, and then pull in your new prompt in the evaluator.
 
 #### Model
 
-To run your LLM-as-a-judge evalautor, you may choose any model available in the dropdown.
+Select the desired model from the provided options.
 
 #### Mapping variables
 
-Use variable mapping to indicate the  variables that are passed into your evaluator prompt from your runs or experiments. To aid with variable mapping, a sample example (or run) is provided for reference. Use the dropdown to select the parts of the run that are relevant for the evalaution.
+Use variable mapping to indicate the variables that are passed into your evaluator prompt from your run or example. To aid with variable mapping, a sample example (or run) is provided for reference. Use the dropdown to select the parts of the run that are relevant for the evalaution.
 
 You may edit/remove variables as needed. For example if you are evaluating a metric such as conciseness, you typically don't need a reference output so you may remove that variable. 
 
@@ -144,12 +147,11 @@ You may edit/remove variables as needed. For example if you are evaluating a met
 Previewing the prompt will show you an example of what the formatted prompt will look like. This preview pulls a sample input, output into the prompt. In the case of a evaluator configured as part of a dataset or in the playground, the preview will also pull reference output from an example in your dataset.
 
 #### Improve your evaluator with few-shot examples
-To better align the LLM-as-a-judge evaluator to human preferences, LangSmith allows you to collect [human corrections](/evaluation/how_to_guides/create_few_shot_evaluators#make-corrections) on evaluator scores. With this selection enabled, these corrections are then inserted automatically as few-shot examples into your prompt.
+To better align the LLM-as-a-judge evaluator to human preferences, LangSmith allows you to collect [human corrections](/evaluation/how_to_guides/create_few_shot_evaluators#make-corrections) on evaluator scores. With this selection enabled, corrections are then inserted automatically as few-shot examples into your prompt.
 
-Once you create your evaluator, we will automatically create a dataset for you, which will be auto-populated with few-shot examples once you start making corrections.
+If you create an evaluator with few-shot examples, LangSmith will automatically create a dataset for you, which will be auto-populated with few-shot examples once you start making corrections.
 
 Note that this is only supported when using mustache prompts - you will not be able to click this option if your prompt uses f-string formatting. Few-shot examples are not currently supported in evaluators that use the prompt hub.
-
 
 <details>
   <summary>Learn more</summary>
@@ -157,30 +159,28 @@ Note that this is only supported when using mustache prompts - you will not be a
   
   When configuring variable mapping for few-shot examples, it should contain the same variables as your main prompt, plus a `few_shot_explanation` and a `score` variable which should have the same name as your feedback key. For example, if your main prompt has variables `question` and `response`, and your evaluator outputs a `correctness` score, then your few-shot prompt should have `question`, `response`, `few_shot_explanation`, and `correctness`.
   
-  You may also specify the number of few-shot examples to use. The default is 5. If your examples will tend to be very long, you may want to set this number lower to save tokens - whereas if your examples tend to be short, you can set a higher number in order to give your evaluator more examples to learn from. If you have more examples in your dataset than this number, we will randomly choose them for you.
+  You may also specify the number of few-shot examples to use. The default is 5. If your examples are very long, you may want to set this number lower to save tokens - whereas if your examples tend to be short, you can set a higher number in order to give your evaluator more examples to learn from. If you have more examples in your dataset than this number, we will randomly choose them for you.
   
   If you're using few-shot examples, LangSmith has a feature in beta that allows the most relevant examples to be dynamically selected at runtime using [dynamic few-shot examples](/evaluation/how_to_guides/index_datasets_for_dynamic_few_shot_example_selection). 
-
 </details>
 
 #### Feedback configuration
 
-Feedback configuration is the scoring criteria that your LLM-as-a-judge evaluator will use. Think of this as the rubric that your evaluator will grade based on. This will be added as [feedback](/observability/concepts#feedback) to a run or example. 
+Feedback configuration is the scoring criteria that your LLM-as-a-judge evaluator will use. Think of this as the rubric that your evaluator will grade based on. Scores will be added as [feedback](/observability/concepts#feedback) to a run or example. Defining feedback for your evaluator:
 
-1. **Name your feedback key**: This is the name that will appear when viewing evaluation results. Names should be unique across experiments. 
+1. **Name the feedback key**: This is the name that will appear when viewing evaluation results. Names should be unique across experiments. 
 
 2. **Add a description**: Describe what the feedback represents. 
 
-3. **Configure the schema for the feedback**
+3. **Choose feedback type**: 
+- **Boolean**: True/false feedback.
+- **Categorical**: Select from predefined categories. 
+- **Continuous**: Numerical scoring within a specified range.
 
-There are 3 kinds of feedback that can be set:
-- **Boolean**: The evaluator will respond with true or false. 
-- **Categorical**: Create a set of categories for your LLM-as-a-judge evaluator to classify the inputs/outputs on. 
-- **Continuous**: The evaluator will respond with a number between the min and max value set. 
-
-Feedback is added as output schema to your LLM-as-a-judge evaluator prompt. If you are pulling in a prompt from the hub, you must configure the output schema for your prompt in the playground.
+Feedback is added as output schema to your LLM-as-a-judge evaluator prompt. If you are pulling in a prompt from the hub, you must add feedback configuration as part of the output schema for your prompt in the playground first.
 
 ### Save the evaluator
 Once your are finished configuring, save your changes. 
+</div>
   </TabItem>
 </Tabs>
