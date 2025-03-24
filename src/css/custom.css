@@ -435,3 +435,18 @@ div[class^='announcementBar_'] {
 .no-highlight > .menu__list-item-collapsible {
   background: transparent !important;
 }
+
+.interface-tabs {
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.interface-tabs .tabs__item {
+  border-bottom: 2px solid #ccc;
+  padding: 10px;
+}
+
+.interface-tabs .tabs__item--active {
+  border-bottom: 2px solid purple !important;
+}

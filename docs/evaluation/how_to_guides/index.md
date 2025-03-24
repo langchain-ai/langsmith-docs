@@ -65,8 +65,8 @@ Run evals using your favorite testing tools.
 
 Evaluate and monitor your system's live performance on production data.
 
-- [Set up an LLM-as-judge online evaluator](../../observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators)
-- [Set up a custom code online evaluator](../../observability/how_to_guides/online_evaluations#configure-custom-code-evaluators)
+- [Set up an LLM-as-judge online evaluator](/observability/how_to_guides/online_evaluations#get-started-with-online-evaluators)
+- [Set up a custom code online evaluator](/observability/how_to_guides/online_evaluations#get-started-with-online-evaluators)
 - [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
 
 ## Automatic evaluation

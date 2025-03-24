@@ -2,89 +2,43 @@
 sidebar_label: Online Evaluation
 sidebar_position: 4
 ---
+import { ZoomableImage } from '@site/src/components/ZoomableImage';
 
 # Set up online evaluations
 
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
-
 - [Set up automation rules](./rules)
+- Running [online evaluations](/evaluation/concepts#online-evaluation)
 
 :::
 
-Online evaluations is a powerful LangSmith feature that allows you to gain insight on your production traces. You
-simply configure a sample of runs that you want to be evaluated from production, and the evaluator will leave feedback
-on sampled runs that you can query downstream in our application. There are two types of online evaluations we support:
+Online evaluations allow you to run evaluations in near-real time on your production traces. This is useful for continuously monitoring the performance of your application, for example evaluating response quality, structure or toxicity of responses.
 
-- Custom Code: write a python evaluator directly in LangSmith. Often used for validating structure or statistical properties of your data.
-- LLM as a Judge: use an LLM to evaluate your traces. Often used to understand higher level qualities of your output (e.g. toxicity, hallucination, etc)
+There are two types of online evaluations supported in LangSmith:
 
-![](./static/automations.png)
+- **[LLM-as-a-judge](/evaluation/concepts#llm-as-judge)**: Use an LLM to evaluate your traces. Used as a scalable way to provide human-like judgement to your output (e.g. toxicity, hallucination, tone, etc.).
+- **Custom Code**: Write an evaluator in Python directly in LangSmith. Often used for validating structure or statistical properties of your data.
 
-## Configure LLM as judge evaluators
+Online evaluations are configured using [automation rules](./rules). 
 
-Currently, we provide support for specifying a prompt template, a model, and a set of criteria to evaluate the runs on.
+## Get started with online evaluators 
+#### 1. Open the [tracing project](/observability/concepts#projects) you want to configure the online evalautor on
+#### 2. Select the Add Rules button (top right)
+#### 3. Configure your rule
+* Add an evaluator name
+* Optionally filter runs that you would like to apply your evaluator on or configure a sampling rate. For example, it is commmon to apply specific evaluators based on the run name, tag or metadata. 
+* Select **Apply Evaluator** 
 
-After entering [rules setup](./rules), you can select `LLM-as-Judge evaluator` from the list of possible actions.
+### Configure a LLM-as-a-judge online evaluator
 
-### Model
+View this guide to configure on configuring an [LLM-as-a-judge evaluator](/evaluation/how_to_guides/llm_as_judge). 
 
-You can choose any model available in the dropdown. Currently, we support **OpenAI**, **AzureOpenAI**, and models hosted on **Fireworks**.
-In order to set the API keys to use for these invocations, click on the `Secrets & API Keys` button and add the necessary keys.
+### Configure a custom code evaluator
 
-![](./static/evaluator_secrets.png)
+Select **custom code** evaluator.
 
-### Prompt template
-
-For the prompt template, you can select a suggested evaluator prompt, create a new prompt, or choose a prompt from the LangChain Hub.
-
-1. #### Suggested evaluator prompts
-
-We provide a list of pre-existing prompts that cater to common evaluator use cases.
-
-2. #### Create your own prompt
-
-We provide a base template from which you can form your own prompt.
-
-3. #### Pull a prompt from the LangChain Hub
-
-You can pull any structured prompt, private or public.
-
-You can't edit these prompts directly within the prompt editor, but you can view the prompt and the schema it uses.
-If the prompt is your own, you can edit it in the playground and commit the version.
-If the prompt is someone else's, you can fork the prompt, make your edits in the playground, and then pull in your new prompt to the online evaluator.
-
-When you choose a hub prompt for your online evaluator, the prompt will be locked to the commit version it was at rule creation. If you want to update the prompt, you can go to edit the online evaluator and re-select the prompt in the dropdown.
-
-### Mapping variables
-
-Prompts can be crafted with any variable name you choose. To map what is passed into your evaluator prompt from your runs or experiments, use the variable mapping inputs. There's a dropdown with suggestions provided based on the schema of your recent runs.
-
-![](./static/mapping_variables.png)
-
-### Preview
-
-Previewing the prompt will show you an example of what the formatted prompt will look like. This preview pulls the input and output of the most recent run. In the case of a dataset evaluator, the preview will also pull reference output from an example in your dataset.
-
-![](./static/prompt_preview.png)
-
-:::note
-You can configure an evaluation prompt that doesn't match the schema of your recent runs, but the dropdown suggestions and preview function won't work as expected.
-:::
-
-### Output schema
-
-An evaluator will attach metadata tags to a run. These tags will have a name and a value. You can configure these in the `Schema` section.
-The names and the descriptions of the fields will be passed into the prompt. Behind the scenes, we use tool calling to coerce the output of the LLM into the score you specify.
-:::note
-The name of the schema cannot have spaces since it is used as the name of a tool.
-:::
-
-## Configure custom code evaluators
-
-Click `Add Rule` -> `Code evaluator` to create an evaluator.
-
-### Write your evaluation function
+#### Write your evaluation function
 
 :::note Custom code evaluators restrictions.
 
@@ -101,9 +55,14 @@ Click `Add Rule` -> `Code evaluator` to create an evaluator.
 **Network Access**: You cannot access the internet from a custom code evaluator.
 :::
 
+Custom code evaluators must be written inline. We reccomend testing locally before setting up your custom code evaluator in LangSmith. 
+
 In the UI, you will see a panel that lets you write your code inline, with some starter code:
 
-![](./static/online-eval-custom-code.png)
+<ZoomableImage 
+  src="/observability/how_to_guides/static/online-eval-custom-code.png" 
+  alt="View experiment demo"
+/>
 
 Custom code evaluators take in one arguments:
 
@@ -142,10 +101,10 @@ def perform_eval(run):
   return {"formatted": True}
 ```
 
-### Test and save your evaluation function
+#### Test and save your evaluation function
 
-Before saving, you can click test, and LangSmith will pull up a recent run to make sure that your code executes properly.
+Before saving, you can test your evaluator function on a recent run by clicking **Test Code** to make sure that your code executes properly.
 
-Save once your code works, and your online evaluator will now run over newly sampled runs (or backfilled ones too if you chose the backfill option).
+Once you **Save**, your online evaluator will run over newly sampled runs (or backfilled ones too if you chose the backfill option).
 
 If you prefer a video tutorial, check out the [Online Evaluations video](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.

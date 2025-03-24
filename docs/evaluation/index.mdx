@@ -14,7 +14,14 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Evaluation Quick Start
 
-This quick start will get you up and running with our evaluation SDK and experiments UI.
+Evaluations are a quantitative way to measure performance of LLM applications, which is important beacause LLMs don't always behave precitably — small changes in prompts, models, or inputs can significantly impact results. Evaluations provide a structured way to identify failures, compare changes across different versions of your applicaiton, and build more reliable AI applications.
+
+Evaluations are made up of three components:
+1. A [dataset](/evaluation/concepts#datasets) test inputs and expected outputs.
+2. A [target function](/evaluation/how_to_guides/define_target) that defines what you're evaluating
+3. [Evaluators](/evaluation/concepts#evaluators) that score your target function's outputs.
+
+This quick start guides you through running an evaluation with the LangSmith SDK and visualizing results in LangSmith.
 
 ## 1. Install Dependencies
 
