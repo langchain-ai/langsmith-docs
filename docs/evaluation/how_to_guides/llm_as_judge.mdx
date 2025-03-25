@@ -1,4 +1,6 @@
-
+---
+hide_table_of_contents: true
+---
 import {
   CodeTabs,
   python,
@@ -7,7 +9,7 @@ import {
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import '@site/src/css/custom.css';
+import { ZoomableImage } from '@site/src/components/ZoomableImage';
 
 
 # How to define an LLM-as-a-judge evaluator
@@ -18,12 +20,10 @@ import '@site/src/css/custom.css';
 
 LLM applications can be challenging to evaluate since they often generate conversational text with no single correct answer.
 
-This guide shows you how to define a LLM-as-a-judge evaluator for [offline evaluation](/evaluation/concepts#offline-evaluation) using either the LangSmith SDK or the UI. Note: To run evaluations in real-time on your production traces, refer to [setting up online evaluations](/observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators). 
+This guide shows you how to define an LLM-as-a-judge evaluator for [offline evaluation](/evaluation/concepts#offline-evaluation) using either the LangSmith SDK or the UI. Note: To run evaluations in real-time on your production traces, refer to [setting up online evaluations](/observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators). 
 
-<Tabs className="interface-tabs">
+<Tabs className="interface-tabs" queryString="mode">
   <TabItem value="sdk" label="SDK">
-
-<div id="sdk-content">
 ## Pre-built evaluators
 
 Pre-built evaluators are a useful starting point for setting up evaluations. Refer to [pre-built evaluators](./prebuilt_evaluators) for how to use pre-built evaluators with LangSmith.
@@ -88,11 +88,8 @@ for the answer is logically valid and consistent with question and the answer.\\
 />
 
 See [here](./custom_evaluator) for more on how to write a custom evaluator.
-</div>
-
   </TabItem >
   <TabItem value="ui" label="UI">
-  <div id="ui-content">
 
   ## Pre-built evaluators
   
@@ -122,8 +119,6 @@ See [here](./custom_evaluator) for more on how to write a custom evaluator.
   
 ### Configure the evaluator
 
-Edit the prompt, a model, set of criteria to evaluate the on, and set a feedback schema for the evaluator. 
-
 #### Prompt
 
 Create a new prompt, or choose an existing prompt from the [prompt hub](/prompt_engineering/quickstarts/quickstart_ui).
@@ -138,9 +133,11 @@ Select the desired model from the provided options.
 
 #### Mapping variables
 
-Use variable mapping to indicate the variables that are passed into your evaluator prompt from your run or example. To aid with variable mapping, a sample example (or run) is provided for reference. Use the dropdown to select the parts of the run that are relevant for the evalaution.
+Use variable mapping to indicate the variables that are passed into your evaluator prompt from your run or example. To aid with variable mapping, an example (or run) is provided for reference. Click on the the variables in your prompt and use the dropdown to map them to the relevant parts of the input, output, or reference output.
 
-You may edit/remove variables as needed. For example if you are evaluating a metric such as conciseness, you typically don't need a reference output so you may remove that variable. 
+To add prompt variables type the variable with double curly brackets `{{prompt_var}}` if using mustache formatting (the default) or single curly brackets `{prompt_var}` if using f-string formatting. 
+
+You may remove variables as needed. For example if you are evaluating a metric such as conciseness, you typically don't need a reference output so you may remove that variable. 
 
 #### Preview
 
@@ -149,20 +146,7 @@ Previewing the prompt will show you of what the formatted prompt will look like 
 #### Improve your evaluator with few-shot examples
 To better align the LLM-as-a-judge evaluator to human preferences, LangSmith allows you to collect [human corrections](/evaluation/how_to_guides/create_few_shot_evaluators#make-corrections) on evaluator scores. With this selection enabled, corrections are then inserted automatically as few-shot examples into your prompt.
 
-If you create an evaluator with few-shot examples, LangSmith will automatically create a dataset for you, which will be auto-populated with few-shot examples once you start making corrections.
-
-Note that this is only supported when using mustache prompts - you will not be able to click this option if your prompt uses f-string formatting. Few-shot examples are not currently supported in evaluators that use the prompt hub.
-
-<details>
-  <summary>Learn more</summary>
-  Each few-shot example will be formatted according to the configuration specified, and automatically inserted into your main prompt using the `{{Few-shot examples}} `template variable. 
-  
-  When configuring variable mapping for few-shot examples, it should contain the same variables as your main prompt, plus a `few_shot_explanation` and a `score` variable which should have the same name as your feedback key. For example, if your main prompt has variables `question` and `response`, and your evaluator outputs a `correctness` score, then your few-shot prompt should have `question`, `response`, `few_shot_explanation`, and `correctness`.
-  
-  You may also specify the number of few-shot examples to use. The default is 5. If your examples are very long, you may want to set this number lower to save tokens - whereas if your examples tend to be short, you can set a higher number in order to give your evaluator more examples to learn from. If you have more examples in your dataset than this number, we will randomly choose them for you.
-  
-  If you're using few-shot examples, LangSmith has a feature in beta that allows the most relevant examples to be dynamically selected at runtime using [dynamic few-shot examples](/evaluation/how_to_guides/index_datasets_for_dynamic_few_shot_example_selection). 
-</details>
+Learn [how to set up few-shot examples and make corrections](/evaluation/how_to_guides/create_few_shot_evaluators). 
 
 #### Feedback configuration
 
@@ -181,6 +165,10 @@ If you are using an existing prompt from the hub, you must add an output schema 
 
 ### Save the evaluator
 Once your are finished configuring, save your changes. 
-</div>
   </TabItem>
 </Tabs>
+
+<ZoomableImage 
+  src="/observability/how_to_guides/static/online-eval-custom-code.png" 
+  alt="View experiment demo"
+/>

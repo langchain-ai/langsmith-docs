@@ -437,16 +437,19 @@ div[class^='announcementBar_'] {
 }
 
 .interface-tabs {
-  border: 2px solid #ccc;
-  border-radius: 5px;
   padding: 10px;
+  border: none;
+  border-bottom: 1.5px solid #cbbbbb; 
 }
 
 .interface-tabs .tabs__item {
-  border-bottom: 2px solid #ccc;
-  padding: 10px;
+  font-size: 1.25rem;
 }
 
-.interface-tabs .tabs__item--active {
-  border-bottom: 2px solid purple !important;
+.zoomable-img {
+  transition: transform 0.2s;
+}
+
+.zoomable-img:hover {
+  transform: scale(1.01);
 }

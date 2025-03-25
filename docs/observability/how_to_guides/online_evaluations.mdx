@@ -2,12 +2,14 @@
 sidebar_label: Online Evaluation
 sidebar_position: 4
 ---
-import { ZoomableImage } from '@site/src/components/ZoomableImage';
+
+import { ZoomableImage } from "@site/src/components/ZoomableImage";
 
 # Set up online evaluations
 
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
+
 - [Set up automation rules](./rules)
 - Running [online evaluations](/evaluation/concepts#online-evaluation)
 
@@ -20,19 +22,23 @@ There are two types of online evaluations supported in LangSmith:
 - **[LLM-as-a-judge](/evaluation/concepts#llm-as-judge)**: Use an LLM to evaluate your traces. Used as a scalable way to provide human-like judgement to your output (e.g. toxicity, hallucination, tone, etc.).
 - **Custom Code**: Write an evaluator in Python directly in LangSmith. Often used for validating structure or statistical properties of your data.
 
-Online evaluations are configured using [automation rules](./rules). 
+Online evaluations are configured using [automation rules](./rules).
 
-## Get started with online evaluators 
+## Get started with online evaluators
+
 #### 1. Open the [tracing project](/observability/concepts#projects) you want to configure the online evalautor on
+
 #### 2. Select the Add Rules button (top right)
+
 #### 3. Configure your rule
-* Add an evaluator name
-* Optionally filter runs that you would like to apply your evaluator on or configure a sampling rate. For example, it is commmon to apply specific evaluators based on the run name, tag or metadata. 
-* Select **Apply Evaluator** 
+
+- Add an evaluator name
+- Optionally filter runs that you would like to apply your evaluator on or configure a sampling rate. For example, it is commmon to apply specific evaluators based on the run name, tag or metadata.
+- Select **Apply Evaluator**
 
 ### Configure a LLM-as-a-judge online evaluator
 
-View this guide to configure on configuring an [LLM-as-a-judge evaluator](/evaluation/how_to_guides/llm_as_judge). 
+View this guide to configure on configuring an [LLM-as-a-judge evaluator](/evaluation/how_to_guides/llm_as_judge).
 
 ### Configure a custom code evaluator
 
@@ -55,12 +61,12 @@ Select **custom code** evaluator.
 **Network Access**: You cannot access the internet from a custom code evaluator.
 :::
 
-Custom code evaluators must be written inline. We reccomend testing locally before setting up your custom code evaluator in LangSmith. 
+Custom code evaluators must be written inline. We reccomend testing locally before setting up your custom code evaluator in LangSmith.
 
 In the UI, you will see a panel that lets you write your code inline, with some starter code:
 
-<ZoomableImage 
-  src="/observability/how_to_guides/static/online-eval-custom-code.png" 
+<ZoomableImage
+  src="/observability/how_to_guides/static/online-eval-custom-code.png"
   alt="View experiment demo"
 />
 
