@@ -54,6 +54,13 @@ Evaluate and improve your application before deploying it.
 - [Print detailed logs (Python only)](../../observability/how_to_guides/output_detailed_logs)
 - [Run an evaluation locally (beta, Python only)](./how_to_guides/local)
 
+### Add default evaluators to a dataset
+
+Set up evaluators that automatically run for all experiments against a dataset.
+
+- [Set up an auto-evaluator](./how_to_guides/bind_evaluator_to_dataset)
+- [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
+
 ## Testing integrations
 
 Run evals using your favorite testing tools.
@@ -65,15 +72,7 @@ Run evals using your favorite testing tools.
 
 Evaluate and monitor your system's live performance on production data.
 
-- [Set up an LLM-as-judge online evaluator](../../observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators)
-- [Set up a custom code online evaluator](../../observability/how_to_guides/online_evaluations#configure-custom-code-evaluators)
-- [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
-
-## Automatic evaluation
-
-Set up evaluators that automatically run for all experiments against a dataset.
-
-- [Set up an auto-evaluator](./how_to_guides/bind_evaluator_to_dataset)
+- [Set up an online evaluator](/observability/how_to_guides/online_evaluations#get-started-with-online-evaluators)
 - [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
 
 ## Analyzing experiment results

@@ -1,24 +1,34 @@
+---
+hide_table_of_contents: true
+---
 import {
   CodeTabs,
   python,
   typescript,
 } from "@site/src/components/InstructionsWithCode";
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # How to define an LLM-as-a-judge evaluator
 
 :::info Key concepts
-
-- [LLM-as-a-judge evaluator](../concepts#llm-as-judge)
-
+- [LLM-as-a-judge evaluator](/evaluation/concepts#llm-as-judge)
 :::
 
-LLM applications can be difficult to evaluate because often they're generating conversational text for which there's no single "right" answer.
-An imperfect but valuable way to evaluate such applications is to use a second LLM to judge the outputs of the first.
-This can be especially useful if a smaller model is used in the application and a larger, better model is used for evaluation.
+LLM applications can be challenging to evaluate since they often generate conversational text with no single correct answer.
 
-## Custom evaluator via SDK
+This guide shows you how to define an LLM-as-a-judge evaluator for [offline evaluation](/evaluation/concepts#offline-evaluation) using either the LangSmith SDK or the UI. Note: To run evaluations in real-time on your production traces, refer to [setting up online evaluations](/observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators). 
 
-For maximal control of evaluator logic, we can write a custom evaluator and run it using the SDK.
+<Tabs className="interface-tabs" queryString="mode">
+  <TabItem value="sdk" label="SDK">
+## Pre-built evaluators
+
+Pre-built evaluators are a useful starting point for setting up evaluations. Refer to [pre-built evaluators](./prebuilt_evaluators) for how to use pre-built evaluators with LangSmith.
+
+## Create your own LLM-as-a-judge evaluator
+
+For complete control of evaluator logic, create your own LLM-as-a-judge evaluator and run it using the LangSmith SDK ([Python](https://docs.smith.langchain.com/reference/python/reference) / [TypeScript](https://docs.smith.langchain.com/reference/js)).
 
 <CodeTabs
   groupId="client-language"
@@ -76,7 +86,82 @@ for the answer is logically valid and consistent with question and the answer.\\
 />
 
 See [here](./custom_evaluator) for more on how to write a custom evaluator.
+  </TabItem >
+  <TabItem value="ui" label="UI">
 
-## Prebuilt evaluators
+  ## Pre-built evaluators
+  
+  Pre-built evaluators are a useful starting point when setting up evaluations. The LangSmith UI supports the following pre-built evaluators:
+  
+  - **Hallucination**: Detect factually incorrect outputs. Requires a reference output.
+  - **Correctness**: Check semantic similarity to a reference.
+  - **Conciseness**: Evaluate whether an answer is a concise response to a question. 
+  - **Code checker**: Verify correctness of code answers.
+  
+  You can configure these evaluators::
+  - When running an evaluation using the [playground](/prompt_engineering/concepts#prompt-playground)
+  - As part of a dataset to [automatically run experiments over a dataset](/evaluation/how_to_guides/bind_evaluator_to_dataset)
+  - When running an [online evaluation](/observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators)
+  
+  ## Customize your LLM-as-a-judge evaluator
+  
+  Add specific instructions for your LLM-as-a-judge evalutor prompt and configure which parts of the input/output/reference output should be passed to the evaluator.
+    
+  ![](./static/playground_evaluator.gif)
+  
+ ### Select/create the evaluator
+  - In the playground or from a dataset: Select the **+Evaluator** button
+  - From a tracing project: Select **Add rules**, configure your rule and select **Apply evaluator**
+  
+  Select the **Create your own evaluator option**. Alternativley, you may start by selecting a pre-built evaluator and editing it. 
+  
+### Configure the evaluator
 
-See [this section](./prebuilt_evaluators) for how to use prebuilt evaluators with LangSmith.
+#### Prompt
+
+Create a new prompt, or choose an existing prompt from the [prompt hub](/prompt_engineering/quickstarts/quickstart_ui).
+
+- **Create your own prompt**: Create a custom prompt inline. 
+
+- **Pull a prompt from the prompt hub**: Use the **Select a prompt** dropdown to select from an existing prompt. You can't edit these prompts directly within the prompt editor, but you can view the prompt and the schema it uses. To make changes, edit the prompt in the playground and commit the version, and then pull in your new prompt in the evaluator.
+
+#### Model
+
+Select the desired model from the provided options.
+
+#### Mapping variables
+
+Use variable mapping to indicate the variables that are passed into your evaluator prompt from your run or example. To aid with variable mapping, an example (or run) is provided for reference. Click on the the variables in your prompt and use the dropdown to map them to the relevant parts of the input, output, or reference output.
+
+To add prompt variables type the variable with double curly brackets `{{prompt_var}}` if using mustache formatting (the default) or single curly brackets `{prompt_var}` if using f-string formatting. 
+
+You may remove variables as needed. For example if you are evaluating a metric such as conciseness, you typically don't need a reference output so you may remove that variable. 
+
+#### Preview
+
+Previewing the prompt will show you of what the formatted prompt will look like using the reference run and dataset example shown on the right.
+
+#### Improve your evaluator with few-shot examples
+To better align the LLM-as-a-judge evaluator to human preferences, LangSmith allows you to collect [human corrections](/evaluation/how_to_guides/create_few_shot_evaluators#make-corrections) on evaluator scores. With this selection enabled, corrections are then inserted automatically as few-shot examples into your prompt.
+
+Learn [how to set up few-shot examples and make corrections](/evaluation/how_to_guides/create_few_shot_evaluators). 
+
+#### Feedback configuration
+
+Feedback configuration is the scoring criteria that your LLM-as-a-judge evaluator will use. Think of this as the rubric that your evaluator will grade based on. Scores will be added as [feedback](/observability/concepts#feedback) to a run or example. Defining feedback for your evaluator:
+
+1. **Name the feedback key**: This is the name that will appear when viewing evaluation results. Names should be unique across experiments. 
+
+2. **Add a description**: Describe what the feedback represents. 
+
+3. **Choose a feedback type**: 
+- **Boolean**: True/false feedback.
+- **Categorical**: Select from predefined categories. 
+- **Continuous**: Numerical scoring within a specified range.
+
+If you are using an existing prompt from the hub, you must add an output schema to the prompt before configuring an evaluator to use it. Each top-level key in the output schema will be treated as a separate piece of feedback.
+
+### Save the evaluator
+Once your are finished configuring, save your changes. 
+  </TabItem>
+</Tabs>
