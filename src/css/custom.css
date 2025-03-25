@@ -445,11 +445,3 @@ div[class^='announcementBar_'] {
 .interface-tabs .tabs__item {
   font-size: 1.25rem;
 }
-
-.zoomable-img {
-  transition: transform 0.2s;
-}
-
-.zoomable-img:hover {
-  transform: scale(1.01);
-}
