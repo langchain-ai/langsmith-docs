@@ -93,7 +93,7 @@ See [here](./custom_evaluator) for more on how to write a custom evaluator.
   
   Pre-built evaluators are a useful starting point when setting up evaluations. The LangSmith UI supports the following pre-built evaluators:
   
-  - **Hallucination**: Detect factually incorrect outputs.
+  - **Hallucination**: Detect factually incorrect outputs. Requires a reference output.
   - **Correctness**: Check semantic similarity to a reference.
   - **Conciseness**: Evaluate whether an answer is a concise response to a question. 
   - **Code checker**: Verify correctness of code answers.
@@ -104,9 +104,9 @@ See [here](./custom_evaluator) for more on how to write a custom evaluator.
   - When running an [online evaluation](/observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators)
   
   ## Customize your LLM-as-a-judge evaluator
-
-  By default, pre-built evaluators assume that you are running the evaluation over the full input, output and (if applicable) reference output. If your application and dataset call for specific instructions or formatting, you can customize the default prompt and which parts of the input/output/reference output should be passed to the judge LLM. You can also configure the judge LLM.
   
+  Add specific instructions for your LLM-as-a-judge evalutor prompt and configure which parts of the input/output/reference output should be passed to the evaluator.
+    
   ![](./static/playground_evaluator.gif)
   
  ### Select/create the evaluator

@@ -13,11 +13,11 @@ Before diving into this content, it might be helpful to read the following:
 
 :::
 
-Online evaluations allow you to run evaluations in near-real time on your production traces. This is useful for continuously monitoring the performance of your application, for example evaluating response quality, structure or toxicity of responses.
+Online evaluations provide real-time feedback on your production traces. This is useful to continuously monitor the performance of your application - to identify issues, measure improvements, and ensure consistent quality over time.
 
 There are two types of online evaluations supported in LangSmith:
 
-- **[LLM-as-a-judge](/evaluation/concepts#llm-as-judge)**: Use an LLM to evaluate your traces. Used as a scalable way to provide human-like judgement to your output (e.g. toxicity, hallucination, tone, etc.).
+- **[LLM-as-a-judge](/evaluation/concepts#llm-as-judge)**: Use an LLM to evaluate your traces. Used as a scalable way to provide human-like judgement to your output (e.g. toxicity, hallucination, correctness, etc.).
 - **Custom Code**: Write an evaluator in Python directly in LangSmith. Often used for validating structure or statistical properties of your data.
 
 Online evaluations are configured using [automation rules](./rules).
@@ -31,7 +31,7 @@ Online evaluations are configured using [automation rules](./rules).
 #### 3. Configure your rule
 
 - Add an evaluator name
-- Optionally filter runs that you would like to apply your evaluator on or configure a sampling rate. For example, it is commmon to apply specific evaluators based on the run name, tag or metadata.
+- Optionally filter runs that you would like to apply your evaluator on or configure a sampling rate. For example, it is commmon to apply specific evaluators based on runs that a user indicated the response was unsatisfactory, runs with a specific model, etc.
 - Select **Apply Evaluator**
 
 ### Configure a LLM-as-a-judge online evaluator
