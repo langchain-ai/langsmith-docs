@@ -26,7 +26,7 @@ This guide shows you how to define a LLM-as-a-judge evaluator for [offline evalu
 <div id="sdk-content">
 ## Pre-built evaluators
 
-Pre-built evaluators are a useful starting point setting up evaluations. Refer to [pre-built evaluators](./prebuilt_evaluators) for how to use pre-built evaluators with LangSmith.
+Pre-built evaluators are a useful starting point for setting up evaluations. Refer to [pre-built evaluators](./prebuilt_evaluators) for how to use pre-built evaluators with LangSmith.
 
 ## Create your own LLM-as-a-judge evaluator
 
@@ -108,9 +108,9 @@ See [here](./custom_evaluator) for more on how to write a custom evaluator.
   - As part of a dataset to [automatically run experiments over a dataset](/evaluation/how_to_guides/bind_evaluator_to_dataset)
   - When running an [online evaluation](/observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators)
   
-  Pre-built evaluators easy to customize. By default, pre-built evaluators assume that you are running the evaluation over the full input, output and (if applicable) reference output. To specify which keys to run the evaluation over, or to change the LLM-as-a-judge prompt you can edit the evaluator. See more details below. 
-  
   ## Customize your LLM-as-a-judge evaluator
+
+  By default, pre-built evaluators assume that you are running the evaluation over the full input, output and (if applicable) reference output. If your application and dataset call for specific instructions or formatting, you can customize the default prompt and which parts of the input/output/reference output should be passed to the judge LLM. You can also configure the judge LLM.
   
   ![](./static/playground_evaluator.gif)
   
@@ -144,7 +144,7 @@ You may edit/remove variables as needed. For example if you are evaluating a met
 
 #### Preview
 
-Previewing the prompt will show you an example of what the formatted prompt will look like. This preview pulls a sample input, output into the prompt. In the case of a evaluator configured as part of a dataset or in the playground, the preview will also pull reference output from an example in your dataset.
+Previewing the prompt will show you of what the formatted prompt will look like using the reference run and dataset example shown on the right.
 
 #### Improve your evaluator with few-shot examples
 To better align the LLM-as-a-judge evaluator to human preferences, LangSmith allows you to collect [human corrections](/evaluation/how_to_guides/create_few_shot_evaluators#make-corrections) on evaluator scores. With this selection enabled, corrections are then inserted automatically as few-shot examples into your prompt.
@@ -172,12 +172,12 @@ Feedback configuration is the scoring criteria that your LLM-as-a-judge evaluato
 
 2. **Add a description**: Describe what the feedback represents. 
 
-3. **Choose feedback type**: 
+3. **Choose a feedback type**: 
 - **Boolean**: True/false feedback.
 - **Categorical**: Select from predefined categories. 
 - **Continuous**: Numerical scoring within a specified range.
 
-Feedback is added as output schema to your LLM-as-a-judge evaluator prompt. If you are pulling in a prompt from the hub, you must add feedback configuration as part of the output schema for your prompt in the playground first.
+If you are using an existing prompt from the hub, you must add an output schema to the prompt before configuring an evaluator to use it. Each top-level key in the output schema will be treated as a separate piece of feedback.
 
 ### Save the evaluator
 Once your are finished configuring, save your changes. 
