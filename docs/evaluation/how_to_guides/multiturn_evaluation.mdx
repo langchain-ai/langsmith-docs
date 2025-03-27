@@ -1,24 +1,24 @@
 # How to set up a multi-turn evaluation
 
-LangSmith makes it easy to evaluate multiturn conversations in the playground. This allows you to evaluate how changing your system prompt,
+LangSmith makes it easy to evaluate multi-turn conversations in the playground. This allows you to evaluate how changing your system prompt,
 the tools available to the model, or the output schema affects a conversation with multiple messages.
 
-This how-to guide walks you through the various ways you can set up the playground for multiturn evaluation, depending on where your
-conversation data is stored.
+This how-to guide walks you through the various ways you can set up the playground for multi-turn evaluation, which will allow you to
+test different tool configurations and system prompts to see how they impact your system.
 
 ## From an existing run
 
-First, ensure you have properly [traced](../../observability) a multiturn conversation, and then navigate to your tracing
+First, ensure you have properly [traced](../../observability) a multi-turn conversation, and then navigate to your tracing
 project. Once you get to your tracing project simply open the run, select the LLM call, and open it in the playground as follows:
 
 ![](./static/multiturn_from_run.gif)
 
-You can then edit the system prompt, tweak the tools and/or output schema and observe how the output of the multiturn conversation changes.
+You can then edit the system prompt, tweak the tools and/or output schema and observe how the output of the multi-turn conversation changes.
 
 ## From a dataset
 
 Before starting, make sure you have [set up your dataset](../../evaluation/how_to_guides/manage_datasets_in_application). Since you want to evaluate
-multiturn conversations, make sure there is a key in your inputs that contains a list of messages.
+multi-turn conversations, make sure there is a key in your inputs that contains a list of messages.
 
 Once you have created your dataset, head to the playground and [load your dataset](../../prompt_engineering/how_to_guides/testing_over_dataset) to evaluate.
 
@@ -30,17 +30,17 @@ When you run your prompt, the messages from each example will be added as a list
 
 ## Manually
 
-There are two ways to manually create multiturn conversations. The first way is by simply appending messages to the prompt:
+There are two ways to manually create multi-turn conversations. The first way is by simply appending messages to the prompt:
 
 ![](./static/multiturn_manual.gif)
 
-This is helpful for quick iteration, but is rigid since the multiturn conversation is hardcoded.
-Instead, if you want your prompt to work with any multiturn conversation you can add a 'Messages List' variable and add your
-multiturn conversation there:
+This is helpful for quick iteration, but is rigid since the multi-turn conversation is hardcoded.
+Instead, if you want your prompt to work with any multi-turn conversation you can add a 'Messages List' variable and add your
+multi-turn conversation there:
 
 ![](./static/multiturn_manual_list.gif)
 
-This allows you to just tweak the system prompt or the tools, while allowing any multiturn conversation to take the place
+This allows you to just tweak the system prompt or the tools, while allowing any multi-turn conversation to take the place
 of the `Messages List` variable, allowing you to reuse this prompt across various evaluations.
 
 ## Next Steps
