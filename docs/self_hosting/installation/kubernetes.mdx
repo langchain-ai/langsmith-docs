@@ -63,6 +63,12 @@ Ensure you have the following tools/items ready. Some items are marked optional:
    ```bash
    openssl rand -base64 32
    ```
+1. JWT Secret (Optional but used for basic auth)
+   1. This is a secret key that you can generate. It should be a random string of characters.
+   1. You can generate this using the following command:
+   ```bash
+   openssl rand -base64 32
+   ```
 1. Egress to `https://beacon.langchain.com` (if not running in offline mode)
    1. LangSmith requires egress to `https://beacon.langchain.com` for license verification and usage reporting. This is required for LangSmith to function properly. You can find more information on egress requirements in the [Egress](/self_hosting/egress) section.
 1. Configuration
@@ -84,7 +90,7 @@ Ensure you have the following tools/items ready. Some items are marked optional:
        enabled: true
        initialOrgAdminEmail: "admin@langchain.dev" # Change this to your admin email address
        initialOrgAdminPassword: "secure-password" # Must be at least 12 characters long and have at least one lowercase, uppercase, and symbol
-       jwtSecret: <your jwt salt>
+       jwtSecret: <your jwt salt> # A random string of characters used to sign JWT tokens for basic auth.
    ```
 
 ## Deploying to Kubernetes:
