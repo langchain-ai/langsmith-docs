@@ -54,6 +54,7 @@ View and interact with your traces to debug your applications.
 - [Share or unshare a trace publicly](./how_to_guides/share_trace)
 - [Compare traces](./how_to_guides/compare_traces)
 - [View threads](./how_to_guides/threads#view-threads)
+- [Set up alerts for your project (Private Beta)](./how_to_guides/alerts)
 
 ## Dashboards
 

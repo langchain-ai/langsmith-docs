@@ -1,0 +1,79 @@
+# Configuring Webhook Notifications for LangSmith Alerts
+
+:::tip Private Beta
+
+This is associated with the LangSmith Alerts feature which is currently in private beta. If interested, please express interest in the <a href="https://langchaincommunity.slack.com/archives/C079K4ECBN2">\#feature-requests</a> channel in the langchain community slack.
+
+:::
+
+## Overview
+
+This guide details the process for setting up webhook notifications for LangSmith alerts. Before proceeding, make sure you have followed the steps leading up to the notification step of creating the alert by following <a href="./alerts.mdx">this guide</a>. Webhooks enable integration with custom services and third-party platforms by sending HTTP POST requests when alert conditions are triggered. Use webhooks to forward alert data to ticketing systems, chat applications, or custom monitoring solutions.
+
+## Prerequisites
+
+- An endpoint that can receive HTTP POST requests
+- Appropriate authentication credentials for your receiving service (if required)
+
+## Integration Configuration
+
+### Step 1: Prepare Your Receiving Endpoint
+
+Before configuring the webhook in LangSmith, ensure your receiving endpoint:
+- Accepts HTTP POST requests
+- Can process JSON payloads
+- Is accessible from external services
+- Has appropriate authentication mechanisms (if required)
+
+Additionally, if on a custom deployment of LangSmith, make sure there are no firewall settings blocking egress traffic from LangSmith services.
+
+### Step 2: Configure Webhook Parameters
+
+In the notification section of your alert complete the webhook configuration with the following parameters:
+
+#### Required Fields
+- **URL**: The complete URL of your receiving endpoint
+  - Example: `https://api.example.com/incident-webhook`
+
+#### Optional Fields
+- **Headers**: JSON Key-value pairs sent with the webhook request
+  - Common headers include:
+    - `Authorization`: For authentication tokens
+    - `Content-Type`: Usually set to `application/json` (default)
+    - `X-Source`: To identify the source as LangSmith
+  - If no headers, then simply use `{}`
+
+- **Request Body Template**: Customize the JSON payload sent to your endpoint
+  - Default: LangSmith sends the payload defined and the following additonal key-value pairs appended to the payload:
+    - `project_name`: Name of the triggered alert
+    - `alert_rule_id`: A UUID to identify the LangSmith alert. This can be used as a de-duplication key in the webhook service.
+    - `alert_rule_name`: The name of the alert rule.
+    - `alert_rule_type`: The type of alert (as of 04/01/2025 all alerts are of type `threshold`).
+    - `alert_rule_attribute`: The attribute associated with the alert rule - `error_count`, `feedback_score` or `latency`.
+    - `triggered_metric_value`: The value of the metric at the time the threshold was triggered.
+    - `triggered_threshold`: The threshold that triggered the alert.
+    - `timestamp`: The timestamp that triggered the alert.
+
+### Step 3: Test the Webhook
+Click **Send Test Alert** to send the webhook notification to ensure the notification works as intended.
+
+## Troubleshooting
+
+If webhook notifications aren't being delivered:
+
+- Verify the webhook URL is correct and accessible
+- Ensure any authentication headers are properly formatted
+- Check that your receiving endpoint accepts POST requests
+- Examine your endpoint's logs for received but rejected requests
+- Verify your custom payload template is valid JSON format
+
+## Security Considerations
+
+- Use HTTPS for your webhook endpoints
+- Implement authentication for your webhook endpoint
+- Consider adding a shared secret in your headers to verify webhook sources
+- Validate incoming webhook requests before processing them
+
+## Additional Resources
+
+- [LangSmith Alerts Documentation](./alerts.mdx)
