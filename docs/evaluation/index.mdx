@@ -22,6 +22,8 @@ Evaluations are made up of three components:
 3. [Evaluators](/evaluation/concepts#evaluators) that score your target function's outputs.
 
 This quick start guides you through running an evaluation with the LangSmith SDK and visualizing results in LangSmith.
+We'll use prebuilt LLM-as-judge evaluators powered by an OpenAI model from the open-source
+[`openevals`](https://github.com/langchain-ai/openevals) package, though you can also [write your own custom evaluators](./how_to_guides/custom_evaluator) if you desire.
 
 ## 1. Install Dependencies
 
@@ -31,13 +33,13 @@ This quick start guides you through running an evaluation with the LangSmith SDK
       value: "python",
       label: "Python",
       language: "bash",
-      content: `pip install -U langsmith openai pydantic`,
+      content: `pip install -U langsmith openevals openai`,
     },
     {
       value: "typescript",
       label: "TypeScript",
       language: "bash",
-      content: `yarn add langsmith openai zod`,
+      content: `yarn add langsmith openevals openai`,
     },
   ]}
   groupId="client-language"
@@ -48,6 +50,9 @@ This quick start guides you through running an evaluation with the LangSmith SDK
 To create an API key head to the <RegionalUrl text='Settings page' suffix='/settings' />. Then click **Create API Key.**
 
 ## 3. Set up your environment
+
+We'll be using an OpenAI model under the hood, so you'll need to set the `OPENAI_API_KEY` environment variable as well as the
+required LangSmith ones:
 
 <CodeTabs
   tabs={[
@@ -60,47 +65,18 @@ export OPENAI_API_KEY="<your-openai-api-key>"`),
   groupId="client-language"
 />
 
-## 4. Import dependencies
-
-<CodeTabs
-  tabs={[
-    {
-      value: "python",
-      label: "Python",
-      content: `from langsmith import wrappers, Client
-from pydantic import BaseModel, Field
-from openai import OpenAI
-
-client = Client()
-openai_client = wrappers.wrap_openai(OpenAI())`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      content: `import { Client } from "langsmith";
-import OpenAI from "openai";
-import { z } from "zod";
-import { zodResponseFormat } from "openai/helpers/zod";
-import type { EvaluationResult } from "langsmith/evaluation";
-import { evaluate } from "langsmith/evaluation";   
-
-
-const client = new Client();
-
-const openai = new OpenAI();`,
-    },
-  ]}
-  groupId="client-language"
-/>
-
-## 5. Create a dataset
+## 4. Create a dataset
 
 <CodeTabs
   tabs={[
     {
 value: "python",
 label: "Python",
-content: `# For other dataset creation methods, see:
+content: `from langsmith import Client
+
+client = Client()
+
+# For other dataset creation methods, see:
 # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
 # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
 
@@ -129,7 +105,8 @@ client.create_examples(dataset_id=dataset.id, examples=examples)
     {
       value: "typescript",
       label: "TypeScript",
-      content: `
+      content: `import { Client } from "langsmith";
+
 // For other dataset creation methods, see: 
 // https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically 
 // https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
@@ -170,14 +147,20 @@ await client.createExamples({
 groupId="client-language"
 />
 
-## 6. Define what you're evaluating
+## 5. Define what you're evaluating
 
 <CodeTabs
   tabs={[
     {
       value: "python",
       label: "Python",
-      content: `# Define the application logic you want to evaluate inside a target function
+      content: `from langsmith import wrappers
+from openai import OpenAI
+
+# Wrap the OpenAI client for LangSmith tracing
+openai_client = wrappers.wrap_openai(OpenAI())
+      
+# Define the application logic you want to evaluate inside a target function
 # The SDK will automatically send the inputs from the dataset to your target function
 def target(inputs: dict) -> dict:
     response = openai_client.chat.completions.create(
@@ -192,7 +175,12 @@ def target(inputs: dict) -> dict:
     {
       value: "typescript",
       label: "TypeScript",
-      content: `// Define the application logic you want to evaluate inside a target function
+      content: `import { wrapOpenAI } from "langsmith/wrappers";
+import OpenAI from "openai";
+
+const openai = wrapOpenAI(new OpenAI());
+
+// Define the application logic you want to evaluate inside a target function
 // The SDK will automatically send the inputs from the dataset to your target function
 async function target(inputs: string): Promise<{ response: string }> {
   const response = await openai.chat.completions.create({
@@ -210,92 +198,57 @@ async function target(inputs: string): Promise<{ response: string }> {
   groupId="client-language"
 />
 
-## 7. Define evaluator
+## 6. Define evaluator
 
 <CodeTabs
   tabs={[
     {
       value: "python",
       label: "Python",
-      content: `# Define instructions for the LLM judge evaluator
-instructions = """Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
-- False: No conceptual match and similarity
-- True: Most or full conceptual match and similarity
-- Key criteria: Concept should match, not exact wording.
-"""
+      content: `from openevals.llm import create_llm_as_judge
+from openevals.prompts import CORRECTNESS_PROMPT
 
-# Define output schema for the LLM judge
-class Grade(BaseModel):
-    score: bool = Field(
-        description="Boolean that indicates whether the response is accurate relative to the reference answer"
+def correctness_evaluator(inputs: dict, outputs: dict, reference_outputs: dict):
+    evaluator = create_llm_as_judge(
+        # CORRECTNESS_PROMPT is just an f-string with
+        # variables for "inputs", "outputs", and "reference_outputs"
+        prompt=CORRECTNESS_PROMPT,
+        model="openai:o3-mini",
     )
-
-# Define LLM judge that grades the accuracy of the response relative to reference output
-def accuracy(outputs: dict, reference_outputs: dict) -> bool:
-    response = openai_client.beta.chat.completions.parse(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": instructions},
-            {
-                "role": "user",
-                "content": f"""Ground Truth answer: {reference_outputs["answer"]}; 
-                Student's Answer: {outputs["response"]}"""
-            },
-        ],
-        response_format=Grade,
-    )
-    return response.choices[0].message.parsed.score`,
+    return evaluator(
+        inputs=inputs,
+        outputs=outputs,
+        reference_outputs=reference_outputs
+    )`,
     },
     {
       value: "typescript",
       label: "TypeScript",
-      content: `// Define instructions for the LLM judge evaluator
-const instructions = \`Evaluate Student Answer against Ground Truth for conceptual similarity and classify true or false: 
-- False: No conceptual match and similarity
-- True: Most or full conceptual match and similarity
-- Key criteria: Concept should match, not exact wording.
-\`;
+      content: `import { createLLMAsJudge, CORRECTNESS_PROMPT } from "openevals";
 
-// Define context for the LLM judge evaluator
-const context = \`Ground Truth answer: {reference}; Student's Answer: {prediction}\`;
-
-// Define output schema for the LLM judge
-const ResponseSchema = z.object({
-  score: z
-    .boolean()
-    .describe(
-      "Boolean that indicates whether the response is accurate relative to the reference answer"
-    ),
-});
-
-// Define LLM judge that grades the accuracy of the response relative to reference output
-async function accuracy({
-  outputs,
-  referenceOutputs,
-}: {
-  outputs?: Record<string, string>;
-  referenceOutputs?: Record<string, string>;
-}): Promise<EvaluationResult> {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      { role: "system", content: instructions },
-      { role: "user", content: context.replace("{prediction}", outputs?.answer || "").replace("{reference}", referenceOutputs?.answer || "") }
-    ],
-    response_format: zodResponseFormat(ResponseSchema, "response")
+const correctnessEvaluator = (params: {
+  inputs: Record<string, unknown>,
+  outputs: Record<string, unknown>,
+  referenceOutputs: Record<string, unknown>
+}) => {
+  const evaluator = createLLMAsJudge({
+    // CORRECTNESS_PROMPT is just an f-string
+    prompt: CORRECTNESS_PROMPT,
+    model: "openai:o3-mini",
   });
-
-  return {
-    key: "accuracy",
-    score: ResponseSchema.parse(JSON.parse(response.choices[0].message.content || "")).score,
-  };
-}`,
+  const res = await evaluator({
+    inputs: params.inputs,
+    outputs: params.outputs,
+    referenceOutputs: params.referenceOutputs
+  });
+  return res;
+};`,
     },
   ]}
   groupId="client-language"
 />
 
-## 8. Run and view results
+## 7. Run and view results
 
 <CodeTabs tabs={[
   
@@ -307,7 +260,7 @@ experiment_results = client.evaluate(
     target,
     data="Sample dataset",
     evaluators=[
-        accuracy,
+        correctness_evaluator,
         # can add multiple evaluators here
     ],
     experiment_prefix="first-eval-in-langsmith",
@@ -325,7 +278,7 @@ await evaluate(
   {
     data: "Sample dataset",
     evaluators: [
-      accuracy,
+      correctnessEvaluator,
       // can add multiple evaluators here
     ],
     experimentPrefix: "first-eval-in-langsmith",
@@ -345,6 +298,7 @@ Click the link printed out by your evaluation run to access the LangSmith Experi
 ## Next steps
 
 For conceptual explanations see the [Conceptual guide](./evaluation/concepts).
+Check out the [OpenEvals README](https://github.com/langchain-ai/openevals) to see all available prebuilt evaluators and how to customize them.
 See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
 For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
 For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
