@@ -101,7 +101,7 @@ Manage datasets in LangSmith used by your evaluations.
 - [Fetch a dataset with the SDK](./how_to_guides/manage_datasets_programmatically#fetch-datasets)
 - [Update a dataset with the SDK](./how_to_guides/manage_datasets_programmatically#update-examples)
 - [Version a dataset](./how_to_guides/version_datasets)
-- [Share/unshare a dataset publicly](./how_to_guides/share_dataset)
+- [Dataset sharing](./how_to_guides/share_dataset)
 - [Export filtered traces from an experiment to a dataset](./how_to_guides/export_filtered_traces_to_dataset)
 
 ## Annotation queues and human feedback
