@@ -29,14 +29,13 @@ Alerts in LangSmith are project-scoped, requiring separate configuration for eac
 
 LangSmith offers threshold-based alerting on three core metrics:
 
-| Metric Type | Description | Use Case |
-|-------------|-------------|----------|
-| **Errored Runs** | Tracks runs with error status | Monitors for failures in application traces. |
-| **Feedback Score** | Measures average feedback score metrics | Tracks feedback from application users or <a href="./online_evaluations">automated evaluation rules</a> to track regressions in prompts or switching models / providers. |
-| **Latency** | Measures average end-to-end trace execution time | Identifies performance bottlenecks from switching models / providers or code regressions. |
+| Metric Type        | Description                                      | Use Case                                                                                                                                                                 |
+| ------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Errored Runs**   | Tracks runs with error status                    | Monitors for failures in application traces.                                                                                                                             |
+| **Feedback Score** | Measures average feedback score metrics          | Tracks feedback from application users or <a href="./online_evaluations">automated evaluation rules</a> to track regressions in prompts or switching models / providers. |
+| **Latency**        | Measures average end-to-end trace execution time | Identifies performance bottlenecks from switching models / providers or code regressions.                                                                                |
 
 ### Step 2: Define Alert Conditions
-
 
 Alert conditions consist of several components:
 
@@ -48,7 +47,6 @@ Alert conditions consist of several components:
 
 <br />
 <div style={{ textAlign: 'center' }}>
-
 
 ![Alert Condition Configuration](./static/define_conditions.png)
 

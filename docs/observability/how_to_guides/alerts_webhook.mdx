@@ -20,6 +20,7 @@ This guide details the process for setting up webhook notifications for LangSmit
 ### Step 1: Prepare Your Receiving Endpoint
 
 Before configuring the webhook in LangSmith, ensure your receiving endpoint:
+
 - Accepts HTTP POST requests
 - Can process JSON payloads
 - Is accessible from external services
@@ -32,11 +33,14 @@ Additionally, if on a custom deployment of LangSmith, make sure there are no fir
 In the notification section of your alert complete the webhook configuration with the following parameters:
 
 #### Required Fields
+
 - **URL**: The complete URL of your receiving endpoint
   - Example: `https://api.example.com/incident-webhook`
 
 #### Optional Fields
+
 - **Headers**: JSON Key-value pairs sent with the webhook request
+
   - Common headers include:
     - `Authorization`: For authentication tokens
     - `Content-Type`: Usually set to `application/json` (default)
@@ -55,6 +59,7 @@ In the notification section of your alert complete the webhook configuration wit
     - `timestamp`: The timestamp that triggered the alert.
 
 ### Step 3: Test the Webhook
+
 Click **Send Test Alert** to send the webhook notification to ensure the notification works as intended.
 
 ## Troubleshooting
