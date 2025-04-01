@@ -21,7 +21,6 @@ Quickly iterate on prompts and models in the LangSmith Playground.
 - [Run the playground against a custom LangServe model server](./how_to_guides/custom_endpoint)
 - [Run the playground against an OpenAI-compliant model provider/proxy](./how_to_guides/custom_openai_compliant_model)
 
-
 ## Few shot prompting
 
 Use LangSmith datasets to serve few shot examples to your application
