@@ -14,7 +14,7 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Evaluation Quick Start
 
-Evaluations are a quantitative way to measure performance of LLM applications, which is important beacause LLMs don't always behave predictably — small changes in prompts, models, or inputs can significantly impact results. Evaluations provide a structured way to identify failures, compare changes across different versions of your application, and build more reliable AI applications.
+Evaluations are a quantitative way to measure performance of LLM applications, which is important because LLMs don't always behave predictably — small changes in prompts, models, or inputs can significantly impact results. Evaluations provide a structured way to identify failures, compare changes across different versions of your application, and build more reliable AI applications.
 
 Evaluations are made up of three components:
 1. A [dataset](/evaluation/concepts#datasets) test inputs and expected outputs.
@@ -23,7 +23,7 @@ Evaluations are made up of three components:
 
 This quick start guides you through running an evaluation with the LangSmith SDK and visualizing results in LangSmith.
 We'll use prebuilt LLM-as-judge evaluators powered by an OpenAI model from the open-source
-[`openevals`](https://github.com/langchain-ai/openevals) package, though you can also [write your own custom evaluators](./how_to_guides/custom_evaluator) if you desire.
+[`openevals`](https://github.com/langchain-ai/openevals) package, though you can also [write your own custom evaluators](./evaluation/how_to_guides/custom_evaluator) if you desire.
 
 ## 1. Install Dependencies
 
@@ -39,19 +39,20 @@ We'll use prebuilt LLM-as-judge evaluators powered by an OpenAI model from the o
       value: "typescript",
       label: "TypeScript",
       language: "bash",
-      content: `yarn add langsmith openevals openai`,
+      caption: "\`@langchain/core\` is used internally in prebuilt \`openevals\` evaluators - it is not required for LangSmith evals in general.",
+      content: `yarn add langsmith openevals @langchain/core openai`,
     },
   ]}
   groupId="client-language"
 />
 
-## 2. Create an API key
+## 2. Create a LangSmith API key
 
 To create an API key head to the <RegionalUrl text='Settings page' suffix='/settings' />. Then click **Create API Key.**
 
 ## 3. Set up your environment
 
-We'll be using an OpenAI model under the hood, so you'll need to set the `OPENAI_API_KEY` environment variable as well as the
+We'll be using OpenAI models, so you'll need to set the `OPENAI_API_KEY` environment variable as well as the
 required LangSmith ones:
 
 <CodeTabs
@@ -76,12 +77,10 @@ content: `from langsmith import Client
 
 client = Client()
 
+# Programmatically create a dataset in LangSmith
 # For other dataset creation methods, see:
 # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
 # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
-
-
-# Programmatically create a dataset in LangSmith
 dataset = client.create_dataset(
     dataset_name="Sample dataset", description="A sample dataset in LangSmith."
 )
@@ -107,40 +106,32 @@ client.create_examples(dataset_id=dataset.id, examples=examples)
       label: "TypeScript",
       content: `import { Client } from "langsmith";
 
-// For other dataset creation methods, see: 
-// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically 
-// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
-    
-// Create inputs and reference outputs
-const examples: [string, string][] = [
-  [
-    "Which country is Mount Kilimanjaro located in?",
-    "Mount Kilimanjaro is located in Tanzania.",
-  ],
-  [
-    "What is Earth's lowest point?",
-    "Earth's lowest point is The Dead Sea.",
-  ],
-];
-
-const inputs = examples.map(([inputPrompt]) => ({
-  question: inputPrompt,
-}));
-const outputs = examples.map(([, outputAnswer]) => ({
-  answer: outputAnswer,
-}));
+const client = new Client();
 
 // Programmatically create a dataset in LangSmith
+// For other dataset creation methods, see:
+// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
+// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
 const dataset = await client.createDataset("Sample dataset", {
   description: "A sample dataset in LangSmith.",
 });
 
+// Create inputs and reference outputs
+const examples = [
+  {
+    inputs: { question: "Which country is Mount Kilimanjaro located in?" },
+    outputs: { answer: "Mount Kilimanjaro is located in Tanzania." },
+    dataset_id: dataset.id,
+  },
+  {
+    inputs: { question: "What is Earth's lowest point?" },
+    outputs: { answer: "Earth's lowest point is The Dead Sea." },
+    dataset_id: dataset.id,
+  },
+];
+
 // Add examples to the dataset
-await client.createExamples({
-  inputs,
-  outputs,
-  datasetId: dataset.id,
-});
+await client.createExamples(examples);
 `,
 },
 ]}
@@ -200,6 +191,13 @@ async function target(inputs: string): Promise<{ response: string }> {
 
 ## 6. Define evaluator
 
+Now, we import a prebuilt prompt and evaluator from [`openevals`](https://github.com/langchain-ai/openevals).
+
+:::info
+`CORRECTNESS_PROMPT` is just an f-string with variables for `"inputs"`, `"outputs"`, and `"reference_outputs"`.
+See [here](https://github.com/langchain-ai/openevals#customizing-prompts) for more information on customizing OpenEvals prompts.
+:::
+
 <CodeTabs
   tabs={[
     {
@@ -210,10 +208,9 @@ from openevals.prompts import CORRECTNESS_PROMPT
 
 def correctness_evaluator(inputs: dict, outputs: dict, reference_outputs: dict):
     evaluator = create_llm_as_judge(
-        # CORRECTNESS_PROMPT is just an f-string with
-        # variables for "inputs", "outputs", and "reference_outputs"
         prompt=CORRECTNESS_PROMPT,
         model="openai:o3-mini",
+        feedback_key="correctness",
     )
     return evaluator(
         inputs=inputs,
@@ -224,22 +221,23 @@ def correctness_evaluator(inputs: dict, outputs: dict, reference_outputs: dict):
     {
       value: "typescript",
       label: "TypeScript",
-      content: `import { createLLMAsJudge, CORRECTNESS_PROMPT } from "openevals";
+      content: `
+import { createLLMAsJudge, CORRECTNESS_PROMPT } from "openevals";
 
-const correctnessEvaluator = (params: {
-  inputs: Record<string, unknown>,
-  outputs: Record<string, unknown>,
-  referenceOutputs: Record<string, unknown>
+const correctnessEvaluator = async (params: {
+  inputs: Record<string, unknown>;
+  outputs: Record<string, unknown>;
+  referenceOutputs?: Record<string, unknown>;
 }) => {
   const evaluator = createLLMAsJudge({
-    // CORRECTNESS_PROMPT is just an f-string
     prompt: CORRECTNESS_PROMPT,
     model: "openai:o3-mini",
+    feedbackKey: "correctness",
   });
   const res = await evaluator({
     inputs: params.inputs,
     outputs: params.outputs,
-    referenceOutputs: params.referenceOutputs
+    referenceOutputs: params.referenceOutputs,
   });
   return res;
 };`,
@@ -270,7 +268,9 @@ experiment_results = client.evaluate(
     {
       value: "typescript",
       label: "TypeScript",
-      content: `// After running the evaluation, a link will be provided to view the results in langsmith
+      content: `import { evaluate } from "langsmith/evaluation";
+
+// After running the evaluation, a link will be provided to view the results in langsmith
 await evaluate(
   (exampleInput) => {
     return target(exampleInput.question);
@@ -297,10 +297,10 @@ Click the link printed out by your evaluation run to access the LangSmith Experi
 
 ## Next steps
 
-For conceptual explanations see the [Conceptual guide](./evaluation/concepts).
-Check out the [OpenEvals README](https://github.com/langchain-ai/openevals) to see all available prebuilt evaluators and how to customize them.
-See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
-For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
-For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
+- For conceptual explanations see the [Conceptual guide](./evaluation/concepts).
+- Check out the [OpenEvals README](https://github.com/langchain-ai/openevals) to see all available prebuilt evaluators and how to customize them.
+- See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
+- For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
+- For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
 
-If you prefer video tutorials, check out the [Datasets, Evaluators, and Experiments videos](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.
+Or, if you prefer video tutorials, check out the [Datasets, Evaluators, and Experiments videos](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.
