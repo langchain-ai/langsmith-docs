@@ -4,27 +4,33 @@ sidebar_position: 4
 
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
-# How to share or unshare a dataset publicly
+# Dataset Sharing
+
+
+## Share a Dataset Publicly
 
 :::caution
+Sharing a dataset publicly will make the **dataset examples, experiments and associated runs and feedback on this dataset accessible to anyone with the link**, even if they don't have a LangSmith account. Make sure you're not sharing sensitive information.
 
-Sharing a dataset publicly will make it accessible to anyone with the link. Make sure you're not sharing sensitive information.
-**This link gives viewers access to all example rows, experiments, and associated runs and feedback on this dataset.**
 This feature is only available in the cloud-hosted version of LangSmith.
-
 :::
 
-To share a dataset publicly, simply click on the **Share** button in the upper right hand side of any dataset details page.
-![](./static/share_dataset.png)
+From the **Dataset & Experiments** tab, select a dataset, click **⋮** (top right of the page), click **Share Dataset**. This will open a dialog where you can copy the link to the dataset.
 
-This will open a dialog where you can copy the link to the dataset.
+![](./static/share_dataset.gif)
 
-Shared datasets will be accessible to anyone with the link, even if they don't have a LangSmith account. They will be able to view the dataset, experiments and examples, but not edit any of this information.
-
-To "unshare" a dataset, either
+**To "unshare" a dataset:**
 
 1. Click on **Unshare** by click on **Public** in the upper right hand corner of any publicly shared dataset, then **Unshare** in the dialog.
    ![](./static/unshare_dataset.png)
 
-2. Navigate to your organization's list of publicly shared dataset, either by clicking on **Settings** -> **Shared URLs** or <RegionalUrl text='this link' suffix='/settings/shared' />, then click on **Unshare** next to the dataset you want to unshare.
+2. Navigate to your organization's list of publicly shared datasets, by clicking on **Settings** -> **Shared URLs** or <RegionalUrl text='this link' suffix='/settings/shared' />, then click on **Unshare** next to the dataset you want to unshare.
    ![](./static/unshare_trace_list.png)
+
+## Export a Dataset
+
+You can export your LangSmith dataset to a CSV, JSONL or [OpenAI's fine tuning format](https://platform.openai.com/docs/guides/fine-tuning#example-format) from the LangSmith UI.
+
+From the **Dataset & Experiments** tab, select a dataset, click **⋮** (top right of the page), click **Download Dataset**. 
+
+![Export Dataset Button](./static/export-dataset-button.gif)

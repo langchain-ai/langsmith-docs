@@ -1,7 +1,8 @@
 ---
 sidebar_label: Quick Start
 sidebar_position: 0
-table_of_contents: true
+table_of_contents: false
+hide_table_of_contents: true
 ---
 
 import {
@@ -11,17 +12,22 @@ import {
   ShellBlock,
 } from "@site/src/components/InstructionsWithCode";
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Evaluation Quick Start
 
 Evaluations are a quantitative way to measure performance of LLM applications, which is important beacause LLMs don't always behave predictably — small changes in prompts, models, or inputs can significantly impact results. Evaluations provide a structured way to identify failures, compare changes across different versions of your application, and build more reliable AI applications.
 
 Evaluations are made up of three components:
-1. A [dataset](/evaluation/concepts#datasets) test inputs and expected outputs.
-2. A [target function](/evaluation/how_to_guides/define_target) that defines what you're evaluating
+1. A [dataset](/evaluation/concepts#datasets) with test inputs and optionally expected outputs.
+2. A [target function](/evaluation/how_to_guides/define_target) that defines what you're evaluating. For example, this may be one LLM call that includes the new prompt you are testing, a part of your application or your end to end application. 
 3. [Evaluators](/evaluation/concepts#evaluators) that score your target function's outputs.
 
-This quick start guides you through running an evaluation with the LangSmith SDK and visualizing results in LangSmith.
+This quick start guides you through running a simple evaluation to test the correctness of LLM responses with the LangSmith SDK or UI. 
+
+<Tabs className="interface-tabs" queryString="mode">
+  <TabItem value="sdk" label="SDK">
 
 ## 1. Install Dependencies
 
@@ -342,9 +348,49 @@ Click the link printed out by your evaluation run to access the LangSmith Experi
 
 ![](./how_to_guides/static/view_experiment.gif)
 
+  </TabItem >
+  <TabItem value="ui" label="UI">
+
+  
+  ## 1. Navigate to the Playground
+    LangSmith's [Prompt Playground](/prompt_engineering/concepts#prompt-playground) makes it possible run evaluations over diffrent prompts, new models or test different model configuration. Go to LangSmith's **Playground**. 
+  
+  ## 2. Create a prompt
+  Modify the system prompt to:
+  ```
+  Answer the following question accurately:
+  ```
+  
+  ## 3. Create a dataset
+  Click **Set up Evaluation**, then use the **+ New** button in the dropdown to create a new dataset.
+  
+  Add the following examples to the dataset:
+  | Inputs | Reference Outputs | 
+  |----------|----------|
+  | question: Which country is Mount Kilimanjaro located in?    | output: Mount Kilimanjaro is located in Tanzania.  |
+  | question: What is Earth's lowest point?    | output: Earth's lowest point is The Dead Sea.  | 
+  
+  Press **Save** to save your newly created dataset. 
+
+  ## 4. Add an evaluator
+  
+  Click **+Evaluator**. Select **Correctness** from the pre-built evaluator options. Press **Save**.
+
+  ## 5. Run your evaluation
+  
+  Press **Start** on the top right to run your evaluation. Running this evaluation will create an experiment that you can view in full by clicking the experiment name. 
+  
+   ![](./how_to_guides/static/evals-quick-start.gif)
+
+    </TabItem>
+  </Tabs>
+
 ## Next steps
 
-For conceptual explanations see the [Conceptual guide](./evaluation/concepts).
+:::tip
+To learn more about running experiments in LangSmith, read conceptual the [evaluation conceptual guide](./evaluation/concepts).
+:::
+
 See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
 For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
 For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
