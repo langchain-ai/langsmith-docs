@@ -2,7 +2,7 @@
 
 :::tip Private Beta
 
-This is feature is currently in private beta. If interested, please express interest in the <a href="https://langchaincommunity.slack.com/archives/C079K4ECBN2">\#feature-requests</a> channel in the langchain community slack.
+This is feature is currently in private beta. If interested, please express interest in the <a href="https://langchaincommunity.slack.com/archives/C079K4ECBN2">\#feature-requests</a> channel in the LangChain Community Slack.
 
 :::
 
@@ -11,14 +11,18 @@ This is feature is currently in private beta. If interested, please express inte
 Effective observability in LLM applications requires proactive detection of failures, performance degradations, and regressions. LangSmith's alerts feature helps identify critical issues such as:
 
 - API rate limit violations from model providers
-- Latency regressions in API calls
-- Prompt engineering failures affecting user experience
+- Latency increases for your application
+- Application changes that affect feedback scores reflecting end-user experience
 
 Alerts in LangSmith are project-scoped, requiring separate configuration for each monitored project.
 
-## Alert Configuration Process
+## Configuring an alert
 
-### Step 1: Select Metric Type
+### Step 1: Navigate To Create Alert
+
+First navigate to the Tracing project that you would like to configure alerts for. Click **+ New Alert** in the top right hand corner of the page to set up an alert.
+
+### Step 2: Select Metric Type
 
 <br />
 <div style={{ textAlign: 'center' }}>

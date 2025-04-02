@@ -2,13 +2,13 @@
 
 :::tip Private Beta
 
-This is associated with the LangSmith Alerts feature which is currently in private beta. If interested, please express interest in the <a href="https://langchaincommunity.slack.com/archives/C079K4ECBN2">\#feature-requests</a> channel in the langchain community slack.
+Set up a WebHook trigger while using the [new alerting feature](/observability/how_to_guides/alerts) which is currently in private beta. If interested, please express interest in the <a href="https://langchaincommunity.slack.com/archives/C079K4ECBN2">\#feature-requests</a> channel in the langchain community slack.
 
 :::
 
 ## Overview
 
-This guide details the process for setting up webhook notifications for LangSmith alerts. Before proceeding, make sure you have followed the steps leading up to the notification step of creating the alert by following <a href="./alerts.mdx">this guide</a>. Webhooks enable integration with custom services and third-party platforms by sending HTTP POST requests when alert conditions are triggered. Use webhooks to forward alert data to ticketing systems, chat applications, or custom monitoring solutions.
+This guide details the process for setting up webhook notifications for LangSmith alerts. Before proceeding, make sure you have followed the steps leading up to the notification step of creating the alert by following <a href="./alerts">this guide</a>. Webhooks enable integration with custom services and third-party platforms by sending HTTP POST requests when alert conditions are triggered. Use webhooks to forward alert data to ticketing systems, chat applications, or custom monitoring solutions.
 
 ## Prerequisites
 
@@ -29,6 +29,12 @@ Before configuring the webhook in LangSmith, ensure your receiving endpoint:
 Additionally, if on a custom deployment of LangSmith, make sure there are no firewall settings blocking egress traffic from LangSmith services.
 
 ### Step 2: Configure Webhook Parameters
+
+<div style={{ textAlign: 'center' }}>
+
+![Webhook Setup](./static/webhook_setup.png)
+
+</div>
 
 In the notification section of your alert complete the webhook configuration with the following parameters:
 

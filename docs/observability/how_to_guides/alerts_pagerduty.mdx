@@ -2,7 +2,7 @@
 
 :::tip Private Beta
 
-This is associated with the LangSmith Alerts feature which is currently in private beta. If interested, please express interest in the <a href="https://langchaincommunity.slack.com/archives/C079K4ECBN2">\#feature-requests</a> channel in the langchain community slack.
+Set up a PagerDuty notification while using the [new alerting feature](/observability/how_to_guides/alerts) which is currently in private beta. If interested, please express interest in the <a href="https://langchaincommunity.slack.com/archives/C079K4ECBN2">\#feature-requests</a> channel in the langchain community slack.
 
 :::
 
@@ -44,7 +44,13 @@ After creating the service, you'll need to retrieve the Integration Key:
 
 ### Step 3: Configure LangSmith Alert with PagerDuty
 
-1. In the notification section of your alert in LangSmith, select **PagerDuty**
+<div style={{ textAlign: 'center' }}>
+
+![PagerDuty Setup](./static/pagerduty_setup.png)
+
+</div>
+
+1. In the notification section of your alert set-up in LangSmith, select **PagerDuty**
 2. Paste the **Integration Key** from Step 2 into the designated field
 3. Configure additional notification options:
    - **Severity**: Maps to PagerDuty incident priority
