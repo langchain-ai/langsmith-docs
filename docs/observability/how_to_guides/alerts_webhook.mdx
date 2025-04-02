@@ -38,12 +38,12 @@ Additionally, if on a custom deployment of LangSmith, make sure there are no fir
 
 In the notification section of your alert complete the webhook configuration with the following parameters:
 
-#### Required Fields
+**Required Fields**
 
 - **URL**: The complete URL of your receiving endpoint
   - Example: `https://api.example.com/incident-webhook`
 
-#### Optional Fields
+**Optional Fields**
 
 - **Headers**: JSON Key-value pairs sent with the webhook request
 
@@ -85,6 +85,106 @@ If webhook notifications aren't being delivered:
 - Consider adding a shared secret in your headers to verify webhook sources
 - Validate incoming webhook requests before processing them
 
+## Example of using webhook option with Slack API
+
+Here is an example for configuring LangSmith alerts to send notifications to Slack channels using the `chat.postMessage` API.
+
+### Prerequisites
+
+- Access to a slack workspace
+- A LangSmith project to set up alerts
+- Permissions to create Slack applications
+
+### Step 1: Create a Slack App
+
+1. Visit the [Slack API Applications page](https://api.slack.com/apps)
+2. Click **Create New App**
+3. Select **From scratch**
+4. Provide an **App Name** (e.g., "LangSmith Alerts")
+5. Select the workspace where you want to install the app
+6. Click **Create App**
+
+### Step 2: Configure Bot Permissions
+
+1. In the left sidebar of your Slack app configuration, click **OAuth & Permissions**
+2. Scroll down to **Bot Token Scopes** under **Scopes** and click **Add an OAuth Scope**
+3. Add the following scopes:
+   - `chat:write` (Send messages as the app)
+   - `chat:write.public` (Send messages to channels the app isn't in)
+   - `channels:read` (View basic channel information)
+
+### Step 3: Install the App to Your Workspace
+
+1. Scroll up to the top of the **OAuth & Permissions** page
+2. Click **Install to Workspace**
+3. Review the permissions and click **Allow**
+4. Copy the **Bot User OAuth Token** that appears (begins with `xoxb-`)
+
+### Step 4: Configure LangSmith Webhook Alert
+
+1. In LangSmith, navigate to your project
+2. Select **Alerts → Create Alert**
+3. Define your alert metrics and conditions
+4. In the notification section, select **Webhook**
+5. Configure the webhook with the following settings:
+
+**Webhook URL**
+```
+https://slack.com/api/chat.postMessage
+```
+
+**Headers**
+```json
+{
+  "Content-Type": "application/json",
+  "Authorization": "Bearer xoxb-your-token-here"
+}
+```
+> **Note:** Replace `xoxb-your-token-here` with your actual Bot User OAuth Token
+
+**Request Body Template**
+```json
+{
+  "channel": "{channel_id}",
+  "text": "Error alert triggered in {project_name}",
+  "blocks": [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "Error alert triggered"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "Please check the following link for more information:"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "<{project_url}|View Traces In Langsmith>"
+        }
+      }
+    ]
+}
+```
+
+**NOTE:** The `channel_id`, `project_url` and `project_name` are currently NOT template variables. You would have to set those manually while creating the alert.
+
+6. Click **Save** to activate the webhook configuration
+
+## Step 5: Test the Integration
+
+1. In the LangSmith alert configuration, click **Test Alert**
+2. Check your specified Slack channel for the test notification
+3. Verify that the message contains the expected alert information
+
 ## Additional Resources
 
 - [LangSmith Alerts Documentation](./alerts.mdx)
+- [Slack chat.postMessage API Documentation](https://api.slack.com/methods/chat.postMessage)
+- [Slack Block Kit Builder](https://app.slack.com/block-kit-builder/)
