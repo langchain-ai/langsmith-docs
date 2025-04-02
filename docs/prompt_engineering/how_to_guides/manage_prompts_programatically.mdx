@@ -202,6 +202,12 @@ To pull a public prompt from the LangChain Hub, you need to specify the handle o
   groupId="client-language"
 />
 
+:::note Important Note for JavaScript Users
+For pulling prompts, if you are using Node.js or an environment that supports dynamic imports, we recommend using the `langchain/hub/node` entrypoint, as it handles deserialization of models associated with your prompt configuration automatically.
+
+If you are in a non-Node environment, "includeModel" is not supported for non-OpenAI models and you should use the base `langchain/hub` entrypoint.
+:::
+
 ## Use a prompt without LangChain
 
 If you want to store your prompts in LangSmith but use them directly with a model provider's API, you can use our conversion methods.
@@ -332,10 +338,3 @@ client.unlikePrompt("efriis/my-first-prompt");`),
   ]}
   groupId="client-language"
 />
-
-:::note Important Note for JavaScript Users
-For pulling prompts, we recommend using the `langchain/hub` package, as it handles prompt deserialization automatically.
-However, you can also choose to use the `_pullPrompt` method of the `langsmith` package directly but, you will need to manually deserialize the prompt using LangChain's `load` method.
-
-All other methods in the LangSmith SDK can be used directly.
-:::
