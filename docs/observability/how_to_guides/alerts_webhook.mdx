@@ -129,47 +129,51 @@ Here is an example for configuring LangSmith alerts to send notifications to Sla
 5. Configure the webhook with the following settings:
 
 **Webhook URL**
+
 ```
 https://slack.com/api/chat.postMessage
 ```
 
 **Headers**
+
 ```json
 {
   "Content-Type": "application/json",
   "Authorization": "Bearer xoxb-your-token-here"
 }
 ```
+
 > **Note:** Replace `xoxb-your-token-here` with your actual Bot User OAuth Token
 
 **Request Body Template**
+
 ```json
 {
   "channel": "{channel_id}",
   "text": "Error alert triggered in {project_name}",
   "blocks": [
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "Error alert triggered"
-        }
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "Please check the following link for more information:"
-        }
-      },
-      {
-        "type": "section",
-        "text": {
-          "type": "mrkdwn",
-          "text": "<{project_url}|View Traces In Langsmith>"
-        }
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Error alert triggered"
       }
-    ]
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Please check the following link for more information:"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "<{project_url}|View Traces In Langsmith>"
+      }
+    }
+  ]
 }
 ```
 
