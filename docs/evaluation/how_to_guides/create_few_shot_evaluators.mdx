@@ -32,10 +32,6 @@ For example, if your main prompt has variables `question` and `response`, and yo
 ### 2. Specify the number of few-shot examples to use
 You may also specify the number of few-shot examples to use. The default is 5. If your examples are very long, you may want to set this number lower to save tokens - whereas if your examples tend to be short, you can set a higher number in order to give your evaluator more examples to learn from. If you have more examples in your dataset than this number, we will randomly choose them for you.
 
-:::tip Dynamic few-shot examples
-If you're using few-shot examples, LangSmith offers a beta feature that dynamically selects the most relevant examples at runtime, potentially enhancing evaluator performance. Learn more by visiting [Dynamic Few-Shot Examples](/evaluation/how_to_guides/index_datasets_for_dynamic_few_shot_example_selection).
-:::
-
 ## Make corrections
 
 :::info Key concepts
