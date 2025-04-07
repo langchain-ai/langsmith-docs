@@ -1,7 +1,8 @@
 ---
 sidebar_label: Quick Start
 sidebar_position: 0
-table_of_contents: true
+table_of_contents: false
+hide_table_of_contents: true
 ---
 
 import {
@@ -11,296 +12,367 @@ import {
   ShellBlock,
 } from "@site/src/components/InstructionsWithCode";
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Evaluation Quick Start
 
 Evaluations are a quantitative way to measure performance of LLM applications, which is important because LLMs don't always behave predictably — small changes in prompts, models, or inputs can significantly impact results. Evaluations provide a structured way to identify failures, compare changes across different versions of your application, and build more reliable AI applications.
 
 Evaluations are made up of three components:
-1. A [dataset](/evaluation/concepts#datasets) test inputs and expected outputs.
-2. A [target function](/evaluation/how_to_guides/define_target) that defines what you're evaluating
+1. A [dataset](/evaluation/concepts#datasets) with test inputs and optionally expected outputs.
+2. A [target function](/evaluation/how_to_guides/define_target) that defines what you're evaluating. For example, this may be one LLM call that includes the new prompt you are testing, a part of your application or your end to end application. 
 3. [Evaluators](/evaluation/concepts#evaluators) that score your target function's outputs.
 
-This quick start guides you through running an evaluation with the LangSmith SDK and visualizing results in LangSmith.
-We'll use prebuilt LLM-as-judge evaluators powered by an OpenAI model from the open-source
-[`openevals`](https://github.com/langchain-ai/openevals) package, though you can also [write your own custom evaluators](./evaluation/how_to_guides/custom_evaluator) if you desire.
+This quick start guides you through running a simple evaluation to test the correctness of LLM responses with the LangSmith SDK or UI. 
 
-## 1. Install Dependencies
+<Tabs className="interface-tabs" queryString="mode">
+  <TabItem value="sdk" label="SDK">
 
-<CodeTabs
-  tabs={[
-    {
-      value: "python",
-      label: "Python",
-      language: "bash",
-      content: `pip install -U langsmith openevals openai`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      language: "bash",
-      caption: "\`@langchain/core\` is used internally in prebuilt \`openevals\` evaluators - it is not required for LangSmith evals in general.",
-      content: `yarn add langsmith openevals @langchain/core openai`,
-    },
-  ]}
-  groupId="client-language"
-/>
+  We'll use prebuilt LLM-as-judge evaluators powered by an OpenAI model from the open-source
+  [`openevals`](https://github.com/langchain-ai/openevals) package, though you can also [write your own custom evaluators](./evaluation/how_to_guides/custom_evaluator) if you desire.
 
-## 2. Create a LangSmith API key
+  ## 1. Install Dependencies
 
-To create an API key head to the <RegionalUrl text='Settings page' suffix='/settings' />. Then click **Create API Key.**
+  <CodeTabs
+    tabs={[
+      {
+        value: "python",
+        label: "Python",
+        language: "bash",
+        content: `pip install -U langsmith openevals openai`,
+      },
+      {
+        value: "typescript",
+        label: "npm",
+        language: "bash",
+        content: `npm install langsmith openevals openai`,
+      },
+      {
+        value: "typescript",
+        label: "yarn",
+        language: "bash",
+        caption: "\`@langchain/core\` is used internally as a peer dep for \`openevals\` evaluators - it is not required for LangSmith evals in general.",
+        content: `yarn add langsmith openevals @langchain/core openai`,
+      },
+      {
+        value: "typescript",
+        label: "pnpm",
+        language: "bash",
+        content: `pnpm install langsmith openevals openai`,
+      },
+    ]}
+    groupId="client-language"
+  />
 
-## 3. Set up your environment
+  ## 2. Create a LangSmith API key
 
-We'll be using OpenAI models, so you'll need to set the `OPENAI_API_KEY` environment variable as well as the
-required LangSmith ones:
+  To create an API key head to the <RegionalUrl text='Settings page' suffix='/settings' />. Then click **Create API Key.**
 
-<CodeTabs
-  tabs={[
-    ShellBlock(`export LANGSMITH_TRACING=true
-export LANGSMITH_API_KEY="<your-langchain-api-key>"
+  ## 3. Set up your environment
 
-# The example uses OpenAI, but it's not necessary in general
-export OPENAI_API_KEY="<your-openai-api-key>"`),
-  ]}
-  groupId="client-language"
-/>
+  We'll be using OpenAI models, so you'll need to set the `OPENAI_API_KEY` environment variable as well as the
+  required LangSmith ones:
 
-## 4. Create a dataset
+  <CodeTabs
+    tabs={[
+      ShellBlock(`export LANGSMITH_TRACING=true
+  export LANGSMITH_API_KEY="<your-langchain-api-key>"
 
-<CodeTabs
-  tabs={[
-    {
-value: "python",
-label: "Python",
-content: `from langsmith import Client
+  # The example uses OpenAI, but it's not necessary in general
+  export OPENAI_API_KEY="<your-openai-api-key>"`),
+    ]}
+    groupId="client-language"
+  />
 
-client = Client()
+  ## 4. Create a dataset
 
-# Programmatically create a dataset in LangSmith
-# For other dataset creation methods, see:
-# https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
-# https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
-dataset = client.create_dataset(
-    dataset_name="Sample dataset", description="A sample dataset in LangSmith."
-)
+  <CodeTabs
+    tabs={[
+      {
+  value: "python",
+  label: "Python",
+  content: `from langsmith import Client
 
-# Create examples
-examples = [
-    {
-        "inputs": {"question": "Which country is Mount Kilimanjaro located in?"},
-        "outputs": {"answer": "Mount Kilimanjaro is located in Tanzania."},
-    },
-    {
-        "inputs": {"question": "What is Earth's lowest point?"},
-        "outputs": {"answer": "Earth's lowest point is The Dead Sea."},
-    },
-]
+  client = Client()
 
-# Add examples to the dataset
-client.create_examples(dataset_id=dataset.id, examples=examples)
-`,
-    },
-    {
-      value: "typescript",
-      label: "TypeScript",
-      content: `import { Client } from "langsmith";
+  # Programmatically create a dataset in LangSmith
+  # For other dataset creation methods, see:
+  # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
+  # https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
+  dataset = client.create_dataset(
+      dataset_name="Sample dataset", description="A sample dataset in LangSmith."
+  )
 
-const client = new Client();
+  # Create examples
+  examples = [
+      {
+          "inputs": {"question": "Which country is Mount Kilimanjaro located in?"},
+          "outputs": {"answer": "Mount Kilimanjaro is located in Tanzania."},
+      },
+      {
+          "inputs": {"question": "What is Earth's lowest point?"},
+          "outputs": {"answer": "Earth's lowest point is The Dead Sea."},
+      },
+  ]
 
-// Programmatically create a dataset in LangSmith
-// For other dataset creation methods, see:
-// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
-// https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
-const dataset = await client.createDataset("Sample dataset", {
-  description: "A sample dataset in LangSmith.",
-});
+  # Add examples to the dataset
+  client.create_examples(dataset_id=dataset.id, examples=examples)
+  `,
+      },
+      {
+        value: "typescript",
+        label: "TypeScript",
+        content: `import { Client } from "langsmith";
 
-// Create inputs and reference outputs
-const examples = [
-  {
-    inputs: { question: "Which country is Mount Kilimanjaro located in?" },
-    outputs: { answer: "Mount Kilimanjaro is located in Tanzania." },
-    dataset_id: dataset.id,
-  },
-  {
-    inputs: { question: "What is Earth's lowest point?" },
-    outputs: { answer: "Earth's lowest point is The Dead Sea." },
-    dataset_id: dataset.id,
-  },
-];
+  const client = new Client();
 
-// Add examples to the dataset
-await client.createExamples(examples);
-`,
-},
-]}
-groupId="client-language"
-/>
-
-## 5. Define what you're evaluating
-
-<CodeTabs
-  tabs={[
-    {
-      value: "python",
-      label: "Python",
-      content: `from langsmith import wrappers
-from openai import OpenAI
-
-# Wrap the OpenAI client for LangSmith tracing
-openai_client = wrappers.wrap_openai(OpenAI())
-      
-# Define the application logic you want to evaluate inside a target function
-# The SDK will automatically send the inputs from the dataset to your target function
-def target(inputs: dict) -> dict:
-    response = openai_client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "Answer the following question accurately"},
-            {"role": "user", "content": inputs["question"]},
-        ],
-    )
-    return { "response": response.choices[0].message.content.strip() }
-  `},
-    {
-      value: "typescript",
-      label: "TypeScript",
-      content: `import { wrapOpenAI } from "langsmith/wrappers";
-import OpenAI from "openai";
-
-const openai = wrapOpenAI(new OpenAI());
-
-// Define the application logic you want to evaluate inside a target function
-// The SDK will automatically send the inputs from the dataset to your target function
-async function target(inputs: string): Promise<{ response: string }> {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      { role: "system", content: "Answer the following question accurately" },
-      { role: "user", content: inputs },
-    ],
+  // Programmatically create a dataset in LangSmith
+  // For other dataset creation methods, see:
+  // https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_programmatically
+  // https://docs.smith.langchain.com/evaluation/how_to_guides/manage_datasets_in_application
+  const dataset = await client.createDataset("Sample dataset", {
+    description: "A sample dataset in LangSmith.",
   });
-  return { response: response.choices[0].message.content?.trim() || "" };
-}
-`,
-    },
-  ]}
-  groupId="client-language"
-/>
 
-## 6. Define evaluator
-
-Now, we import a prebuilt prompt and evaluator from [`openevals`](https://github.com/langchain-ai/openevals).
-
-:::info
-`CORRECTNESS_PROMPT` is just an f-string with variables for `"inputs"`, `"outputs"`, and `"reference_outputs"`.
-See [here](https://github.com/langchain-ai/openevals#customizing-prompts) for more information on customizing OpenEvals prompts.
-:::
-
-<CodeTabs
-  tabs={[
+  // Create inputs and reference outputs
+  const examples = [
     {
-      value: "python",
-      label: "Python",
-      content: `from openevals.llm import create_llm_as_judge
-from openevals.prompts import CORRECTNESS_PROMPT
-
-def correctness_evaluator(inputs: dict, outputs: dict, reference_outputs: dict):
-    evaluator = create_llm_as_judge(
-        prompt=CORRECTNESS_PROMPT,
-        model="openai:o3-mini",
-        feedback_key="correctness",
-    )
-    return evaluator(
-        inputs=inputs,
-        outputs=outputs,
-        reference_outputs=reference_outputs
-    )`,
+      inputs: { question: "Which country is Mount Kilimanjaro located in?" },
+      outputs: { answer: "Mount Kilimanjaro is located in Tanzania." },
+      dataset_id: dataset.id,
     },
     {
-      value: "typescript",
-      label: "TypeScript",
-      content: `
-import { createLLMAsJudge, CORRECTNESS_PROMPT } from "openevals";
-
-const correctnessEvaluator = async (params: {
-  inputs: Record<string, unknown>;
-  outputs: Record<string, unknown>;
-  referenceOutputs?: Record<string, unknown>;
-}) => {
-  const evaluator = createLLMAsJudge({
-    prompt: CORRECTNESS_PROMPT,
-    model: "openai:o3-mini",
-    feedbackKey: "correctness",
-  });
-  const res = await evaluator({
-    inputs: params.inputs,
-    outputs: params.outputs,
-    referenceOutputs: params.referenceOutputs,
-  });
-  return res;
-};`,
+      inputs: { question: "What is Earth's lowest point?" },
+      outputs: { answer: "Earth's lowest point is The Dead Sea." },
+      dataset_id: dataset.id,
     },
-  ]}
-  groupId="client-language"
-/>
+  ];
 
-## 7. Run and view results
-
-<CodeTabs tabs={[
-  
-  {
-    value: "python",
-    label: "Python",
-    content: `# After running the evaluation, a link will be provided to view the results in langsmith
-experiment_results = client.evaluate(
-    target,
-    data="Sample dataset",
-    evaluators=[
-        correctness_evaluator,
-        # can add multiple evaluators here
-    ],
-    experiment_prefix="first-eval-in-langsmith",
-    max_concurrency=2,
-)
-`},
-    {
-      value: "typescript",
-      label: "TypeScript",
-      content: `import { evaluate } from "langsmith/evaluation";
-
-// After running the evaluation, a link will be provided to view the results in langsmith
-await evaluate(
-  (exampleInput) => {
-    return target(exampleInput.question);
+  // Add examples to the dataset
+  await client.createExamples(examples);
+  `,
   },
-  {
-    data: "Sample dataset",
-    evaluators: [
-      correctnessEvaluator,
-      // can add multiple evaluators here
-    ],
-    experimentPrefix: "first-eval-in-langsmith",
-    maxConcurrency: 2,
+  ]}
+  groupId="client-language"
+  />
+
+  ## 5. Define what you're evaluating
+
+  <CodeTabs
+    tabs={[
+      {
+        value: "python",
+        label: "Python",
+        content: `from langsmith import wrappers
+  from openai import OpenAI
+
+  # Wrap the OpenAI client for LangSmith tracing
+  openai_client = wrappers.wrap_openai(OpenAI())
+        
+  # Define the application logic you want to evaluate inside a target function
+  # The SDK will automatically send the inputs from the dataset to your target function
+  def target(inputs: dict) -> dict:
+      response = openai_client.chat.completions.create(
+          model="gpt-4o-mini",
+          messages=[
+              {"role": "system", "content": "Answer the following question accurately"},
+              {"role": "user", "content": inputs["question"]},
+          ],
+      )
+      return { "response": response.choices[0].message.content.strip() }
+    `},
+      {
+        value: "typescript",
+        label: "TypeScript",
+        content: `import { wrapOpenAI } from "langsmith/wrappers";
+  import OpenAI from "openai";
+
+  const openai = wrapOpenAI(new OpenAI());
+
+  // Define the application logic you want to evaluate inside a target function
+  // The SDK will automatically send the inputs from the dataset to your target function
+  async function target(inputs: string): Promise<{ response: string }> {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Answer the following question accurately" },
+        { role: "user", content: inputs },
+      ],
+    });
+    return { response: response.choices[0].message.content?.trim() || "" };
   }
-);
-`,
+  `,
+      },
+    ]}
+    groupId="client-language"
+  />
+
+  ## 6. Define evaluator
+
+  Now, we import a prebuilt prompt and evaluator from [`openevals`](https://github.com/langchain-ai/openevals).
+
+  :::info
+  `CORRECTNESS_PROMPT` is just an f-string with variables for `"inputs"`, `"outputs"`, and `"reference_outputs"`.
+  See [here](https://github.com/langchain-ai/openevals#customizing-prompts) for more information on customizing OpenEvals prompts.
+  :::
+
+  <CodeTabs
+    tabs={[
+      {
+        value: "python",
+        label: "Python",
+        content: `from openevals.llm import create_llm_as_judge
+  from openevals.prompts import CORRECTNESS_PROMPT
+
+  def correctness_evaluator(inputs: dict, outputs: dict, reference_outputs: dict):
+      evaluator = create_llm_as_judge(
+          prompt=CORRECTNESS_PROMPT,
+          model="openai:o3-mini",
+          feedback_key="correctness",
+      )
+      return evaluator(
+          inputs=inputs,
+          outputs=outputs,
+          reference_outputs=reference_outputs
+      )`,
+      },
+      {
+        value: "typescript",
+        label: "TypeScript",
+        content: `
+  import { createLLMAsJudge, CORRECTNESS_PROMPT } from "openevals";
+
+  const correctnessEvaluator = async (params: {
+    inputs: Record<string, unknown>;
+    outputs: Record<string, unknown>;
+    referenceOutputs?: Record<string, unknown>;
+  }) => {
+    const evaluator = createLLMAsJudge({
+      prompt: CORRECTNESS_PROMPT,
+      model: "openai:o3-mini",
+      feedbackKey: "correctness",
+    });
+    const res = await evaluator({
+      inputs: params.inputs,
+      outputs: params.outputs,
+      referenceOutputs: params.referenceOutputs,
+    });
+    return res;
+  };`,
+      },
+    ]}
+    groupId="client-language"
+  />
+
+  ## 7. Run and view results
+
+  <CodeTabs tabs={[
+    
+    {
+      value: "python",
+      label: "Python",
+      content: `# After running the evaluation, a link will be provided to view the results in langsmith
+  experiment_results = client.evaluate(
+      target,
+      data="Sample dataset",
+      evaluators=[
+          correctness_evaluator,
+          # can add multiple evaluators here
+      ],
+      experiment_prefix="first-eval-in-langsmith",
+      max_concurrency=2,
+  )
+  `},
+      {
+        value: "typescript",
+        label: "TypeScript",
+        content: `import { evaluate } from "langsmith/evaluation";
+
+  // After running the evaluation, a link will be provided to view the results in langsmith
+  await evaluate(
+    (exampleInput) => {
+      return target(exampleInput.question);
     },
-  ]}
-  groupId="client-language"
-/>
+    {
+      data: "Sample dataset",
+      evaluators: [
+        correctnessEvaluator,
+        // can add multiple evaluators here
+      ],
+      experimentPrefix: "first-eval-in-langsmith",
+      maxConcurrency: 2,
+    }
+  );
+  `,
+      },
+    ]}
+    groupId="client-language"
+  />
 
-Click the link printed out by your evaluation run to access the LangSmith Experiments UI, and explore the results of your evaluation.
+  Click the link printed out by your evaluation run to access the LangSmith Experiments UI, and explore the results of your evaluation.
 
-![](./how_to_guides/static/view_experiment.gif)
+  ![](./how_to_guides/static/view_experiment.gif)
 
-## Next steps
+  ## Next steps
 
-- For conceptual explanations see the [Conceptual guide](./evaluation/concepts).
-- Check out the [OpenEvals README](https://github.com/langchain-ai/openevals) to see all available prebuilt evaluators and how to customize them.
-- See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
-- For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
-- For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
+    :::tip
+    To learn more about running experiments in LangSmith, read the [evaluation conceptual guide](./evaluation/concepts).
+    :::
 
-Or, if you prefer video tutorials, check out the [Datasets, Evaluators, and Experiments videos](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.
+  - Check out the [OpenEvals README](https://github.com/langchain-ai/openevals) to see all available prebuilt evaluators and how to customize them.
+  - See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
+  - For end-to-end walkthroughs see [Tutorials](./evaluation/tutorials).
+  - For comprehensive descriptions of every class and function see the [API reference](https://langsmith-sdk.readthedocs.io/en/latest/evaluation.html).
+
+  Or, if you prefer video tutorials, check out the [Datasets, Evaluators, and Experiments videos](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.
+
+  </TabItem >
+  <TabItem value="ui" label="UI">
+
+  
+  ## 1. Navigate to the Playground
+    LangSmith's [Prompt Playground](/prompt_engineering/concepts#prompt-playground) makes it possible to run evaluations over different prompts, new models or test different model configurations. Go to LangSmith's **Playground** in the UI. 
+  
+  ## 2. Create a prompt
+  Modify the system prompt to:
+  ```
+  Answer the following question accurately:
+  ```
+  
+  ## 3. Create a dataset
+  Click **Set up Evaluation**, then use the **+ New** button in the dropdown to create a new dataset.
+  
+  Add the following examples to the dataset:
+  | Inputs | Reference Outputs | 
+  |----------|----------|
+  | question: Which country is Mount Kilimanjaro located in?    | output: Mount Kilimanjaro is located in Tanzania.  |
+  | question: What is Earth's lowest point?    | output: Earth's lowest point is The Dead Sea.  | 
+  
+  Press **Save** to save your newly created dataset. 
+
+  ## 4. Add an evaluator
+  
+  Click **+Evaluator**. Select **Correctness** from the pre-built evaluator options. Press **Save**.
+
+  ## 5. Run your evaluation
+  
+  Press **Start** on the top right to run your evaluation. Running this evaluation will create an experiment that you can view in full by clicking the experiment name. 
+  
+   ![](./how_to_guides/static/evals-quick-start.gif)
+   
+   ## Next steps
+
+  :::tip
+  To learn more about running experiments in LangSmith, read the [evaluation conceptual guide](./evaluation/concepts).
+  :::
+
+  See the [How-to guides](./evaluation/how_to_guides) for answers to “How do I….?” format questions.
+  - Learn how to [create and manage datasets in the UI](/evaluation/how_to_guides/manage_datasets_in_application#set-up-your-dataset)
+  - Learn how to [run an evaluation from the prompt playground](/evaluation/how_to_guides/run_evaluation_from_prompt_playground)
+
+  If you prefer video tutorials, check out the [Playground videos](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.
+
+  
+  </TabItem>
+</Tabs>
