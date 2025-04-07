@@ -112,6 +112,12 @@ export default defineConfig({
 - `reporters` is responsible for nicely formatting your output as shown above
 - `setupFiles` runs `dotenv` to load environment variables before running your evals
 
+:::caution
+
+JSDom environments are not supported at this time. You should either omit the `"environment"` field from your config or set it to `"node"`.
+
+:::
+
 Finally, add the following to the `scripts` field in your `package.json` to run Vitest with the config you just created:
 
 ```json
@@ -206,6 +212,12 @@ module.exports = {
 - `testMatch` ensures that only files ending with some variation of `eval.js` in your project are run
 - `reporters` is responsible for nicely formatting your output as shown above
 - `setupFiles` runs `dotenv` to load environment variables before running your evals
+
+:::caution
+
+JSDom environments are not supported at this time. You should either omit the `"testEnvironment"` field from your config or set it to `"node"`.
+
+:::
 
 Finally, add the following to the `scripts` field in your `package.json` to run Jest with the config you just created:
 
