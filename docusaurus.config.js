@@ -46,12 +46,6 @@ const config = {
               label: "stable",
               badge: false,
             },
-            old: {
-              label: "old",
-              banner: "unmaintained",
-              badge: false,
-              path: "old",
-            },
           },
           sidebarPath: require.resolve("./sidebars.js"),
           remarkPlugins: [
