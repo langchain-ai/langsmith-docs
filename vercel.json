@@ -19,14 +19,6 @@
       "destination": "/evaluation/how_to_guides/manage_datasets_in_application#manage-a-dataset"
     },
     {
-      "source": "/overview",
-      "destination": "/"
-    },
-    {
-      "source": "/docs/:path*",
-      "destination": "/"
-    },
-    {
       "source": "/monitoring/:path*",
       "destination": "/observability/how_to_guides#monitoring"
     },
@@ -37,10 +29,6 @@
     {
       "source": "/hub/:path*",
       "destination": "/prompt_engineering/how_to_guides#prompt-hub"
-    },
-    {
-      "source": "/user_guide",
-      "destination": "/"
     },
     {
       "source": "/category/prompt-hub/:path*",
@@ -81,18 +69,6 @@
     {
       "source": "/how_to_guides/setup/:path*",
       "destination": "/administration/how_to_guides/organization_management"
-    },
-    {
-      "source": "/how_to_guides",
-      "destination": "/"
-    },
-    {
-      "source": "/concepts",
-      "destination": "/"
-    },
-    {
-      "source": "/tutorials",
-      "destination": "/"
     },
     {
       "source": "/concepts/admin:path*",
