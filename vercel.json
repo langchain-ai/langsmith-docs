@@ -8,8 +8,7 @@
     },
     {
       "source": "/category/organizations/:path*",
-      "destination": ":path*",
-      "_comment": "we should fid 404 and get rid of this"
+      "destination": ":path*"
     },
     {
       "source": "/evaluation/faq/datasets-client",
