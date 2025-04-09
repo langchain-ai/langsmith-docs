@@ -3,48 +3,21 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/evaluation/custom-evaluators",
-      "destination": "/evaluation/faq/custom-evaluators"
-    },
-    {
       "source": "/category/tracing",
-      "destination": "/tracing"
-    },
-    {
-      "source": "category/testing--evaluation",
-      "destination": "/evaluation"
-    },
-    {
-      "source": "/category/langsmith-cookbook",
-      "destination": "/cookbook"
-    },
-    {
-      "source": "/tracing/tracing-faq",
-      "destination": "/tracing/faq"
-    },
-    {
-      "source": "/category/organizations",
-      "destination": "/"
-    },
-    {
-      "source": "/organizations",
-      "destination": "/"
+      "destination": "/observability"
     },
     {
       "source": "/category/organizations/:path*",
-      "destination": ":path*"
-    },
-    {
-      "source": "/cookbook/testing-examples/prod-candidate-testing",
-      "destination": "/cookbook/testing-examples/backtesting"
+      "destination": ":path*",
+      "_comment": "we should fid 404 and get rid of this"
     },
     {
       "source": "/evaluation/faq/datasets-client",
-      "destination": "/evaluation/faq/manage-datasets#how-to-manage-datasets-programmatically"
+      "destination": "/evaluation/how_to_guides/manage_datasets_programmatically"
     },
     {
       "source": "/evaluation/faq/datasets-webapp",
-      "destination": "/evaluation/faq/manage-datasets"
+      "destination": "/evaluation/how_to_guides/manage_datasets_in_application#manage-a-dataset"
     },
     {
       "source": "/overview",
@@ -52,39 +25,27 @@
     },
     {
       "source": "/docs/:path*",
-      "destination": "/:path*"
+      "destination": "/"
     },
     {
       "source": "/monitoring/:path*",
-      "destination": "/old/monitoring/:path*"
-    },
-    {
-      "source": "/proxy/:path*",
-      "destination": "/old/proxy/:path*"
+      "destination": "/observability/how_to_guides#monitoring"
     },
     {
       "source": "/tracing/:path*",
-      "destination": "/old/tracing/:path*"
-    },
-    {
-      "source": "/cookbook/:path*",
-      "destination": "/old/cookbook/:path*"
+      "destination": "/observability"
     },
     {
       "source": "/hub/:path*",
-      "destination": "/old/hub/:path*"
+      "destination": "/prompt_engineering/how_to_guides#prompt-hub"
     },
     {
       "source": "/user_guide",
-      "destination": "/old/user_guide"
+      "destination": "/"
     },
     {
       "source": "/category/prompt-hub/:path*",
-      "destination": "/old/category/prompt-hub/:path*"
-    },
-    {
-      "source": "/category/proxy/:path*",
-      "destination": "/old/category/proxy/:path*"
+      "destination": "/prompt_engineering/how_to_guides#prompt-hub"
     },
     {
       "source": "/category/release-notes",
@@ -92,35 +53,35 @@
     },
     {
       "source": "/how_to_guides/evaluation/:path*",
-      "destination": "/evaluation/how_to_guides/evaluation/:path*"
+      "destination": "/evaluation/how_to_guides/evaluation"
     },
     {
       "source": "/how_to_guides/human_feedback/:path*",
-      "destination": "/evaluation/how_to_guides/human_feedback/:path*"
+      "destination": "/evaluation/how_to_guides#annotation-queues-and-human-feedback"
     },
     {
       "source": "/how_to_guides/datasets/:path*",
-      "destination": "/evaluation/how_to_guides/datasets/:path*"
+      "destination": "/evaluation/how_to_guides#dataset-management"
     },
     {
       "source": "/how_to_guides/monitoring/:path*",
-      "destination": "/observability/how_to_guides/monitoring/:path*"
+      "destination": "/observability/how_to_guides"
     },
     {
       "source": "/how_to_guides/tracing/:path*",
-      "destination": "/observability/how_to_guides/tracing/:path*"
+      "destination": "/observability/how_to_guides"
     },
     {
       "source": "/how_to_guides/prompts/:path*",
-      "destination": "/prompt_engineering/how_to_guides/prompts/:path*"
+      "destination": "/prompt_engineering/how_to_guides#prompt-hub"
     },
     {
       "source": "/how_to_guides/playground/:path*",
-      "destination": "/prompt_engineering/how_to_guides/playground/:path*"
+      "destination": "/prompt_engineering/how_to_guides#playground"
     },
     {
       "source": "/how_to_guides/setup/:path*",
-      "destination": "/administration/how_to_guides/organization_management/:path*"
+      "destination": "/administration/how_to_guides/organization_management"
     },
     {
       "source": "/how_to_guides",
@@ -156,7 +117,7 @@
     },
     {
       "source": "/pricing:path*",
-      "destination": "/pricing"
+      "destination": "https://www.langchain.com/pricing-langsmith"
     },
     {
       "source": "/tutorials/Developers/observability",
@@ -220,7 +181,7 @@
     },
     {
       "source": "/evaluation/how_to_guides/unit_testing(/?)",
-      "destination": "/evauation/how_to_guides/pytest"
+      "destination": "/evaluation/how_to_guides/pytest"
     },
     {
       "source": "/observability/how_to_guides/tracing/:path*",
