@@ -177,11 +177,6 @@
     {
       "source": "/evaluation/how_to_guides/use_langchain_off_the_shelf_evaluators",
       "destination": "/evaluation/how_to_guides/prebuilt_evaluators"
-    },
-    {
-      "source": "/((?!observability(?:/|$)|evaluation(?:/|$)|prompt_engineering(?:/|$)|administration(?:/|$)|self_hosting(?:/|$)|pricing(?:/|$)|reference(?:/|$)|static(?:/|$)|favicon\\.ico$|robots\\.txt$|sw\\.js$)(?!.*\\..+).+)",
-      "destination": "/",
-      "permanent": false
     }
   ],
   "builds": [
