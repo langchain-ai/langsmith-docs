@@ -1,6 +1,12 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/evaluation/custom-evaluators",
+      "destination": "/404"
+    }
+  ],
   "redirects": [
     {
       "source": "/category/tracing",
