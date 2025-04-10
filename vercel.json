@@ -2,6 +2,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
+    { "source": "/(.*)", "status": 404, "destination": "/404" },
     {
       "source": "/category/tracing",
       "destination": "/observability"
@@ -188,9 +189,5 @@
         "buildCommand": "npm run vercel-build"
       }
     }
-  ],
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "status": 404, "dest": "/404" }
   ]
 }
