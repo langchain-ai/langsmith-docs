@@ -1,7 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import { translate } from "@docusaurus/Translate";
-import Link from '@docusaurus/Link';
+import Link from "@docusaurus/Link";
 import Heading from "@theme/Heading";
 
 export default function NotFoundContent({ className }) {
@@ -13,19 +13,19 @@ export default function NotFoundContent({ className }) {
             {translate({
               id: "theme.NotFound.title",
               message: "Page Not Found",
-              description: "The title of the 404 page"
+              description: "The title of the 404 page",
             })}
           </Heading>
           <p>
             {translate({
               id: "theme.NotFound.p1",
               message: "We could not find what you were looking for.",
-              description: "The first paragraph of the 404 page"
+              description: "The first paragraph of the 404 page",
             })}
           </p>
           <p>
-            Head back to our <Link to="/">main docs page</Link> or use the search bar to find the
-            page you need.
+            Head back to our <Link to="/">main docs page</Link> or use the
+            search bar to find the page you need.
           </p>
         </div>
       </div>
