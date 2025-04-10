@@ -24,4 +24,3 @@ vercel-build: install-vercel-deps build-api-ref
 	mv langsmith-sdk/js/_build/api_refs/* static/reference/js/
 	rm -rf langsmith-sdk
 	NODE_OPTIONS="--max-old-space-size=5000" yarn run docusaurus build
-	cp static/404.html build/
