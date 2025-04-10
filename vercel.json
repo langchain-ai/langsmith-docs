@@ -1,11 +1,6 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/"
-    }
-  ],
+  "buildCommand": "yarn vercel-build",
   "trailingSlash": false,
   "redirects": [
     {
@@ -183,16 +178,6 @@
     {
       "source": "/evaluation/how_to_guides/use_langchain_off_the_shelf_evaluators",
       "destination": "/evaluation/how_to_guides/prebuilt_evaluators"
-    }
-  ],
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "outputDirectory": "build",
-        "buildCommand": "npm run vercel-build"
-      }
     }
   ]
 }
