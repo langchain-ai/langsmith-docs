@@ -66,13 +66,6 @@ Some additional GCP services we use include:
 
 ![](./cloud-arch.png)
 
-## Scalability
-
-LangSmith is designed to be scalable and performant.
-
-As of load testing done in February 2024, LangSmith can comfortably process 500K+ runs (spans) per minute.
-We anticipate that LangSmith can process 750K+ runs per minute with the optimizations we've made since then.
-
 ## Whitelisting IP addresses
 
 All traffic leaving LangSmith services will be routed through a NAT gateway. All traffic will appear to originate from the following IP addresses:
