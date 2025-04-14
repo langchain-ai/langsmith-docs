@@ -178,6 +178,66 @@
     {
       "source": "/evaluation/how_to_guides/use_langchain_off_the_shelf_evaluators",
       "destination": "/evaluation/how_to_guides/prebuilt_evaluators"
+    },
+    {
+      "source": "/old/tracing/faq/querying_traces",
+      "destination": "/observability/how_to_guides/export_traces"
+    },
+    {
+      "source": "/old/tracing/:path*",
+      "destination": "/observability"
+    },
+    {
+      "source": "/old/evaluation/:path*",
+      "destination": "/evaluation"
+    },
+    {
+      "source": "/old/monitoring/:path*",
+      "destination": "/observability/how_to_guides#monitoring"
+    },
+    {
+      "source": "/old/category/prompt-hub/:path*",
+      "destination": "/prompt_engineering/quickstarts/quickstart_ui"
+    },
+    {
+      "source": "/old/pricing/:path*",
+      "destination": "https://www.langchain.com/pricing-langsmith"
+    },
+    {
+      "source": "/old/category/self-hosting/:path*",
+      "destination": "/self_hosting"
+    },
+    {
+      "source": "/old/cookbook/tracing-examples/:path*",
+      "destination": "/observability/how_to_guides"
+    },
+    {
+      "source": "/old/cookbook/hub-examples/:path*",
+      "destination": "/prompt_engineering/how_to_guides"
+    },
+    {
+      "source": "/old/cookbook/testing-examples/:path*",
+      "destination": "/evaluation/how_to_guides"
+    },
+    {
+      "source": "/old/cookbook/typescript-testing-examples/:path*",
+      "destination": "/evaluation"
+    },
+    {
+      "source": "/old/cookbook/introduction/:path",
+      "destination": "/"
+    },
+    {
+      "source": "/old/cookbook/exploratory-data-analysis/:path*",
+      "destination": "/evaluation/how_to_guides#analyzing-experiment-results"
+    },
+    {
+      "source": "/old/cookbook/fine-tuning-examples/:path*",
+      "destination": "/"
+    },
+    {
+      "source": "/old/cookbook/introduction/:path*",
+      "destination": "/evaluation/concepts"
     }
   ]
 }
