@@ -196,6 +196,10 @@
       "destination": "/observability/how_to_guides#monitoring"
     },
     {
+      "source": "/old/hub/:path*",
+      "destination": "/how_to_guides#prompt-hub"
+    },
+    {
       "source": "/old/category/prompt-hub/:path*",
       "destination": "/prompt_engineering/quickstarts/quickstart_ui"
     },
