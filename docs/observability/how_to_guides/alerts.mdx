@@ -33,11 +33,19 @@ First navigate to the Tracing project that you would like to configure alerts fo
 
 LangSmith offers threshold-based alerting on three core metrics:
 
-| Metric Type        | Description                                      | Use Case                                                                                                                                                                 |
-| ------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Errored Runs**   | Tracks root runs with error status               | Monitors for failures in application traces.                                                                                                                             |
-| **Feedback Score** | Measures average feedback score metrics          | Tracks feedback from application users or <a href="./online_evaluations">automated evaluation rules</a> to track regressions in prompts or switching models / providers. |
-| **Trace Latency**  | Measures average end-to-end trace execution time | Identifies performance bottlenecks from switching models / providers or code regressions.                                                                                |
+| Metric Type        | Description                             | Use Case                                                                                                                                                                 |
+| ------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Errored Runs**   | Tracks runs with error status           | Monitors for failures in application runs.                                                                                                                               |
+| **Feedback Score** | Measures average feedback score metrics | Tracks feedback from application users or <a href="./online_evaluations">automated evaluation rules</a> to track regressions in prompts or switching models / providers. |
+| **Latency**        | Measures average run execution time     | Identifies performance bottlenecks from switching models / providers or code regressions.                                                                                |
+
+Additionally, for **Errored Runs** and **Run Latency**, you can define filters to narrow down the runs that trigger alerts. For example, you might create an error alert filter for all `llm` runs tagged with `support_agent` that encounter a `RateLimitExceeded` error.
+
+<div style={{ textAlign: 'center' }}>
+
+![Alert Metrics](./static/alerts_filter.png)
+
+</div>
 
 ### Step 2: Define Alert Conditions
 
@@ -57,6 +65,14 @@ Alert conditions consist of several components:
 </div>
 
 **Example:** The configuration shown above would generate an alert when more than 5% of runs within the past 5 minutes result in errors.
+
+You can preview alert behavior over a historical time window to understand how many datapoints—and which ones—would have triggered an alert at a chosen threshold (indicated in red). For example, setting an average latency threshold of 60 seconds for a project lets you visualize potential alerts, as shown in the image below.
+
+<div style={{ textAlign: 'center' }}>
+
+![Alert Metrics](./static/alert_preview.png)
+
+</div>
 
 ### Step 3: Configure Notification Channel
 
