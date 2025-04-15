@@ -101,7 +101,7 @@ const config = {
       },
       announcementBar: {
         content:
-          'Join us at <a href="https://interrupt.langchain.com/" target="_blank" rel="noopener noreferrer"> Interrupt: The Agent AI Conference by LangChain</a> on May 13 & 14 in San Francisco!',
+          'We are growing and hiring for multiple roles for LangChain, LangGraph and LangSmith. <a href="https://www.langchain.com/careers" target="_blank" rel="noopener noreferrer">Join our team!</a>',
       },
       prism: {
         theme: {
