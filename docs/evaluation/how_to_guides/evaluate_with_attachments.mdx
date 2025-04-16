@@ -345,7 +345,7 @@ To learn more about how to define llm-based evaluators, please see [this guide](
     PythonBlock(`# Assumes you've installed pydantic
 from pydantic import BaseModel\n
 def valid_image_description(outputs: dict, attachments: dict) -> bool:
-    """Use an LLM to judge if the image description and imagee are consistent."""\n
+    """Use an LLM to judge if the image description and images are consistent."""\n
     instructions = """
     Does the description of the following image make sense?
     Please carefully review the image and the description to determine if the description is valid."""\n
