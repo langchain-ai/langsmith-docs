@@ -28,7 +28,7 @@ for output in my_generator():
 import asyncio\n
 @traceable
 async def my_async_generator():
-    hunk in ["Hello", "World", "!"]:
+    for chunk in ["Hello", "World", "!"]:
         yield chunk\n
 # Stream to the user
 async def main():
