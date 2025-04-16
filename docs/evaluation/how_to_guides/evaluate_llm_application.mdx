@@ -66,10 +66,10 @@ First we need an application to evaluate. Let's create a simple toxicity classif
       import { wrapOpenAI } from "langsmith/wrappers";
       import { traceable } from "langsmith/traceable";
       
-      # Optionally wrap the OpenAI client to trace all model calls.
+      // Optionally wrap the OpenAI client to trace all model calls.
       const oaiClient = wrapOpenAI(new OpenAI());
       
-      # Optionally add the 'traceable' wrapper to trace the inputs/outputs of this function.
+      // Optionally add the 'traceable' wrapper to trace the inputs/outputs of this function.
       const toxicityClassifier = traceable(
         async (text: string) => {
           const result = await oaiClient.chat.completions.create({
@@ -133,7 +133,7 @@ We need a [Dataset](../concepts#datasets) to evaluate our application on. Our da
         },
       ]
       
-      dataset = ls_client.create_dataset(dataset_name="Toxic Queries)
+      dataset = ls_client.create_dataset(dataset_name="Toxic Queries")
       ls_client.create_examples(
         dataset_id=dataset.id, 
         examples=examples,
@@ -290,7 +290,7 @@ _If you've annotated your code for tracing, you can open the trace of each row i
       # Step 2. Create a dataset
       ls_client = Client()
       
-      dataset = ls_client.create_dataset(dataset_name="Toxic Queries)
+      dataset = ls_client.create_dataset(dataset_name="Toxic Queries")
       examples = [
         {
           "inputs": {"text": "Shut up, idiot"}, 
