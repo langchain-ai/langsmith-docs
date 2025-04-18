@@ -85,9 +85,9 @@ If webhook notifications aren't being delivered:
 - Consider adding a shared secret in your headers to verify webhook sources
 - Validate incoming webhook requests before processing them
 
-## Example of using webhook option with Slack API
+## Sending alerts to Slack using a webhook
 
-Here is an example for configuring LangSmith alerts to send notifications to Slack channels using the `chat.postMessage` API.
+Here is an example for configuring LangSmith alerts to send notifications to Slack channels using the [`chat.postMessage`](https://api.slack.com/methods/chat.postMessage) API.
 
 ### Prerequisites
 
@@ -120,7 +120,7 @@ Here is an example for configuring LangSmith alerts to send notifications to Sla
 3. Review the permissions and click **Allow**
 4. Copy the **Bot User OAuth Token** that appears (begins with `xoxb-`)
 
-### Step 4: Configure LangSmith Webhook Alert
+### Step 4: Configure the Webhook Alert in LangSmith
 
 1. In LangSmith, navigate to your project
 2. Select **Alerts → Create Alert**
@@ -150,13 +150,13 @@ https://slack.com/api/chat.postMessage
 ```json
 {
   "channel": "{channel_id}",
-  "text": "Error alert triggered in {project_name}",
+  "text": "{alert_name} triggered for {project_name}",
   "blocks": [
     {
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "Error alert triggered"
+        "text": "🚨{alert_name} has been triggered"
       }
     },
     {
@@ -170,22 +170,36 @@ https://slack.com/api/chat.postMessage
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": "<{project_url}|View Traces In Langsmith>"
+        "text": "<{project-url}|View in LangSmith>"
       }
     }
   ]
 }
 ```
 
-**NOTE:** The `channel_id`, `project_url` and `project_name` are currently NOT template variables. You would have to set those manually while creating the alert.
+**NOTE:** Fill in the `channel_id`, `alert_name`, `project_name` and `project_url` when creating the alert. You can find your `project_url` in the browser's URL bar. Copy the portion up to but not including any query parameters.
 
 6. Click **Save** to activate the webhook configuration
 
-## Step 5: Test the Integration
+### Step 5: Test the Integration
 
 1. In the LangSmith alert configuration, click **Test Alert**
 2. Check your specified Slack channel for the test notification
 3. Verify that the message contains the expected alert information
+
+### (Optional) Step 6: Link to the Alert Preview in the Request Body
+
+After creating an alert, you can optionally link to its preview in the webhook's request body.
+
+![Alert Preview Pane](./static/alert_preview_pane.png)
+
+To configure this:
+
+1. Save your alert
+2. Find your saved alert in the alerts table and click it
+3. Copy the dsiplayed URL
+4. Click "Edit Alert"
+5. Replace the existing project URL with the copied alert preview URL
 
 ## Additional Resources
 
