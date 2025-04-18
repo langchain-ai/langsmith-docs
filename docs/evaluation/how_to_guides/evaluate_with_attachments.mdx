@@ -29,10 +29,12 @@ from langsmith import Client
 # Publicly available test files
 pdf_url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 wav_url = "https://openaiassets.blob.core.windows.net/$web/API/docs/audio/alloy.wav"
+img_url = "https://www.w3.org/Graphics/PNG/nurbcup2si.png"
 
 # Fetch the files as bytes
 pdf_bytes = requests.get(pdf_url).content
 wav_bytes = requests.get(wav_url).content
+img_bytes = requests.get(img_url).content
 
 # Create the dataset
 ls_client = Client()
@@ -42,25 +44,30 @@ dataset = ls_client.create_dataset(
     description="Test dataset for evals with publicly available attachments",
 )
 
+inputs = {
+    "audio_question": "What is in this audio clip?",
+    "image_question": "What is in this image?",
+}
+
+outputs = {
+    "audio_answer": "The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
+    "image_answer": "A mug with a blanket over it.",
+}
+
 # Define an example with attachments
 example_id = uuid.uuid4()
 example = {
     "id": example_id,
-    "inputs": {
-        "audio_question": "What is in this audio clip?",
-        "image_question": "What is in this image?",
-    },
-    "outputs": {
-        "audio_answer": "The sun rises in the east and sets in the west. This simple fact has been observed by humans for thousands of years.",
-        "image_answer": "A mug with a blanket over it.",
-    },
+    "inputs": inputs,
+    "outputs": outputs,
     "attachments": {
         "my_pdf": {"mime_type": "application/pdf", "data": pdf_bytes},
-        "my_wav": {"mime_type": "audio/wav", "data": wav_bytes),
+        "my_wav": {"mime_type": "audio/wav", "data": wav_bytes},
+        "my_img": {"mime_type": "image/png", "data": img_bytes},
         # Example of an attachment specified via a local file path:
-        # "my_img": {"mime_type": "image/png", "data": Path(__file__).parent / "my_img.png"},
+        # "my_local_img": {"mime_type": "image/png", "data": Path(__file__).parent / "my_local_img.png"},
     },
-)
+}
 
 # Create the example
 ls_client.create_examples(
@@ -192,25 +199,26 @@ def file_qa(inputs, attachments): # Read the audio bytes from the reader and enc
     audio_reader = attachments["my_wav"]["reader"]
     audio_b64 = base64.b64encode(audio_reader.read()).decode('utf-8')
     audio_completion = client.chat.completions.create(
-    model="gpt-4o-audio-preview",
-    messages=[
-        {
-            "role": "user",
-            "content": [
-                {
-                    "type": "text",
-                    "text": inputs["audio_question"]
-                },
-                {
-                    "type": "input_audio",
-                    "input_audio": {
-                        "data": audio_b64,
-                        "format": "wav"
+        model="gpt-4o-audio-preview",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": inputs["audio_question"]
+                    },
+                    {
+                        "type": "input_audio",
+                        "input_audio": {
+                            "data": audio_b64,
+                            "format": "wav"
+                        }
                     }
-                }
-            ]
-        }
-    ]\n
+                ]
+            }
+        ]
+    )\n
     # Most models support taking in an image URL directly in addition to base64 encoded images
     # You can pipe the image pre-signed URL directly to the model
     image_url = attachments["my_img"]["presigned_url"]
@@ -337,7 +345,7 @@ To learn more about how to define llm-based evaluators, please see [this guide](
     PythonBlock(`# Assumes you've installed pydantic
 from pydantic import BaseModel\n
 def valid_image_description(outputs: dict, attachments: dict) -> bool:
-    """Use an LLM to judge if the image description and ime are consistent."""\n
+    """Use an LLM to judge if the image description and images are consistent."""\n
     instructions = """
     Does the description of the following image make sense?
     Please carefully review the image and the description to determine if the description is valid."""\n
@@ -451,17 +459,19 @@ Note that:
         # These are net new attachments
         "my_new_file": ("text/plain", b"foo bar"),
     },
+    "inputs": inputs,
+    "outputs": outputs,
     # Any attachments not in rename/retain will be deleted.
     # In this case, that would be "my_img" if we uploaded it.
-    "attachments_operations": (
+    "attachments_operations": {
         # Retained attachments will stay exactly the same
         "retain": ["my_pdf"],
         # Renaming attachments preserves the original data
         "rename": {
             "my_wav": "my_new_wav",
         }
-    ),
-)
+    },
+}
 
 ls_client.update_examples(dataset_id=dataset.id, updates=[example_update])
 `),
