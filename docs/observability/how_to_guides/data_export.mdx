@@ -4,8 +4,8 @@ sidebar_position: 22
 
 # [Beta] Bulk Exporting Trace Data
 
-:::tip Note
-Please note that the Data Export functionality is in Beta and only supported for LangSmith Plus or Enterprise tiers.
+:::info Plan restrictions apply
+Please note that the Data Export functionality is in Beta and only supported for [LangSmith Plus or Enterprise tiers](https://www.langchain.com/pricing-langsmith).
 :::
 
 LangSmith's bulk data export functionality allows you to export your traces into an external destination. This can be useful if you want to analyze the
@@ -39,6 +39,10 @@ The following information is needed for the export:
 We support any S3 compatible bucket, for non AWS buckets such as GCS or MinIO, you will need to provide the endpoint URL.
 
 ### Preparing the Destination
+
+:::note For self-hosted and EU region deployments
+Update the LangSmith URL appropriately for self-hosted installations or organizations in the EU region in the requests below. For the EU region, use `eu.api.smith.langchain.com`.
+:::
 
 The following example demonstrates how to create a destination using cURL. Replace the placeholder values with your actual configuration details.
 Note that credentials will be stored securely in an encrypted form in our system.
