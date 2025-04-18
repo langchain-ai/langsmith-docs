@@ -176,6 +176,7 @@ https://slack.com/api/chat.postMessage
   ]
 }
 ```
+
 **NOTE:** Fill in the `channel_id`, `alert_name`, `project_name` and `project_url` when creating the alert. You can find your `project_url` in the browser's URL bar. Copy the portion up to but not including any query parameters.
 
 6. Click **Save** to activate the webhook configuration
@@ -187,17 +188,18 @@ https://slack.com/api/chat.postMessage
 3. Verify that the message contains the expected alert information
 
 ### (Optional) Step 6: Link to the Alert Preview in the Request Body
-After creating an alert, you can optionally link to its preview in the webhook's request body. 
+
+After creating an alert, you can optionally link to its preview in the webhook's request body.
 
 ![Alert Preview Pane](./static/alert_preview_pane.png)
 
- To configure this: 
+To configure this:
+
 1. Save your alert
 2. Find your saved alert in the alerts table and click it
 3. Copy the dsiplayed URL
 4. Click "Edit Alert"
 5. Replace the existing project URL with the copied alert preview URL
-
 
 ## Additional Resources
 
