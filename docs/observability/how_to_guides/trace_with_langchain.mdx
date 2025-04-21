@@ -564,3 +564,361 @@ Alternatively, you can convert LangChain's `RunnableConfig` to a equivalent RunT
 />
 
 If you prefer a video tutorial, check out the [Alternative Ways to Trace video](https://academy.langchain.com/pages/intro-to-langsmith-preview) from the Introduction to LangSmith Course.
+
+## Log multimodal traces
+
+You can trace multimodal chains that involve images in LangSmith. There are two main ways to include images in your prompts: using base64-encoded images or direct URLs.
+
+### Using base64-encoded images
+
+You can encode local images to base64 and include them in your prompts. This is useful when working with local images or when you need to process images before sending them to the model.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+import base64
+
+def encode_image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+def create_image_analysis_prompt() -> ChatPromptTemplate:
+    """
+    Create a prompt template for analyzing images.
+    """
+    system_prompt = "You are a helpful assistant that can analyze images."
+
+    user_prompt = "Please describe what you see in this image: {text_input}"
+
+    prompt = ChatPromptTemplate([
+        ("system", system_prompt),
+        ("human", [
+            {
+                "type": "text",
+                "text": user_prompt
+            },
+            {
+# highlight-next-line
+                "type": "image_url",
+# highlight-next-line
+                "image_url": {"url": "data:image/jpeg;base64,{image_base64}"}
+            }
+        ])
+    ])
+
+    return prompt
+
+# Get base64 representation of the image
+image_path = "venice.jpg"
+base64_image = encode_image_to_base64(image_path)
+
+# Create the prompt template
+prompt = create_image_analysis_prompt()
+
+# Create the chain
+model = ChatOpenAI(model="gpt-4o-mini", max_tokens=300)
+chain = (
+    prompt
+    | model
+    | StrOutputParser()
+)
+
+# Run the chain
+response = chain.invoke({
+    "text_input": "Focus on the main elements and atmosphere.",
+    "image_base64": base64_image
+})`),
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import * as fs from "fs";
+
+function encodeImageToBase64(imagePath: string): string {
+  const imageBuffer = fs.readFileSync(imagePath);
+  return imageBuffer.toString("base64");
+}
+
+function createImageAnalysisPrompt(): ChatPromptTemplate {
+  const systemPrompt = "You are a helpful assistant that can analyze images.";
+
+  const userPrompt = "Please describe what you see in this image: {text_input}";
+
+  return ChatPromptTemplate.fromMessages([
+    ["system", systemPrompt],
+    ["human", [
+      {
+        type: "text",
+        text: userPrompt
+      },
+      {
+// highlight-next-line
+        type: "image_url",
+// highlight-next-line
+        image_url: { url: "data:image/jpeg;base64,{image_base64}" }
+      }
+    ]]
+  ]);
+}
+
+// Get base64 representation of the image
+const imagePath = "venice.jpg";
+const base64Image = encodeImageToBase64(imagePath);
+
+// Create the prompt template
+const prompt = createImageAnalysisPrompt();
+
+// Create the chain
+const model = new ChatOpenAI({ modelName: "gpt-4o-mini", maxTokens: 300 });
+const chain = prompt
+  .pipe(model)
+  .pipe(new StringOutputParser());
+
+// Run the chain
+const response = await chain.invoke({
+  text_input: "Focus on the main elements and atmosphere.",
+  image_base64: base64Image
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+### Using direct URLs
+
+You can also pass image URLs directly to the prompt template. This is simpler and more efficient when working with images that are already hosted online.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`prompt = ChatPromptTemplate([
+    ("system", system_prompt),
+    ("human", [
+        {
+            "type": "text",
+            "text": user_prompt
+        },
+        {
+            "type": "image_url",
+# highlight-next-line
+            "image_url": "https://example.com/venice.jpg"
+        }
+    ])
+])`),
+    TypeScriptBlock(`const prompt = ChatPromptTemplate.fromMessages([
+  ["system", systemPrompt],
+  ["human", [
+    {
+      type: "text",
+      text: userPrompt
+    },
+    {
+      type: "image_url",
+// highlight-next-line
+      image_url: "https://example.com/venice.jpg"
+    }
+  ]]
+]);`),
+  ]}
+  groupId="client-language"
+/>
+
+When you run these chains, LangSmith will automatically capture and display the images in the trace viewer, allowing you to see both the inputs and outputs of your multimodal chains.
+
+:::note
+Make sure you're using a model that supports image inputs, such as `gpt-4o-mini` for OpenAI's ChatGPT. The model must be capable of processing the image format you're providing.
+:::
+
+### Handling Multiple Images
+
+You can also analyze multiple images in a single chain by using placeholder messages. This approach allows you to dynamically insert multiple image messages into your prompt.
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from typing import List, Dict, Any
+import base64
+
+def encode_image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+def create_image_messages(images_info: List[Dict[str, Any]]) -> List[tuple]:
+    """Create a list of message tuples for analyzing multiple images in a single chain.
+    
+    This function processes a list of image information, handling both local files and URLs.
+    For local files, it converts them to base64 format, and for URLs, it uses them directly.
+    Each image is paired with a text prompt for analysis.
+    
+    Args:
+        images_info: List of dictionaries containing image information.
+                    Each dict should have 'path_or_url' (str) and 'text_input' (str) keys.
+                    
+    Returns:
+        List of tuples, each containing a message role and content for the chat model.
+        The content includes both the text prompt and image data.
+    """
+    messages = []
+    for img_info in images_info:
+        path_or_url = img_info['path_or_url']
+        # Handle both URLs and local files
+        if path_or_url.startswith(('http://', 'https://')):
+            image_data = {"type": "image_url", "image_url": path_or_url}
+        else:
+            base64_image = encode_image_to_base64(path_or_url)
+            image_data = {
+                "type": "image_url",
+                "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
+            }
+
+        messages.extend([
+            ("human", [
+                {
+                    "type": "text",
+                    "text": "Please describe this image: {text_input}"
+                },
+                image_data
+            ])
+        ])
+    return messages
+
+def create_multi_image_prompt() -> ChatPromptTemplate:
+    """Create a prompt template for analyzing multiple images."""
+    prompt = ChatPromptTemplate([
+        ("system", "You are a helpful assistant that can analyze multiple images."),
+# highlight-next-line
+        ("placeholder", "{image_messages}"),
+        ("human", "Please provide a description of all the images shown above.")
+    ])
+    return prompt
+
+# Define the images to analyze
+images_info = [
+    {
+        "path_or_url": "image1.jpg",
+        "text_input": "Focus on the main elements"
+    },
+    {
+        "path_or_url": "https://example.com/image2.jpg",
+        "text_input": "Describe the overall scene"
+    }
+]
+
+# Create image messages
+image_messages = create_image_messages(images_info)
+
+# Create the prompt template
+prompt = create_multi_image_prompt()
+
+# Create the chain
+model = ChatOpenAI(model="gpt-4o-mini", max_tokens=500)
+chain = (
+    prompt
+    | model
+    | StrOutputParser()
+)
+
+# Run the chain
+response = chain.invoke({
+# highlight-next-line
+    "image_messages": image_messages
+})`),
+    TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { StringOutputParser } from "@langchain/core/output_parsers";
+import * as fs from "fs";
+
+interface ImageInfo {
+  path_or_url: string;
+  text_input: string;
+}
+
+function encodeImageToBase64(imagePath: string): string {
+  const imageBuffer = fs.readFileSync(imagePath);
+  return imageBuffer.toString("base64");
+}
+
+function createImageMessages(imagesInfo: ImageInfo[]): Array<[string, any[]]> {
+  const messages: Array<[string, any[]]> = [];
+  
+  for (const imgInfo of imagesInfo) {
+    const pathOrUrl = imgInfo.path_or_url;
+    // Handle both URLs and local files
+    const imageData = pathOrUrl.startsWith('http')
+      ? { type: "image_url", image_url: pathOrUrl }
+      : {
+          type: "image_url",
+          image_url: {
+            url: \`data:image/jpeg;base64,\${encodeImageToBase64(pathOrUrl)}\`
+          }
+        };
+
+    messages.push([
+      "human",
+      [
+        {
+          type: "text",
+          text: "Please describe this image: {text_input}"
+        },
+        imageData
+      ]
+    ]);
+  }
+  
+  return messages;
+}
+
+function createMultiImagePrompt(): ChatPromptTemplate {
+  return ChatPromptTemplate.fromMessages([
+    ["system", "You are a helpful assistant that can analyze multiple images."],
+// highlight-next-line
+    ["placeholder", "{image_messages}"],
+    ["human", "Please provide a description of all the images shown above."]
+  ]);
+}
+
+// Define the images to analyze
+const imagesInfo: ImageInfo[] = [
+  {
+    path_or_url: "image1.jpg",
+    text_input: "Focus on the main elements"
+  },
+  {
+    path_or_url: "https://example.com/image2.jpg",
+    text_input: "Describe the overall scene"
+  }
+];
+
+// Create image messages
+const imageMessages = createImageMessages(imagesInfo);
+
+// Create the prompt template
+const prompt = createMultiImagePrompt();
+
+// Create the chain
+const model = new ChatOpenAI({ modelName: "gpt-4o-mini", maxTokens: 500 });
+const chain = prompt
+  .pipe(model)
+  .pipe(new StringOutputParser());
+
+// Run the chain
+const response = await chain.invoke({
+// highlight-next-line
+  image_messages: imageMessages
+});`),
+  ]}
+  groupId="client-language"
+/>
+
+This approach has several advantages:
+1. Each image can be processed with its own context and instructions
+2. Images can be loaded from both local files and URLs
+3. All images and their analyses will be properly traced in LangSmith
+4. The placeholder message allows for dynamic insertion of any number of images
+
+![](./static/multimodal_trace.png)
+
+:::note
+When using URLs, make sure they point to valid image files (supported formats: png, jpeg, gif, webp).
+:::
