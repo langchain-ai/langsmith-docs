@@ -1,9 +1,7 @@
 # Alerts in LangSmith
 
-:::tip Private Beta
-
-This is feature is currently in private beta. If interested, please express interest in the <a href="https://langchaincommunity.slack.com/archives/C079K4ECBN2">\#feature-requests</a> channel in the LangChain Community Slack.
-
+:::note Self-hosted Version Requirement
+Access to alerts requires Helm chart version version **0.10** or later.
 :::
 
 ## Overview
@@ -33,11 +31,11 @@ First navigate to the Tracing project that you would like to configure alerts fo
 
 LangSmith offers threshold-based alerting on three core metrics:
 
-| Metric Type        | Description                             | Use Case                                                                                                                                                                 |
-| ------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Errored Runs**   | Tracks runs with error status           | Monitors for failures in application runs.                                                                                                                               |
-| **Feedback Score** | Measures average feedback score metrics | Tracks feedback from application users or <a href="./online_evaluations">automated evaluation rules</a> to track regressions in prompts or switching models / providers. |
-| **Latency**        | Measures average run execution time     | Identifies performance bottlenecks from switching models / providers or code regressions.                                                                                |
+| Metric Type        | Description                         | Use Case                                                                                                                                                                 |
+| ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Errored Runs**   | Track runs with an error status     | Monitors for failures in an application.                                                                                                                                 |
+| **Feedback Score** | Measures the average feedback score | Track [feedback from end users](/evaluation/how_to_guides/attach_user_feedback) or [online evaluation results](/evaluation/online_evaluations") to alert on regressions. |
+| **Latency**        | Measures average run execution time | Tracks the latency of your application to alert on spikes and performance bottlenecks.                                                                                   |
 
 Additionally, for **Errored Runs** and **Run Latency**, you can define filters to narrow down the runs that trigger alerts. For example, you might create an error alert filter for all `llm` runs tagged with `support_agent` that encounter a `RateLimitExceeded` error.
 
