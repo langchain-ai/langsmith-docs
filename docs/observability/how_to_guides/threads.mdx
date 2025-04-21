@@ -3,7 +3,6 @@ import {
   PythonBlock,
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
-import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Set up threads
 
@@ -214,22 +213,3 @@ You can then click into a particular thread. This will open the history for a pa
 ![Conversation](./static/convo.png)
 
 You can open up the trace or annotate the trace in a side panel by clicking on `Annotate` and `Open trace`, respectively.
-
-## Query threads
-
-:::tip Recommended Reading
-Before diving into this content, it might be helpful to read the following:
-
-- [Run (span) data format](/reference/data_formats/run_data_format)
-- <RegionalUrl type="api" suffix="/redoc" text="LangSmith API Reference" />
-- [LangSmith trace query syntax](/reference/data_formats/trace_query_syntax)
-  :::
-
-:::note For bulk data exports
-If you are looking to export a large volume of traces, we recommend that you use the [Bulk Data Export](./data_export) functionality, as it will better
-handle large data volumes and will support automatic retries and parallelization across partitions.
-:::
-
-### Get the last run in a thread
-
-You may want to run evaluations over a multi-turn conversation

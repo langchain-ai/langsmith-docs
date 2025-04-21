@@ -31,11 +31,11 @@ First navigate to the Tracing project that you would like to configure alerts fo
 
 LangSmith offers threshold-based alerting on three core metrics:
 
-| Metric Type        | Description                         | Use Case                                                                                                                                                                 |
-| ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Errored Runs**   | Track runs with an error status     | Monitors for failures in an application.                                                                                                                                 |
-| **Feedback Score** | Measures the average feedback score | Track [feedback from end users](/evaluation/how_to_guides/attach_user_feedback) or [online evaluation results](/evaluation/online_evaluations) to alert on regressions. |
-| **Latency**        | Measures average run execution time | Tracks the latency of your application to alert on spikes and performance bottlenecks.                                                                                   |
+| Metric Type        | Description                         | Use Case                                                                                                                                                                                 |
+| ------------------ | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Errored Runs**   | Track runs with an error status     | Monitors for failures in an application.                                                                                                                                                 |
+| **Feedback Score** | Measures the average feedback score | Track [feedback from end users](/evaluation/how_to_guides/attach_user_feedback) or [online evaluation results](/observability/how_to_guides/online_evaluations) to alert on regressions. |
+| **Latency**        | Measures average run execution time | Tracks the latency of your application to alert on spikes and performance bottlenecks.                                                                                                   |
 
 Additionally, for **Errored Runs** and **Run Latency**, you can define filters to narrow down the runs that trigger alerts. For example, you might create an error alert filter for all `llm` runs tagged with `support_agent` that encounter a `RateLimitExceeded` error.
 
