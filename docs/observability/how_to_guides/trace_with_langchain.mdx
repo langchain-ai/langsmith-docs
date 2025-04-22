@@ -567,7 +567,14 @@ If you prefer a video tutorial, check out the [Alternative Ways to Trace video](
 
 ## Log multimodal traces
 
-You can trace multimodal chains that involve images in LangSmith. There are two main ways to include images in your prompts: using base64-encoded images or direct URLs.
+You can trace multimodal chains that involve images in LangSmith. There are two main ways to include images in your prompts:
+
+* Using base64-encoded images
+* Using direct URLs
+
+:::tip
+If you're not using LangChain's `ChatPromptTemplate`, check out [this guide](./log_multimodal_traces) for other ways to log multimodal traces. For additional types of multimodal inputs and examples, see the [LangChain multimodal inputs guide](https://python.langchain.com/docs/how_to/multimodal_inputs/).
+:::
 
 ### Using base64-encoded images
 
@@ -633,41 +640,73 @@ response = chain.invoke({
     TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
-import * as fs from "fs";
+import * as fs from "fs/promises";
 
-function encodeImageToBase64(imagePath: string): string {
-  const imageBuffer = fs.readFileSync(imagePath);
+interface ImageInfo {
+  path_or_url: string;
+  text_input: string;
+}
+
+async function encodeImageToBase64(imagePath: string): Promise<string> {
+  const imageBuffer = await fs.readFile(imagePath);
   return imageBuffer.toString("base64");
 }
 
-function createImageAnalysisPrompt(): ChatPromptTemplate {
-  const systemPrompt = "You are a helpful assistant that can analyze images.";
+async function createImageMessages(imagesInfo: ImageInfo[]): Promise<Array<[string, any[]]>> {
+  const messages: Array<[string, any[]]> = [];
+  
+  for (const imgInfo of imagesInfo) {
+    const pathOrUrl = imgInfo.path_or_url;
+    // Handle both URLs and local files
+    const imageData = pathOrUrl.startsWith('http')
+      ? { type: "image_url", image_url: pathOrUrl }
+      : {
+          type: "image_url",
+          image_url: {
+            url: \`data:image/jpeg;base64,\${await encodeImageToBase64(pathOrUrl)}\`
+          }
+        };
 
-  const userPrompt = "Please describe what you see in this image: {text_input}";
+    messages.push([
+      "human",
+      [
+        {
+          type: "text",
+          text: "Please describe this image: {text_input}"
+        },
+        imageData
+      ]
+    ]);
+  }
+  
+  return messages;
+}
 
+async function createMultiImagePrompt(): Promise<ChatPromptTemplate> {
   return ChatPromptTemplate.fromMessages([
-    ["system", systemPrompt],
-    ["human", [
-      {
-        type: "text",
-        text: userPrompt
-      },
-      {
-// highlight-next-line
-        type: "image_url",
-// highlight-next-line
-        image_url: { url: "data:image/jpeg;base64,{image_base64}" }
-      }
-    ]]
+    ["system", "You are a helpful assistant that can analyze multiple images."],
+    ["placeholder", "{image_messages}"],
+    ["human", "Please provide a description of all the images shown above."]
   ]);
 }
 
-// Get base64 representation of the image
-const imagePath = "venice.jpg";
-const base64Image = encodeImageToBase64(imagePath);
+// Define the images to analyze
+const imagesInfo: ImageInfo[] = [
+  {
+    path_or_url: "image1.jpg",
+    text_input: "Focus on the main elements"
+  },
+  {
+    path_or_url: "https://example.com/image2.jpg",
+    text_input: "Describe the overall scene"
+  }
+];
+
+// Create image messages
+const imageMessages = await createImageMessages(imagesInfo);
 
 // Create the prompt template
-const prompt = createImageAnalysisPrompt();
+const prompt = await createMultiImagePrompt();
 
 // Create the chain
 const model = new ChatOpenAI({ modelName: "gpt-4o-mini", maxTokens: 300 });
@@ -677,8 +716,7 @@ const chain = prompt
 
 // Run the chain
 const response = await chain.invoke({
-  text_input: "Focus on the main elements and atmosphere.",
-  image_base64: base64Image
+  image_messages: imageMessages
 });`),
   ]}
   groupId="client-language"
@@ -827,19 +865,19 @@ response = chain.invoke({
     TypeScriptBlock(`import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
-import * as fs from "fs";
+import * as fs from "fs/promises";
 
 interface ImageInfo {
   path_or_url: string;
   text_input: string;
 }
 
-function encodeImageToBase64(imagePath: string): string {
-  const imageBuffer = fs.readFileSync(imagePath);
+async function encodeImageToBase64(imagePath: string): Promise<string> {
+  const imageBuffer = await fs.readFile(imagePath);
   return imageBuffer.toString("base64");
 }
 
-function createImageMessages(imagesInfo: ImageInfo[]): Array<[string, any[]]> {
+async function createImageMessages(imagesInfo: ImageInfo[]): Promise<Array<[string, any[]]>> {
   const messages: Array<[string, any[]]> = [];
   
   for (const imgInfo of imagesInfo) {
@@ -850,7 +888,7 @@ function createImageMessages(imagesInfo: ImageInfo[]): Array<[string, any[]]> {
       : {
           type: "image_url",
           image_url: {
-            url: \`data:image/jpeg;base64,\${encodeImageToBase64(pathOrUrl)}\`
+            url: \`data:image/jpeg;base64,\${await encodeImageToBase64(pathOrUrl)}\`
           }
         };
 
@@ -869,10 +907,9 @@ function createImageMessages(imagesInfo: ImageInfo[]): Array<[string, any[]]> {
   return messages;
 }
 
-function createMultiImagePrompt(): ChatPromptTemplate {
+async function createMultiImagePrompt(): Promise<ChatPromptTemplate> {
   return ChatPromptTemplate.fromMessages([
     ["system", "You are a helpful assistant that can analyze multiple images."],
-// highlight-next-line
     ["placeholder", "{image_messages}"],
     ["human", "Please provide a description of all the images shown above."]
   ]);
@@ -891,10 +928,10 @@ const imagesInfo: ImageInfo[] = [
 ];
 
 // Create image messages
-const imageMessages = createImageMessages(imagesInfo);
+const imageMessages = await createImageMessages(imagesInfo);
 
 // Create the prompt template
-const prompt = createMultiImagePrompt();
+const prompt = await createMultiImagePrompt();
 
 // Create the chain
 const model = new ChatOpenAI({ modelName: "gpt-4o-mini", maxTokens: 500 });
@@ -904,7 +941,6 @@ const chain = prompt
 
 // Run the chain
 const response = await chain.invoke({
-// highlight-next-line
   image_messages: imageMessages
 });`),
   ]}
