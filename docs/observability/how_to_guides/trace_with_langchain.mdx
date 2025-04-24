@@ -682,7 +682,7 @@ async function createImageMessages(imagesInfo: ImageInfo[]): Promise<Array<[stri
   return messages;
 }
 
-async function createMultiImagePrompt(): Promise<ChatPromptTemplate> {
+function createMultiImagePrompt(): ChatPromptTemplate {
   return ChatPromptTemplate.fromMessages([
     ["system", "You are a helpful assistant that can analyze multiple images."],
     ["placeholder", "{image_messages}"],
@@ -706,7 +706,7 @@ const imagesInfo: ImageInfo[] = [
 const imageMessages = await createImageMessages(imagesInfo);
 
 // Create the prompt template
-const prompt = await createMultiImagePrompt();
+const prompt = createMultiImagePrompt();
 
 // Create the chain
 const model = new ChatOpenAI({ modelName: "gpt-4o-mini", maxTokens: 300 });
@@ -907,7 +907,7 @@ async function createImageMessages(imagesInfo: ImageInfo[]): Promise<Array<[stri
   return messages;
 }
 
-async function createMultiImagePrompt(): Promise<ChatPromptTemplate> {
+function createMultiImagePrompt(): ChatPromptTemplate {
   return ChatPromptTemplate.fromMessages([
     ["system", "You are a helpful assistant that can analyze multiple images."],
     ["placeholder", "{image_messages}"],
@@ -931,7 +931,7 @@ const imagesInfo: ImageInfo[] = [
 const imageMessages = await createImageMessages(imagesInfo);
 
 // Create the prompt template
-const prompt = await createMultiImagePrompt();
+const prompt = createMultiImagePrompt();
 
 // Create the chain
 const model = new ChatOpenAI({ modelName: "gpt-4o-mini", maxTokens: 500 });
