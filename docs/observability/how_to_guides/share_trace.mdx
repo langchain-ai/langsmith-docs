@@ -7,10 +7,9 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 # Share or unshare a trace publicly
 
 :::caution
-
 Sharing a trace publicly will make it accessible to anyone with the link. Make sure you're not sharing sensitive information.
-This feature is only available in the cloud-hosted version of LangSmith.
 
+If your self-hosted or hybrid LangSmith deployment is within a VPC, then the public link is accessible only to members authenticated within your VPC.
 :::
 
 To share a trace publicly, simply click on the **Share** button in the upper right hand side of any trace view.
@@ -26,4 +25,4 @@ To "unshare" a trace, either
    ![](./static/unshare_trace.png)
 
 2. Navigate to your organization's list of publicly shared traces, either by clicking on **Settings** -> **Shared URLs** or <RegionalUrl text='this link' suffix='/settings/shared'/>, then click on **Unshare** next to the trace you want to unshare.
-   ![](./static/unshare_trace_list.png)
+   ![](./static/unshare_trace.png)
