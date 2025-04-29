@@ -124,6 +124,14 @@ Which results in a trace like [this one](https://smith.langchain.com/public/4d3a
 
 ### Node.js
 
+:::note
+The official `@opentelemetry/sdk-node` client SDK is [currently experimental](https://github.com/open-telemetry/opentelemetry-js?tab=readme-ov-file#package-version-compatibility) and pushes breaking changes in minor version bumps.
+
+`@opentelemetry/sdk-node@0.200.0` is only fully supported if you have `langsmith>=0.3.22` installed.
+
+If you are on an older version of `langsmith`, install the previous version, [`@opentelemetry/sdk-node@0.57.2`](https://www.npmjs.com/package/@opentelemetry/sdk-node?activeTab=versions) and `@opentelemetry/auto-instrumentations-node@0.57.1`.
+:::
+
 First, learn more how to setup OpenTelemetry instrumentation within your Node.js app [here](https://opentelemetry.io/docs/languages/js/getting-started/nodejs/#setup).
 
 In particular, you will need to ensure that OTEL setup and configuration run before your application logic. One tool commonly used for this task are Node's [`--require`](https://nodejs.org/api/cli.html#-r---require-module) or `--import` flags.
