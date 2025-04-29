@@ -61,7 +61,7 @@ Use LangSmith custom and built-in dashboards to gain insight into your productio
 
 - [Create and use custom dashboards](./how_to_guides/dashboards)
 - [Use built-in monitoring dashboards](./how_to_guides/use_monitoring_charts)
-- [Set up alerts for your project (Private Beta)](./how_to_guides/alerts)
+- [Set up alerts for your project](./how_to_guides/alerts)
 
 ## Automations
 
