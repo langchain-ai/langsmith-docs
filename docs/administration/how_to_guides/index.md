@@ -16,6 +16,7 @@ See the following guides to set up your LangSmith account.
   - [Create a workspace](./how_to_guides/organization_management/set_up_workspace#create-a-workspace)
   - [Manage users](./how_to_guides/organization_management/set_up_workspace#manage-users)
   - [Configure workspace settings](./how_to_guides/organization_management/set_up_workspace#configure-workspace-settings)
+  - [Delete a workspace](./how_to_guides/organization_management/set_up_workspace#delete-a-workspace)
 - [Set up billing](./how_to_guides/organization_management/set_up_billing)
 - [Update invoice email, tax id and, business information](./how_to_guides/organization_management/update_business_info)
 - [Set up access control (enterprise only)](./how_to_guides/organization_management/set_up_access_control)

@@ -6,6 +6,14 @@ table_of_contents: true
 
 # Deleting Workspaces
 
+:::note
+
+Deleting a workspace is supported **nativley in LangSmith Self-Hosted v0.10**. View [instructions for deleting a workspace](/administration/how_to_guides/organization_management/set_up_workspace#delete-a-workspace).
+
+Follow the guide below for Self-Hosted versions before v0.10.
+
+:::
+
 The LangSmith UI does not currently support the deletion of an individual workspace from an organization. This, however, can be accomplished by directly removing all traces from all materialized views in ClickHouse (except the runs_history views) and the runs and feedbacks tables and then removing the Workspace from the Postgres tenants table.
 
 This command using the Workspace ID as an argument.
