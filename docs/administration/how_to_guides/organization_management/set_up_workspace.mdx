@@ -45,3 +45,19 @@ Users may also be invited directly to one or more workspaces when they are [invi
 Workspace configuration exists in the <RegionalUrl text='workspace settings page' suffix='/settings/workspaces'/> tab. Select the workspace to configure and then the desired configuration sub-tab. The example below shows the `API keys`, and other configuration options including secrets, models, and shared URLs are available here as well.
 
 ![](./static/workspace_settings.png)
+
+## Delete a workspace
+
+:::warning
+Deleting a workspace will permanently delete the workspace and all associated data. This action cannot be undone.
+:::
+
+Workspaces can be deleted through the LangSmith UI or via [API](https://api.smith.langchain.com/redoc?#tag/workspaces/operation/delete_workspace_api_v1_workspaces__workspace_id__delete). You must be a workspace admin in order to delete a workspace.
+
+#### Deleting a workspace via the UI
+
+1. Navigate to **Settings**.
+2. Select the workspace you want to delete.
+3. Click **Delete** in the top-right corner of the screen.
+
+![Delete a workspace](./static/delete_workspace.png)
