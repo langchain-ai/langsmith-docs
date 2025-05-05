@@ -141,19 +141,19 @@ you can select and unselect splits for the selected examples, or create a new sp
 
 ### Edit example metadata
 
-You can add metadata to your examples by clicking on an example and then clicking on the "Metadata" tab in the side pane.
+You can add metadata to your examples by clicking on an example and then clicking "Edit" on the top righthandside of the popover.
 From this page, you can update/delete existing metadata, or add new metadata. You may use this to store information about
-your examples, such as tags or version info, which you can [then filter by when you call `list_examples` in the SDK](./manage_datasets_programmatically#list-examples-by-metadata).
+your examples, such as tags or version info, which you can then [group by](./analyze_single_experiment#group-results-by-metadata) when analyzing experiment results or [filter by](./manage_datasets_programmatically#list-examples-by-metadata) when you call `list_examples` in the SDK.
 
-![Add Metadata](./static/add_metadata.png)
+![Add Metadata](./static/add_metadata.gif)
 
 ### Filter examples
 
-You can filter examples by metadata key/value or full-text search. To filter examples, click "Filter" in the top left of the table:
+You can filter examples by split, metadata key/value or perform full-text search over examples. These filtering options are available to the top left of the examples table. 
+- **Filter by split**: Select split > Select a split to filter by
+- **Filter by metadata**: Filters > Select "Metadata" from the dropdown > Select the metadata key and value to filter on
+- **Full-text search**: Filters > Select "Full Text" from the dropdown > Enter your search criteria 
 
-![Filter Examples](./static/filter_examples.png)
-
-Next, click "Add filter" and select "Full Text" or "Metadata" from the resulting dropdown. You may add multiple filters, and only examples that satisfy all of the
-filters will be displayed in the table.
+You may add multiple filters, and only examples that satisfy all of the filters will be displayed in the table.
 
 ![Filters Applied to Examples](./static/filters_applied.png)
