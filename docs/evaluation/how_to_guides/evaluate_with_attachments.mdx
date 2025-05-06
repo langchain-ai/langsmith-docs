@@ -510,16 +510,14 @@ Once uploaded, you can view examples with attachments in the LangSmith UI. Each 
 ![](./static/attachments_with_examples.png)
 
 ## Create a multimodal prompt
-When evaluating models that work with multimodal content, you can incorporate attachments into your prompts through the LangSmith UI:
+The LangSmith UI allows you to include attachments in your prompts when evaluating multimodal models:
 
-1. Click the file icon in the message where you want to add multimodal content
-2. Choose between:
-   - Inline content: Static content included in all prompts
-   - Template variables: Dynamic content pulled from each example's attachments
+First, click the file icon in the message where you want to add multimodal content.
+Next, add a template variable for the attachment(s) you want to include for each example.
+- For a single attachment type: Use the suggested variable name. Note: all examples must have an attachment with this name.
+- For multiple attachments or if your attachments have varying names from one example to another: Use the `All attachments` variable to include all available attachments for each example.
 
-To reference attachments in your prompts:
-- For a single attachment type: Use the suggested variable name (all examples must have attachments with matching names)
-- For multiple attachments or varying names: Use the `All attachments` variable to include all available attachments
+![](./static/adding_multimodal_variable.gif)
 
 ## Update examples with attachments
 
