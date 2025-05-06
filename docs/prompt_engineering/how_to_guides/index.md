@@ -7,6 +7,7 @@ Step-by-step guides that cover key tasks and operations for doing prompt enginee
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
 - [Create a prompt](./how_to_guides/create_a_prompt)
+- [Include multimodal content](./how_to_guides/multimodal_content)
 - [Update a prompt](./how_to_guides/update_a_prompt)
 - [Manage prompts programmatically](./how_to_guides/manage_prompts_programatically)
 - [Prompt tags](./how_to_guides/prompt_tags)
