@@ -19,7 +19,7 @@ Attachments are particularly valuable for LLM applications that work with multim
 <Tabs className="interface-tabs" queryString="mode">
   <TabItem value="sdk" label="SDK">
 
-## Create examples with attachments
+## 1. Create examples with attachments
 
 To upload examples with attachments using the SDK, use the [create_examples](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.create_examples) / [update_examples](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.update_examples) Python methods or the [uploadExamplesMultipart](https://docs.smith.langchain.com/reference/js/classes/client.Client#uploadexamplesmultipart) / [updateExamplesMultipart](https://docs.smith.langchain.com/reference/js/classes/client.Client#updateexamplesmultipart) TypeScript methods.
 
@@ -163,7 +163,7 @@ client.create_examples(..., dangerously_allow_filesystem=True)
 
 :::
 
-## Run evaluations
+## 2. Run evaluations
 
 ### Define a target function 
 
@@ -488,7 +488,7 @@ groupId="client-language"
 
   </TabItem>
   <TabItem value="ui" label="UI">
-## Create examples with attachments
+## 1. Create examples with attachments
 
 You can add examples with attachments to a dataset in a few different ways.
 
@@ -501,7 +501,7 @@ To learn more, please see [this guide](./manage_datasets_in_application#add-runs
 
 ### From scratch
 
-You can upload examples with attachments directly from the LangSmith UI. Click the `+ Example` button in the `Examples` tab of the dataset UI.
+You can create examples with attachments directly from the LangSmith UI. Click the `+ Example` button in the `Examples` tab of the dataset UI.
 Then upload attachments using the "Upload Files" button:
 
 ![](./static/create_example_with_attachments.png)
@@ -509,7 +509,7 @@ Then upload attachments using the "Upload Files" button:
 Once uploaded, you can view examples with attachments in the LangSmith UI. Each attachment will be rendered with a preview for easy inspection.
 ![](./static/attachments_with_examples.png)
 
-## Create a multimodal prompt
+## 2. Create a multimodal prompt
 The LangSmith UI allows you to include attachments in your prompts when evaluating multimodal models:
 
 First, click the file icon in the message where you want to add multimodal content.
