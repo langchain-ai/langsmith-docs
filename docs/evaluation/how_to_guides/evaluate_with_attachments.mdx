@@ -519,6 +519,20 @@ Next, add a template variable for the attachment(s) you want to include for each
 
 ![](./static/adding_multimodal_variable.gif)
 
+## Define custom evaluators
+
+:::note Multimodal evaluators
+The LangSmith playground does not currently support pulling multimodal content into evaluators. If this would be helpful for your use case, please let us know in the [LangChain's community Slack](https://langchaincommunity.slack.com/) (sign up [here](https://www.langchain.com/join-community) if you're not already a member)!
+:::
+
+You can evaluate a model's text output by adding an evaluator that takes in the example's inputs and outputs.
+Even without multimodal support in your evaluators, you can still run text-only evaluations. For example:
+
+- OCR → text correction: Use a vision model to extract text from a document, then evaluate the accuracy of the extracted output.
+- Speech-to-text → transcription quality: Use a voice model to transcribe audio to text, then evaluate the transcription against your reference.
+
+For more information on defining custom evaluators, see the [LLM as Judge](../how_to_guides/llm_as_judge) guide.
+
 ## Update examples with attachments
 
 :::note Attachment Size Limit
@@ -533,16 +547,6 @@ When editing an example in the UI, you can:
 Changes are not saved until you click submit.
 
 ![](./static/attachment_editing.gif)
-
-## Define custom evaluators
-
-:::note Multimodal evaluators
-The LangSmith playground does not currently support pulling multimodal content into evaluators. If this would be helpful for your use case, please let us know in the [LangChain's community Slack](https://langchaincommunity.slack.com/) (sign up [here](https://www.langchain.com/join-community) if you're not already a member)!
-:::
-
-You can evaluate a model's text output by adding an evaluator that takes in the example's inputs and outputs.
-
-For more information on defining custom evaluators, see the [LLM as Judge](../how_to_guides/llm_as_judge) guide.
 
   </TabItem>
 </Tabs>

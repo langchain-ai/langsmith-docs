@@ -7,7 +7,6 @@ Step-by-step guides that cover key tasks and operations for doing prompt enginee
 Organize and manage prompts in LangSmith to streamline your LLM development workflow.
 
 - [Create a prompt](./how_to_guides/create_a_prompt)
-- [Include multimodal content](./how_to_guides/multimodal_content)
 - [Update a prompt](./how_to_guides/update_a_prompt)
 - [Manage prompts programmatically](./how_to_guides/manage_prompts_programatically)
 - [Prompt tags](./how_to_guides/prompt_tags)
@@ -18,6 +17,7 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
 Quickly iterate on prompts and models in the LangSmith Playground.
 
 - [Run an evaluation in the Playground](/evaluation?mode=ui)
+- [Include multimodal content in a prompt](./how_to_guides/multimodal_content)
 - [Manage prompt settings](./how_to_guides/managing_model_configurations)
 - [Iterate on your prompts with the Prompt Canvas](./how_to_guides/prompt_canvas)
 - [Run the playground against a custom LangServe model server](./how_to_guides/custom_endpoint)

@@ -9,10 +9,12 @@ hide_table_of_contents: true
 Some applications are based around multimodal content, like a chatbot that can answer questions about a PDF or image.
 In these cases, you'll want to include multimodal content in your prompt and test the model's ability to answer questions about the content.
 
-There are two ways to include multimodal content in a prompt:
+The LangSmith Playground supports two methods for incorporating multimodal content in your prompts:
 
-1. Inline content: Static content included in all prompts
-2. Template variables: Creates a template variable for each attachment
+1. Inline content: Embed static files (images, PDFs, audio) directly in your prompt. This is ideal when you want to consistently include the same multimodal content across all uses of the prompt. For example, you might include a reference image that helps ground the model's responses.
+2. Template variables: Create dynamic placeholders for attachments that can be populated with different content each time. This approach offers more flexibility, allowing you to:
+   - Test how the model handles different inputs
+   - Create reusable prompts that work with varying content
 
 ## Inline content
 
@@ -31,12 +33,10 @@ Currently, only images, PDFs, and audio files (.wav, .mp3) are supported.
 
 ## Populate the template variable
 
-In the right side of the screen, you'll see a button to add content to populate the template variable.
-
-This is where you can try out different input with your prompt.
+Once you've added a template variable, you can provide content for it using the panel on the right side of the screen. Simply click the `+` button to upload or select content that will be used to populate the template variable.
 
 ![](./static/manual_prompt_multimodal.png)
 
 ## Run an evaluation
 
-After testing out your prompt manually, you can [run an evaluation](../../evaluation/how_to_guides/evaluate_with_attachments?mode=ui) to see how the prompt performs over a golden dataset of information.
+After testing out your prompt manually, you can [run an evaluation](../../evaluation/how_to_guides/evaluate_with_attachments?mode=ui) to see how the prompt performs over a golden dataset of examples.
