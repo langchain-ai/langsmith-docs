@@ -8,7 +8,9 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 What's new in LangSmith — new features, enhancements, and bugs fixed — organized by release date and release version.
 
-### 2025‑04‑28 - v0.10.31
+## 2025‑04‑28
+
+### LangSmith v0.10.31
 
 #### LangSmith
 
