@@ -4,18 +4,22 @@ import {
   PythonBlock,
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-# Run an evaluation with large file inputs
+# Run an evaluation with multimodal content
 
 LangSmith supports creating dataset examples with file attachments, which you can consume when running evals over that dataset.
 
-Attachments are most useful when working with LLM applications that require multimodal inputs or produce multimodal outputs.
-While multimodal data can be base64 encoded and uploaded as part of an example's inputs/outputs, base64 encodings are fairly space inefficient relative to the underlying binary data making them slower to upload/download to/from LangSmith.
-By using attachments you can speed up uploads/downloads and get nicer renderings of different file types in the LangSmith UI.
+Attachments are particularly valuable for LLM applications that work with multimodal inputs or outputs, such as images, audio, or documents. While you can include multimodal data in your examples by base64 encoding it, this approach is inefficient - the encoded data takes up more space than the original binary files, resulting in slower transfers to and from LangSmith. Using attachments instead provides two key benefits:
+
+1. Faster upload and download speeds due to more efficient binary file transfers
+2. Enhanced visualization of different file types in the LangSmith UI
+
+<Tabs className="interface-tabs" queryString="mode">
+  <TabItem value="sdk" label="SDK">
 
 ## Create examples with attachments
-
-### Using the SDK
 
 To upload examples with attachments using the SDK, use the [create_examples](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.create_examples) / [update_examples](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.update_examples) Python methods or the [uploadExamplesMultipart](https://docs.smith.langchain.com/reference/js/classes/client.Client#uploadexamplesmultipart) / [updateExamplesMultipart](https://docs.smith.langchain.com/reference/js/classes/client.Client#updateexamplesmultipart) TypeScript methods.
 
@@ -147,7 +151,7 @@ Note that you cannot directly pass in a file path in the TypeScript SDK, as acce
   ]}
   groupId="client-language"
   />
-  
+
 :::info Uploading from filesystem
 
 Along with being passed in as bytes, attachments can be specified as paths to local files.
@@ -159,29 +163,7 @@ client.create_examples(..., dangerously_allow_filesystem=True)
 
 :::
 
-Once you upload examples with attachments, you can view them in the LangSmith UI. Each attachment will be rendered as a file with a preview, making it easy to inspect the contents.
-![](./static/attachments_with_examples.png)
-
-
-### From the UI
-
-#### From existing runs
-
-When adding runs to a LangSmith dataset, attachments can be selectively propagated from the source run to the destination example.
-To learn more, please see [this guide](./manage_datasets_in_application#add-runs-from-the-tracing-project-ui).
-
-![](./static/add_trace_with_attachments_to_dataset.png)
-
-#### From scratch
-
-You can also upload examples with attachments directly from the LangSmith UI. You can do so by clicking the `+ Example` button in the `Examples` tab of the dataset UI.
-You can then upload the attachments that you want by using the "Upload Files" button:
-
-![](./static/create_example_with_attachments.png)
-
 ## Run evaluations
-
-Once you have a dataset that contains examples with file attachments, you can run evaluations that process these attachments.
 
 ### Define a target function 
 
@@ -334,7 +316,6 @@ groupId="client-language"
 
 ### Define custom evaluators
 
-In addition to using attachments inside of your target function, you can also use them inside of your evaluators as follows.
 The exact same rules apply as above to determine whether the evaluator should receive attachments.
 
 The evaluator below uses an LLM to judge if the reasoning and the answer are consistent.
@@ -432,9 +413,7 @@ groupId="client-language"
 
 ## Update examples with attachments
 
-### Using the SDK
-
-In the code [above](#create-examples-with-attachments), we showed how to add examples with attachments to a dataset.
+In the code above, we showed how to add examples with attachments to a dataset.
 It is also possible to update these same examples using the SDK.
 
 As with existing examples, datasets are versioned when you update them with attachments. Therefore, you can navigate to the dataset version history to see the changes made to each example.
@@ -507,14 +486,65 @@ dataset.id,
 groupId="client-language"
 />
 
-### From the UI
+  </TabItem>
+  <TabItem value="ui" label="UI">
+## Create examples with attachments
+
+You can add examples with attachments to a dataset in a few different ways.
+
+### From existing runs
+
+When adding runs to a LangSmith dataset, attachments can be selectively propagated from the source run to the destination example.
+To learn more, please see [this guide](./manage_datasets_in_application#add-runs-from-the-tracing-project-ui).
+
+![](./static/add_trace_with_attachments_to_dataset.png)
+
+### From scratch
+
+You can upload examples with attachments directly from the LangSmith UI. Click the `+ Example` button in the `Examples` tab of the dataset UI.
+Then upload attachments using the "Upload Files" button:
+
+![](./static/create_example_with_attachments.png)
+
+Once uploaded, you can view examples with attachments in the LangSmith UI. Each attachment will be rendered with a preview for easy inspection.
+![](./static/attachments_with_examples.png)
+
+## Create a multimodal prompt
+When evaluating models that work with multimodal content, you can incorporate attachments into your prompts through the LangSmith UI:
+
+1. Click the file icon in the message where you want to add multimodal content
+2. Choose between:
+   - Inline content: Static content included in all prompts
+   - Template variables: Dynamic content pulled from each example's attachments
+
+To reference attachments in your prompts:
+- For a single attachment type: Use the suggested variable name (all examples must have attachments with matching names)
+- For multiple attachments or varying names: Use the `All attachments` variable to include all available attachments
+
+## Update examples with attachments
 
 :::note Attachment Size Limit
 Attachments are limited to 20MB in size in the UI.
 :::
 
-When editing an example in the UI, you can upload new attachments, rename and delete attachemnts,
-and there is also a quick reset button to restore the attachments to what previously existed on the example.
-No changes will be saved until you click submit.
+When editing an example in the UI, you can:
+- Upload new attachments
+- Rename and delete attachments  
+- Reset attachments to their previous state using the quick reset button
+
+Changes are not saved until you click submit.
 
 ![](./static/attachment_editing.gif)
+
+## Define custom evaluators
+
+:::note Multimodal evaluators
+The LangSmith playground does not currently support pulling multimodal content into evaluators. If this would be helpful for your use case, please let us know in the [LangChain's community Slack](https://langchaincommunity.slack.com/) (sign up [here](https://www.langchain.com/join-community) if you're not already a member)!
+:::
+
+You can evaluate a model's text output by adding an evaluator that takes in the example's inputs and outputs.
+
+For more information on defining custom evaluators, see the [LLM as Judge](../how_to_guides/llm_as_judge) guide.
+
+  </TabItem>
+</Tabs>
