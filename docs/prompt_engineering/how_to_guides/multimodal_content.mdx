@@ -2,7 +2,7 @@
 sidebar_position: 7
 ---
 
-# Include multimodal content
+# Include multimodal content in a prompt
 
 Some applications are based around multimodal content, like a chatbot that can answer questions about a PDF or image.
 In these cases, you'll want to include multimodal content in your prompt and test the model's ability to answer questions about the content.
@@ -13,6 +13,10 @@ The LangSmith Playground supports two methods for incorporating multimodal conte
 2. Template variables: Create dynamic placeholders for attachments that can be populated with different content each time. This approach offers more flexibility, allowing you to:
    - Test how the model handles different inputs
    - Create reusable prompts that work with varying content
+
+:::note
+Not all models support multimodal content. Before using multimodal features in the playground, make sure your selected model supports the file types you want to use.
+:::
 
 ## Inline content
 
