@@ -6,7 +6,7 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Changelog
 
-What's new in LangSmith — new features, enhancements, and bugs fixed — organized by release date and release version. Looking for just the major product updates & highlights? [Check out our website feed.](http://changelog.langchain.com/).
+What's new in LangSmith — new features, enhancements, and bugs fixed — organized by release date and release version. Looking for just the major product updates & highlights? [Check out our website feed.](http://changelog.langchain.com/)
 
 ## 2025‑04‑28
 
