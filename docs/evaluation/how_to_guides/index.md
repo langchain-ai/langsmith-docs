@@ -30,7 +30,6 @@ Evaluate and improve your application before deploying it.
 - [Run an evaluation from the UI](./how_to_guides/run_evaluation_from_prompt_playground)
 - [Run an evaluation via the REST API](./how_to_guides/run_evals_api_only)
 - [Run an evaluation with multimodal content](./how_to_guides/evaluate_with_attachments)
-- [Set up a multi-turn evaluation](./how_to_guides/multiturn_evaluation)
 
 ### Define an evaluator
 
