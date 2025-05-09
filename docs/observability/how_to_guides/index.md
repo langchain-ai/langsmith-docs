@@ -59,7 +59,7 @@ View and interact with your traces to debug your applications.
 
 Use LangSmith custom and built-in dashboards to gain insight into your production systems.
 
-- [Create and use custom dashboards](./how_to_guides/dashboards)
+- [Monitor projects with dashboards](./how_to_guides/dashboards)
 - [Set up alerts for your project](./how_to_guides/alerts)
 
 ## Automations
