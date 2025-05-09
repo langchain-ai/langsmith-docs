@@ -19,10 +19,27 @@ Take a look at the full [specification](https://platform.openai.com/docs/api-ref
 
 ## Use the model in the LangSmith Playground
 
-Once you have deployed a model server, you can use it in the LangSmith Playground. Enter the playground and select the `Proxy Provider` inside the `OpenAI` modal.
+Once you have deployed a model server, you can use it in the LangSmith Playground.
+
+### Recommended: Use the `Custom Model Endpoint` provider option
+
+Enter the playground and change the provider to `Custom Model Endpoint`.
+Enter in your model endpoint in the `Base URL` field.
+
+![Custom Model Endpoint](./static/custom_model_endpoint.png)
+
+Behind the scenes, the playground will use the `ChatOpenAI` from `langchain-openai` and pass in your endpoint as a `base_url`.
+
+### Alternative: Use the `Proxy Provider` option
+
+Note: this is functionally equivalent to the `Custom Model Endpoint` provider option.
+
+Enter the playground and select the `Proxy Provider` inside the `OpenAI` modal.
 
 ![OpenAI Proxy Provider](./static/openai_proxy_provider.png)
 
 If everything is set up correctly, you should see the model's response in the playground. You can also use this functionality to invoke downstream pipelines as well.
+
+## Save your model configuration
 
 See how to store your model configuration for later use [here](./managing_model_configurations).
