@@ -3,82 +3,120 @@ sidebar_label: Dashboards
 sidebar_position: 3
 ---
 
-# Create dashboards
+import runDepth from "./static/run_depth_explained.png";
 
-With dashboards you can create tailored collections of charts for tracking metrics that matter most to your application.
+# Monitor projects with dashboards
 
-## Creating a new dashboard
+Dashboards give you high‑level insights into your trace data, helping you spot trends and monitor the health of your applications. LangSmith offers two dashboard types:
 
-1. Navigate to the `Dashboards` tab in the left sidebar.
-2. Click on the `+ Dashboard` button.
+- **Prebuilt dashboards**: Automatically generated for every tracing project.
+- **Custom dashboards**: Fully configurable collections of charts tailored to your needs.
+
+## Prebuilt dashboards
+
+Prebuilt dashboards are created automatically for each project and cover essential metrics, such as trace count, error rates, token usage, and more.
+
+![prebuilt](./static/prebuilt.gif)
+
+:::note
+You cannot modify a prebuilt dashboard. In the future, we plan to allow you to clone a default dashboard in order to have a starting point to customize it.
+:::
+
+### Dashboard sections
+
+Prebuilt dashboards are broken down into the following sections:
+
+| Section         | What it shows                                                                                                                                                                                                                                                                                |
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Traces          | Trace count, latency and error rates. A [trace](/observability/concepts#traces) is a collection of [runs](/observability/concepts#runs) related to a single operation. For example, if a user request triggers an agent, all runs for that agent invocation would be part of the same trace. |
+| LLM Calls       | LLM call count and latency. Includes all runs where run type is "llm".                                                                                                                                                                                                                       |
+| Cost & Tokens   | Total and per-trace token counts and costs, broken down by token type. Costs are measured using [LangSmith's cost tracking](/observability/how_to_guides/log_llm_trace#manually-provide-token-counts).                                                                                       |
+| Tools           | Run counts, error rates, and latency stats for tool runs broken down by tool name. Includes runs where run type is "tool". Limits to top 5 most frequently occurring tools.                                                                                                                  |
+| Run Types       | Run counts, error rates, and latency stats for runs that are immediate children of the root run. This helps in understanding the the high-level execution path of agents. Limits to top 5 most frequently occuring tool names. <sup>1</sup>                                                  |
+| Feedback Scores | Aggregate stats for the top 5 most frequently occurring types of feedback. Charts show average score for numerical feedback and category counts for categorical feedback.                                                                                                                    |
+
+<sup>1</sup> For example, for the following trace, the following runs have a depth
+of 1: <img
+  src={runDepth}
+  alt="run_depth"
+  style={{ display: "block", width: 250 }}
+/>{" "}
+
+### Group by
+
+Group by [run tag or metadata](/observability/how_to_guides/add_metadata_tags) can be used to split data over attributes that are important to your application. The global group by setting appears on the top right hand side of the dashboard. Note that the Tool and Run Type charts already have a group by applied, so the global group by won't take effect; the global group by will apply to all other charts.
+
+:::tip
+When adding metadata to runs, we reccomend having the same metadata on the trace, as well has the specific run (eg. LLM call). Metadata and tags are not propagated from parent to child runs, or vice versa. So, if you want to see e.g. both your trace charts and your LLM call charts grouped on some metadata key then both your traces (root runs) and your LLM runs need to have that metadata attached.
+:::
+
+## Custom Dashboards
+
+Create tailored collections of charts for tracking metrics that matter most for your application.
+
+### Creating a new dashboard
+
+1. Navigate to the **Monitor** tab in the left sidebar.
+2. Click on the **+ New Dashboard** button.
 3. Give your dashboard a name and a description.
-4. Click on `Create`.
+4. Click on **Create**.
 
-You'll see all of your dashboards displayed in a table view.
+### Adding charts to your dashboard
 
-![Add dashboard](./static/add_dashboard.png)
-![Dashboard table](./static/dashboard_table.png)
-
-## Adding charts to your dashboard
-
-1. Within a dashboard, click on the `+ Chart` button to open up the chart creation pane.
+1. Within a dashboard, click on the **+ New Chart** button to open up the chart creation pane.
 2. Give your chart a name and a description.
-3. Select one or more projects to track metrics for.
-4. Choose a metric from the dropdown menu to set the y-axis of your chart.
+3. Configure the chart.
 
-With a project and a metric selected, you'll see a preview of your chart and the matching runs.
+### Chart configuration
 
-![Add chart](./static/add_chart.png)
+#### Select tracing projects and filter runs
 
-## Filtering traces in your chart
+- Select one or more tracing projects to track metrics for.
+- Use the **Chart filters** section to refine the matching runs. This filter applies to all data series in the chart. For more information on filtering traces, view our guide on [filtering traces in application](./filter_traces_in_application).
 
-Use the **Chart filters** section to refine the matching runs. These are the same filters available on the Projects page and apply to all data series in the chart. (See [Filter traces in application](./filter_traces_in_application) for more information on filtering traces.)
+#### Pick a metric
 
-![Chart filters](./static/chart_filters.png)
-
-## Comparing data within a chart
-
-There are two ways to compare data in a chart (i.e. create multiple lines in a chart):
-
-1. **Multiple metrics**: Add multiple metrics with the same unit to a single chart. Each metric appears as a separate line. For example, compare P99 with P50 latency.
-   When you pick an initial metric, the comparison metrics dropdown will only show metrics with the same unit.
+- Choose a metric from the dropdown menu to set the y-axis of your chart. With a project and a metric selected, you'll see a preview of your chart and the matching runs.
+- For certain metrics (such as latency, token usage, cost), we support comparing multiple metrics with the same unit. For example, you may wany one chart where you can see prompt tokens and completion tokens. Each metric appears as a separate line.
 
 ![Multiple metrics](./static/compare_metrics.png)
 
-Or
+#### Split the data
 
-2. **Data series**: Create multiple data series within a chart, each with its own filters. This is useful for comparing granular data within a single metric.
-   An example of using data series is to compare the performance of two different models or configurations. Name each series and apply specific filters.
+There are two ways to create multiple series in a chart (i.e. create multiple lines in a chart):
+
+1. **Group by**: Group runs by [run tag or metadata](/observability/how_to_guides/add_metadata_tags), run name, or run type. Group by automatically splits the data into multiple series based on the field selected. Note that group by is limited to the top 5 elements by frequency.
+
+2. **Data series**: Manually define multiple series with individual filters. This is useful for comparing granular data within a single metric.
 
 ![Multiple data series](./static/multiple_data_series.png)
 
-## Chart display options
+#### Pick a chart type
 
-- Choose between a line chart and a bar chart for visualizing (you can toggle this within the dashboard view)
-- Optionally reassign the chart to a different dashboard
+- Choose between a line chart and a bar chart for visualizing
 
-![Multiple data series](./static/bar_chart.png)
-
-## Saving and managing charts
+### Save and manage charts
 
 - Click `Save` to save your chart to the dashboard.
-- Edit or delete a chart by clicking the triple line button in the top right of the chart.
-- Clone a chart by clicking the triple line button in the top right of the chart and selecting `+ Clone`. This will open a new chart creation pane with the same configurations as the original.
+- Edit or delete a chart by clicking the triple dot button in the top right of the chart.
+- Clone a chart by clicking the triple line button in the top right of the chart and selecting **+ Clone**. This will open a new chart creation pane with the same configurations as the original.
 
 ![More actions bar](./static/more_actions_bar.png)
 
-## View a chart in full screen
-
-Click the expand icon in the top right corner of a chart to view it in full screen. This view offers:
-
-- Greater detail on individual runs contributing to the chart data.
-- The ability to change the time range of the chart.
-
 ![Expanded chart](./static/expanded_chart.png)
 
-## User journeys
+## Linking to a dashboard from a tracing project
 
-1. **Use monitoring charts for mapping the decisions made by an agent at a particular node.**
+You can link to a dashboard directly from a tracing project. By default, the prebuilt dashboard for your tracing project is selected. If you have a custom dashboard that you would like to link instead:
+
+1. In your tracing project, click the pencil icon next to the Dashboard selector.
+2. Choose a dashboard to set as the new default.
+
+![Tracing project to dashboard](./static/tracing_project_to_dashboard.png)
+
+## Example: User‑Journey Monitoring
+
+Use monitoring charts for mapping the decisions made by an agent at a particular node.
 
 Consider an email assistant agent. At a particular node it makes a decision about an email to:
 

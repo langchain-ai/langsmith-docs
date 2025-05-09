@@ -57,10 +57,9 @@ View and interact with your traces to debug your applications.
 
 ## Monitoring
 
-Use LangSmith custom and built-in dashboards to gain insight into your production systems.
+Continuously monitor your production systems applications using dashboards, and set up alerts to get notified when metrics drop.
 
-- [Create and use custom dashboards](./how_to_guides/dashboards)
-- [Use built-in monitoring dashboards](./how_to_guides/use_monitoring_charts)
+- [Monitor projects with dashboards](./how_to_guides/dashboards)
 - [Set up alerts for your project](./how_to_guides/alerts)
 
 ## Automations
