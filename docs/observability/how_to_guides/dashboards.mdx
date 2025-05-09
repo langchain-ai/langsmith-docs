@@ -3,32 +3,33 @@ sidebar_label: Dashboards
 sidebar_position: 3
 ---
 
-import runDepth from './static/run_depth_explained.png';
-
+import runDepth from "./static/run_depth_explained.png";
 
 # Dashboards
 
 Dashboards give you high‑level insights into your trace data, helping you spot trends and monitor the health of your applications. LangSmith offers two dashboard types:
 
-- **Prebuilt dashboards**: Automatically generated for every tracing project.  
-- **Custom dashboards**: Fully configurable collections of charts tailored to your needs.  
+- **Prebuilt dashboards**: Automatically generated for every tracing project.
+- **Custom dashboards**: Fully configurable collections of charts tailored to your needs.
 
 ## Prebuilt dashboards
+
 Prebuilt dashboards are created automatically for each project and cover essential metrics, such as trace count, error rates, token usage, and more.
 
 ![prebuilt](./static/prebuilt.gif)
 
 ### Dashboard sections
+
 Prebuilt dashboards are broken down into sections that group relevant charts. Navigate between sections using the the navigation at the top.
 
-| Section                   | What it shows                                                        |
-|-------------------------|----------------------------------------------------------------------|
-| Traces          | A [trace](/observability/concepts#traces) is a collection of [runs](/observability/concepts#runs) related to a single operation. For example, if a user request triggers an agent, all runs for that agent invocation would be part of the same trace.            |
-| LLM Calls        | All runs where run type is "llm".                                 |
-| Cost & Tokens     | Costs are measured using [LangSmith's cost tracking](/observability/how_to_guides/log_llm_trace#manually-provide-token-counts).           | 
-| Tools     | Includes runs where run type is "tool". Limits to top [N] tools.             | 
-| Run Types     | Includes runs that are immediate children of the root run. For example, for the following trace, the following runs have a depth of 1:  <img src={runDepth} alt="run_depth" style= {{ display: 'block', width: 200 }} />. Limits to top [N] runs.   | 
-| Feedback Scores     | Feedback provided as part of [online evaluators](/observability/how_to_guides/online_evaluations). Limits to top the top 4 feedback scores by volume.             | 
+| Section         | What it shows                                                                                                                                                                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Traces          | A [trace](/observability/concepts#traces) is a collection of [runs](/observability/concepts#runs) related to a single operation. For example, if a user request triggers an agent, all runs for that agent invocation would be part of the same trace. |
+| LLM Calls       | All runs where run type is "llm".                                                                                                                                                                                                                      |
+| Cost & Tokens   | Costs are measured using [LangSmith's cost tracking](/observability/how_to_guides/log_llm_trace#manually-provide-token-counts).                                                                                                                        |
+| Tools           | Includes runs where run type is "tool". Limits to top [N] tools.                                                                                                                                                                                       |
+| Run Types       | Includes runs that are immediate children of the root run. For example, for the following trace, the following runs have a depth of 1: <img src={runDepth} alt="run_depth" style= {{ display: 'block', width: 200 }} />. Limits to top [N] runs.       |
+| Feedback Scores | Feedback provided as part of [online evaluators](/observability/how_to_guides/online_evaluations). Limits to top the top 4 feedback scores by volume.                                                                                                  |
 
 ### Group by
 
@@ -39,16 +40,16 @@ When adding metadata to runs, we reccomend having the same metadata on the trace
 :::
 
 ### Time selector
-Choose a time window in the dropdown on the top right hand side of the dashboard. You can set a default time window, by hovering over the values in the dropdown and clicking "Set default". Maximum time horizon is 30d. 
+
+Choose a time window in the dropdown on the top right hand side of the dashboard. You can set a default time window, by hovering over the values in the dropdown and clicking "Set default". Maximum time horizon is 30d.
 
 :::note
-You cannot modify a prebuilt dashboard. In the future, we plan to allow you to clone a default dashboard in order to have a starting point to customize it. 
+You cannot modify a prebuilt dashboard. In the future, we plan to allow you to clone a default dashboard in order to have a starting point to customize it.
 :::
-
 
 ## Custom Dashboards
 
-Create tailored collections of charts for tracking metrics that matter most for your application. 
+Create tailored collections of charts for tracking metrics that matter most for your application.
 
 ### Creating a new dashboard
 
@@ -65,15 +66,15 @@ Create tailored collections of charts for tracking metrics that matter most for 
 
 ### Chart configuration
 
-#### Select tracing projects and filter runs 
+#### Select tracing projects and filter runs
 
 - Select one or more tracing projects to track metrics for.
-- Use the **Chart filters** section to refine the matching runs. This filter applies to all data series in the chart. For more information on filtering traces, view our guide on [filtering traces in application](./filter_traces_in_application). 
+- Use the **Chart filters** section to refine the matching runs. This filter applies to all data series in the chart. For more information on filtering traces, view our guide on [filtering traces in application](./filter_traces_in_application).
 
 #### Pick a metric
 
 - Choose a metric from the dropdown menu to set the y-axis of your chart. With a project and a metric selected, you'll see a preview of your chart and the matching runs.
-- For certain metrics (such as latency, token usage, cost), we support comparing multiple metrics with the same unit. For example, you may wany one chart where you can see prompt tokens and completion tokens. Each metric appears as a separate line. 
+- For certain metrics (such as latency, token usage, cost), we support comparing multiple metrics with the same unit. For example, you may wany one chart where you can see prompt tokens and completion tokens. Each metric appears as a separate line.
 
 ![Multiple metrics](./static/compare_metrics.png)
 
@@ -81,16 +82,16 @@ Create tailored collections of charts for tracking metrics that matter most for 
 
 There are two ways to create multiple series in a chart (i.e. create multiple lines in a chart):
 
-1. **Group by**: Group runs by [run tag or metadata](/observability/how_to_guides/add_metadata_tags), run name or run type. Group by automatically splits the data into multiple series based on the field selected. 
+1. **Group by**: Group runs by [run tag or metadata](/observability/how_to_guides/add_metadata_tags), run name or run type. Group by automatically splits the data into multiple series based on the field selected.
 
-2. **Data series**: Manually define multiple series with individual filters. This is useful for comparing granular data within a single metric. 
+2. **Data series**: Manually define multiple series with individual filters. This is useful for comparing granular data within a single metric.
 
 [need to retake screenshot, blocked on bug]
 ![Multiple data series](./static/multiple_data_series.png)
 
 #### Pick a chart type
 
-- Choose between a line chart and a bar chart for visualizing 
+- Choose between a line chart and a bar chart for visualizing
 
 ### Save and manage charts
 
@@ -113,8 +114,8 @@ Click the expand icon in the top right corner of a chart to view it in full scre
 
 You can link to a dashboard directly from a tracing project. By default, the prebuilt dashboard for your tracing project is selected. If you have a custom dashboard that you would like to link instead:
 
-1. In your tracing project, click the pencil icon next to the Dashboard selector.  
-2. Choose a dashboard to set as the new default.  
+1. In your tracing project, click the pencil icon next to the Dashboard selector.
+2. Choose a dashboard to set as the new default.
 
 ![Tracing project to dashboard](./static/tracing_project_to_dashboard.png)
 
