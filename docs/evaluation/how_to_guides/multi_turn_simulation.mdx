@@ -19,8 +19,10 @@ When evaluating the performance of such applications, core concepts such as [gat
 cases become a trajectory of messages rather than a single one.
 
 However, you may find it useful to instead run a *simulation* between your app and a user, then evaluate this dynamically
-created trajectory. The advantages of this approach are that it doesn't require pre-existing trajectories and can test your app over a wider range
-of natural language inputs. The disadvantage is that it is less consistent, as the increased number of turns and LLM calls introduces more randomness.
+created trajectory. Some advantages of this approach are that it doesn't require pre-existing trajectories and can test your app over a wider range
+of natural language inputs, though it does introduce more randomness compared to evaluating over prepared trajectories from a dataset.
+
+![](./static/multi_turn_trace.png)
 
 This guide will show you how to simulate multi-turn interactions using the open-source [`openevals`](https://github.com/langchain-ai/openevals) package,
 which contains prebuilt evaluators and other convenient resources for evaluating your AI apps. It will also use OpenAI models,
@@ -36,13 +38,13 @@ First, ensure you have the required dependencies installed:
       value: "python",
       label: "Python",
       language: "bash",
-      content: `pip install -U langsmith openevals openai`,
+      content: `pip install -U langsmith openevals`,
     },
     {
       value: "typescript",
       label: "TypeScript",
       language: "bash",
-      content: `npm install langsmith openevals openai`,
+      content: `npm install langsmith openevals`,
       footnote: "If you are using `yarn` as your package manager, you will also need to manually install \`@langchain/core\` as a peer dependency of `openevals`. This is not required for LangSmith evals in general.",
     },
   ]}
@@ -133,7 +135,7 @@ import { wrapOpenAI } from "langsmith/wrappers/openai";
 
 import {
     createLLMSimulatedUser,
-    runMultiturnSimulation
+    runMultiturnSimulation,
     type ChatCompletionMessage,
 } from "openevals";
 
@@ -224,7 +226,11 @@ There are several ways to configure the simulated user, such as having it return
 as well as the simulation as a whole. For full details, check out [the OpenEvals README](https://github.com/langchain-ai/openevals?tab=readme-ov-file#multiturn-simulation).
 :::
 
-Congrats! You just ran your first multi-turn simulation. Next, we'll cover how to run it in LangSmith.
+The final trace will look something [like this](https://smith.langchain.com/public/648ca37d-1c4d-4f7b-9b6a-89e35dc5d4f0/r) with responses from your `app` and `user` interleaved:
+
+![](./static/multi_turn_trace.png)
+
+Congrats! You just ran your first multi-turn simulation. Next, we'll cover how to run it in a LangSmith experiment.
 
 ## Running in LangSmith experiments
 
@@ -235,10 +241,21 @@ or [`evaluate`](https://docs.smith.langchain.com/evaluation/how_to_guides/evalua
 
 ### Using `pytest` or `Vitest/Jest`
 
+:::tip
+See the following guides to learn how to set up evals using LangSmith's integrations with test frameworks:
+
+- [`pytest`](https://docs.smith.langchain.com/evaluation/how_to_guides/pytest)
+- [`Vitest` or `Jest`](https://docs.smith.langchain.com/evaluation/how_to_guides/vitest_jest)
+:::
+
 If you are using one of the [LangSmith test framework integrations](https://docs.smith.langchain.com/evaluation/how_to_guides#testing-integrations),
 you can pass in an array of OpenEvals evaluators as a `trajectory_evaluators` param when running the simulation.
 These evaluators will run at the end of the simulation, taking the final list of chat messages as
-an `outputs` kwarg. Your passed `trajectory_evaluator` must therefore accept this kwarg. Here's an example:
+an `outputs` kwarg. Your passed `trajectory_evaluator` must therefore accept this kwarg.
+
+![](./static/multi_turn_vitest.png)
+
+Here's an example:
 
 <CodeTabs
   tabs={[
@@ -305,7 +322,7 @@ def test_multiturn_message_with_openai():
         max_turns=5,
     )
 
-    t.log_outputs(res["trajectory"])
+    t.log_outputs(res)
 
     # Optionally, assert that the evaluator scored the interaction as satisfactory.
     # This will cause the overall test case to fail if "score" is False.
@@ -327,12 +344,12 @@ import { expect } from "vitest";
 
 import {
     createLLMSimulatedUser,
-    runMultiturnSimulation
+    runMultiturnSimulation,
     createLLMAsJudge,
     type ChatCompletionMessage,
 } from "openevals";
 
-const client = new wrapOpenAI(new OpenAI());
+const client = wrapOpenAI(new OpenAI());
 
 ls.describe("Multiturn demo", () => {
     ls.test(
@@ -342,9 +359,7 @@ ls.describe("Multiturn demo", () => {
           messages: [{ role: "user" as const, content: "I want a refund for my car!" }],
         },
       },
-      async ({ inputs }) => {
-        const client = new OpenAI();
-        
+      async ({ inputs }) => {        
         const history = {};
 
         // Create a custom app function
@@ -392,7 +407,7 @@ ls.describe("Multiturn demo", () => {
           maxTurns: 5,
         });
         
-        ls.logOutputs(result.trajectory);
+        ls.logOutputs(result);
 
         // Optionally, assert that the evaluator scored the interaction as satisfactory.
         // This will cause the overall test case to fail if "score" is false.
@@ -416,11 +431,11 @@ You may also find it convenient to have the simulated user's system prompt to be
 ### Using `evaluate`
 
 You can also use the [`evaluate`](https://docs.smith.langchain.com/evaluation/how_to_guides/evaluate_llm_application)
-runner to evaluate simulated multi-turn interactions. This will look a little bit different from the `pytest`/`Vitest`/`Jest` example as follows:
+runner to evaluate simulated multi-turn interactions. This will be a little bit different from the `pytest`/`Vitest`/`Jest` example in the following ways:
 
 - The simulation should be part of your `target` function, and your target function should return the final trajectory.
   - This will make the trajectory the `outputs` that LangSmith will pass to your evaluators.
-- Instead of using the `trajectory_evaluators` param, you should pass your evaluators into `evaluate()`.
+- Instead of using the `trajectory_evaluators` param, you should pass your evaluators as a param into the `evaluate()` method.
 - You will need an existing dataset of inputs and (optionally) reference trajectories.
 
 Here's an example:
@@ -468,10 +483,10 @@ def target(inputs: dict):
 
     history = {}
 
-    def app(inputs: ChatCompletionMessage, *, thread_id: str):
+    def app(next_message: ChatCompletionMessage, *, thread_id: str):
         if thread_id not in history:
             history[thread_id] = []
-        history[thread_id] = history[thread_id] + [inputs]
+        history[thread_id] = history[thread_id] + [next_message]
         res = client.chat.completions.create(
             model="gpt-4.1-nano",
             messages=[
@@ -489,15 +504,12 @@ def target(inputs: dict):
     user = create_llm_simulated_user(
         system="You are a nice customer who wants a refund for their car.",
         model="openai:gpt-4.1-nano",
-        fixed_responses=[
-            inputs,
-        ],
+        fixed_responses=inputs["messages"],
     )
 
     res = run_multiturn_simulation(
         app=app,
         user=user,
-        trajectory_evaluators=[trajectory_evaluator],
         max_turns=5,
     )
 
@@ -516,22 +528,32 @@ results = ls_client.evaluate(
       label: "TypeScript",
       language: "typescript",
       content: `import { OpenAI } from "openai";
-import { wrapOpenAI } from "langsmith/wrappers/openai";
 
+import { Client } from "langsmith";
+import { wrapOpenAI } from "langsmith/wrappers/openai";
 import { evaluate } from "langsmith/evaluation";
 
 import {
     createLLMSimulatedUser,
-    runMultiturnSimulation
+    runMultiturnSimulation,
     createLLMAsJudge,
     type ChatCompletionMessage,
 } from "openevals";
 
-const client = new wrapOpenAI(new OpenAI());
+const lsClient = new Client();
+
+const inputs = {
+    messages: [
+      {
+        role: "user",
+        content: "I want a refund for my car!",
+      },
+    ],
+};
 
 const datasetName = "Multiturn";
-const dataset = await langsmith.createDataset(datasetName);
-await langsmith.createExamples([{ inputs, datasetId: dataset.id }]);
+const dataset = await lsClient.createDataset(datasetName);
+await lsClient.createExamples([{ inputs, dataset_id: dataset.id }]);
 
 const trajectoryEvaluator = createLLMAsJudge({
     model: "openai:o3-mini",
@@ -540,17 +562,19 @@ const trajectoryEvaluator = createLLMAsJudge({
     feedbackKey: "satisfaction",
 });
 
-const target = ({ inputs }: { inputs: Record<string, unknown> }) => {
+const client = wrapOpenAI(new OpenAI());
+
+const target = async (inputs: { messages: ChatCompletionMessage[]}) => {
     const history = {};
 
     // Create a custom app function
     const app = async (
-      { inputs, threadId }: { inputs: ChatCompletionMessage, threadId: string }
+      { inputs: nextMessage, threadId }: { inputs: ChatCompletionMessage, threadId: string }
     ) => {
       if (history[threadId] === undefined) {
         history[threadId] = [];
       }
-      history[threadId].push(inputs);
+      history[threadId].push(nextMessage);
       const res = await client.chat.completions.create({
         model: "gpt-4.1-nano",
         messages: [
@@ -559,7 +583,7 @@ const target = ({ inputs }: { inputs: Record<string, unknown> }) => {
             content:
               "You are a patient and understanding customer service agent",
           },
-          inputs,
+          nextMessage,
         ],
       });
       const responseMessage = res.choices[0].message;
@@ -574,24 +598,16 @@ const target = ({ inputs }: { inputs: Record<string, unknown> }) => {
       fixedResponses: inputs.messages,
     });
 
-    const trajectoryEvaluator = createLLMAsJudge({
-      model: "openai:o3-mini",
-      prompt:
-        "Based on the below conversation, was the user satisfied?\\n{outputs}",
-      feedbackKey: "satisfaction",
-    });
-
     const result = await runMultiturnSimulation({
       app,
       user,
-      trajectoryEvaluators: [trajectoryEvaluator],
       maxTurns: 5,
     });
 
     return result.trajectory;
 };
 
-await evaluate((inputs) => toxicityClassifier(inputs["input"]), {
+await evaluate(target, {
     data: datasetName,
     evaluators: [trajectoryEvaluator],
 });
