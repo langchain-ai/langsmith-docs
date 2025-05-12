@@ -739,6 +739,9 @@ import {
 
 const lsClient = new Client();
 
+const datasetName = "Multiturn with personas";
+const dataset = await lsClient.createDataset(datasetName);
+
 const examples = [{
     inputs: {
       messages: [
@@ -763,8 +766,6 @@ const examples = [{
     dataset_id: dataset.id,
 }];
 
-const datasetName = "Multiturn with personas";
-const dataset = await lsClient.createDataset(datasetName);
 await lsClient.createExamples(examples);
 
 const trajectoryEvaluator = createLLMAsJudge({
