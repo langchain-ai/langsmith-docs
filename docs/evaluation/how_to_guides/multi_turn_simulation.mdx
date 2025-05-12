@@ -74,7 +74,7 @@ The simulator in `openevals` passes a single chat message to your `app` from the
 Therefore you should statefully track the current history internally based on `thread_id` if needed.
 
 Here's an example that simulates a multi-turn customer support interaction. This guide uses a simple chat app that wraps a single call to the OpenAI chat completions API, however this is where you would call your application or agent. 
-Our app is a stand-in for a customer support agent, and our simulated user is playing the role of a particularly aggressive customer:
+In this example, our simulated user is playing the role of a particularly aggressive customer:
 
 <CodeTabs
   tabs={[
