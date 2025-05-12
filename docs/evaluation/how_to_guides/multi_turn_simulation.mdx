@@ -15,7 +15,11 @@ import {
 
 AI applications with conversational interfaces, like chatbots, operate over multiple interactions with a user, also called conversation *turns*.
 When evaluating the performance of such applications, core concepts such as [building a dataset](../../evaluation/concepts#datasets) and defining
-[evaluators](../../evaluation/concepts#evaluators) to judge results successful remain useful - the inputs and outputs for these
+[evaluators](../../evaluation/concepts#evaluators) to judge results successful remain useful. When running evals over multi-turn interactions, the dataset should have a trajectory of messages to evaluate over. 
+
+
+
+The inputs or outputs for these
 cases become a trajectory of messages rather than a single one.
 
 However, you may find it useful to instead run a *simulation* between your app and a user, then evaluate this dynamically
