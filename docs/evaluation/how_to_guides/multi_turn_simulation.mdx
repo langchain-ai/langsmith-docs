@@ -627,8 +627,8 @@ await evaluate(target, {
 
 The above examples run using the same simulated user persona for all input examples, defined by the `system` parameter
 passed into `create_llm_simulated_user`. If you would like to use a different persona for specific items in your dataset,
-you can update your dataset examples to also contain an extra field with a new `system` prompt, then pass that in when
-creating your simulated user like this:
+you can update your dataset examples to also contain an extra field with the desired `system` prompt, then pass that
+field in when creating your simulated user like this:
 
 <CodeTabs
   tabs={[
