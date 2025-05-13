@@ -145,7 +145,7 @@ run_filter = f'and(gt(start_time, "{start_time.isoformat()}"), lt(end_time, "{en
 prod_runs = list(
     client.list_runs(
         project_name=project_name,
-        execution_order=1,
+        is_root=True,
         filter=run_filter,
     )
 )
