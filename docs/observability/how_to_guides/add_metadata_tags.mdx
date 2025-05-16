@@ -94,48 +94,40 @@ chat_completion = patched_client.chat.completions.create(
 )
 `),
     TypeScriptBlock(`import OpenAI from "openai";
-import { traceable } from "langsmith/traceable";
+import { traceable, getCurrentRunTree } from "langsmith/traceable";
 import { wrapOpenAI } from "langsmith/wrappers";
-import { RunTree} from "langsmith";\n
-const client = new OpenAI();\n
-const messages = [
-    {role: "system", content: "You are a helpful assistant."},
-    {role: "user", content: "Hello!"}
-];\n
-const traceableCallOpenAI = traceable(async (messages: {role: string, content: string}[]) => {
-    const completion = await client.chat.completions.create({
+
+const client = wrapOpenAI(new OpenAI());
+
+const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
+    { role: "system", content: "You are a helpful assistant." },
+    { role: "user", content: "Hello!" },
+];
+
+const traceableCallOpenAI = traceable(
+    async (messages: OpenAI.Chat.ChatCompletionMessageParam[]) => {
+      const completion = await client.chat.completions.create({
         model: "gpt-4o-mini",
-        messages: messages,
-    });
-    return completion.choices[0].message.content;
-},{
-    run_type: "llm",
-    name: "OpenAI Call Traceable",
-    // highlight-next-line
-    tags: ["my-tag"],
-    // highlight-next-line
-    metadata: { "my-key": "my-value" }
-});
+        messages,
+      });
+      const runTree = getCurrentRunTree();
+      runTree.extra.metadata = {
+        ...runTree.extra.metadata,
+        someKey: "someValue",
+      };
+      runTree.tags = [...(runTree.tags ?? []), "runtime-tag"];
+      return completion.choices[0].message.content;
+    },
+    {
+      run_type: "llm",
+      name: "OpenAI Call Traceable",
+      tags: ["my-tag"],
+      metadata: { "my-key": "my-value" },
+    }
+);
 // Call the traceable function
-await traceableCallOpenAI(messages, "gpt-4o-mini");\n
-// Create a RunTree object
-const rt = new RunTree({
-  run_type: "llm",
-  name: "OpenAI Call RunTree",
-  inputs: { messages },
-   // highlight-next-line
-  tags: ["my-tag"],
-   // highlight-next-line
-  extra: { metadata: { "my-key": "my-value" } },
-});
-await rt.postRun();
-const chatCompletion = await client.chat.completions.create({
-  model: "gpt-4o-mini",
-  messages: messages,
-});
-// End and submit the run
-await rt.end(chatCompletion);
-await rt.patchRun();`),
-  ]}
-  groupId="client-language"
+await traceableCallOpenAI(messages);
+`),
+]}
+groupId="client-language"
 />
