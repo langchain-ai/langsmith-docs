@@ -453,7 +453,7 @@ One way to think about different types of RAG evaluators is as a tuple of what i
             STUDENT ANSWER: \${outputs.answer}\`
             
           // Run evaluator
-          const grade = graderLLM.invoke([{role: "system", content: correctnessInstructions}, {role: "user", content: answer}])\
+          const grade = graderLLM.invoke([{role: "system", content: correctnessInstructions}, {role: "user", content: answer}])
           return grade.score
         };
     `,
@@ -552,7 +552,7 @@ Without a reference answer we can't grade accuracy, but can still grade relevanc
         STUDENT ANSWER: \${outputs.answer}\`
             
           // Run evaluator
-          const grade = relevanceLLM.invoke([{role: "system", content: relevanceInstructions}, {role: "user", content: answer}])\
+          const grade = relevanceLLM.invoke([{role: "system", content: relevanceInstructions}, {role: "user", content: answer}])
           return grade.relevant
         };
     `,
@@ -649,7 +649,7 @@ Another useful way to evaluate responses without needing reference answers is to
             STUDENT ANSWER: \${outputs.answer}\`
             
           // Run evaluator
-          const grade = groundedLLM.invoke([{role: "system", content: groundedInstructions}, {role: "user", content: answer}])\
+          const grade = groundedLLM.invoke([{role: "system", content: groundedInstructions}, {role: "user", content: answer}])
           return grade.grounded
         };
     `,
@@ -750,7 +750,7 @@ Another useful way to evaluate responses without needing reference answers is to
             QUESTION: \${inputs.question}\`
             
           // Run evaluator
-          const grade = retrievalRelevanceLLM.invoke([{role: "system", content: retrievalRelevanceInstructions}, {role: "user", content: answer}])\
+          const grade = retrievalRelevanceLLM.invoke([{role: "system", content: retrievalRelevanceInstructions}, {role: "user", content: answer}])
           return grade.relevant
         };
     `,
@@ -781,7 +781,7 @@ We can now kick off our evaluation job with all of our different evaluators.
     typescript`
         import { evaluate } from "langsmith/evaluation";
         
-        const targetFunc = (input: Record<string, any>) => {
+        const targetFunc = (inputs: Record<string, any>) => {
             return ragBot(inputs.question)
         };
         
@@ -1251,7 +1251,7 @@ Here's a consolidated script with all the above code:
             STUDENT ANSWER: \${outputs.answer}\`
             
           // Run evaluator
-          const grade = graderLLM.invoke([{role: "system", content: correctnessInstructions}, {role: "user", content: answer}])\
+          const grade = graderLLM.invoke([{role: "system", content: correctnessInstructions}, {role: "user", content: answer}])
           return grade.score
         };
         
@@ -1299,7 +1299,7 @@ Here's a consolidated script with all the above code:
         STUDENT ANSWER: \${outputs.answer}\`
             
           // Run evaluator
-          const grade = relevanceLLM.invoke([{role: "system", content: relevanceInstructions}, {role: "user", content: answer}])\
+          const grade = relevanceLLM.invoke([{role: "system", content: relevanceInstructions}, {role: "user", content: answer}])
           return grade.relevant
         };
         
@@ -1348,7 +1348,7 @@ Here's a consolidated script with all the above code:
             STUDENT ANSWER: \${outputs.answer}\`
             
           // Run evaluator
-          const grade = groundedLLM.invoke([{role: "system", content: groundedInstructions}, {role: "user", content: answer}])\
+          const grade = groundedLLM.invoke([{role: "system", content: groundedInstructions}, {role: "user", content: answer}])
           return grade.grounded
         };
         
@@ -1398,7 +1398,7 @@ Here's a consolidated script with all the above code:
             QUESTION: \${inputs.question}\`
             
           // Run evaluator
-          const grade = retrievalRelevanceLLM.invoke([{role: "system", content: retrievalRelevanceInstructions}, {role: "user", content: answer}])\
+          const grade = retrievalRelevanceLLM.invoke([{role: "system", content: retrievalRelevanceInstructions}, {role: "user", content: answer}])
           return grade.relevant
         };
         
