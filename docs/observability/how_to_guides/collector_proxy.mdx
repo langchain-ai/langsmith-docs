@@ -35,14 +35,29 @@ Configure via environment variables:
 | -------------------- | --------------------------------- | --------------------------------- |
 | `HTTP_PORT`          | Port to run the proxy server      | `4318`                            |
 | `LANGSMITH_ENDPOINT` | LangSmith backend URL             | `https://api.smith.langchain.com` |
-| `LANGSMITH_API_KEY`  | API key for LangSmith             | **Required**                      |
-| `LANGSMITH_PROJECT`  | Default tracing project           | _Optional_                        |
+| `LANGSMITH_API_KEY`  | API key for LangSmith             | **Required** (env var or header)  |
+| `LANGSMITH_PROJECT`  | Default tracing project           | Default project if not specified  |
 | `BATCH_SIZE`         | Spans per upload batch            | `100`                             |
 | `FLUSH_INTERVAL_MS`  | Flush interval in milliseconds    | `1000`                            |
 | `MAX_BUFFER_BYTES`   | Max uncompressed buffer size      | `10485760` (10 MB)                |
 | `MAX_BODY_BYTES`     | Max incoming request body size    | `209715200` (200 MB)              |
 | `MAX_RETRIES`        | Retry attempts for failed uploads | `3`                               |
 | `RETRY_BACKOFF_MS`   | Initial backoff in milliseconds   | `100`                             |
+
+### Project Configuration
+
+The Collector-Proxy supports LangSmith project configuration with the following priority:
+
+1. If a project is specified in the request headers (`Langsmith-Project`), that project will be used
+2. If no project is specified in headers, it will use the project set in the `LANGSMITH_PROJECT` environment variable
+3. If neither is set, it will trace to the `default` project.
+
+### Authentication
+
+The API key can be provided either:
+
+- As an environment variable (`LANGSMITH_API_KEY`)
+- In the request headers (`X-API-Key`)
 
 ## Deployment (Docker)
 
@@ -58,7 +73,7 @@ You can deploy the Collector-Proxy with Docker:
 
 2. **Run the container**
 
-```
+```bash
 docker run -d \
   -p 4318:4318 \
   -e LANGSMITH_API_KEY=<your_api_key> \
