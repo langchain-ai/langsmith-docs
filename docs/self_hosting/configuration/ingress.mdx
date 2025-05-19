@@ -51,12 +51,11 @@ With these parameters in hand, you can configure your LangSmith instance to use 
     annotations: {} # Add annotations here if needed
     labels: {} # Add labels here if needed
     tls: [] # Add TLS configuration here if needed
-
 frontend:
-  service:
-    type: ClusterIP
-`)
-]}
+    service:
+        type: ClusterIP
+`),
+  ]}
 />
 
 Once configured, you will need to update your LangSmith installation. If everything is configured correctly, your LangSmith instance should now be accessible via the Ingress.
