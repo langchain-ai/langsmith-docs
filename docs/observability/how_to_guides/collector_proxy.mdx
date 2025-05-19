@@ -1,10 +1,18 @@
 # [Beta] LangSmith Collector-Proxy
 
 :::tip Note
-The LangSmith Collector-Proxy feature is currently in Beta and subject to change.
+The LangSmith Collector-Proxy feature is currently in Beta and subject to change. [View the source code on GitHub](https://github.com/langchain-ai/langsmith-collector-proxy).
 :::
 
-The LangSmith Collector-Proxy is a middleware service designed to efficiently aggregate, compress, and bulk-upload tracing data from your applications to LangSmith. It’s optimized for large-scale, parallel environments generating high volumes of spans.
+The LangSmith Collector-Proxy is a middleware service designed to efficiently aggregate, compress, and bulk-upload OTEL tracing data from your applications to LangSmith. It's optimized for large-scale, parallel environments generating high volumes of spans.
+
+## When to Use the Collector-Proxy
+
+The Collector-Proxy is particularly valuable when:
+
+- You're running multiple instances of your application in parallel and need to efficiently aggregate traces
+- You want more efficient tracing than direct OTEL API calls to LangSmith (the collector optimizes batching and compression)
+- You're using a language that doesn't have a native LangSmith SDK
 
 ## Key Features
 
