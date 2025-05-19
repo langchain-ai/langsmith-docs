@@ -29,7 +29,8 @@ Evaluate and improve your application before deploying it.
 - [Evaluate an existing experiment (Python only)](./how_to_guides/evaluate_existing_experiment)
 - [Run an evaluation from the UI](./how_to_guides/run_evaluation_from_prompt_playground)
 - [Run an evaluation via the REST API](./how_to_guides/run_evals_api_only)
-- [Run an evaluation with large file inputs](./how_to_guides/evaluate_with_attachments)
+- [Run an evaluation with multimodal content](./how_to_guides/evaluate_with_attachments)
+- [Simulate multi-turn interactions](./how_to_guides/multi_turn_simulation)
 
 ### Define an evaluator
 
@@ -54,6 +55,13 @@ Evaluate and improve your application before deploying it.
 - [Print detailed logs (Python only)](../../observability/how_to_guides/output_detailed_logs)
 - [Run an evaluation locally (beta, Python only)](./how_to_guides/local)
 
+### Add default evaluators to a dataset
+
+Set up evaluators that automatically run for all experiments against a dataset.
+
+- [Set up an auto-evaluator](./how_to_guides/bind_evaluator_to_dataset)
+- [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
+
 ## Testing integrations
 
 Run evals using your favorite testing tools.
@@ -65,15 +73,7 @@ Run evals using your favorite testing tools.
 
 Evaluate and monitor your system's live performance on production data.
 
-- [Set up an LLM-as-judge online evaluator](../../observability/how_to_guides/online_evaluations#configure-llm-as-judge-evaluators)
-- [Set up a custom code online evaluator](../../observability/how_to_guides/online_evaluations#configure-custom-code-evaluators)
-- [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
-
-## Automatic evaluation
-
-Set up evaluators that automatically run for all experiments against a dataset.
-
-- [Set up an auto-evaluator](./how_to_guides/bind_evaluator_to_dataset)
+- [Set up an online evaluator](/observability/how_to_guides/online_evaluations#get-started-with-online-evaluators)
 - [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
 
 ## Analyzing experiment results
@@ -102,7 +102,7 @@ Manage datasets in LangSmith used by your evaluations.
 - [Fetch a dataset with the SDK](./how_to_guides/manage_datasets_programmatically#fetch-datasets)
 - [Update a dataset with the SDK](./how_to_guides/manage_datasets_programmatically#update-examples)
 - [Version a dataset](./how_to_guides/version_datasets)
-- [Share/unshare a dataset publicly](./how_to_guides/share_dataset)
+- [Dataset sharing](./how_to_guides/share_dataset)
 - [Export filtered traces from an experiment to a dataset](./how_to_guides/export_filtered_traces_to_dataset)
 
 ## Annotation queues and human feedback

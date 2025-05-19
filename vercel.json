@@ -1,90 +1,39 @@
 {
   "cleanUrls": true,
+  "buildCommand": "yarn vercel-build",
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/evaluation/custom-evaluators",
-      "destination": "/evaluation/faq/custom-evaluators"
-    },
-    {
       "source": "/category/tracing",
-      "destination": "/tracing"
-    },
-    {
-      "source": "category/testing--evaluation",
-      "destination": "/evaluation"
-    },
-    {
-      "source": "/category/langsmith-cookbook",
-      "destination": "/cookbook"
-    },
-    {
-      "source": "/tracing/tracing-faq",
-      "destination": "/tracing/faq"
-    },
-    {
-      "source": "/category/organizations",
-      "destination": "/"
-    },
-    {
-      "source": "/organizations",
-      "destination": "/"
+      "destination": "/observability"
     },
     {
       "source": "/category/organizations/:path*",
       "destination": ":path*"
     },
     {
-      "source": "/cookbook/testing-examples/prod-candidate-testing",
-      "destination": "/cookbook/testing-examples/backtesting"
-    },
-    {
       "source": "/evaluation/faq/datasets-client",
-      "destination": "/evaluation/faq/manage-datasets#how-to-manage-datasets-programmatically"
+      "destination": "/evaluation/how_to_guides/manage_datasets_programmatically"
     },
     {
       "source": "/evaluation/faq/datasets-webapp",
-      "destination": "/evaluation/faq/manage-datasets"
-    },
-    {
-      "source": "/overview",
-      "destination": "/"
-    },
-    {
-      "source": "/docs/:path*",
-      "destination": "/:path*"
+      "destination": "/evaluation/how_to_guides/manage_datasets_in_application#manage-a-dataset"
     },
     {
       "source": "/monitoring/:path*",
-      "destination": "/old/monitoring/:path*"
-    },
-    {
-      "source": "/proxy/:path*",
-      "destination": "/old/proxy/:path*"
+      "destination": "/observability/how_to_guides#monitoring"
     },
     {
       "source": "/tracing/:path*",
-      "destination": "/old/tracing/:path*"
-    },
-    {
-      "source": "/cookbook/:path*",
-      "destination": "/old/cookbook/:path*"
+      "destination": "/observability"
     },
     {
       "source": "/hub/:path*",
-      "destination": "/old/hub/:path*"
-    },
-    {
-      "source": "/user_guide",
-      "destination": "/old/user_guide"
+      "destination": "/prompt_engineering/how_to_guides#prompt-hub"
     },
     {
       "source": "/category/prompt-hub/:path*",
-      "destination": "/old/category/prompt-hub/:path*"
-    },
-    {
-      "source": "/category/proxy/:path*",
-      "destination": "/old/category/proxy/:path*"
+      "destination": "/prompt_engineering/how_to_guides#prompt-hub"
     },
     {
       "source": "/category/release-notes",
@@ -92,47 +41,35 @@
     },
     {
       "source": "/how_to_guides/evaluation/:path*",
-      "destination": "/evaluation/how_to_guides/evaluation/:path*"
+      "destination": "/evaluation/how_to_guides/evaluation"
     },
     {
       "source": "/how_to_guides/human_feedback/:path*",
-      "destination": "/evaluation/how_to_guides/human_feedback/:path*"
+      "destination": "/evaluation/how_to_guides#annotation-queues-and-human-feedback"
     },
     {
       "source": "/how_to_guides/datasets/:path*",
-      "destination": "/evaluation/how_to_guides/datasets/:path*"
+      "destination": "/evaluation/how_to_guides#dataset-management"
     },
     {
       "source": "/how_to_guides/monitoring/:path*",
-      "destination": "/observability/how_to_guides/monitoring/:path*"
+      "destination": "/observability/how_to_guides"
     },
     {
       "source": "/how_to_guides/tracing/:path*",
-      "destination": "/observability/how_to_guides/tracing/:path*"
+      "destination": "/observability/how_to_guides"
     },
     {
       "source": "/how_to_guides/prompts/:path*",
-      "destination": "/prompt_engineering/how_to_guides/prompts/:path*"
+      "destination": "/prompt_engineering/how_to_guides#prompt-hub"
     },
     {
       "source": "/how_to_guides/playground/:path*",
-      "destination": "/prompt_engineering/how_to_guides/playground/:path*"
+      "destination": "/prompt_engineering/how_to_guides#playground"
     },
     {
       "source": "/how_to_guides/setup/:path*",
-      "destination": "/administration/how_to_guides/organization_management/:path*"
-    },
-    {
-      "source": "/how_to_guides",
-      "destination": "/"
-    },
-    {
-      "source": "/concepts",
-      "destination": "/"
-    },
-    {
-      "source": "/tutorials",
-      "destination": "/"
+      "destination": "/administration/how_to_guides/organization_management"
     },
     {
       "source": "/concepts/admin:path*",
@@ -156,7 +93,7 @@
     },
     {
       "source": "/pricing:path*",
-      "destination": "/pricing"
+      "destination": "https://www.langchain.com/pricing-langsmith"
     },
     {
       "source": "/tutorials/Developers/observability",
@@ -220,7 +157,7 @@
     },
     {
       "source": "/evaluation/how_to_guides/unit_testing(/?)",
-      "destination": "/evauation/how_to_guides/pytest"
+      "destination": "/evaluation/how_to_guides/pytest"
     },
     {
       "source": "/observability/how_to_guides/tracing/:path*",
@@ -241,16 +178,74 @@
     {
       "source": "/evaluation/how_to_guides/use_langchain_off_the_shelf_evaluators",
       "destination": "/evaluation/how_to_guides/prebuilt_evaluators"
-    }
-  ],
-  "builds": [
+    },
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "outputDirectory": "build",
-        "buildCommand": "npm run vercel-build"
-      }
+      "source": "/evaluation/how_to_guides/multiturn_evaluation",
+      "destination": "/prompt_engineering/how_to_guides/multiple_messages"
+    },
+    {
+      "source": "/old/tracing/faq/querying_traces",
+      "destination": "/observability/how_to_guides/export_traces"
+    },
+    {
+      "source": "/old/tracing/:path*",
+      "destination": "/observability"
+    },
+    {
+      "source": "/old/evaluation/:path*",
+      "destination": "/evaluation"
+    },
+    {
+      "source": "/old/monitoring/:path*",
+      "destination": "/observability/how_to_guides#monitoring"
+    },
+    {
+      "source": "/old/hub/:path*",
+      "destination": "/how_to_guides#prompt-hub"
+    },
+    {
+      "source": "/old/category/prompt-hub/:path*",
+      "destination": "/prompt_engineering/quickstarts/quickstart_ui"
+    },
+    {
+      "source": "/old/pricing/:path*",
+      "destination": "https://www.langchain.com/pricing-langsmith"
+    },
+    {
+      "source": "/old/category/self-hosting/:path*",
+      "destination": "/self_hosting"
+    },
+    {
+      "source": "/old/cookbook/tracing-examples/:path*",
+      "destination": "/observability/how_to_guides"
+    },
+    {
+      "source": "/old/cookbook/hub-examples/:path*",
+      "destination": "/prompt_engineering/how_to_guides"
+    },
+    {
+      "source": "/old/cookbook/testing-examples/:path*",
+      "destination": "/evaluation/how_to_guides"
+    },
+    {
+      "source": "/old/cookbook/typescript-testing-examples/:path*",
+      "destination": "/evaluation"
+    },
+    {
+      "source": "/old/cookbook/introduction/:path",
+      "destination": "/"
+    },
+    {
+      "source": "/old/cookbook/exploratory-data-analysis/:path*",
+      "destination": "/evaluation/how_to_guides#analyzing-experiment-results"
+    },
+    {
+      "source": "/old/cookbook/fine-tuning-examples/:path*",
+      "destination": "/"
+    },
+    {
+      "source": "/old/cookbook/introduction/:path*",
+      "destination": "/evaluation/concepts"
     }
   ]
 }

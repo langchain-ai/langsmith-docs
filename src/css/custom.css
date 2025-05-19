@@ -267,7 +267,7 @@ html[data-theme="dark"] {
 }
 
 /* Dark mode specific styling */
-[data-theme='dark'] .fold-markers {
+[data-theme="dark"] .fold-markers {
   /* background: var(--prism-background-color) !important; */
   background: #1e1e1e;
 }
@@ -322,7 +322,7 @@ html[data-theme="dark"] {
 }
 
 .code-block-with-gutter {
-  padding-left: 12px
+  padding-left: 12px;
 }
 
 /* Remove theme border */
@@ -359,7 +359,7 @@ html[data-theme="dark"] {
   .tabs-container > .code-tabs {
     background: #1e1e1e;
   }
-  
+
   .tabs-container .code-caption {
     background: #1e1e1e;
   }
@@ -422,7 +422,7 @@ hr {
   background-color: var(--joy-palette-background-level2) !important;
 }
 
-div[class^='announcementBar_'] {
+div[class^="announcementBar_"] {
   font-size: 20px;
   background-color: #d0c9feff;
   font-weight: bold;
@@ -434,4 +434,14 @@ div[class^='announcementBar_'] {
 
 .no-highlight > .menu__list-item-collapsible {
   background: transparent !important;
+}
+
+.interface-tabs {
+  padding: 10px;
+  border: none;
+  border-bottom: 1.5px solid #cbbbbb;
+}
+
+.interface-tabs .tabs__item {
+  font-size: 1.25rem;
 }

@@ -2,34 +2,106 @@
 sidebar_position: 1
 ---
 
-# How to manage datasets in the UI
+# Creating and Managing Datasets in the UI
+
+[Datasets](/evaluation/concepts#datasets) enable you to perform repeatable evaluations over time using consistent data. Datasets are made up of [examples](/evaluation/concepts#examples), which store inputs, outputs, and optionally, reference outputs.
+
 
 :::tip Recommended Reading
-Before diving into this content, it might be helpful to read the following:
-
-- [Concepts guide on evaluation and datasets](../concepts#datasets-and-examples)
-
+For more information on datasets, evaluations and examples, read the [concepts guide on evaluation and datasets](../concepts#datasets-and-examples).
 :::
 
-The easiest way to interact with datasets is directly in the LangSmith app. Here, you can create and edit datasets and examples.
+This guide outlines the various methods for creating and editing datasets in LangSmith's UI. 
 
-## Set up your dataset
+## Create a dataset and add examples 
 
-To create a dataset, head to the Datasets & Experiments page in LangSmith, and click `+ Dataset`. You'll have 2 options for
-getting started:
+### Manually from a tracing project 
+A common pattern for constructing datasets is to convert notable traces from your application into dataset examples. This approach requires that you have [tracing to LangSmith configured](/observability/how_to_guides#tracing-configuration). 
 
-### Option 1: Create from CSV
+:::tip
+A powerful technique to build datasets is to filter-down into the most interesting traces, such as traces that were tagged with poor user feedback, and add them to a dataset.
+For tips on how to filter traces, see the [filtering traces](../../../observability/how_to_guides/filter_traces_in_application) guide.
+:::
 
-Select a name and description for the dataset, and then confirm that the inferred input and output columns are correct.
+There are two ways to manually add data from a tracing projects to datasets.
 
-![Confirm Columns](./static/select_columns.png)
+1) Multi-select runs from the runs table:
 
-### Option 2: Create empty Dataset
+![Multi-select runs](./static/multiselect_add_to_dataset.png)
 
-#### Set up a schema
+2) Navigate to the run details page and click `Add to -> Dataset` on the top right corner:
 
-LangSmith datasets store arbitrary JSON objects. We recommend (but do not require) that you define a schema for your dataset.
-Dataset schemas are defined with standard [JSON schema](https://json-schema.org/), with the addition of a few [prebuilt types](/reference/data_formats/dataset_json_types)
+![Add to dataset](./static/add_to..dataset.png)
+
+When you select a dataset from the run details page, a modal will pop up letting you know if any [transformations](/reference/evaluation/dataset_transformations) were applied or if schema validation failed. For example, the screenshot below shows a dataset that is using transformations to optimize for collecting LLM runs. 
+
+![](./static/confirmation.png)
+
+You can then optionally edit the run before adding it to the dataset.
+
+### Automatically from a tracing project
+
+You can use [run rules](../../../observability/how_to_guides/rules) to automatically add traces to a dataset based on certain conditions. For example, you could add all traces that are [tagged](/observability/concepts#tags) with a specific use case or have a [low feedback score](/observability/concepts#feedback). 
+
+### From examples in an Annotation Queue
+
+:::tip
+If you rely on subject matter experts to build meaningful datasets, use [annotation queues](/evaluation/how_to_guides/annotation_queues) to provide a streamlined view for reviewiers. Human reviewers can optionally modify the inputs/outputs/reference outputs from a trace before it is added to the dataset. 
+:::
+
+Annotation queues are can be optionally configured with a default dataset, though you can add runs to any dataset by using the dataset switcher on the bottom of the screen. Once you select the right dataset, click **Add to Dataset** or hit the hot key `D` to add the run to it.
+
+Any modifications you make to the run in your annotation queue will carry over to the dataset, and all metadata associated with the run will also be copied.
+
+![](./static/add_to_dataset_from_aq.png)
+
+Note you can also set up rules to add runs that meet specific criteria to an annotation queue using [automation rules](/observability/how_to_guides/rules). 
+
+### From the Prompt Playground
+
+On the [**Prompt Playground**](/prompt_engineering/concepts#prompt-playground) page, select **Set up Evaluation**, click **+New** if you're starting a new dataset or select from an existing dataset.
+
+:::note
+Creating datasets inline in the playground is not supported for datasets that have nested keys. In order to add/edit examples with nested keys, you must edit [from the datasets page](/evaluation/how_to_guides/manage_datasets_in_application#from-the-datasets-page). 
+:::
+
+To edit the examples:
+- Use **+Row** to add a new example to the dataset 
+- Delete an example using the **⋮** dropdown on the right hand side of the table
+- If you're creating a reference-free dataset remove the "Reference Output" column using the **x** button in the column. Note: this action is not reversable.
+
+![Create a dataset in the playground](./static/playground_dataset.png)
+
+### Import a dataset from a CSV or JSONL file
+
+On the **Datasets & Experiments** page, click **+New Dataset**, then **Import** an existing dataset from CSV or JSONL file. 
+
+### Create a new dataset from the dataset page
+
+On the **Datasets & Experiments** page, click **+New Dataset**, then **Create an empty dataset**.  You can optionally create a [dataset schema](/evaluation/how_to_guides/manage_datasets_in_application#create-a-dataset-schema) to validate your dataset. 
+
+Then to add examples inline, go to the **Examples** tab, and click **+ Example`**. This will let you define examples in JSON inline.
+
+#### Add synthetic examples created by an LLM via the Datasets UI
+
+If you have a schema defined on your dataset, when you click `+ Example` you'll see an option to `Generate examples`. This will use an LLM to create synthetic examples.
+
+You have to do the following:
+
+1. **Select few-shot examples**: Choose a set of examples to guide the LLM's generation. You can manually select these examples from your dataset or use the automatic selection option.
+2. **Specify the number of examples**: Enter the number of synthetic examples you want to generate.
+3. **Configure API Key**: Ensure your OpenAI API key is entered at the "API Key" link.
+   ![Generate Synthetic Examples](./static/generate_synthetic_examples_create.png)
+
+After clicking "Generate," the examples will appear on the page. You can choose which examples to add to your dataset, with the option to edit them before finalizing.
+Each example will be validated against your specified dataset schema and tagged as "synthetic" in the source metadata.
+![Generate Synthetic Examples](./static/generate_synthetic_examples_pane.png)
+
+## Manage a Dataset
+
+### Create a dataset schema 
+
+LangSmith datasets store arbitrary JSON objects. We recommend (but do not require) that you define a schema for your dataset to ensure that they confirm to a specific JSON schema. Dataset schemas are defined with standard [JSON schema](https://json-schema.org/), with the addition of a few [prebuilt types](/reference/data_formats/dataset_json_types)
 that make it easier to type common primitives like messages and tools.
 
 Certain fields in your schema have a `+ Transformations` option.
@@ -46,86 +118,7 @@ or from OpenAI calls using the [LangSmith OpenAI wrapper](/observability/how_to_
 Please see the [dataset transformations reference](/reference/evaluation/dataset_transformations) for more information.
 :::
 
-## Add runs to your dataset in the UI
-
-There are a few ways to add examples to your dataset in UI.
-
-### Add runs from the tracing project UI
-
-A common pattern for constructing datasets is to simply use the application and convert interesting traces into dataset examples. To do this, we first filter
-through our tracing projects to find the runs we want to add to the dataset. Then we add the inputs, outputs, and metadata from these runs to the dataset.
-
-:::tip
-An extremely powerful technique to build datasets is to drill-down into the most interesting traces, such as traces that were tagged with poor user feedback, and add them to a dataset.
-For tips on how to filter traces, see the [filtering traces](../../../observability/how_to_guides/filter_traces_in_application) guide.
-:::
-
-There are two ways to add data from tracing projects to datasets.
-
-The first way is to multi-select runs from the runs table:
-
-![](./static/multiselect_add_to_dataset.png)
-
-The second is to navigate to the run details page and click `Add to -> Dataset` on the top right corner:
-
-![](./static/add_to..dataset.png)
-
-When you select the proper dataset from the run details page (this one using transformations to optimize for collecting LLM runs),
-a modal will pop up letting you know if any transformations were applied / if schema validation failed. You can then optionally edit
-the run before adding it to the dataset.
-
-![](./static/confirmation.png)
-
-### Automatically add runs to a dataset
-
-You can use [run rules](../../../observability/how_to_guides/rules) to automatically add traces to a dataset based on certain conditions. For example, you could add all traces that have a certain tag to a dataset.
-
-### Add runs from an annotation queue
-
-Annotation queues are configured optionally with a default dataset, though they allow you to add runs to any dataset
-by simply pressing the dataset switcher on the bottom of the screen. Once you select the right dataset, you click `Add to Dataset`
-or hit the hot key `D` to add the run to it.
-
-![](./static/add_to_dataset_from_aq.png)
-
-Any modifications you make to the run in your annotation queue will carry over to
-the dataset, and all metadata associated with the run will also be copied.
-
-Note you can also set up rules to add runs that meet criteria to an annotation queue, and then follow the guide below for adding from annotation queues.
-
-### Add runs directly via the Datasets UI
-
-Go to the Datasets & Experiments UI, click the `Examples` tab, and `+ Example`. This will let you define examples in JSON inline.
-
-### Add synthetic examples created by an LLM via the Datasets UI
-
-If you have a schema defined on your dataset, when you click `+ Example` you'll see an option to `Generate examples`. This will use an LLM to create synthetic examples.
-
-You have to do the following:
-
-1. **Select few-shot examples**: Choose a set of examples to guide the LLM's generation. You can manually select these examples from your dataset or use the automatic selection option.
-2. **Specify the number of examples**: Enter the number of synthetic examples you want to generate.
-3. **Configure API Key**: Ensure your OpenAI API key is entered at the "API Key" link.
-   ![Generate Synthetic Examples](./static/generate_synthetic_examples_create.png)
-
-After clicking "Generate," the examples will appear on the page. You can choose which examples to add to your dataset, with the option to edit them before finalizing.
-Each example will be validated against your specified dataset schema and tagged as "synthetic" in the source metadata.
-![Generate Synthetic Examples](./static/generate_synthetic_examples_pane.png)
-
-## Export a dataset
-
-You can export your LangSmith dataset to CSV or OpenAI evals format directly from the web application.
-
-To do so, click "Export Dataset" from the homepage.
-To do so, select a dataset, click on "Examples", and then click the "Export Dataset" button at the top of the examples table.
-
-![Export Dataset Button](./static/export-dataset-button.png)
-
-This will open a modal where you can select the format you want to export to.
-
-![Export Dataset Modal](./static/export-dataset-modal.png)
-
-## Create and manage dataset splits
+### Create and manage dataset splits
 
 Dataset splits are divisions of your dataset that you can use to segment your data. For example, it is common
 in machine learning workflows to split datasets into training, validation, and test sets. This can be useful
@@ -146,21 +139,21 @@ you can select and unselect splits for the selected examples, or create a new sp
 
 ![Add to Split](./static/add_to_split2.png)
 
-## Edit example metadata
+### Edit example metadata
 
-You can add metadata to your examples by clicking on an example and then clicking on the "Metadata" tab in the side pane.
+You can add metadata to your examples by clicking on an example and then clicking "Edit" on the top righthand side of the popover.
 From this page, you can update/delete existing metadata, or add new metadata. You may use this to store information about
-your examples, such as tags or version info, which you can [then filter by when you call `list_examples` in the SDK](./manage_datasets_programmatically#list-examples-by-metadata).
+your examples, such as tags or version info, which you can then [group by](./analyze_single_experiment#group-results-by-metadata) when analyzing experiment results or [filter by](./manage_datasets_programmatically#list-examples-by-metadata) when you call `list_examples` in the SDK.
 
-![Add Metadata](./static/add_metadata.png)
+![Add Metadata](./static/add_metadata.gif)
 
-## Filter examples
+### Filter examples
 
-You can filter examples by metadata key/value or full-text search. To filter examples, click "Filter" in the top left of the table:
+You can filter examples by split, metadata key/value or perform full-text search over examples. These filtering options are available to the top left of the examples table. 
+- **Filter by split**: Select split > Select a split to filter by
+- **Filter by metadata**: Filters > Select "Metadata" from the dropdown > Select the metadata key and value to filter on
+- **Full-text search**: Filters > Select "Full Text" from the dropdown > Enter your search criteria 
 
-![Filter Examples](./static/filter_examples.png)
-
-Next, click "Add filter" and select "Full Text" or "Metadata" from the resulting dropdown. You may add multiple filters, and only examples that satisfy all of the
-filters will be displayed in the table.
+You may add multiple filters, and only examples that satisfy all of the filters will be displayed in the table.
 
 ![Filters Applied to Examples](./static/filters_applied.png)

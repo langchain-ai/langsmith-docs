@@ -34,6 +34,15 @@ const config = {
   },
   themes: ["@docusaurus/theme-mermaid"],
 
+  plugins: [
+    [
+      "@docusaurus/plugin-google-tag-manager",
+      {
+        containerId: "GTM-WRT5MXDT",
+      },
+    ],
+  ],
+
   presets: [
     [
       "classic",
@@ -45,12 +54,6 @@ const config = {
             current: {
               label: "stable",
               badge: false,
-            },
-            old: {
-              label: "old",
-              banner: "unmaintained",
-              badge: false,
-              path: "old",
             },
           },
           sidebarPath: require.resolve("./sidebars.js"),
@@ -107,7 +110,7 @@ const config = {
       },
       announcementBar: {
         content:
-          'Join us at <a href="https://interrupt.langchain.com/" target="_blank" rel="noopener noreferrer"> Interrupt: The Agent AI Conference by LangChain</a> on May 13 & 14 in San Francisco!',
+          'We are growing and hiring for multiple roles for LangChain, LangGraph and LangSmith. <a href="https://www.langchain.com/careers" target="_blank" rel="noopener noreferrer">Join our team!</a>',
       },
       prism: {
         theme: {
@@ -164,10 +167,6 @@ const config = {
           {
             title: "Community",
             items: [
-              {
-                label: "Discord",
-                href: "https://discord.gg/cU2adEyC7w",
-              },
               {
                 label: "Twitter",
                 href: "https://twitter.com/LangChainAI",
@@ -234,13 +233,7 @@ const config = {
         contextualSearch: true,
       },
     }),
-  scripts: [
-    "/js/google_analytics.js",
-    {
-      src: "https://www.googletagmanager.com/gtag/js?id=G-62DTR64PQZ",
-      async: true,
-    },
-  ],
+  scripts: [],
 };
 
 module.exports = config;
