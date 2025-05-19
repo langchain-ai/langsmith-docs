@@ -54,6 +54,7 @@ View and interact with your traces to debug your applications.
 - [Share or unshare a trace publicly](./how_to_guides/share_trace)
 - [Compare traces](./how_to_guides/compare_traces)
 - [View threads](./how_to_guides/threads#view-threads)
+- [Collector Proxy](./how_to_guides/collector_proxy)
 
 ## Monitoring
 
