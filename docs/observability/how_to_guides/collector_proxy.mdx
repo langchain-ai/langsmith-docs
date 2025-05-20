@@ -172,5 +172,5 @@ To ensure full traces are batched correctly, route spans with the same trace ID 
 
 Fork the [Collector-Proxy repo on GitHub](https://github.com/langchain-ai/langsmith-collector-proxy) and implement your own converter:
 
-- Create a custom `GenAiConverter` in `internal/translator`
-- Register it in `cmd/collector` to handle bespoke OTLP conventions.
+- Create a custom `GenAiConverter` or modify the existing one in `internal/translator/otel_converter.go`
+- Register the custom converter in `internal/translator/translator.go`
