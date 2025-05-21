@@ -28,7 +28,7 @@ For LangSmith to accurately calculate token-based costs, you need to provide the
 
 :::note
 
-If `ls_model_name` is not present in `extra.metadata`, other fields might be used from the `extra.invocation_metadata` for estimating token counts and calculating cost. The following fields are used in the order of precedence:
+If `ls_model_name` is not present in `extra.metadata`, other fields might be used from the `extra.metadata` for estimating token counts and calculating cost. The following fields are used in the order of precedence:
 
 1. `metadata.ls_model_name`
 2. `invocation_params.model`
@@ -135,3 +135,11 @@ This information matches the model pricing map entry we set up earlier.
 The trace produced will contain the token-based costs based on the token counts provided in the LLM invocation and the model pricing map entry.
 
 ![](./static/model_costs.png)
+
+## Explicitly setting costs while tracing
+
+If you are tracing an LLM call that returns token cost information, are tracing an API with a non-token based pricing scheme,
+or otherwise have accurate information around costs at runtime, you may instead populate a `usage_metadata`
+dict while tracing rather than relying on LangSmith's built-in token counting.
+
+See [this section](./log_llm_trace#manually-provide-usage-information) on manually providing usage information for an example.

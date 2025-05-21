@@ -163,29 +163,150 @@ list(
 )
 ```
 
-## Manually provide token counts
+:::tip
+
+If `ls_model_name` is not present in `extra.metadata`, other fields might be used from the `extra.metadata` for estimating token counts. The following fields are used in the order of precedence:
+
+1. `metadata.ls_model_name`
+2. `inputs.model`
+3. `inputs.model_name`
+
+:::
+
+## Manually provide usage information
 
 :::tip Token-based cost tracking
 
-To learn how to set up token-based cost tracking based on the token usage information, see [this guide](./calculate_token_based_costs).
+To learn how to set up custom token-based cost tracking based on provided token counts, see [this guide](./calculate_token_based_costs).
+
 :::
 
 By default, LangSmith uses [TikToken](https://github.com/openai/tiktoken) to count tokens, utilizing a best guess at the model's tokenizer based on the `ls_model_name` provided.
-Many models already include token counts as part of the response. You can send these token counts to LangSmith by providing the `usage_metadata` field in the response.
-If token information is passed to LangSmith, the system will use this information _instead of_ using TikToken.
+However, many models already include exact token counts as part of the response. If you have this information, you can override the default token calculation in LangSmith in one of two ways:
 
-You can add a `usage_metadata` key to the function's response, containing a dictionary with the keys `input_tokens`, `output_tokens` and `total_tokens`.
-If using LangChain or [OpenAI wrapper](./annotate_code#wrap-the-openai-client), these fields will be automatically populated correctly.
+1. Extract usage within your traced function and set a `usage_metadata` field on the run's metadata.
+2. Return a `usage_metadata` field in your traced function/`RunTree` outputs.
+
+In both cases, the usage metadata you extract should contain some of the following LangSmith-recognized fields:
+
+```python
+class ExtractedUsageMetadata(TypedDict, total=False):
+    prompt_tokens: int
+    """The number of tokens used for the prompt."""
+
+    completion_tokens: int
+    """The number of tokens generated as output."""
+
+    total_tokens: int
+    """The total number of tokens used."""
+
+    input_token_details: dict[str, Any]
+    """The details of the input tokens."""
+
+    output_token_details: dict[str, Any]
+    """The details of the output tokens."""
+
+    input_cost: Decimal
+    """The cost of the input tokens."""
+
+    output_cost: Decimal
+    """The cost of the output tokens."""
+
+    total_cost: Decimal
+    """The total cost of the tokens."""
+
+    input_cost_details: dict[str, Any]
+    """The cost details of the input tokens."""
+
+    output_cost_details: dict[str, Any]
+    """The cost details of the output tokens."""
+```
+
+### Setting usage metadata on the run
 
 :::note
 
-If `ls_model_name` is not present in `extra.metadata`, other fields might be used from the `extra.invocation_metadata` for estimating token counts. The following fields are used in the order of precedence:
-
-1. `metadata.ls_model_name`
-2. `invocation_params.model`
-3. `invocation_params.model_name`
+Modifying metadata as shown below was added in `langsmith>=0.3.43` (Python) and `langsmith>=0.3.30` (JS/TS).
 
 :::
+
+You can [modify the current run's metadata](./add_metadata_tags)
+with usage information within your traced function. The advantage of this approach is that you do not have to actively change
+your traced function's runtime outputs. Here's an example:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import traceable, get_current_run_tree\n
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."},
+]\n
+@traceable(
+    run_type="llm",
+    metadata={"ls_provider": "my_provider", "ls_model_name": "my_model"}
+)
+def chat_model(messages: list):
+    llm_output = {
+        "choices": [
+            {
+                "message": {
+                    "role": "assistant",
+                    "content": "Sure, what time would you like to book the table for?"
+                }
+            }
+        ],
+        "usage_metadata": {
+            "input_tokens": 27,
+            "llm_output_tokens": 13,
+            "total_tokens": 40,
+        },
+    }
+    run = get_current_run_tree()
+    run.set(usage=llm_output["usage_metadata"])
+    return llm_output["choices"][0]["message"]\n
+chat_model(inputs)`),
+    TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";\n
+const messages = [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "I'd like to book a table for two." },
+];\n
+const chatModel = traceable(
+  async ({
+    messages,
+  }: {
+    messages: { role: string; content: string }[];
+    model: string;
+  }) => {
+    const llmOutput = {
+      choices: [
+        {
+          message: {
+            role: "assistant",
+            content: "Sure, what time would you like to book the table for?",
+          },
+        },
+      ],
+      usage_metadata: {
+        input_tokens: 27,
+        output_tokens: 13,
+        total_tokens: 40,
+      },
+    };
+    const runTree = getCurrentRunTree();
+    runTree.metadata.usage_metadata = llmOutput.usage_metadata;
+    return llmOutput.choices[0].message;
+  },
+  { run_type: "llm", name: "chat_model", metadata: { ls_provider: "my_provider", ls_model_name: "my_model" } }
+);\n
+await chatModel({ messages });`),
+  ]}
+  groupId="client-language"
+/>
+
+### Returning usage metadata
+
+You can add a `usage_metadata` key to the function's response.
+If using LangChain or [OpenAI wrapper](./annotate_code#wrap-the-openai-client), these fields will be automatically populated correctly.
 
 <CodeTabs
   tabs={[
