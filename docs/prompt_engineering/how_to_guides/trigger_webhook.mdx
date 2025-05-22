@@ -36,15 +36,15 @@ The sample payload is a JSON object with the following fields:
 
 ## Trigger the webhook
 
-Commit to a prompt to trigger the webhooks you've configured.
+Commit to a prompt to trigger the webhook you've configured.
 
 ### Using the Playground
 
-If you do this in the Playground, you'll be prompted to deselect any webhooks you'd like to avoid triggering.
+If you do this in the Playground, you'll be prompted to deselect the webhooks you'd like to avoid triggering.
 
 ![](./static/commit_prompt_playground.png)
 
 ### Using the API
 
-If you commit via the API, you can specify to skip triggering all webhooks by setting the `skip_webhooks` parameter to `true` or to specify specific webhooks to trigger by setting the `ignore_webhook_ids` parameter to a list of webhook ids.
+If you commit via the API, you can specify to skip triggering the webhook by setting the `skip_webhooks` parameter to `true` or to an array of webhook ids to ignore.
 See API docs [here](https://api.smith.langchain.com/redoc#tag/commits/operation/create_commit_api_v1_commits__owner___repo__post) for more information.
