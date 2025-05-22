@@ -362,7 +362,7 @@ The webhook will typically send a JSON payload containing the entire **prompt ma
 </details>
 
 :::note Workspace Level Triggers
-It's important to understand that Langsmith webhooks for prompt commits are generally triggered at the **workspace level**. This means if *any* prompt within your Langsmith workspace is modified and a "prompt commit" is saved, the webhook will fire and send the *entire manifest* of all prompts in that workspace. Your receiving server should be designed with this in mind.
+It's important to understand that Langsmith webhooks for prompt commits are generally triggered at the **workspace level**. This means if *any* prompt within your Langsmith workspace is modified and a "prompt commit" is saved, the webhook will fire and send the updated manifest of the prompt. The payloads are identifiable by prompt id. Your receiving server should be designed with this in mind.
 :::
 
 ## Configuring the Webhook in Langsmith
