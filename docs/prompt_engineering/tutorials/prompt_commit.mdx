@@ -36,7 +36,6 @@ Before we begin, ensure you have the following set up:
 
 5.  **Publicly Accessible Webhook Receiver (FastAPI Server):**
     * When a prompt is updated in Langsmith, it will send a webhook (an HTTP POST request) to a URL you specify. This URL must be publicly accessible on the internet.
-    * **Localhost won't work:** Langsmith's servers need to be able to reach your server, so `http://localhost:8000` is not suitable for this.
     * **Deployment Platform:** For this tutorial, we recommend using a service like [Render.com](https://render.com/), which offers a free tier suitable for hosting a simple FastAPI application and provides a public URL. Other alternatives include Vercel, Fly.io, or any cloud provider (AWS, GCP, Azure).
     * We will build a simple FastAPI server to receive these webhooks. The code is provided below.
 
