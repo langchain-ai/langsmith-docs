@@ -7,7 +7,7 @@ sidebar_position: 4 # Or an appropriate position
 
 LangSmith provides a collaborative interface to create, test, and iterate on prompts.
 
-A powerful feature to enhance this workflow is the ability to react to prompt modifications using **webhooks**. When a prompt is updated in Langsmith and a "prompt commit" is made, a webhook can trigger external actions. This tutorial will guide you through setting up a system to automatically commit your Langsmith prompt manifest to a GitHub repository whenever a prompt is updated.
+While you can [dynamically fetch prompts](/prompt_engineering/how_to_guides/manage_prompts_programatically#pull-a-prompt) from LangSmith into your application at runtime, you may prefer to sync prompts with your own database or version control system. To support this workflow, LangSmith allows you to receive notifications of prompt updates via webhooks.
 
 **Why sync prompts with GitHub?**
 
