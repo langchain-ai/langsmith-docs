@@ -182,11 +182,13 @@ It's important to understand that LangSmith webhooks for prompt commits are gene
 
 ## Implementing a FastAPI Server for Webhook Reception
 
-To effectively process webhook notifications from LangSmith when prompts are updated, a dedicated FastAPI server is implemented. This publicly accessible server is designed to:
+To effectively process webhook notifications from LangSmith when prompts are updated, an intermediary server application is necessary. This server will act as the receiver for HTTP POST requests sent by LangSmith. For demonstration purposes in this guide, we will outline the creation of a simple FastAPI application to fulfill this role.
 
-1.  **Receive Webhook Requests:** Listen for incoming HTTP POST requests sent by LangSmith.
-2.  **Parse Payloads:** Extract and interpret the JSON-formatted prompt manifest from the request body.
-3.  **Commit to GitHub:** Programmatically create a new commit in your specified GitHub repository, containing the updated prompt manifest. This ensures your prompts remain version-controlled and synchronized with changes made in LangSmith.
+This publicly accessible server will be responsible for:
+
+1.  **Receiving Webhook Requests:** Listening for incoming HTTP POST requests.
+2.  **Parsing Payloads:** Extracting and interpreting the JSON-formatted prompt manifest from the request body.
+3.  **Committing to GitHub:** Programmatically creating a new commit in your specified GitHub repository, containing the updated prompt manifest. This ensures your prompts remain version-controlled and synchronized with changes made in LangSmith.
 
 For deployment, platforms like [Render.com](https://render.com/) (offering a suitable free tier), Vercel, Fly.io, or other cloud providers (AWS, GCP, Azure) can be utilized to host the FastAPI application and obtain a public URL.
 
