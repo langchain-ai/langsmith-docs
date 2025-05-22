@@ -222,7 +222,7 @@ async def health_check():
 
 In Langsmith, when you save changes to a prompt, you're essentially creating a new version or a "Prompt Commit." These commits are what can trigger webhooks.
 
-The webhook will typically send a JSON payload containing the entire **prompt manifest** for your workspace. This manifest includes all the prompts defined in that workspace.
+The webhook will send a JSON payload containing the new **prompt manifest**.
 
 <details>
 <summary>Sample Webhook Payload</summary>
