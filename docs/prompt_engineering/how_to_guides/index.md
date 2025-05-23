@@ -11,6 +11,7 @@ Organize and manage prompts in LangSmith to streamline your LLM development work
 - [Manage prompts programmatically](./how_to_guides/manage_prompts_programatically)
 - [Prompt tags](./how_to_guides/prompt_tags)
 - [LangChain Hub](./how_to_guides/langchain_hub)
+- [Trigger a webhook on prompt commit](./how_to_guides/trigger_webhook)
 
 ## Playground
 
