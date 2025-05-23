@@ -408,6 +408,8 @@ Once your FastAPI server is deployed and you have its public URL, you can config
 
 ## The Workflow in Action
 
+![Workflow Diagram showing: User saves prompt in LangSmith, LangSmith sends webhook to FastAPI Server, which interacts with GitHub to update files](./static/prompt-sequence-diagram.png)
+
 Now, with everything set up, here's what happens:
 
 1.  **Prompt Modification:** A user (developer or non-technical team member) modifies a prompt in the LangSmith UI and saves it, creating a new "prompt commit."
@@ -417,7 +419,7 @@ Now, with everything set up, here's what happens:
 5.  **GitHub Commit:** The server parses the JSON manifest from the request body. It then uses the configured GitHub Personal Access Token, repository owner, repository name, file path, and branch to:
     * Check if the manifest file already exists in the repository on the specified branch to get its SHA (this is necessary for updating an existing file).
     * Create a new commit with the latest prompt manifest, either creating the file or updating it if it already exists. The commit message will indicate that it's an update from LangSmith.
-6.  **Confirmation:** Your server sends a success response back to LangSmith. You should see the new commit appear in your GitHub repository.
+6.  **Confirmation:** You should see the new commit appear in your GitHub repository.
 
     ![Manifest commited to Github](./static/prompt-commit-github.png)
     
