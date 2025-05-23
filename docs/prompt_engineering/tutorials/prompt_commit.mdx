@@ -11,11 +11,11 @@ While you can [dynamically fetch prompts](/prompt_engineering/how_to_guides/mana
 
 **Why sync prompts with GitHub?**
 
-* **Version Control:** Keep your prompts versioned alongside your application code in a familiar system.
-* **CI/CD Integration:** Trigger automated staging or production deployments when critical prompts change.
+- **Version Control:** Keep your prompts versioned alongside your application code in a familiar system.
+- **CI/CD Integration:** Trigger automated staging or production deployments when critical prompts change.
 
 ![Prompt Webhook Diagram](./static/prompt-excalidraw.png)
-    
+
 ## Prerequisites
 
 Before we begin, ensure you have the following set up:
@@ -23,16 +23,14 @@ Before we begin, ensure you have the following set up:
 1.  **GitHub Account:** A standard GitHub account.
 2.  **GitHub Repository:** Create a new (or choose an existing) repository where your LangSmith prompt manifests will be stored. This could be the same repository as your application code or a dedicated one for prompts.
 3.  **GitHub Personal Access Token (PAT):**
-      * LangSmith webhooks don't directly interact with GitHub—they call an intermediary server that *you* create.
-      * This server requires a GitHub PAT to authenticate and make commits to your repository.
-      * Must include the `repo` scope (`public_repo` is sufficient for public repositories).
-      * Go to **GitHub > Settings > Developer settings > Personal access tokens > Tokens (classic)**.
-      * Click **Generate new token (classic)**.
-      * Name it (e.g., "LangSmith Prompt Sync"), set an expiration, and select the required scopes.
-      * Click **Generate token** and **copy it immediately** — it won’t be shown again.
-      * Store the token securely and provide it as an environment variable to your server.
-
-
+    - LangSmith webhooks don't directly interact with GitHub—they call an intermediary server that _you_ create.
+    - This server requires a GitHub PAT to authenticate and make commits to your repository.
+    - Must include the `repo` scope (`public_repo` is sufficient for public repositories).
+    - Go to **GitHub > Settings > Developer settings > Personal access tokens > Tokens (classic)**.
+    - Click **Generate new token (classic)**.
+    - Name it (e.g., "LangSmith Prompt Sync"), set an expiration, and select the required scopes.
+    - Click **Generate token** and **copy it immediately** — it won’t be shown again.
+    - Store the token securely and provide it as an environment variable to your server.
 
 ## Understanding LangSmith "Prompt Commits" and Webhooks
 
@@ -53,22 +51,12 @@ The webhook will send a JSON payload containing the new **prompt manifest**.
   "manifest": {
     "lc": 1,
     "type": "constructor",
-    "id": [
-      "langchain",
-      "schema",
-      "runnable",
-      "RunnableSequence"
-    ],
+    "id": ["langchain", "schema", "runnable", "RunnableSequence"],
     "kwargs": {
       "first": {
         "lc": 1,
         "type": "constructor",
-        "id": [
-          "langchain",
-          "prompts",
-          "chat",
-          "ChatPromptTemplate"
-        ],
+        "id": ["langchain", "prompts", "chat", "ChatPromptTemplate"],
         "kwargs": {
           "messages": [
             {
@@ -118,9 +106,7 @@ The webhook will send a JSON payload containing the new **prompt manifest**.
                     "PromptTemplate"
                   ],
                   "kwargs": {
-                    "input_variables": [
-                      "question"
-                    ],
+                    "input_variables": ["question"],
                     "template_format": "mustache",
                     "template": "{{question}}"
                   }
@@ -128,30 +114,18 @@ The webhook will send a JSON payload containing the new **prompt manifest**.
               }
             }
           ],
-          "input_variables": [
-            "question"
-          ]
+          "input_variables": ["question"]
         }
       },
       "last": {
         "lc": 1,
         "type": "constructor",
-        "id": [
-          "langchain",
-          "schema",
-          "runnable",
-          "RunnableBinding"
-        ],
+        "id": ["langchain", "schema", "runnable", "RunnableBinding"],
         "kwargs": {
           "bound": {
             "lc": 1,
             "type": "constructor",
-            "id": [
-              "langchain",
-              "chat_models",
-              "openai",
-              "ChatOpenAI"
-            ],
+            "id": ["langchain", "chat_models", "openai", "ChatOpenAI"],
             "kwargs": {
               "temperature": 1,
               "top_p": 1,
@@ -160,9 +134,7 @@ The webhook will send a JSON payload containing the new **prompt manifest**.
               "model": "gpt-4.1-mini",
               "extra_headers": {},
               "openai_api_key": {
-                "id": [
-                  "OPENAI_API_KEY"
-                ],
+                "id": ["OPENAI_API_KEY"],
                 "lc": 1,
                 "type": "secret"
               }
@@ -179,7 +151,7 @@ The webhook will send a JSON payload containing the new **prompt manifest**.
 </details>
 
 :::note Workspace Level Triggers
-It's important to understand that LangSmith webhooks for prompt commits are generally triggered at the **workspace level**. This means if *any* prompt within your LangSmith workspace is modified and a "prompt commit" is saved, the webhook will fire and send the updated manifest of the prompt. The payloads are identifiable by prompt id. Your receiving server should be designed with this in mind.
+It's important to understand that LangSmith webhooks for prompt commits are generally triggered at the **workspace level**. This means if _any_ prompt within your LangSmith workspace is modified and a "prompt commit" is saved, the webhook will fire and send the updated manifest of the prompt. The payloads are identifiable by prompt id. Your receiving server should be designed with this in mind.
 :::
 
 ## Implementing a FastAPI Server for Webhook Reception
@@ -374,10 +346,11 @@ async def health_check():
 ```
 
 **Key aspects of this server:**
-* **Configuration (`.env`):** It expects a `.env` file with your `GITHUB_TOKEN`, `GITHUB_REPO_OWNER`, and `GITHUB_REPO_NAME`. You can also customize `GITHUB_FILE_PATH` (default: `LangSmith_prompt_manifest.json`) and `GITHUB_BRANCH` (default: `main`).
-* **GitHub Interaction:** The `commit_manifest_to_github` function handles the logic of fetching the current file's SHA (to update it) and then committing the new manifest content.
-* **Webhook Endpoint (`/webhook/commit`):** This is the URL path your LangSmith webhook will target.
-* **Error Handling:** Basic error handling for GitHub API interactions is included.
+
+- **Configuration (`.env`):** It expects a `.env` file with your `GITHUB_TOKEN`, `GITHUB_REPO_OWNER`, and `GITHUB_REPO_NAME`. You can also customize `GITHUB_FILE_PATH` (default: `LangSmith_prompt_manifest.json`) and `GITHUB_BRANCH` (default: `main`).
+- **GitHub Interaction:** The `commit_manifest_to_github` function handles the logic of fetching the current file's SHA (to update it) and then committing the new manifest content.
+- **Webhook Endpoint (`/webhook/commit`):** This is the URL path your LangSmith webhook will target.
+- **Error Handling:** Basic error handling for GitHub API interactions is included.
 
 **Deploy this server to your chosen platform (e.g., Render) and note down its public URL (e.g., `https://prompt-commit-webhook.onrender.com`).**
 
@@ -398,9 +371,9 @@ Once your FastAPI server is deployed and you have its public URL, you can config
 
     ![LangSmith Webhook configuration modal](./static/prompt-commit-webhook.png)
 
-    * **Webhook URL:** Enter the full public URL of your deployed FastAPI server's endpoint. For our example server, this would be `https://prompt-commit-webhook.onrender.com/webhook/commit`.
-    * **Headers (Optional):**
-        * You can add custom headers that LangSmith will send with each webhook request.
+    - **Webhook URL:** Enter the full public URL of your deployed FastAPI server's endpoint. For our example server, this would be `https://prompt-commit-webhook.onrender.com/webhook/commit`.
+    - **Headers (Optional):**
+      - You can add custom headers that LangSmith will send with each webhook request.
 
 5.  **Test the Webhook:** LangSmith provides a "Send Test Notification" button. Use this to send a sample payload to your server. Check your server logs (e.g., on Render) to ensure it receives the request and processes it successfully (or to debug any issues).
 
@@ -417,20 +390,20 @@ Now, with everything set up, here's what happens:
 3.  **HTTP Request:** LangSmith sends an HTTP POST request to the public URL of your FastAPI server (e.g., `https://prompt-commit-webhook.onrender.com/webhook/commit`). The body of this request contains the JSON prompt manifest for the entire workspace.
 4.  **Server Receives Payload:** Your FastAPI server's endpoint receives the request.
 5.  **GitHub Commit:** The server parses the JSON manifest from the request body. It then uses the configured GitHub Personal Access Token, repository owner, repository name, file path, and branch to:
-    * Check if the manifest file already exists in the repository on the specified branch to get its SHA (this is necessary for updating an existing file).
-    * Create a new commit with the latest prompt manifest, either creating the file or updating it if it already exists. The commit message will indicate that it's an update from LangSmith.
+    - Check if the manifest file already exists in the repository on the specified branch to get its SHA (this is necessary for updating an existing file).
+    - Create a new commit with the latest prompt manifest, either creating the file or updating it if it already exists. The commit message will indicate that it's an update from LangSmith.
 6.  **Confirmation:** You should see the new commit appear in your GitHub repository.
 
     ![Manifest commited to Github](./static/prompt-commit-github.png)
-    
+
 You've now successfully synced your LangSmith prompts with GitHub!
 
 ## Beyond a Simple Commit
 
 Our example FastAPI server performs a direct commit of the entire prompt manifest. However, this is just the starting point. You can extend the server's functionality to perform more sophisticated actions:
 
-* **Granular Commits:** Parse the manifest and commit changes to individual prompt files if you prefer a more granular structure in your repository.
-* **Trigger CI/CD:** Instead of (or in addition to) committing, have the server trigger a CI/CD pipeline (e.g., Jenkins, GitHub Actions, GitLab CI) to deploy a staging environment, run tests, or build new application versions.
-* **Update Databases/Caches:** If your application loads prompts from a database or cache, update these stores directly.
-* **Notifications:** Send notifications to Slack, email, or other communication channels about prompt changes.
-* **Selective Processing:** Based on metadata within the LangSmith payload (if available, e.g., which specific prompt changed or by whom), you could apply different logic.
+- **Granular Commits:** Parse the manifest and commit changes to individual prompt files if you prefer a more granular structure in your repository.
+- **Trigger CI/CD:** Instead of (or in addition to) committing, have the server trigger a CI/CD pipeline (e.g., Jenkins, GitHub Actions, GitLab CI) to deploy a staging environment, run tests, or build new application versions.
+- **Update Databases/Caches:** If your application loads prompts from a database or cache, update these stores directly.
+- **Notifications:** Send notifications to Slack, email, or other communication channels about prompt changes.
+- **Selective Processing:** Based on metadata within the LangSmith payload (if available, e.g., which specific prompt changed or by whom), you could apply different logic.
