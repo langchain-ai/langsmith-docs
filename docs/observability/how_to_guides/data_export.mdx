@@ -2,10 +2,10 @@
 sidebar_position: 22
 ---
 
-# [Beta] Bulk Exporting Trace Data
+# Bulk Exporting Trace Data
 
 :::info Plan restrictions apply
-Please note that the Data Export functionality is in Beta and only supported for [LangSmith Plus or Enterprise tiers](https://www.langchain.com/pricing-langsmith).
+Please note that the Data Export functionality is only supported for [LangSmith Plus or Enterprise tiers](https://www.langchain.com/pricing-langsmith).
 :::
 
 LangSmith's bulk data export functionality allows you to export your traces into an external destination. This can be useful if you want to analyze the
@@ -101,7 +101,7 @@ curl --request POST \
 #### Google GCS XML S3 compatible bucket
 
 When using Google's GCS bucket, you need to use the XML S3 compatible API, and supply the `endpoint_url`
-which is typically `https://storage.googleapis.com`.  
+which is typically `https://storage.googleapis.com`.
 Here is an example of the API request when using the GCS XML API which is compatible with S3:
 
 ```bash
@@ -287,7 +287,7 @@ aws s3 cp ./test.txt s3://<bucket-name>/tmp/test.txt
 
 **GCS Compatible Buckets:**
 
-You will need to supply the endpoint_url with `--endpoint-url` option.  
+You will need to supply the endpoint_url with `--endpoint-url` option.
 For GCS, the `endpoint_url` is typically `https://storage.googleapis.com`:
 
 ```bash
