@@ -1,5 +1,4 @@
 {
   "editor.trimAutoWhitespace": false,
-  "files.trimTrailingWhitespaceInRegexAndStrings": false,
-  "makefile.configureOnOpen": false
+  "files.trimTrailingWhitespaceInRegexAndStrings": false
 }
