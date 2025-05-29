@@ -31,7 +31,7 @@ This is useful for critiquing specific steps of the LLM application, such as the
 
 :::
 
-:::tip Backgrounded ingestion (Python only)
+:::tip Non-blocking creation (Python only)
 
 The Python client will automatically background feedback creation if you pass `trace_id=` to [create_feedback()](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.create_feedback).
 This is essential for low-latency environments, where you want to make sure your application isn't blocked on feedback creation.
