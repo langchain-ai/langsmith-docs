@@ -40,45 +40,46 @@ This is essential for low-latency environments, where you want to make sure your
 
 <CodeTabs
   tabs={[
-    python({caption: "Requires `langsmith >= 0.3.43`"})`
-from langsmith import trace, traceable, Client
+    python({caption: "Requires `langsmith >= 0.3.43`"})
+`
+      from langsmith import trace, traceable, Client
 
-@traceable
-def foo(x):
-    return {"y": x * 2}
+      @traceable
+      def foo(x):
+          return {"y": x * 2}
 
-@traceable
-def bar(y):
-    return {"z": y - 1}
+      @traceable
+      def bar(y):
+          return {"z": y - 1}
 
-client = Client()
+      client = Client()
 
-inputs = {"x": 1}
-with trace(name="foobar", inputs=inputs) as root_run:
-    result = foo(**inputs)
-    result = bar(**result)
-    root_run.outputs = result
-    trace_id = root_run.id
-    child_runs = root_run.child_runs
+      inputs = {"x": 1}
+      with trace(name="foobar", inputs=inputs) as root_run:
+          result = foo(**inputs)
+          result = bar(**result)
+          root_run.outputs = result
+          trace_id = root_run.id
+          child_runs = root_run.child_runs
 
-# Provide feedback for a trace (a.k.a. a root run)
-client.create_feedback(
-    key="user_feedback",
-    score=1,
-    trace_id=trace_id,
-    comment="the user said that ..."
-)
+      # Provide feedback for a trace (a.k.a. a root run)
+      client.create_feedback(
+          key="user_feedback",
+          score=1,
+          trace_id=trace_id,
+          comment="the user said that ..."
+      )
 
-# Provide feedback for a child run
-foo_run_id = [run for run in child_runs if run.name == "foo"][0].id
-client.create_feedback(
-    key="correctness",
-    score=0,
-    run_id=foo_run_id,
-    # trace_id= is optional but recommended to enable batched and backgrounded 
-    # feedback ingestion.
-    trace_id=trace_id,
-)
+      # Provide feedback for a child run
+      foo_run_id = [run for run in child_runs if run.name == "foo"][0].id
+      client.create_feedback(
+          key="correctness",
+          score=0,
+          run_id=foo_run_id,
+          # trace_id= is optional but recommended to enable batched and backgrounded 
+          # feedback ingestion.
+          trace_id=trace_id,
+      )
     `,
     typescript({})`import { Client } from "langsmith";
 const client = new Client();\n
