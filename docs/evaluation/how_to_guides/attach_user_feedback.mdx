@@ -6,6 +6,8 @@ import {
   CodeTabs,
   PythonBlock,
   TypeScriptBlock,
+  python,
+  typescript,
 } from "@site/src/components/InstructionsWithCode";
 
 # Log user feedback using the SDK
@@ -40,8 +42,7 @@ This is essential for low-latency environments, where you want to make sure your
 
 <CodeTabs
   tabs={[
-    PythonBlock(`
-from langsmith import Client\n
+    python({caption: "Requires `langsmith >= 0.3.43`"})`
 from langsmith import trace, traceable, Client
 
 @traceable
@@ -80,8 +81,8 @@ client.create_feedback(
     # feedback ingestion.
     trace_id=trace_id,
 )
-    `),
-    TypeScriptBlock(`import { Client } from "langsmith";
+    `,
+    typescript({})`import { Client } from "langsmith";
 const client = new Client();\n
 // ... Run your application and get the run_id...
 // This information can be the result of a user-facing feedback form\n
@@ -92,7 +93,7 @@ await client.createFeedback(
         score: 1.0,
         comment: "comment",
     }
-);`),
+);`,
   ]}
   groupId="client-language"
 />
