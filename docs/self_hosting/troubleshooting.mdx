@@ -13,6 +13,11 @@ While running LangSmith, you may encounter unexpected 500 errors, slow performan
 ## Getting helpful information
 To diagnose and resolve an issue, you will first need to retrieve some relevant information. Below, we explain how to do this for a kubernetes setup, a docker setup, as well as how to pull helpful browser info.
 
+Generally, the main services you will want to analyze are:
+
+- `langsmith-backend`: The main backend service.
+- `langsmith-queue`: The queue service.
+
 #### Kubernetes
 
 The first step in troubleshooting is to gather important debugging information about your LangSmith deployment. Service logs, kubernetes events, and resource utilization of containers can help identify the root cause of an issue.
@@ -30,11 +35,6 @@ If running on Docker, you can check the logs your deployment by running the foll
 ```bash
 docker compose logs >> logs.txt
 ```
-
-Generally, the main services you will want to analyze are:
-
-- `langsmith-backend`: The main backend service.
-- `langsmith-queue`: The queue service.
 
 #### Browser Errors
 
