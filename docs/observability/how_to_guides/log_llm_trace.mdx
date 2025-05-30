@@ -175,26 +175,26 @@ If `ls_model_name` is not present in `extra.metadata`, other fields might be use
 
 ## Manually provide usage information
 
-:::tip Token-based cost tracking
+By default, LangSmith uses [TikToken](https://github.com/openai/tiktoken) to count tokens, utilizing a best guess at the model's tokenizer based on the `ls_model_name` provided. It also
+calculates costs automatically by using the <RegionalUrl text='model pricing map' suffix='/settings/workspaces/models' />.
 
-To learn how to set up custom token-based cost tracking based on provided token counts, see [this guide](./calculate_token_based_costs).
-
+:::tip LangSmith token/cost tracking
+To learn how LangSmith calculates token and cost statistics automatically, see [this guide](./calculate_token_based_costs).
 :::
 
-By default, LangSmith uses [TikToken](https://github.com/openai/tiktoken) to count tokens, utilizing a best guess at the model's tokenizer based on the `ls_model_name` provided.
-However, many models already include exact token counts as part of the response. If you have this information, you can override the default token calculation in LangSmith in one of two ways:
+However, many models already include exact token counts and/or cost information as part of the response. If you have this information, you can override the default token/cost calculation in LangSmith in one of two ways:
 
 1. Extract usage within your traced function and set a `usage_metadata` field on the run's metadata.
 2. Return a `usage_metadata` field in your traced function/`RunTree` outputs.
 
-In both cases, the usage metadata you extract should contain some of the following LangSmith-recognized fields:
+In both cases, the usage metadata you send should contain a subset of the following LangSmith-recognized fields (additional fields are not allowed):
 
 ```python
 class ExtractedUsageMetadata(TypedDict, total=False):
-    prompt_tokens: int
+    input_tokens: int
     """The number of tokens used for the prompt."""
 
-    completion_tokens: int
+    output_tokens: int
     """The number of tokens generated as output."""
 
     total_tokens: int
@@ -257,12 +257,12 @@ def chat_model(messages: list):
         ],
         "usage_metadata": {
             "input_tokens": 27,
-            "llm_output_tokens": 13,
+            "output_tokens": 13,
             "total_tokens": 40,
         },
     }
     run = get_current_run_tree()
-    run.set(usage=llm_output["usage_metadata"])
+    run.set(usage_metadata=llm_output["usage_metadata"])
     return llm_output["choices"][0]["message"]\n
 chat_model(inputs)`),
     TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";\n
