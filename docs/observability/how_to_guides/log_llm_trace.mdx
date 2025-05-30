@@ -187,7 +187,11 @@ However, many models already include exact token counts and/or cost information 
 1. Extract usage within your traced function and set a `usage_metadata` field on the run's metadata.
 2. Return a `usage_metadata` field in your traced function/`RunTree` outputs.
 
-In both cases, the usage metadata you send should contain a subset of the following LangSmith-recognized fields (additional fields are not allowed):
+In both cases, the usage metadata you send should contain a subset of the following LangSmith-recognized fields:
+
+:::warning Setting Usage Metadata
+You cannot set ANY fields other than the ones listed below that exist on the `ExtractedUsageMetadata` object.
+:::
 
 ```python
 class ExtractedUsageMetadata(TypedDict, total=False):
