@@ -11,6 +11,7 @@ This guide will walk you through common issues you may encounter when running a 
 While running LangSmith, you may encounter unexpected 500 errors, slow performance, or other issues. This guide will help you diagnose and resolve these issues.
 
 ## Getting helpful information
+
 To diagnose and resolve an issue, you will first need to retrieve some relevant information. Below, we explain how to do this for a kubernetes setup, a docker setup, as well as how to pull helpful browser info.
 
 Generally, the main services you will want to analyze are:
@@ -23,10 +24,12 @@ Generally, the main services you will want to analyze are:
 The first step in troubleshooting is to gather important debugging information about your LangSmith deployment. Service logs, kubernetes events, and resource utilization of containers can help identify the root cause of an issue.
 
 You can run our [k8s troubleshooting script](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/scripts/get_k8s_debugging_info.sh) which will pull all of the relevant kubernetes information and output it to a folder for investigation. The script also compresses this folder into a zip file for sharing. Here is an example of how to run this script, assuming your langsmith deployment was brought up in a `langsmith` namespace:
+
 ```bash
 bash get_k8s_debugging_info.sh --namespace langsmith
 ```
-You can then inspect the contents of the produced folder for any relevant errors or information. If you would like the LangSmith team to assist in debugging, please share this zip file with the team. 
+
+You can then inspect the contents of the produced folder for any relevant errors or information. If you would like the LangSmith team to assist in debugging, please share this zip file with the team.
 
 #### Docker
 
@@ -40,7 +43,7 @@ docker compose logs >> logs.txt
 
 If you are experiencing an issue that surfaces as a browser error, it may also be helpful to inspect a HAR file which may include key information. To get the HAR file, you will need to open the developer tools panel in the browser, click into the Network tab, and then download the HAR file locally.
 
-You can then use [Google's HAR analyzer](https://toolbox.googleapps.com/apps/har_analyzer/).   
+You can then use [Google's HAR analyzer](https://toolbox.googleapps.com/apps/har_analyzer/).
 
 ## Common issues
 
