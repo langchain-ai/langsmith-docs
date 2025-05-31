@@ -96,12 +96,14 @@ We ended support for legacy API keys prefixed with `ls__` on October 22, 2024 in
 #### Personal Access Tokens (PATs)
 
 Personal Access Tokens (PATs) are used to authenticate requests to the LangSmith API. They are created by users and scoped to a user. The PAT will have the same permissions as the user that created it.
+We recommend not using these to authenticate requests from your application, but rather using them for personal scripts or tools that interact with the LangSmith API. If the user associated with the PAT is removed from the organization, the PAT will no longer work.
 
 PATs are prefixed with `lsv2_pt_`
 
 #### Service keys
 
-Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account.
+Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account. Only admins can create service keys. We recommend using these for applications / services that need to interact with the LangSmith API, such as LangGraph agents or other integrations.
+Service keys are scoped to a workspace and can be used to authenticate requests to the LangSmith API for that workspace.
 
 Service keys are prefixed with `lsv2_sk_`
 
