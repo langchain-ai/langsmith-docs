@@ -53,14 +53,14 @@ from langsmith.run_helpers import get_current_run_tree
 
 @ls.traceable(run_type="chain")
 @tool
-def parent_node(input_text: str) -> dict:  
-    # Your custom logic here 
+def parent_node(input_text: str) -> dict:
+    # Your custom logic here
     processed = f"Processed: {input_text}"
-    
+
     # Get current run tree headers to pass downstream
     run_tree = get_current_run_tree()
     headers = run_tree.to_headers() if run_tree else {}
-    
+
     return {
         "processed": processed,
         "langsmith_extra": {
@@ -88,43 +88,41 @@ def child_node(processed_text: str, langsmith_extra: dict = None) -> str:
 Here's how to configure the flow.dag.yaml to connect these nodes with proper trace propagation:
 
 ```yaml
-inputs:  
-  user_input:  
-    type: string  
+inputs:
+  user_input:
+    type: string
 
-outputs:  
-  final_output:  
-    type: string  
-    reference: ${child.output}  
+outputs:
+  final_output:
+    type: string
+    reference: ${child.output}
 
-nodes:  
-- name: parent  
-  type: python  
-  source:  
-    type: code  
-    path: parent_node.py  
-  function: parent_node  
-  inputs:  
-    input_text: ${inputs.user_input}  
+nodes:
+  - name: parent
+    type: python
+    source:
+      type: code
+      path: parent_node.py
+    function: parent_node
+    inputs:
+      input_text: ${inputs.user_input}
 
-- name: child    
-  type: python  
-  source:  
-    type: code  
-    path: child_node.py  
-  function: child_node  
-  inputs:  
-    processed_text: ${parent.output.processed}
-    langsmith_extra: ${parent.output.langsmith_extra}
+  - name: child
+    type: python
+    source:
+      type: code
+      path: child_node.py
+    function: child_node
+    inputs:
+      processed_text: ${parent.output.processed}
+      langsmith_extra: ${parent.output.langsmith_extra}
 ```
 
 ## Important Considerations
 
-1. **Decorator Order**: The order of decorators matters. Place the LangSmith `@traceable` decorator before the PromptFlow `@tool` decorator.
+1. **Return Type**: Make sure to correctly specify the return type of your function in the function signature to match what you're actually returning.
 
-2. **Return Type**: Make sure to correctly specify the return type of your function in the function signature to match what you're actually returning.
-
-3. **Headers Propagation**: Always check if the run_tree exists before calling to_headers() to avoid errors.
+2. **Headers Propagation**: Always check if the run_tree exists before calling to_headers() to avoid errors.
 
 ## Using LangGraph with PromptFlow and LangSmith
 
@@ -158,12 +156,12 @@ agent = create_react_agent(model, tools=tools)
 def graph_node(input_text: str, langsmith_extra: dict = None) -> str:
     # Process the input
     processed = f"Processing query: {input_text}"
-    
+
     # Invoke the LangGraph agent
     response = agent.invoke({
         "messages": [{"role": "user", "content": input_text}]
     })
-    
+
     return f"Agent response: {response}"
 ```
 
