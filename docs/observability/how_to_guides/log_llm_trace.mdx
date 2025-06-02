@@ -12,10 +12,8 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 # Log custom LLM traces
 
 :::note
-Nothing will break if you don't log LLM traces in the correct format and data will still be logged. However, the data will not be processed or rendered in a way that is specific to LLMs.
+Nothing will break if you don't log LLM traces in the correct format - data will still be logged. However, the data will not be processed or rendered in a way that is specific to LLMs.
 :::
-
-The best way to logs traces from OpenAI models is to use the [wrapper](./annotate_code#wrap-the-openai-client) available in the `langsmith` SDK for Python and TypeScript. However, you can also log traces from custom models by following the guidelines below.
 
 LangSmith provides special rendering and processing for LLM traces, including token counting (assuming token counts are not available from the model provider) and token-based cost calculation.
 In order to make the most of this feature, you must log your LLM traces in a specific format.
@@ -28,6 +26,14 @@ The examples below uses the `traceable` decorator/wrapper to log the model run (
 
 ## Chat-style models
 
+### Using LangChain OSS or LangSmith wrappers
+
+If you are using OpenAI or Anthropic models, we suggest using the [`wrap_openai`](./annotate_code#wrap-the-openai-client) or [`wrap_anthropic`](https://docs.smith.langchain.com/reference/python/wrappers/langsmith.wrappers._anthropic.wrap_anthropic) which will automatically log traces in the format LangSmith expects.
+
+You can also use any of the [LangChain OSS chat models](https://python.langchain.com/docs/integrations/chat/#all-chat-models) as a drop in for directly accessing the API of any of the providers, and this will also log LLM traces in the format LangSmith expects.
+
+### Implementing your own custom chat-model
+
 For chat-style models, inputs must be a list of messages in OpenAI-compatible format, represented as Python dictionaries or TypeScript object. Each message must contain the key `role` and `content`.
 
 The output is accepted in any of the following formats:
@@ -39,7 +45,7 @@ The output is accepted in any of the following formats:
 
 The input to your function should be named `messages`.
 
-You can also provide the following `metadata` fields to help LangSmith identify the model and calculate costs. If using LangChain or the LangSmith [OpenAI wrapper](./annotate_code#wrap-the-openai-client), these fields will automatically be populated correctly. To learn more about how to use the `metadata` fields, see [this guide](./add_metadata_tags).
+You can also provide the following `metadata` fields to help LangSmith identify the model - which if recognized, LangSmith will use to automatically calculate costs. To learn more about how to use the `metadata` fields, see [this guide](./add_metadata_tags).
 
 - `ls_provider`: The provider of the model, eg "openai", "anthropic", etc.
 - `ls_model_name`: The name of the model, eg "gpt-4o-mini", "claude-3-opus-20240307", etc.
@@ -126,9 +132,7 @@ The above code will log the following trace:
 
 ![](./static/chat_model.png)
 
-## Stream outputs
-
-For streaming, you can "reduce" the outputs into the same format as the non-streaming version. This is currently only supported in Python.
+If you implement a custom streaming chat_model, you can "reduce" the outputs into the same format as the non-streaming version. This is currently only supported in Python.
 
 ```python
 def _reduce_chunks(chunks: list):
@@ -305,8 +309,7 @@ await chatModel({ messages });`),
 
 ### Setting run outputs
 
-You can add a `usage_metadata` key to the function's response.
-If using LangChain or [OpenAI wrapper](./annotate_code#wrap-the-openai-client), these fields will be automatically populated correctly.
+You can add a `usage_metadata` key to the function's response to set manual token counts and costs.
 
 <CodeTabs
   tabs={[
