@@ -69,14 +69,14 @@ To create a _new entry_ in the model pricing map, click on the `Add new model` b
 
 Here, you can specify the following fields:
 
-- `Model Name`: The human-readable name of the model.
-- `Match Pattern`: A regex pattern to match the model name. This is used to match the value for `ls_model_name` in the run metadata.
-- `Prompt (Input) Price`: The cost per 1M input tokens for the model. This number is multiplied by the number of tokens in the prompt to calculate the prompt cost.
-- `Completion (Output) Price`: The cost per 1M output tokens for the model. This number is multiplied by the number of tokens in the completion to calculate the completion cost.
-- `Prompt (Input) Price Breakdown` (Optional): The breakdown of price for each different type of prompt token, e.g. `cache_read`, `video`, `audio`, etc.
-- `Completion (Output) Price Breakdown` (Optional): The breakdown of price for each different type of completion token, e.g. `reasoning`, `image`, etc.
-- `Model Activation Date` (Optional): The date from which the pricing is applicable. Only runs after this date will apply this model price.
-- `Provider` (Optional): The provider of the model. If specified, this is matched against `ls_provider` in the run metadata.
+- **Model Name**: The human-readable name of the model.
+- **Match Pattern**: A regex pattern to match the model name. This is used to match the value for `ls_model_name` in the run metadata.
+- **Prompt (Input) Price**: The cost per 1M input tokens for the model. This number is multiplied by the number of tokens in the prompt to calculate the prompt cost.
+- **Completion (Output) Price**: The cost per 1M output tokens for the model. This number is multiplied by the number of tokens in the completion to calculate the completion cost.
+- **Prompt (Input) Price Breakdown** (Optional): The breakdown of price for each different type of prompt token, e.g. `cache_read`, `video`, `audio`, etc.
+- **Completion (Output) Price Breakdown** (Optional): The breakdown of price for each different type of completion token, e.g. `reasoning`, `image`, etc.
+- **Model Activation Date** (Optional): The date from which the pricing is applicable. Only runs after this date will apply this model price.
+- **Provider** (Optional): The provider of the model. If specified, this is matched against `ls_provider` in the run metadata.
 
 Once you have set up the model pricing map, LangSmith will automatically calculate and aggregate the token-based costs for traces based on the token counts provided in the LLM invocations.
 
@@ -86,9 +86,10 @@ For specifying pricing breakdowns, here are the detailed token count types used 
 # Standardized
 cache_read
 cache_write
+reasoning
 audio
 image
-reasoning
+video
 
 # Anthropic-only
 ephemeral_1h_input_tokens
