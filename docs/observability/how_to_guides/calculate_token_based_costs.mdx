@@ -80,6 +80,21 @@ Here, you can specify the following fields:
 
 Once you have set up the model pricing map, LangSmith will automatically calculate and aggregate the token-based costs for traces based on the token counts provided in the LLM invocations.
 
+For specifying pricing breakdowns, here are the detailed token count types used by LangChain chat model integrations and LangSmith SDK wrappers:
+
+```python
+# Standardized
+cache_read
+cache_write
+audio
+image
+reasoning
+
+# Anthropic-only
+ephemeral_1h_input_tokens
+ephemeral_5m_input_tokens
+```
+
 ## Cost formula
 
 The cost for a run is computed greedily from most-to-lease specific token type.
