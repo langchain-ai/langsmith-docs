@@ -18,6 +18,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [LangChain OSS libraries](./how_to_guides/trace_with_langchain)
 - [LangGraph](./how_to_guides/trace_with_langgraph)
 - [OpenAI](./how_to_guides/annotate_code#wrap-the-openai-client)
+- [Anthropic (Python only)](./how_to_guides/annotate_code#wrap-the-anthropic-client-python-only)
 - [Instructor](./how_to_guides/trace_with_instructor)
 - [Vercel AI SDK (JS only)](./how_to_guides/trace_with_vercel_ai_sdk)
 - [OpenTelemetry](./how_to_guides/trace_with_opentelemetry)
