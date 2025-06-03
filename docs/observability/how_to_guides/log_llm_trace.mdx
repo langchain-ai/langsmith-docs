@@ -12,10 +12,8 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 # Log custom LLM traces
 
 :::note
-Nothing will break if you don't log LLM traces in the correct format and data will still be logged. However, the data will not be processed or rendered in a way that is specific to LLMs.
+Nothing will break if you don't log LLM traces in the correct format - data will still be logged. However, the data will not be processed or rendered in a way that is specific to LLMs.
 :::
-
-The best way to logs traces from OpenAI models is to use the [wrapper](./annotate_code#wrap-the-openai-client) available in the `langsmith` SDK for Python and TypeScript. However, you can also log traces from custom models by following the guidelines below.
 
 LangSmith provides special rendering and processing for LLM traces, including token counting (assuming token counts are not available from the model provider) and token-based cost calculation.
 In order to make the most of this feature, you must log your LLM traces in a specific format.
@@ -28,6 +26,14 @@ The examples below uses the `traceable` decorator/wrapper to log the model run (
 
 ## Chat-style models
 
+### Using LangChain OSS or LangSmith wrappers
+
+If you are using OpenAI or Anthropic models, we suggest using the [`wrap_openai`](./annotate_code#wrap-the-openai-client) or [`wrap_anthropic`](https://docs.smith.langchain.com/reference/python/wrappers/langsmith.wrappers._anthropic.wrap_anthropic) which will automatically log traces in the format LangSmith expects.
+
+You can also use any of the [LangChain OSS chat models](https://python.langchain.com/docs/integrations/chat/#all-chat-models) as a drop in for directly accessing the API of any of the providers, and this will also log LLM traces in the format LangSmith expects.
+
+### Implementing your own custom chat-model
+
 For chat-style models, inputs must be a list of messages in OpenAI-compatible format, represented as Python dictionaries or TypeScript object. Each message must contain the key `role` and `content`.
 
 The output is accepted in any of the following formats:
@@ -39,7 +45,7 @@ The output is accepted in any of the following formats:
 
 The input to your function should be named `messages`.
 
-You can also provide the following `metadata` fields to help LangSmith identify the model and calculate costs. If using LangChain or [OpenAI wrapper](./annotate_code#wrap-the-openai-client), these fields will be automatically populated correctly. To learn more about how to use the `metadata` fields, see [this guide](./add_metadata_tags).
+You can also provide the following `metadata` fields to help LangSmith identify the model - which if recognized, LangSmith will use to automatically calculate costs. To learn more about how to use the `metadata` fields, see [this guide](./add_metadata_tags).
 
 - `ls_provider`: The provider of the model, eg "openai", "anthropic", etc.
 - `ls_model_name`: The name of the model, eg "gpt-4o-mini", "claude-3-opus-20240307", etc.
@@ -126,9 +132,7 @@ The above code will log the following trace:
 
 ![](./static/chat_model.png)
 
-## Stream outputs
-
-For streaming, you can "reduce" the outputs into the same format as the non-streaming version. This is currently only supported in Python.
+If you implement a custom streaming chat_model, you can "reduce" the outputs into the same format as the non-streaming version. This is currently only supported in Python.
 
 ```python
 def _reduce_chunks(chunks: list):
@@ -163,29 +167,149 @@ list(
 )
 ```
 
-## Manually provide token counts
+:::tip
 
-:::tip Token-based cost tracking
-
-To learn how to set up token-based cost tracking based on the token usage information, see [this guide](./calculate_token_based_costs).
-:::
-
-By default, LangSmith uses [TikToken](https://github.com/openai/tiktoken) to count tokens, utilizing a best guess at the model's tokenizer based on the `ls_model_name` provided.
-Many models already include token counts as part of the response. You can send these token counts to LangSmith by providing the `usage_metadata` field in the response.
-If token information is passed to LangSmith, the system will use this information _instead of_ using TikToken.
-
-You can add a `usage_metadata` key to the function's response, containing a dictionary with the keys `input_tokens`, `output_tokens` and `total_tokens`.
-If using LangChain or [OpenAI wrapper](./annotate_code#wrap-the-openai-client), these fields will be automatically populated correctly.
-
-:::note
-
-If `ls_model_name` is not present in `extra.metadata`, other fields might be used from the `extra.invocation_metadata` for estimating token counts. The following fields are used in the order of precedence:
+If `ls_model_name` is not present in `extra.metadata`, other fields might be used from the `extra.metadata` for estimating token counts. The following fields are used in the order of precedence:
 
 1. `metadata.ls_model_name`
-2. `invocation_params.model`
-3. `invocation_params.model_name`
+2. `inputs.model`
+3. `inputs.model_name`
 
 :::
+
+## Provide token and cost information
+
+By default, LangSmith uses [tiktoken](https://github.com/openai/tiktoken) to count tokens, utilizing a best guess at the model's tokenizer based on the `ls_model_name` provided. It also
+calculates costs automatically by using the <RegionalUrl text='model pricing table' suffix='/settings/workspaces/models' />.
+To learn how LangSmith calculates token-based costs, see [this guide](./calculate_token_based_costs).
+
+However, many models already include exact token counts as part of the response. If you have this information, you can override the default token calculation in LangSmith in one of two ways:
+
+1. Extract usage within your traced function and set a `usage_metadata` field on the run's metadata.
+2. Return a `usage_metadata` field in your traced function outputs.
+
+In both cases, the usage metadata you send should contain a subset of the following LangSmith-recognized fields:
+
+:::warning Setting usage metadata
+You cannot set any fields other than the ones listed below. You do not need to include all fields.
+:::
+
+```python
+class UsageMetadata(TypedDict, total=False):
+    input_tokens: int
+    """The number of tokens used for the prompt."""
+    output_tokens: int
+    """The number of tokens generated as output."""
+    total_tokens: int
+    """The total number of tokens used."""
+    input_token_details: dict[str, float]
+    """The details of the input tokens."""
+    output_token_details: dict[str, float]
+    """The details of the output tokens."""
+    input_cost: float
+    """The cost of the input tokens."""
+    output_cost: float
+    """The cost of the output tokens."""
+    total_cost: float
+    """The total cost of the tokens."""
+    input_cost_details: dict[str, float]
+    """The cost details of the input tokens."""
+    output_cost_details: dict[str, float]
+    """The cost details of the output tokens."""
+```
+
+Note that the usage data can also include cost information, in case you do not want to rely on LangSmith's token-based cost formula.
+This is useful for models with pricing that is not linear by token type.
+
+### Setting run metadata
+
+You can [modify the current run's metadata](./add_metadata_tags) with usage information within your traced function.
+The advantage of this approach is that you do not need to change your traced function's runtime outputs.
+Here's an example:
+
+:::note Dependencies
+
+Requires `langsmith>=0.3.43` (Python) and `langsmith>=0.3.30` (JS/TS).
+
+:::
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import traceable, get_current_run_tree\n
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."},
+]\n
+@traceable(
+    run_type="llm",
+    metadata={"ls_provider": "my_provider", "ls_model_name": "my_model"}
+)
+def chat_model(messages: list):
+    llm_output = {
+        "choices": [
+            {
+                "message": {
+                    "role": "assistant",
+                    "content": "Sure, what time would you like to book the table for?"
+                }
+            }
+        ],
+        "usage_metadata": {
+            "input_tokens": 27,
+            "output_tokens": 13,
+            "total_tokens": 40,
+            "input_token_details": {"cache_read": 10},
+            # If you wanted to specify costs:
+            # "input_cost": 1.1e-6,
+            # "input_cost_details": {"cache_read": 2.3e-7},
+            # "output_cost": 5.0e-6,
+        },
+    }
+    run = get_current_run_tree()
+    run.set(usage_metadata=llm_output["usage_metadata"])
+    return llm_output["choices"][0]["message"]\n
+chat_model(inputs)`),
+    TypeScriptBlock(`import { traceable, getCurrentRunTree } from "langsmith/traceable";\n
+const messages = [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "I'd like to book a table for two." },
+];\n
+const chatModel = traceable(
+  async ({
+    messages,
+  }: {
+    messages: { role: string; content: string }[];
+    model: string;
+  }) => {
+    const llmOutput = {
+      choices: [
+        {
+          message: {
+            role: "assistant",
+            content: "Sure, what time would you like to book the table for?",
+          },
+        },
+      ],
+      usage_metadata: {
+        input_tokens: 27,
+        output_tokens: 13,
+        total_tokens: 40,
+      },
+    };
+    const runTree = getCurrentRunTree();
+    runTree.metadata.usage_metadata = llmOutput.usage_metadata;
+    return llmOutput.choices[0].message;
+  },
+  { run_type: "llm", name: "chat_model", metadata: { ls_provider: "my_provider", ls_model_name: "my_model" } }
+);\n
+await chatModel({ messages });`),
+  ]}
+  groupId="client-language"
+/>
+
+### Setting run outputs
+
+You can add a `usage_metadata` key to the function's response to set manual token counts and costs.
 
 <CodeTabs
   tabs={[
@@ -207,6 +331,11 @@ output = {
         "input_tokens": 27,
         "output_tokens": 13,
         "total_tokens": 40,
+        "input_token_details": {"cache_read": 10},
+        # If you wanted to specify costs:
+        # "input_cost": 1.1e-6,
+        # "input_cost_details": {"cache_read": 2.3e-7},
+        # "output_cost": 5.0e-6,
     },
 }\n
 @traceable(
