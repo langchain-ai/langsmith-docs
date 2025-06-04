@@ -32,32 +32,34 @@ Ensure you have the following tools/items ready. Some items are marked optional:
       - We recommend setting up the metrics server so that autoscaling can be turned on
       - You must have a node with at least 4 vCPUs and 16GB of memory **allocatable** as ClickHouse will request this amount of resources by default.
    1. Valid Dynamic PV provisioner or PVs available on your cluster.
-      - We will be using a PostgreSQL database, Redis, and ClickHouse for storing traces. These services require persistent storage.
+
+      - We will be using a `PostgreSQL` database, `Redis` cache, and `ClickHouse` database for storing traces. These services require persistent storage.
       - Our base installation will try to install these services inside your cluster. To enable persistence, we will try to provision volumes for these services.
       - If using PVs in your cluster, we highly recommend setting up backups in a production environment.
       - **We strongly encourage using a storage class backed by SSDs for better performance. We recommend 7000 IOPS and 1000 MiB/s throughput.**
       - On EKS, you may need to ensure you have the `ebs-csi-driver` installed and configured for dynamic provisioning. Refer to the [EBS CSI Driver documentation](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html) for more information.
 
       You can verify this by running:
-         ```bash
-         kubectl get storageclass
-         ```
 
-         The output should show at least one storage class with a provisioner that supports dynamic provisioning. For example:
+      ```bash
+      kubectl get storageclass
+      ```
 
-         ```bash
-           NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-           gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   true                   161d
-         ```
+      The output should show at least one storage class with a provisioner that supports dynamic provisioning. For example:
 
-         :::note
-         We highly recommend using a storage class that supports volume expansion. This is because traces can potentially require a lot of disk space and your volumes may need to be resized over time.
-         :::
+      ```bash
+        NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+        gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   true                   161d
+      ```
 
-         Refer to the [Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/storage-classes/) for more information on storage classes.
+      :::note
+      We highly recommend using a storage class that supports volume expansion. This is because traces can potentially require a lot of disk space and your volumes may need to be resized over time.
+      :::
+
+      Refer to the [Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/storage-classes/) for more information on storage classes.
 
 1. Helm
-   1. To install helm refer to the [Helm documentation](https://helm.sh/docs/intro/install/)
+   1. To install `helm` refer to the [Helm documentation](https://helm.sh/docs/intro/install/)
 1. LangSmith License Key
    1. You can get this from your Langchain representative. Contact us at sales@langchain.dev for more information.
 1. Api Key Salt
@@ -109,34 +111,49 @@ Ensure you have the following tools/items ready. Some items are marked optional:
        No resources found in default namespace.
        ```
 
-2.  Ensure you have the Langchain Helm repo added. (skip this step if you are using local charts)
+    :::note Namespace
+    If you are using a namespace other than the default namespace, you will need to specify the namespace in the `helm` and `kubectl` commands by using the `-n <namespace>` flag.
+    :::
+
+1.  Ensure you have the Langchain Helm repo added. (skip this step if you are using local charts)
 
     ```bash
     helm repo add langchain https://langchain-ai.github.io/helm/
     "langchain" has been added to your repositories
     ```
 
-:::note Namespace
-If you are using a namespace other than the default namespace, you will need to specify the namespace in the `helm` and `kubectl` commands by using the `-n <namespace>` flag.
-:::
-
-3.  Run `helm install langsmith langchain/langsmith --values langsmith_config.yaml --version <version> -n <namespace> --debug`
-
-    - Replace `<namespace>` with the namespace you want to deploy LangSmith to.
-    - Replace `<version>` with the version of LangSmith you want to deploy. You can find the available versions in the [Helm Chart repository](https://github.com/langchain-ai/helm/releases). We generally recommend using the latest version.
-      Output should look something like:
+1.  Find the latest version of the chart. You can find the available versions in the [Helm Chart repository](https://github.com/langchain-ai/helm/releases).
+    - We generally recommend using the latest version.
+    - You can also run `helm search repo langchain/langsmith --versions` to see the available versions. The output will look something like this:
 
     ```bash
-    NAME: langsmith
-    LAST DEPLOYED: Fri Sep 17 21:08:47 2021
-    NAMESPACE: langsmith
-    STATUS: deployed
-    REVISION: 1
-    TEST SUITE: None
+    langchain/langsmith     0.10.14         0.10.32         Helm chart to deploy the langsmith application ...
+    langchain/langsmith     0.10.13         0.10.32         Helm chart to deploy the langsmith application ...
+    langchain/langsmith     0.10.12         0.10.32         Helm chart to deploy the langsmith application ...
+    langchain/langsmith     0.10.11         0.10.29         Helm chart to deploy the langsmith application ...
+    langchain/langsmith     0.10.10         0.10.29         Helm chart to deploy the langsmith application ...
     ```
 
-4.  Run `kubectl get pods`
-    Output should now look something like:
+1.  Run `helm install langsmith langchain/langsmith --values langsmith_config.yaml --version <version> -n <namespace> --debug`
+
+    - Replace `<namespace>` with the namespace you want to deploy LangSmith to.
+    - Replace `<version>` with the version of LangSmith you want to install from the previous step. Most users should install the latest version available.
+
+    Once the `helm install` command runs and finishes successfully, you should see output similar to this:
+
+        ```bash
+        NAME: langsmith
+        LAST DEPLOYED: Fri Sep 17 21:08:47 2021
+        NAMESPACE: langsmith
+        STATUS: deployed
+        REVISION: 1
+        TEST SUITE: None
+        ```
+
+    This may take a few minutes to complete as it will create several Kubernetes resources and run several jobs to initialize the database and other services.
+
+1.  Run `kubectl get pods`
+    Output should now look something like this (note the exact pod names may vary based on the version and configuration you used):
 
     ```bash
     langsmith-backend-6ff46c99c4-wz22d       1/1     Running   0          3h2m
@@ -183,12 +200,13 @@ Now that LangSmith is running, you can start using it to trace your code. You ca
 
 Your LangSmith instance is now running but may not be fully setup yet.
 
-If you used one of the basic configs, you may have deployed a no-auth configuration.
-In this state, there is no authentication or concept of user accounts nor API keys and traces can be submitted directly without an API key so long as the hostname is passed to the LangChain tracer/LangSmith SDK.
+If you used one of the basic configs, you will have a default admin user account created for you. You can log in with the email address and password you specified in the `langsmith_config.yaml` file.
 
 As a next step, it is strongly recommended you work with your infrastructure administrators to:
 
 - Setup DNS for your LangSmith instance to enable easier access
 - Configure SSL to ensure in-transit encryption of traces submitted to LangSmith
-- Configure LangSmith for [oauth authentication](/self_hosting/configuration/sso) or [basic authentication](/self_hosting/configuration/basic_auth) to secure your LangSmith instance
-- Connect LangSmith to secured Postgres and Redis instances
+- Configure LangSmith with [Single Sign-On](/self_hosting/configuration/sso) to secure your LangSmith instance
+- Connect LangSmith to external Postgres and Redis instances
+
+Review our [configuration section](../configuration) for more information on how to configure these options.
