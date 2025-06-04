@@ -54,13 +54,15 @@ The available filter operators depend on the data type of the attribute you are 
 - **is one of**: Match on any of the values in the list
 - `>` / `<`: Available for numeric fields
 
-## Filter for intermediate runs (spans)
+## Specific Filtering Techniques
+
+### Filter for intermediate runs (spans)
 
 In order to filter for intermediate runs (spans), you first need to remove the default `IsTrace` is `true` filter. For example, you would do this if you wanted to filter by `run name` for sub runs or filter by `run type`.
 
-Run metadata and tags are also powerful to filter on. These relies on good tagging for all parts of your pipeline. To learn more, you can check out [this guide](./add_metadata_tags).
+Run metadata and tags are also powerful to filter on. These rely on good tagging across all parts of your pipeline. To learn more, you can check out [this guide](./add_metadata_tags).
 
-## Filter based on inputs and outputs
+### Filter based on inputs and outputs
 
 You can filter runs based on the content in the inputs and outputs of the run.
 
@@ -74,7 +76,7 @@ Note that keyword search is done splitting the text and finding any partial matc
 
 Based on the filters above, the system will search for `python` and `tensorflow` in either inputs or outputs, and `embedding` in the inputs along with `fine` and `tune` in the outputs.
 
-## Filter based on input / output key-value pairs
+### Filter based on input / output key-value pairs
 
 In addition to full-text search, you can filter runs based on specific key-value pairs in the inputs and outputs. This allows for more precise filtering, especially when dealing with structured data.
 
@@ -88,7 +90,7 @@ For example, to match the following input:
 }
 ```
 
-Select `Filters`, `Add Filter` to bring up the filtering options. Then select `Input KV`, enter `input` as the key and enter `What is the capital of France?` as the value.
+Select `Filters`, `Add Filter` to bring up the filtering options. Then select `Input Key`, enter `input` as the key and enter `What is the capital of France?` as the value.
 
 ![Filtering](./static/search_kv_input.png)
 
@@ -106,7 +108,7 @@ You can also match nested keys by using dot notation to selected the nested key 
 }
 ```
 
-Select `Output KV`, enter `documents.page_content` as the key and enter `The capital of France is Paris` as the value. This will match the nested key `documents.page_content` with the specified value.
+Select `Output Key`, enter `documents.page_content` as the key and enter `The capital of France is Paris` as the value. This will match the nested key `documents.page_content` with the specified value.
 
 ![Filtering](./static/search_kv_output.png)
 
@@ -114,9 +116,11 @@ You can add multiple key-value filters to create more complex queries. You can a
 
 ![Filtering](./static/search_kv_filter_shortcut.png)
 
-## Example of filtering using output key-value pairs: filter tool calls
+### Example: Filtering for tool calls
 
-As an example of filtering on key-value pairs, let's suppose that you wanted to filter traces for tool calls.
+It's common to want to search for traces that contain a specific tool calls. Tool calls are typically indicated in the output of an LLM run. To filter for tool calls, you would use the `Output Key` filter.
+
+While this example will show you how to filter for tool calls, the same logic can be applied to filter for any key-value pair in the output.
 
 In this case, let's assume this is the output you want to filter for:
 
@@ -177,7 +181,7 @@ LangSmith will break it into the following set of searchable key value pairs:
 | `generations.message.kwargs.tool_calls.type`       | `tool_call`                                                                  |
 | `type`                                             | `LLMResult`                                                                  |
 
-To search for specific tool call, you can use the following Output KV search while removing the root runs filter:
+To search for specific tool call, you can use the following Output Key search while removing the root runs filter:
 
 `generations.message.kwargs.tool_calls.name` = `Plan`
 
@@ -185,15 +189,11 @@ This will match root and non-root runs where the `tool_calls` name is `Plan`.
 
 ![Filtering](./static/search_kv_tool.png)
 
-If you would like to filter for all runs _whose tree contains_ the tool filter call, you can use the tree filter in the [advanced filters](/observability/how_to_guides/filter_traces_in_application#advanced-filters) setting:
-
-![Filtering](./static/search_kv_tool_tree.png)
-
-## Negative filtering on key-value pairs
+### Negative filtering on key-value pairs
 
 Different types of negative filtering can be applied to `Metadata`, `Input Key`, and `Output Key` fields to exclude specific runs from your results.
 
-For example, to find all runs where the metadata key `phone` is not equal to `1234567890`, set the `Metadata`'s `Key` operator to `is` and `Key` field to `phone`, then set the `Value` operator to `is not` and the `Value` field to `1234567890`. This will match all runs that have a metadata key `phone` with any value except `1234567890`.
+For example, to find all runs where the metadata key `phone` is not equal to `1234567890`, set the `Metadata` `Key` operator to `is` and `Key` field to `phone`, then set the `Value` operator to `is not` and the `Value` field to `1234567890`. This will match all runs that have a metadata key `phone` with any value except `1234567890`.
 
 ![Filtering](./static/negative_filtering_1.png)
 
@@ -211,7 +211,7 @@ Finally, you can also filter for runs that do not have a specific key but have a
 
 Note that you can use `does not contain` operator instead of `is not` to perform a substring match.
 
-## Saved filters
+## Save a filter
 
 Saving filters allow you to store and reuse frequently used filter configurations. Saved filters are specific to a tracing project.
 
@@ -290,3 +290,9 @@ This is the opposite of the above. You may want to search for runs who have spec
 In order to do this, you can click on the `Advanced Filters` link all the way at the bottom of the filter. This will open up a new modal where you can add `Tree filters`. This will make the rule you specific apply to all child runs of the individual runs you've already filtered for.
 
 ![Filtering](./static/child_runs.png)
+
+### Example: Filtering on all runs whose tree contains the tool call filter
+
+Extending the [tool call filtering example](/observability/how_to_guides/filter_traces_in_application#example-filtering-for-tool-calls) from above, if you would like to filter for all runs _whose tree contains_ the tool filter call, you can use the tree filter in the [advanced filters](/observability/how_to_guides/filter_traces_in_application#advanced-filters) setting:
+
+![Filtering](./static/search_kv_tool_tree.png)
