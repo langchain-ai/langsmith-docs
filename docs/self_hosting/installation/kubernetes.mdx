@@ -31,27 +31,30 @@ Ensure you have the following tools/items ready. Some items are marked optional:
       - We recommend using a cluster autoscaler to handle scaling up/down of nodes based on resource usage
       - We recommend setting up the metrics server so that autoscaling can be turned on
       - You must have a node with at least 4 vCPUs and 16GB of memory **allocatable** as ClickHouse will request this amount of resources by default.
-   1. Valid Dynamic PV provisioner or PVs available on your cluster. You can verify this by running:
+   1. Valid Dynamic PV provisioner or PVs available on your cluster.
       - We will be using a PostgreSQL database, Redis, and ClickHouse for storing traces. These services require persistent storage.
+      - Our base installation will try to install these services inside your cluster. To enable persistence, we will try to provision volumes for these services.
       - If using PVs in your cluster, we highly recommend setting up backups in a production environment.
       - **We strongly encourage using a storage class backed by SSDs for better performance. We recommend 7000 IOPS and 1000 MiB/s throughput.**
+      - On EKS, you may need to ensure you have the `ebs-csi-driver` installed and configured for dynamic provisioning. Refer to the [EBS CSI Driver documentation](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html) for more information.
 
-   ```bash
-   kubectl get storageclass
-   ```
+      You can verify this by running:
+         ```bash
+         kubectl get storageclass
+         ```
 
-   The output should show at least one storage class with a provisioner that supports dynamic provisioning. For example:
+         The output should show at least one storage class with a provisioner that supports dynamic provisioning. For example:
 
-   ```bash
-     NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-     gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   true                   161d
-   ```
+         ```bash
+           NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+           gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   true                   161d
+         ```
 
-   :::note
-   We highly recommend using a storage class that supports volume expansion. This is because traces can potentially require a lot of disk space and your volumes may need to be resized over time.
-   :::
+         :::note
+         We highly recommend using a storage class that supports volume expansion. This is because traces can potentially require a lot of disk space and your volumes may need to be resized over time.
+         :::
 
-   Refer to the [Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/storage-classes/) for more information on storage classes.
+         Refer to the [Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/storage-classes/) for more information on storage classes.
 
 1. Helm
    1. To install helm refer to the [Helm documentation](https://helm.sh/docs/intro/install/)
