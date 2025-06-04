@@ -48,8 +48,8 @@ Ensure you have the following tools/items ready. Some items are marked optional:
       The output should show at least one storage class with a provisioner that supports dynamic provisioning. For example:
 
       ```bash
-        NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-        gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   true                   161d
+        NAME            PROVISIONER                 RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+        gp2 (default)   ebs.csi.eks.amazonaws.com   Delete          WaitForFirstConsumer   true                   161d
       ```
 
       :::note
@@ -123,6 +123,7 @@ Ensure you have the following tools/items ready. Some items are marked optional:
     ```
 
 1.  Find the latest version of the chart. You can find the available versions in the [Helm Chart repository](https://github.com/langchain-ai/helm/releases).
+
     - We generally recommend using the latest version.
     - You can also run `helm search repo langchain/langsmith --versions` to see the available versions. The output will look something like this:
 
