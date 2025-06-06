@@ -219,7 +219,7 @@ Learn [how run pairwise evaluations](/evaluation/how_to_guides/evaluate_pairwise
 Evaluating a deployed application's outputs in (roughly) realtime is what we call "online" evaluation.
 In this case there is no dataset involved and no possibility of reference outputs — we're running evaluators on real inputs and real outputs as they're produced.
 This is useful for monitoring your application and flagging unintended behavior.
-Online evaluation can also work hand-in-hand with offline evaluation: for example, an online evaluator can be used to classify input questions into a set of categories that can be later used to curate a dataset for offline evaluation.
+Online evaluation can also work hand-in-hand with offline evaluation: for example, an online evaluator can be used to classify input questions into a set of categories that can later be used to curate a dataset for offline evaluation.
 
 Online evaluators are generally intended to be run server-side. LangSmith has built-in [LLM-as-judge evaluators](/evaluation/how_to_guides/llm_as_judge) that you can configure, or you can define custom code evaluators that are also run within LangSmith.
 
