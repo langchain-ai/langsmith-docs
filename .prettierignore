@@ -3,3 +3,5 @@ build
 .docusaurus
 docs/api
 docs/evaluation
+# TODO: Fix our formatter
+docs/observability/how_to_guides/threads.mdx
