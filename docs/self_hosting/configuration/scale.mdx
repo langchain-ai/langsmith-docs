@@ -80,3 +80,7 @@ redis:
     enabled: true
     existingSecretName: langsmith-redis-secret   # Set the connection url for your external Redis instance (200+ GB)
 ```
+
+:::note
+Note that to move to a 200 GB Redis cache on Azure, you will have to move to a Redis Enterprise cluster. More information about enabling Redis cluster for LangSmith to come.
+:::
