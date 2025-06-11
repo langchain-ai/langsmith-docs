@@ -1,0 +1,82 @@
+# Configuring LangSmith for Scale
+
+A self-hosted LangSmith instance can handle a large number of traces. The default configuration for the deployment can handle low/medium levels of scale, and you can configure your deployment to be able to achieve your desired scale.
+
+Below we outline recommendations depending on the desired scale. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes version of LangSmith. 
+
+:::note
+Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
+:::
+
+## 10 Traces Per Second (TPS)
+The default LangSmith configuration mentioned in our [prerequisites section](../installation/kubernetes#prerequisites) should be able to handle 10 TPS. 
+
+## 100 TPS
+To achieve 100 TPS, we recommend the following updates to your configuration:
+- A Redis cache of at least 14 GB. We also recommend a 1 hour TTL on the redis cache.
+- 10 queue worker replicas.
+
+Here is an example `values.yaml` snippet for this configuration:
+```yaml
+queue:
+  deployment:
+    replicas: 10
+
+redis:
+  statefulSet:
+    resources:
+      requests:
+        memory: 14Gi
+      limits:
+        memory: 14Gi
+
+  # -- For external redis instead use something like below --
+  # external:
+  #   enabled: true
+  #   connectionUrl: "<URL>" OR existingSecretName: "<SECRET-NAME>"
+```
+
+:::note
+Note that we recommend having an external Redis cache. If this is the case, you will need to ensure your Redis cache is configured with at least 14 GB instead of the resource configuration in the values file shown above.
+:::
+
+## 1000 TPS
+In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, we recommend the following updates to the LangSmith configuration:
+- An external Redis cache of at least 200 GB
+- 80 queue workers with 20 jobs per worker
+- 8 platform-backend pods
+- 8 frontend pods. We use these as a reverse proxy for inbound requests.
+:::warning
+Ensuring any ingress controller deployed on the cluster is able to handle the desired load. In our internal testing, we saw bottlenecks in our Nginx controller and make the following updates to achieve this scale:
+```bash
+    replicaCount = 8
+    config = {
+        proxy-request-buffering    = "off"
+        client-body-buffer-size    = "32m"
+        proxy-body-size            = "100m"
+    }
+```
+:::
+
+Here is a `values.yaml` snippet configuring the recommendations above:
+```yaml
+frontend:
+  deployment:
+    replicas: 8
+
+platformBackend:
+  deployment:
+    replicas: 8
+
+queue:
+  deployment:
+    replicas: 80
+  extraEnv:
+    - name: "MAX_ASYNC_JOBS_PER_WORKER"
+      value: "20"
+
+redis:
+  external:
+    enabled: true
+    existingSecretName: langsmith-redis-secret   # Set the connection url for your external Redis instance (200+ GB)
+```
