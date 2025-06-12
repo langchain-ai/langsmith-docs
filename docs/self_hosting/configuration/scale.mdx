@@ -4,12 +4,11 @@ A self-hosted LangSmith instance can handle a large number of traces. The defaul
 
 In the table below, we provide some high level guidance for LangSmith configurations. Further below, we go into detail on the recommended configurations. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes version of LangSmith.
 
-| Desired traces per second (TPS) | Queue worker replicas | Frontend replicas | Platform backend replicas | Clickhouse config | Redis cache size |
-|---|---|---|---|---|---|
-| **10 TPS** | 3 (default) | 1 (default) | 3 (default) | 16+ GB Memory (default) | 2 GB (default) |
-| **100 TPS** | **10** | 1 (default) | 1 (default) | 4+ vCPUs, 16+ GB Memory (default) | **14+ GB** |
-| **1000 TPS** | **160** | **4** | **20** | **8+ vCPUs, 24+ GB Memory** | **200+ GB** |
-
+| Desired traces per second (TPS) | Queue worker replicas | Frontend replicas | Platform backend replicas | Clickhouse config                 | Redis cache size |
+| ------------------------------- | --------------------- | ----------------- | ------------------------- | --------------------------------- | ---------------- |
+| **10 TPS**                      | 3 (default)           | 1 (default)       | 3 (default)               | 16+ GB Memory (default)           | 2 GB (default)   |
+| **100 TPS**                     | **10**                | 1 (default)       | 1 (default)               | 4+ vCPUs, 16+ GB Memory (default) | **14+ GB**       |
+| **1000 TPS**                    | **160**               | **4**             | **20**                    | **8+ vCPUs, 24+ GB Memory**       | **200+ GB**      |
 
 :::note
 Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
@@ -66,7 +65,7 @@ Here is a `values.yaml` snippet configuring the recommendations above:
 ```yaml
 frontend:
   deployment:
-    replicas: 4  # OR enable autoscaling to this level (example below)
+    replicas: 4 # OR enable autoscaling to this level (example below)
 # autoscaling:
 #   enabled: true
 #   maxReplicas: 4
@@ -74,7 +73,7 @@ frontend:
 
 platformBackend:
   deployment:
-    replicas: 20  # OR enable autoscaling to this level (example below)
+    replicas: 20 # OR enable autoscaling to this level (example below)
     resources:
       requests:
         cpu: "1600m"
@@ -86,7 +85,7 @@ platformBackend:
 # Note that we are actively working on improving performance on this service.
 queue:
   deployment:
-    replicas: 160  # OR enable autoscaling to this level (example below)
+    replicas: 160 # OR enable autoscaling to this level (example below)
 # autoscaling:
 #   enabled: true
 #   maxReplicas: 160
@@ -100,7 +99,7 @@ redis:
 clickhouse:
   statefulSet:
     persistence:
-      size: 200Gi  # This may depend on your configured TTL (see below)
+      size: 200Gi # This may depend on your configured TTL (see below)
   resources:
     requests:
       cpu: "8"
@@ -120,8 +119,8 @@ config:
 #     shortlived: "604800"  # 7 days
 ```
 
-  :::important
-  Ensure any ingress controller deployed on the cluster is able to handle the desired load. In our internal testing, we saw bottlenecks in our Nginx controller and make the following updates to achieve this scale:
+:::important
+Ensure any ingress controller deployed on the cluster is able to handle the desired load. In our internal testing, we saw bottlenecks in our Nginx controller and make the following updates to achieve this scale:
 
 ```bash
     replicaCount = 4
