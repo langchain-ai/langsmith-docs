@@ -2,7 +2,14 @@
 
 A self-hosted LangSmith instance can handle a large number of traces. The default configuration for the deployment can handle low/medium levels of scale, and you can configure your deployment to be able to achieve your desired scale.
 
-Below we outline recommendations depending on the desired scale. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes version of LangSmith.
+In the table below, we provide some high level guidance for LangSmith configurations. Further below, we go into detail on the recommended configurations. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes version of LangSmith.
+
+| Desired traces per second (TPS) | Queue worker replicas | Frontend replicas | Platform backend replicas | Clickhouse config | Redis cache size |
+|---|---|---|---|---|---|
+| **10 TPS** | 3 (default) | 1 (default) | 3 (default) | 16+ GB Memory (default) | 2 GB (default) |
+| **100 TPS** | **10** | 1 (default) | 1 (default) | 4+ vCPUs, 16+ GB Memory (default) | **14+ GB** |
+| **1000 TPS** | **160** | **4** | **20** | **8+ vCPUs, 24+ GB Memory** | **200+ GB** |
+
 
 :::note
 Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
@@ -49,14 +56,75 @@ Note that we recommend having an external Redis cache. If this is the case, you 
 In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, we recommend the following updates to the LangSmith configuration:
 
 - An external Redis cache of at least 200 GB
-- 80 queue workers with 20 jobs per worker
-- 8 platform-backend pods
-- 8 frontend pods. We use these as a reverse proxy for inbound requests.
-  :::warning
-  Ensuring any ingress controller deployed on the cluster is able to handle the desired load. In our internal testing, we saw bottlenecks in our Nginx controller and make the following updates to achieve this scale:
+- 8 vCPU and 24 GB of memory on your clickhouse instance.
+- 160 queue workers with 20 jobs per worker
+- 20 platform-backend pods
+- 4 frontend pods. We use these as a reverse proxy for inbound requests.
+
+Here is a `values.yaml` snippet configuring the recommendations above:
+
+```yaml
+frontend:
+  deployment:
+    replicas: 4  # OR enable autoscaling to this level (example below)
+# autoscaling:
+#   enabled: true
+#   maxReplicas: 4
+#   minReplicas: 2
+
+platformBackend:
+  deployment:
+    replicas: 20  # OR enable autoscaling to this level (example below)
+    resources:
+      requests:
+        cpu: "1600m"
+# autoscaling:
+#   enabled: true
+#   maxReplicas: 20
+#   minReplicas: 8
+
+# Note that we are actively working on improving performance on this service.
+queue:
+  deployment:
+    replicas: 160  # OR enable autoscaling to this level (example below)
+# autoscaling:
+#   enabled: true
+#   maxReplicas: 160
+#   minReplicas: 40
+
+redis:
+  external:
+    enabled: true
+    existingSecretName: langsmith-redis-secret # Set the connection url for your external Redis instance (200+ GB)
+
+clickhouse:
+  statefulSet:
+    persistence:
+      size: 200Gi  # This may depend on your configured TTL (see below)
+  resources:
+    requests:
+      cpu: "8"
+      memory: "16Gi"
+    limits:
+      cpu: "12"
+      memory: "48Gi"
+
+config:
+  blobStorage:
+    # Please also set the other keys to connect to your blob storage. See configuration section.
+    enabled: true
+# ttl:
+#   enabled: true
+#   ttl_period_seconds:
+#     longlived: "7776000"  # 90 days
+#     shortlived: "604800"  # 7 days
+```
+
+  :::important
+  Ensure any ingress controller deployed on the cluster is able to handle the desired load. In our internal testing, we saw bottlenecks in our Nginx controller and make the following updates to achieve this scale:
 
 ```bash
-    replicaCount = 8
+    replicaCount = 4
     config = {
         proxy-request-buffering    = "off"
         client-body-buffer-size    = "32m"
@@ -64,32 +132,4 @@ In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, w
     }
 ```
 
-:::
-
-Here is a `values.yaml` snippet configuring the recommendations above:
-
-```yaml
-frontend:
-  deployment:
-    replicas: 8
-
-platformBackend:
-  deployment:
-    replicas: 8
-
-queue:
-  deployment:
-    replicas: 80
-  extraEnv:
-    - name: "MAX_ASYNC_JOBS_PER_WORKER"
-      value: "20"
-
-redis:
-  external:
-    enabled: true
-    existingSecretName: langsmith-redis-secret # Set the connection url for your external Redis instance (200+ GB)
-```
-
-:::note
-Note that to move to a 200 GB Redis cache on Azure, you will have to move to a Redis Enterprise cluster. More information about enabling Redis cluster for LangSmith to come.
 :::
