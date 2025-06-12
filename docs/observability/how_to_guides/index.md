@@ -18,6 +18,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [LangChain OSS libraries](./how_to_guides/trace_with_langchain)
 - [LangGraph](./how_to_guides/trace_with_langgraph)
 - [OpenAI](./how_to_guides/annotate_code#wrap-the-openai-client)
+- [Anthropic (Python only)](./how_to_guides/annotate_code#wrap-the-anthropic-client-python-only)
 - [Instructor](./how_to_guides/trace_with_instructor)
 - [Vercel AI SDK (JS only)](./how_to_guides/trace_with_vercel_ai_sdk)
 - [OpenTelemetry](./how_to_guides/trace_with_opentelemetry)
@@ -31,12 +32,13 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Implement distributed tracing](./how_to_guides/distributed_tracing)
 - [Trace LangChain with OpenTelemetry (Python only)](./how_to_guides/trace_langchain_with_otel)
 - [Access the current span within a traced function](./how_to_guides/access_current_span)
+- [Log custom LLM traces](./how_to_guides/log_llm_trace)
+- [Log LLM token counts](./how_to_guides/log_llm_trace#provide-token-and-cost-information)
+- [Calculate token-based costs for traces](./how_to_guides/calculate_token_based_costs)
 - [Log multimodal traces](./how_to_guides/log_multimodal_traces)
 - [Log retriever traces](./how_to_guides/log_retriever_trace)
-- [Log custom LLM traces / provide custom token counts](./how_to_guides/log_llm_trace)
 - [Prevent logging of sensitive data in traces](./how_to_guides/mask_inputs_outputs)
 - [Trace generator functions](./how_to_guides/trace_generator_functions)
-- [Calculate token-based costs for traces](./how_to_guides/calculate_token_based_costs)
 - [Trace JS functions in serverless environments](./how_to_guides/serverless_environments)
 - [Troubleshoot trace testing](./how_to_guides/nest_traces)
 - [Upload files with traces](./how_to_guides/upload_files_with_traces)
@@ -73,6 +75,6 @@ Leverage LangSmith's powerful monitoring, automation, and online evaluation feat
 
 ## Human feedback
 
-- [Log user feedback](../evaluation/how_to_guides/attach_user_feedback)
+- [Log user feedback using the SDK](../evaluation/how_to_guides/attach_user_feedback)
 - [Set up a new feedback criteria](../evaluation/how_to_guides/set_up_feedback_criteria)
 - [Annotate traces inline in the UI](../evaluation/how_to_guides/annotate_traces_inline)

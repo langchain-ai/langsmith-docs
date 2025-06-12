@@ -48,7 +48,7 @@ spend (which we will see later on our draft invoice).
 
 We can navigate to the Usage Graph under `Settings` -> `Usage and Billing` -> `Usage Graph`.
 
-![](./static/p1usagegraph_v2.png)
+![](./static/usage_graph.png)
 
 We see in the graph above that there are two usage metrics that LangSmith charges for:
 
@@ -63,16 +63,6 @@ LangSmith Traces usage is measured per workspace, because workspaces often repre
 or teams within an organization. As a LangSmith administrator, we want to understand spend granularly per each of these units. In
 this case where we just want to cut spend, we can focus on the environment responsible for the majority of costs first for the greatest savings.
 
-:::note
-LangSmith's Usage Graph and Invoice use the term `tenant_id` to refer to a workspace ID. They are interchangeable.
-:::
-
-In the above image, the vast majority of usage is in the workspace with ID `c27dd32c-7c80-4e8c-acde-bfcb67a90ab2`. We can
-go to `Settings` -> `Workspaces`, and hover our mouse over the `Workspace ID` button to find the one with a matching ID. In
-this case, it's the Prod workspace:
-
-![](./static/p1findworkspaceid_v2.png)
-
 ### Invoices
 
 We understand what usage looks like in terms of traces, but we now need to translate that into spend. To do so,
@@ -80,6 +70,10 @@ we head to the `Invoices` tab. The first invoice that will appear on screen is a
 invoice, which shows your running spend thus far this month.
 
 ![](./static/invoice_investigation_v2.gif)
+
+:::note
+LangSmith's Usage Graph and Invoice use the term `tenant_id` to refer to a workspace ID. They are interchangeable.
+:::
 
 In the above GIF, we see that the charges for LangSmith Traces are broken up by "tenant_id" (i.e. Workspace ID), meaning we can track tracing spend
 on each of our workspaces. In the first few days of June, the vast majority of the total spend of ~$2,000 is in our production
@@ -156,11 +150,8 @@ and will persist indefinitely, even after the trace gets deleted.
 
 ### See results after 7 days
 
-While the total amount of traces per day stayed the same, the extended data retention traces was cut heavily.
+While the total amount of traces per day stayed the same, the extended data retention traces was cut heavily. In the invoice, we can see thatwe've only spent about $900 in the last 7 days, as opposed to $2,000 in the previous 4.
 
-![](./static/p1endresultgraph_v2.png)
-
-This translates to the invoice, where we've only spent about $900 in the last 7 days, as opposed to $2,000 in the previous 4.
 That's a cost reduction of nearly 75% per day!
 
 ![](./static/p1endresultinvoice_v2.png)

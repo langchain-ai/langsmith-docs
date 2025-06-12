@@ -8,130 +8,130 @@ import {
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
+import priceEntry from "./static/new_price_map_entry.png";
 
 # Calculate token-based costs for traces
 
-:::tip Recommended Reading
-Before diving into this content, it might be helpful to read the following:
+:::info Recommended Reading
 
-- [Providing token counts for LLM runs (spans)](./log_llm_trace#manually-provide-token-counts)
-
-:::
-
-LangSmith allows you to track costs for traces based on the number of tokens used for LLM invocations.
-The costs are rolled up to the trace level and project level.
-
-For LangSmith to accurately calculate token-based costs, you need to provide the token counts for each LLM invocation in the trace, along with sending up `ls_provider` and `ls_model_name` in the run metadata.
-
-- If you are using the LangSmith Python or TS/JS SDK, you should carefully read through the [this guide](./log_llm_trace).
-- If you are using LangChain Python or TS/JS, _`ls_provider` and `ls_model_name` along with token counts are automatically sent up to LangSmith_.
-
-:::note
-
-If `ls_model_name` is not present in `extra.metadata`, other fields might be used from the `extra.invocation_metadata` for estimating token counts and calculating cost. The following fields are used in the order of precedence:
-
-1. `metadata.ls_model_name`
-2. `invocation_params.model`
-3. `invocation_params.model_name`
-4. `invocation_params.model_id` (for costs only)
-5. `invocation_params.model_path` (for costs only)
-6. `invocation_params.endpoint_name` (for costs only)
+- [Providing token counts for LLM runs (spans)](./log_llm_trace#provide-token-and-cost-information)
 
 :::
 
-Once you are sending up the correct information to LangSmith, you must set up the model pricing map in LangSmith settings.
-In order to do this, navigate to the <RegionalUrl text='model pricing map' suffix='/settings/workspaces/models' />.
-Here, you can set the cost per token for each model and provider combination. This information is scoped to a workspace.
+LangSmith allows you to track token-based costs for LLM runs.
+The costs are rolled up to the trace and project level.
 
-Several default entries for OpenAI models are already present in the model pricing map, which you can clone and modify as needed.
+There are two ways costs can be tracked:
+
+1. Derived from token counts and model prices
+2. Directly specified as part of the run data
+
+In most cases it is easier to include token counts in the run data and specify model pricing in LangSmith.
+LangSmith assumes that costs are linear in token counts, broken down by token type.
+For the few models with non-linear pricing (e.g., above X input tokens the per-token price changes), we recommend computing costs client-side and sending them as part of the run data.
+
+## Send token counts
+
+For LangSmith to accurately derive costs for an LLM run, you need to provide token counts:
+
+- If you are using the LangSmith Python or TS/JS SDK with OpenAI or Anthropic models, the [built-in wrappers](./annotate_code#wrap-the-openai-client) will automatically send up token counts, model provider and model name data to LangSmith.
+- If you are using the LangSmith SDK's with other model providers, you should carefully read through [this guide](./log_llm_trace#manually-provide-usage-information).
+- If you are using LangChain Python or TS/JS, token counts, model provider, and model name are automatically sent up to LangSmith for most chat model integrations. If there is a chat model integration that is missing token counts and for which the underlying API includes token counts in the model response, please open a GitHub issue in the [LangChain repo](https://github.com/langchain-ai/langchain).
+
+If token counts are not explicitly specified, LangSmith will approximate the token counts of the LLM messages using `tiktoken`.
+
+## Specify model name
+
+LangSmith reads the LLM model name from the `ls_model_name` field in [run metadata](./add_metadata_tags).
+The [SDK built-in wrappers](./annotate_code#wrap-the-openai-client) and any LangChain integrations will automatically handle specifying this metadata for you.
+
+## Set model prices
+
+To compute costs from token counts and model names, we need to know the per-token prices for the model you're using.
+LangSmith has a <RegionalUrl text='model pricing table' suffix='/settings/workspaces/models' /> for this.
+The table comes with pricing information for most OpenAI, Anthropic, and Gemini models.
+You can add prices for other models, or overwrite pricing for default models.
+
+You can specify prices for prompt (input) and completion (output) tokens. If needed you can provide a more detailed breakdown of prices.
+For example, some model providers have different pricing for multimodal or cached tokens.
 
 ![](./static/model_price_map.png)
 
+Hovering over the `...` next to the prompt/completion prices shows you the price breakdown by token type. You can see, for example, if `audio` and `image` prompt tokens have different prices versus default text prompt tokens.
+
 To create a _new entry_ in the model pricing map, click on the `Add new model` button in the top right corner.
 
-![](./static/new_price_map_entry.png)
+<img
+  src={priceEntry}
+  alt="New price map entry interface"
+  style={{ maxHeight: "800px" }}
+/>
 
 Here, you can specify the following fields:
 
-- `Model Name`: The name of the model, will also be used to name the entry in the model pricing map.
-- `Prompt Cost`: The cost per input token for the model. This number is multiplied by the number of tokens in the prompt to calculate the prompt cost.
-- `Completion Cost`: The cost per output token for the model. This number is multiplied by the number of tokens in the completion to calculate the completion cost.
-- `Model Activation Date`: The date from which the pricing is applicable.
-- `Match Pattern`: A regex pattern to match the model name and provider. This is used to match the value for `ls_model_name` in the run metadata.
-- `Provider`: The provider of the model. This is used to match the value for `ls_provider` in the run metadata.
+- **Model Name**: The human-readable name of the model.
+- **Match Pattern**: A regex pattern to match the model name. This is used to match the value for `ls_model_name` in the run metadata.
+- **Prompt (Input) Price**: The cost per 1M input tokens for the model. This number is multiplied by the number of tokens in the prompt to calculate the prompt cost.
+- **Completion (Output) Price**: The cost per 1M output tokens for the model. This number is multiplied by the number of tokens in the completion to calculate the completion cost.
+- **Prompt (Input) Price Breakdown** (Optional): The breakdown of price for each different type of prompt token, e.g. `cache_read`, `video`, `audio`, etc.
+- **Completion (Output) Price Breakdown** (Optional): The breakdown of price for each different type of completion token, e.g. `reasoning`, `image`, etc.
+- **Model Activation Date** (Optional): The date from which the pricing is applicable. Only runs after this date will apply this model price.
+- **Provider** (Optional): The provider of the model. If specified, this is matched against `ls_provider` in the run metadata.
 
 Once you have set up the model pricing map, LangSmith will automatically calculate and aggregate the token-based costs for traces based on the token counts provided in the LLM invocations.
 
-To see the example above in action, you can execute the following code snippet:
+:::note
+Please note that updates to the model pricing map are will not be reflected in the costs for traces already logged. We do not currently support backfilling model pricing changes.
+:::
 
-<CodeTabs
-  tabs={[
-    PythonBlock(`from langsmith import traceable\n
-inputs = [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "I'd like to book a table for two."},
-]\n
-output = {
-    "choices": [
-        {
-            "message": {
-                "role": "assistant",
-                "content": "Sure, what time would you like to book the table for?"
-            }
-        }
-    ],
-    "usage_metadata": {
-        "input_tokens": 27,
-        "output_tokens": 13,
-        "total_tokens": 40,
-    },
-}\n
-@traceable(
-    run_type="llm",
-    metadata={"ls_provider": "my_provider", "ls_model_name": "my_model"}
-)
-def chat_model(messages: list):
-    return output\n
-chat_model(inputs)`),
-    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
-const messages = [
-  { role: "system", content: "You are a helpful assistant." },
-  { role: "user", content: "I'd like to book a table for two." },
-];\n
-const output = {
-  choices: [
-    {
-      message: {
-        role: "assistant",
-        content: "Sure, what time would you like to book the table for?",
-      },
-    },
-  ],
-  usage_metadata: {
-    input_tokens: 27,
-    output_tokens: 13,
-    total_tokens: 40,
-  },
-};\n
-const chatModel = traceable(
-  async ({
-    messages,
-  }: {
-    messages: { role: string; content: string }[];
-    model: string;
-  }) => {
-    return output;
-  },
-  { run_type: "llm", name: "chat_model", metadata: { ls_provider: "my_provider", ls_model_name: "my_model" } }
-);\n
-await chatModel({ messages });`),
-  ]}
-  groupId="client-language"
-/>
+For specifying pricing breakdowns, here are the detailed token count types used by LangChain chat model integrations and LangSmith SDK wrappers:
 
-In the above code snippet, we are sending up the `ls_provider` and `ls_model_name` in the run metadata, along with the token counts for the LLM invocation.
-This information matches the model pricing map entry we set up earlier.
+```python
+# Standardized
+cache_read
+cache_write
+reasoning
+audio
+image
+video
 
-The trace produced will contain the token-based costs based on the token counts provided in the LLM invocation and the model pricing map entry.
+# Anthropic-only
+ephemeral_1h_input_tokens
+ephemeral_5m_input_tokens
+```
 
-![](./static/model_costs.png)
+## Cost formula
+
+The cost for a run is computed greedily from most-to-lease specific token type.
+Suppose we set a price of $2 per 1M prompt tokens with a detailed price of $1 per 1M `cache_read` prompt tokens, and $3 per 1M completion tokens.
+If we uploaded the following usage metadata:
+
+```python
+{
+  "input_tokens": 20,
+  "input_token_details": {"cache_read": 5},
+  "output_tokens": 10,
+  "output_token_details": {},
+  "total_tokens": 30,
+}
+```
+
+then we'd compute the token costs as follows:
+
+```python
+# A.K.A. prompt_cost
+# Notice that we compute the cache_read cost and then for any
+# remaining input_tokens we apply the default input price.
+input_cost = 5 * 1e-6 + (20 - 5) * 2e-6  # 3.5e-5
+# A.K.A. completion_cost
+output_cost = 10 * 3e-6  # 3e-5
+total_cost = input_cost + output_cost  # 6.5e-5
+```
+
+## Send costs directly
+
+If you are tracing an LLM call that returns token cost information, are tracing an API with a non-token based pricing scheme,
+or otherwise have accurate information around costs at runtime, you may instead populate a `usage_metadata`
+dict while tracing rather than relying on LangSmith's built-in cost calculations.
+
+See [this guide](./log_llm_trace#manually-provide-usage-information) to learn how to manually provide cost information for a run.
