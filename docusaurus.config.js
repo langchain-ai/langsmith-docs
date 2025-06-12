@@ -110,7 +110,7 @@ const config = {
       },
       announcementBar: {
         content:
-          'We are growing and hiring for multiple roles for LangChain, LangGraph and LangSmith. <a href="https://www.langchain.com/careers" target="_blank" rel="noopener noreferrer">Join our team!</a>',
+          'LangChain Availability Impacted: Please follow our <a href="https://status.smith.langchain.com/"></a>status page</a> for more information',
       },
       prism: {
         theme: {
