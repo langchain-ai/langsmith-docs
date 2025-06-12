@@ -1,8 +1,8 @@
 # Configuring LangSmith for Scale
 
-A self-hosted LangSmith instance can handle a large number of traces. The default configuration for the deployment can handle low/medium levels of scale, and you can configure your deployment to be able to achieve your desired scale.
+A self-hosted LangSmith instance can handle a large number of traces. The default configuration for the deployment can handle substantial load, and you can configure your deployment to be able to achieve higher scale.
 
-In the table below, we provide some high level guidance for LangSmith configurations. Further below, we go into detail on the recommended configurations. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes version of LangSmith.
+In the table below, we provide some high level guidance for LangSmith configurations. Further below, we go into detail on the recommended configurations. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes deployment of LangSmith.
 
 | Desired traces per second (TPS) | Queue worker replicas | Frontend replicas | Platform backend replicas | Clickhouse config                 | Redis cache size |
 | ------------------------------- | --------------------- | ----------------- | ------------------------- | --------------------------------- | ---------------- |
@@ -86,7 +86,7 @@ platformBackend:
 #   maxReplicas: 20
 #   minReplicas: 8
 
-# Note that we are actively working on improving performance on this service.
+## Note that we are actively working on improving performance on this service.
 queue:
   deployment:
     replicas: 160 # OR enable autoscaling to this level (example below)
@@ -95,6 +95,7 @@ queue:
 #   maxReplicas: 160
 #   minReplicas: 40
 
+## Ensure your Redis cache is at least 200 GB
 redis:
   external:
     enabled: true
@@ -114,7 +115,7 @@ clickhouse:
 
 config:
   blobStorage:
-    # Please also set the other keys to connect to your blob storage. See configuration section.
+    ## Please also set the other keys to connect to your blob storage. See configuration section.
     enabled: true
 # ttl:
 #   enabled: true
@@ -126,6 +127,10 @@ commonEnv:
   - name: "REDIS_RUNS_EXPIRY_SECONDS"
     value: "3600"
 ```
+
+:::important
+Please also make sure that the kubernetes cluster is configured with sufficent resources to scale to the recommended size. After deployment, all of the pods in the kubernetes cluster should be in a `Running` state. Pods stuck in `Pending` may indicate that you are reaching node pool limits or need larger nodes.
+:::
 
 :::important
 Ensure any ingress controller deployed on the cluster is able to handle the desired load. In our internal testing, we saw bottlenecks in our Nginx controller and make the following updates to achieve this scale:
