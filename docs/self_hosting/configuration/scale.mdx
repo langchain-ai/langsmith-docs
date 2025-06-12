@@ -44,6 +44,10 @@ redis:
   # external:
   #   enabled: true
   #   connectionUrl: "<URL>" OR existingSecretName: "<SECRET-NAME>"
+
+commonEnv:
+  - name: "REDIS_RUNS_EXPIRY_SECONDS"
+    value: "3600"
 ```
 
 :::note
@@ -54,7 +58,7 @@ Note that we recommend having an external Redis cache. If this is the case, you 
 
 In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, we recommend the following updates to the LangSmith configuration:
 
-- An external Redis cache of at least 200 GB
+- An external Redis cache of at least 200 GB. We also recommend a 1 hour TTL on the redis cache.
 - 8 vCPU and 24 GB of memory on your clickhouse instance.
 - 160 queue workers with 20 jobs per worker
 - 20 platform-backend pods
@@ -117,6 +121,10 @@ config:
 #   ttl_period_seconds:
 #     longlived: "7776000"  # 90 days
 #     shortlived: "604800"  # 7 days
+
+commonEnv:
+  - name: "REDIS_RUNS_EXPIRY_SECONDS"
+    value: "3600"
 ```
 
 :::important
