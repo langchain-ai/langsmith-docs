@@ -12,8 +12,7 @@ This guide covers three core topics:
 
 :::info
 Since langsmith ≥ 0.4.1,
-setting LANGSMITH_OTEL_ENABLED=true automatically adds a LangSmith OTEL exporter and respects any existing OpenTelemetry TracerProvider or standard OTEL environment variables you configure.
-This means enabling LANGSMITH_OTEL_ENABLED will by default send traces to both LangSmith and your OTEL endpoint (if you have global trace provider initiazlied). No extra code is needed for fan-out.
+setting LANGSMITH_OTEL_ENABLED=true will by default send traces to both LangSmith and your OTEL endpoint (if you have global trace provider initiazlied). No extra code is needed for fan-out.
 :::
 
 ## Sending Traces to LangSmith through OTel
@@ -51,8 +50,6 @@ import os
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
-# LangChain will automatically use OpenTelemetry to send traces to LangSmith
-# because the LANGSMITH_OTEL_ENABLED environment variable is set.
 
 # Create a chain
 prompt = ChatPromptTemplate.from_template("Tell me a joke about {topic}")
