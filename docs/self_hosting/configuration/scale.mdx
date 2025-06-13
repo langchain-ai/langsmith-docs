@@ -4,11 +4,11 @@ A self-hosted LangSmith instance can handle a large number of traces. The defaul
 
 In the table below, we provide some high level guidance for LangSmith configurations. Further below, we go into detail on the recommended configurations. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes deployment of LangSmith.
 
-| Desired traces per second (TPS) | Queue worker replicas | Frontend replicas | Platform backend replicas | Clickhouse config                 | Redis cache size |
-| ------------------------------- | --------------------- | ----------------- | ------------------------- | --------------------------------- | ---------------- |
-| **10 TPS**                      | 3 (default)           | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default)   | 2 GB (default)   |
-| **100 TPS**                     | **10**                | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default)   | **14+ GB**       |
-| **1000 TPS**                    | **160**               | **4**             | **20**                    | **8 vCPUs, 24 GB Memory**         | **200+ GB**      |
+| Desired traces per second (TPS) | Queue worker replicas | Frontend replicas | Platform backend replicas | Clickhouse config               | Redis cache size |
+| ------------------------------- | --------------------- | ----------------- | ------------------------- | ------------------------------- | ---------------- |
+| **10 TPS**                      | 3 (default)           | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | 2 GB (default)   |
+| **100 TPS**                     | **10**                | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | **14+ GB**       |
+| **1000 TPS**                    | **160**               | **4**             | **20**                    | **8 vCPUs, 24 GB Memory**       | **200+ GB**      |
 
 :::note
 Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
