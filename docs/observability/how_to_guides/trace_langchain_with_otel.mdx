@@ -11,6 +11,7 @@ This guide covers three core topics:
 - Distributed Tracing – Propagate context across services for end-to-end visibility.
 
 ## Sending Traces to LangSmith through OTel
+
 ### 1. Installation
 
 :::info
@@ -35,7 +36,7 @@ LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 LANGSMITH_API_KEY=<your_langsmith_api_key>
 ```
 
-###  3. Create a LangChain application with tracing
+### 3. Create a LangChain application with tracing
 
 Here's a simple example showing how to use the OpenTelemetry integration with LangChain:
 
@@ -57,7 +58,7 @@ result = chain.invoke({"topic": "programming"})
 print(result.content)
 ```
 
-###  4. View the traces in LangSmith
+### 4. View the traces in LangSmith
 
 Once your application runs, you'll see the traces in your LangSmith dashboard [like this one](https://smith.langchain.com/public/a762af6c-b67d-4f22-90a0-728df16baeba/r).
 
@@ -79,11 +80,11 @@ LangSmith uses the HTTP trace exporter by default. If you'd like to use your own
 
 1. Set the OTEL environment variables as shown above, or
 2. Set a global trace provider before initializing LangChain components, which LangSmith will detect and use instead of creating its own.
-:::info
-Since langsmith ≥ 0.4.1, 
-setting LANGSMITH_OTEL_ENABLED=true automatically adds a LangSmith OTEK exporter and respects any existing OpenTelemetry TracerProvider or standard OTEL environment variables you configure.
+   :::info
+   Since langsmith ≥ 0.4.1,
+   setting LANGSMITH_OTEL_ENABLED=true automatically adds a LangSmith OTEK exporter and respects any existing OpenTelemetry TracerProvider or standard OTEL environment variables you configure.
 
-This means enabling LANGSMITH_OTEL_ENABLED will by default send traces to both LangSmith and your OTEL enpoint (if you have global trace provider initiazlied). No extra code is needed for fan-out. 
+This means enabling LANGSMITH_OTEL_ENABLED will by default send traces to both LangSmith and your OTEL enpoint (if you have global trace provider initiazlied). No extra code is needed for fan-out.
 :::
 
 ### Configuring Alternate OTLP Endpoints
@@ -123,6 +124,7 @@ chain = prompt | model
 result = chain.invoke({"topic": "programming"})
 print(result.content)
 ```
+
 :::info
 To disable the hybrid behavior after 0.4.1 and send traces only to your OTEL endpoint and exclude sending to LangSmith, add an additional env var:
 
@@ -211,7 +213,6 @@ This approach offers several advantages:
 - Reduced overhead in your application code
 - Better scalability and resilience
 - Ability to add or remove destinations without changing application code
-
 
 ## Distributed Tracing with LangChain and OpenTelemetry
 
