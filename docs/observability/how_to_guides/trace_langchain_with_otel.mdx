@@ -10,6 +10,12 @@ This guide covers three core topics:
 
 - Distributed Tracing – Propagate context across services for end-to-end visibility.
 
+:::info
+Since langsmith ≥ 0.4.1,
+setting LANGSMITH_OTEL_ENABLED=true automatically adds a LangSmith OTEL exporter and respects any existing OpenTelemetry TracerProvider or standard OTEL environment variables you configure.
+This means enabling LANGSMITH_OTEL_ENABLED will by default send traces to both LangSmith and your OTEL endpoint (if you have global trace provider initiazlied). No extra code is needed for fan-out.
+:::
+
 ## Sending Traces to LangSmith through OTel
 
 ### 1. Installation
@@ -27,7 +33,7 @@ pip install langchain
 
 ### 2. Enable the OpenTelemetry integration
 
-In LangChain/LangGraph App, you can enable the OpenTelemetry integration by setting the `LANGSMITH_OTEL_ENABLED` environment variable:
+In your LangChain/LangGraph App, enable the OpenTelemetry integration by setting the `LANGSMITH_OTEL_ENABLED` environment variable:
 
 ```bash
 LANGSMITH_OTEL_ENABLED=true
@@ -68,7 +74,7 @@ While LangSmith is the default destination for OpenTelemetry traces, you can als
 
 ### Using Environment Variables or Global Configuration
 
-By default, the LangSmith OpenTelemetry exporter will send data to the LangSmith API OTEL endpoint, but this can be customized by setting standard OTEL environment variables:
+By default, the LangSmith OpenTelemetry exporter will send data to the LangSmith API OTEL endpoint (and to OTEL endpoint as well, if you configured global TracerProvider), but this can be customized by setting standard OTEL environment variables:
 
 ```bash
 OTEL_EXPORTER_OTLP_ENDPOINT: Override the endpoint URL
@@ -80,12 +86,7 @@ LangSmith uses the HTTP trace exporter by default. If you'd like to use your own
 
 1. Set the OTEL environment variables as shown above, or
 2. Set a global trace provider before initializing LangChain components, which LangSmith will detect and use instead of creating its own.
-   :::info
-   Since langsmith ≥ 0.4.1,
-   setting LANGSMITH_OTEL_ENABLED=true automatically adds a LangSmith OTEK exporter and respects any existing OpenTelemetry TracerProvider or standard OTEL environment variables you configure.
 
-This means enabling LANGSMITH_OTEL_ENABLED will by default send traces to both LangSmith and your OTEL enpoint (if you have global trace provider initiazlied). No extra code is needed for fan-out.
-:::
 
 ### Configuring Alternate OTLP Endpoints
 
