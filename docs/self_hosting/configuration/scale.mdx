@@ -24,6 +24,7 @@ To achieve 100 TPS, we recommend the following updates to your configuration:
 
 - A Redis cache of at least 14 GB. We also recommend a 1 hour TTL on the redis cache.
 - 10 queue worker replicas.
+- Increasing the clickhouse PVC to store the traces.
 
 Here is an example `values.yaml` snippet for this configuration:
 
@@ -44,6 +45,13 @@ redis:
   # external:
   #   enabled: true
   #   connectionUrl: "<URL>" OR existingSecretName: "<SECRET-NAME>"
+
+clickhouse:
+  statefulSet:
+    persistence:
+      # This may depend on your configured TTL.
+      # We recommend 60Gi for every shortlived TTL day if operating at this scale constantly.
+      size: 420Gi  # This assumes 7 days TTL and operating a this scale constantly.
 
 commonEnv:
   - name: "REDIS_RUNS_EXPIRY_SECONDS"
@@ -104,7 +112,9 @@ redis:
 clickhouse:
   statefulSet:
     persistence:
-      size: 200Gi # This may depend on your configured TTL (see below)
+      # This may depend on your configured TTL (see config section).
+      # We recommend 600Gi for every shortlived TTL day if operating at this scale constantly.
+      size: 4200Gi  # This assumes 7 days TTL and operating a this scale constantly.
   resources:
     requests:
       cpu: "8"
