@@ -1,0 +1,147 @@
+# Configuring LangSmith for Scale
+
+A self-hosted LangSmith instance can handle a large number of traces. The default configuration for the deployment can handle substantial load, and you can configure your deployment to be able to achieve higher scale.
+
+In the table below, we provide some high level guidance for LangSmith configurations. Further below, we go into detail on the recommended configurations. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes deployment of LangSmith.
+
+| Desired traces per second (TPS) | Queue worker replicas | Frontend replicas | Platform backend replicas | Clickhouse config               | Redis cache size |
+| ------------------------------- | --------------------- | ----------------- | ------------------------- | ------------------------------- | ---------------- |
+| **10 TPS**                      | 3 (default)           | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | 2 GB (default)   |
+| **100 TPS**                     | **10**                | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | **14+ GB**       |
+| **1000 TPS**                    | **160**               | **4**             | **20**                    | **8 vCPUs, 24 GB Memory**       | **200+ GB**      |
+
+:::note
+Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
+:::
+
+## 10 Traces Per Second (TPS)
+
+The default LangSmith configuration mentioned in our [prerequisites section](../installation/kubernetes#prerequisites) should be able to handle 10 TPS.
+
+## 100 TPS
+
+To achieve 100 TPS, we recommend the following updates to your configuration:
+
+- A Redis cache of at least 14 GB. We also recommend a 1 hour TTL on the redis cache.
+- 10 queue worker replicas.
+
+Here is an example `values.yaml` snippet for this configuration:
+
+```yaml
+queue:
+  deployment:
+    replicas: 10
+
+redis:
+  statefulSet:
+    resources:
+      requests:
+        memory: 14Gi
+      limits:
+        memory: 14Gi
+
+  # -- For external redis instead use something like below --
+  # external:
+  #   enabled: true
+  #   connectionUrl: "<URL>" OR existingSecretName: "<SECRET-NAME>"
+
+commonEnv:
+  - name: "REDIS_RUNS_EXPIRY_SECONDS"
+    value: "3600"
+```
+
+:::note
+Note that we recommend having an external Redis cache. If this is the case, you will need to ensure your Redis cache is configured with at least 14 GB instead of the resource configuration in the values file shown above.
+:::
+
+## 1000 TPS
+
+In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, we recommend the following updates to the LangSmith configuration:
+
+- An external Redis cache of at least 200 GB. We also recommend a 1 hour TTL on the redis cache.
+- 8 vCPU and 24 GB of memory on your clickhouse instance.
+- 160 queue workers with 20 jobs per worker
+- 20 platform-backend pods
+- 4 frontend pods. We use these as a reverse proxy for inbound requests.
+
+Here is a `values.yaml` snippet configuring the recommendations above:
+
+```yaml
+frontend:
+  deployment:
+    replicas: 4 # OR enable autoscaling to this level (example below)
+# autoscaling:
+#   enabled: true
+#   maxReplicas: 4
+#   minReplicas: 2
+
+platformBackend:
+  deployment:
+    replicas: 20 # OR enable autoscaling to this level (example below)
+    resources:
+      requests:
+        cpu: "1600m"
+# autoscaling:
+#   enabled: true
+#   maxReplicas: 20
+#   minReplicas: 8
+
+## Note that we are actively working on improving performance on this service.
+queue:
+  deployment:
+    replicas: 160 # OR enable autoscaling to this level (example below)
+# autoscaling:
+#   enabled: true
+#   maxReplicas: 160
+#   minReplicas: 40
+
+## Ensure your Redis cache is at least 200 GB
+redis:
+  external:
+    enabled: true
+    existingSecretName: langsmith-redis-secret # Set the connection url for your external Redis instance (200+ GB)
+
+clickhouse:
+  statefulSet:
+    persistence:
+      size: 200Gi # This may depend on your configured TTL (see below)
+  resources:
+    requests:
+      cpu: "8"
+      memory: "16Gi"
+    limits:
+      cpu: "12"
+      memory: "48Gi"
+
+config:
+  blobStorage:
+    ## Please also set the other keys to connect to your blob storage. See configuration section.
+    enabled: true
+# ttl:
+#   enabled: true
+#   ttl_period_seconds:
+#     longlived: "7776000"  # 90 days
+#     shortlived: "604800"  # 7 days
+
+commonEnv:
+  - name: "REDIS_RUNS_EXPIRY_SECONDS"
+    value: "3600"
+```
+
+:::important
+Please also make sure that the kubernetes cluster is configured with sufficent resources to scale to the recommended size. After deployment, all of the pods in the kubernetes cluster should be in a `Running` state. Pods stuck in `Pending` may indicate that you are reaching node pool limits or need larger nodes.
+:::
+
+:::important
+Ensure any ingress controller deployed on the cluster is able to handle the desired load. In our internal testing, we saw bottlenecks in our Nginx controller and make the following updates to achieve this scale:
+
+```bash
+    replicaCount = 4
+    config = {
+        proxy-request-buffering    = "off"
+        client-body-buffer-size    = "32m"
+        proxy-body-size            = "100m"
+    }
+```
+
+:::
