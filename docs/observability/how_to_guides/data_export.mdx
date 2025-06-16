@@ -129,7 +129,7 @@ See [Google documentation](https://cloud.google.com/storage/docs/interoperabilit
 
 ### Create an export job
 
-To export data, you will need to create an export job. This job will specify the destination, the project, and the date range of the data to export.
+To export data, you will need to create an export job. This job will specify the destination, the project, the date range, and filter expression of the data to export. The filter expression is used to narrow down the set of runs exported and is optional. Not setting the filter field will export all runs. Refer to our [filter query language](/reference/data_formats/trace_query_syntax#filter-query-language) and [examples](/observability/how_to_guides/export_traces#use-filter-query-language) to determine the correct filter expression for your export.
 
 You can use the following cURL command to create the job:
 
@@ -143,7 +143,8 @@ curl --request POST \
     "bulk_export_destination_id": "your_destination_id",
     "session_id": "project_uuid",
     "start_time": "2024-01-01T00:00:00Z",
-    "end_time": "2024-01-02T23:59:59Z"
+    "end_time": "2024-01-02T23:59:59Z",
+    "filter": "and(eq(run_type, \"llm\"), eq(name, \"ChatOpenAI\"), eq(input_key, \"messages.content\"), like(input_value, \"%messages.content%\"))"
   }'
 ```
 
