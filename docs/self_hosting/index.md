@@ -35,4 +35,5 @@ Step-by-step guides that cover the installation, configuration, and scaling of y
 - [FAQ](./self_hosting/faq): Frequently asked questions about LangSmith.
 - [Troubleshooting](./self_hosting/troubleshooting): Troubleshooting common issues with your Self-Hosted LangSmith instance.
 - [Observability](./self_hosting/observability): How to access telemetry data for your self-hosted LangSmith instance.
-  - [Export LangSmith telemetry to your backend](./self_hosting/observability/export_backend): How to export telemetry data from LangSmith to your observability backend.
+  - [Export LangSmith telemetry](./self_hosting/observability/export_backend): Export logs, metrics and traces to your collector and/or backend of choice.
+  - [Collector configuration](./self_hosting/observability/langsmith_collector): Example yaml configurations for an OTel collector to gather LangSmith telemetry data.
