@@ -1,0 +1,40 @@
+---
+sidebar_position: 11
+---
+
+# Use tools in a prompt
+
+The LangSmith playground supports tools, which are functions that can be called by the model to perform tasks like searching the web, looking up information, and more.
+
+## Add a tool
+
+To add a tool to your prompt, click the `+ Tool` button at the bottom of the prompt editor.
+![](./static/add_tool.png)
+
+## Construct a tool
+
+To create a custom tool, you'll need to provide a name, description, and arguments. The arguments are the inputs to the tool.
+
+![](./static/custom_tool.png)
+
+Note that when running a custom defined tool in the playground, the model will respond with a JSON object containing the tool name and the tool call.
+There's no current way to hook this up to a hosted tool via MCP.
+
+![](./static/tool_call.png)
+
+## Use a built-in tool
+
+Some model providers support calling tools directly. For example, OpenAI hosts a web search tool that can be used to search the web.
+In the tool section, you can select the built-in tool you want to use.
+
+![](./static/built_in.png)
+
+If the model calls the tool, the playground will output the response from calling the tool.
+
+## Tool choice
+
+Some models support forcing a model to use a specific tool. To see the options for the model you're using, go into the prompt settings -> tool settings -> tool choice.
+
+Each provider has different options, so check the provider's documentation for more information on how each one works.
+
+![](./static/tool_choice.png)
