@@ -1,12 +1,197 @@
 ---
-sidebar_label: Bring up a LangSmith OTEL Collector
+sidebar_label: OTEL Collector Configuration
 sidebar_position: 9
 ---
 
-# Exporting LangSmith telemetry to your observability backend
+# Configure your Telemetry collector to scrape LangSmith services
 
-Self-Hosted LangSmith instances produce telemetry data in the form of logs, metrics and traces
+As seen in the previous section, the various services in a LangSmith deployment emit telemetry data in the form of logs, metrics and traces.
+You may already have telemetry collectors set up in your Kubernetes cluster, or would like to deploy one to monitor your application.
+
+This section will show you the way we would configure an [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/configuration/) to export telemetry data from LangSmith.
+Note that all of the concepts discussed below can be translated to other collectors such as [Fluentd](https://www.fluentd.org/) or [FluentBit](https://fluentbit.io/).
 
 :::warning Important
 **This section is only applicable for Kubernetes deployments.**
 :::
+
+## Receivers
+### Logs
+As discussed previously, logs are read from the filesystem of the nodes/containers running the application. An example configuration for reading logs from files:
+```yaml
+filelog:
+  exclude: []
+  include:
+  - /var/log/pods/*/*/*.log
+  include_file_name: false
+  include_file_path: true
+  operators:
+    - id: container-parser
+      max_log_size: 102400
+      type: container
+  retry_on_failure:
+    enabled: true
+  start_at: end
+```
+
+:::note Note
+**The above configuration reads all logs from all files. If you would like to only read LangSmith logs, you need to either:**
+
+1. Only include files from containers in your LangSmith namespace.
+2. Filter out logs from other namespaces in your processing logic.
+:::
+
+### Metrics
+Metrics can be scraped using the Prometheus endpoints. The configuration below will scrape all database and service metrics:
+```yaml
+prometheus:                                                                                                                                                                           │
+  scrape_configs:                                                                                                                                                                     │
+    - job_name: database-metrics                                                                                                                                                      │
+        scrape_interval: 15s                                                                                                                                                            │
+        static_configs:                                                                                                                                                                 │
+          - targets:                                                                                                                                                                    │
+            - <postgres_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                             │
+            - <redis_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                               │
+            - <clickhouse_service>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                            │
+    - job_name: service-metrics                                                                                                                                                       │
+        scrape_interval: 15s                                                                                                                                                            │
+        static_configs:                                                                                                                                                                 │
+          - targets:                                                                                                                                                                    │
+            - <backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                             │
+            - <host_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                        │
+            - <platform_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                   │
+            - <playground_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics 
+```
+
+### Traces
+For traces, you need to enable the OTLP receiver. The following configuration can be used to listen to HTTP traces on port 4318, and GRPC on port 4317:
+```
+otlp:
+  protocols:
+    grpc: 
+      endpoint: 0.0.0.0:4317
+    http: 
+      endpoint: 0.0.0.0:4318
+```
+
+## Processors
+### Recommended OTEL Processors
+The following processors are recommended when using the OTEL collector:
+
+- [Batch Processor](https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/batchprocessor/README.md): Groups the data into batches before sending to exporters.
+- [Memory Limiter](https://github.com/open-telemetry/opentelemetry-collector/blob/main/processor/memorylimiterprocessor/README.md): Prevents the collector from using too much memory and crashing. When the soft limit is crossed,
+the collector stops accepting new data.
+- [K8s Attributes Processor] (https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/k8sattributesprocessor): Adds K8s metadata such as pod name into the logs, metrics and traces
+
+## Exporters
+Exporters just need to point to an external endpoint of your liking. The following configuration allows you to configure a separate endpoint for logs, metrics and traces:
+```yaml
+otlphttp/logs:
+  endpoint: <your_logs_endpoint>
+    tls: false
+otlphttp/metrics:
+  endpoint: <your_metrics_endpoint>
+    tls: false
+otlphttp/traces:
+  endpoint: <your_traces_endpoint>
+    tls: false
+```
+
+:::note Note
+**The OTEL Collector also supports exporting directly to a [Datadog](https://docs.datadoghq.com/opentelemetry/setup/collector_exporter) endpoint.**
+:::
+
+# Example Collector Configuration:
+Note that this configuration uses a filter to drop any logs from files other than LangSmith ones in our namespace.
+```yaml
+receivers:
+  filelog:
+    exclude: []
+    include:
+    - /var/log/pods/*/*/*.log
+    include_file_name: false
+    include_file_path: true
+    operators:
+      - id: container-parser
+        max_log_size: 102400
+        type: container
+    retry_on_failure:
+      enabled: true
+    start_at: end
+    
+  prometheus:                                                                                                                                                                           │
+    scrape_configs:                                                                                                                                                                     │
+    - job_name: database-metrics                                                                                                                                                      │
+      scrape_interval: 15s                                                                                                                                                            │
+      static_configs:                                                                                                                                                                 │
+        - targets:                                                                                                                                                                    │
+        - <postgres_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                             │
+        - <redis_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                               │
+        - <clickhouse_service>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                            │
+    - job_name: service-metrics                                                                                                                                                       │
+      scrape_interval: 15s                                                                                                                                                            │
+      static_configs:                                                                                                                                                                 │
+        - targets:                                                                                                                                                                    │
+        - <backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                             │
+        - <host_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                        │
+        - <platform_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics                                                                                                   │
+        - <playground_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
+  otlp:
+    protocols:
+      grpc: 
+        endpoint: 0.0.0.0:4317
+      http: 
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    send_batch_size: 8192
+    timeout: 1s
+  memory_limiter:
+    check_interval: 1m
+    limit_percentage: 75
+    spike_limit_percentage: 25
+  filter:
+    error_mode: ignore
+    logs:
+      log_record:
+      - 'resource.attributes["k8s.namespace.name"] != "<langsmith_namespace>"'
+      - 'resource.attributes["k8s.app.name"] != "<langsmith_app_name>"'
+  k8sattributes:
+    extract:
+      labels:
+      - from: pod
+        key: app.kubernetes.io/name
+        tag_name: k8s.app.name
+      metadata:
+      - k8s.namespace.name
+
+exporters:
+  otlphttp/logs:
+    endpoint: <your_logs_endpoint>
+    tls:
+      insecure: false
+otlphttp/metrics:
+  endpoint: <your_metrics_endpoint>
+    tls:
+      insecure: false
+otlphttp/traces:
+  endpoint: <your_traces_endpoint>
+    tls:
+      insecure: false
+      
+service:
+  pipelines:
+    logs/langsmith:
+      receivers: [filelog]
+      processors: [k8sattributes, filter, batch, memory_limiter]
+      exporters: [otlphttp/logs]
+    metrics/langsmith:
+      receivers: [prometheus]
+      processors: [batch, memory_limiter]
+      exporters: [otlphttp/metrics]
+    traces/langsmith:
+      receivers: [otlp]
+      processors: [batch, memory_limiter]
+      exporters: [otlphttp/traces]
+```
