@@ -20,6 +20,7 @@ Quickly iterate on prompts and models in the LangSmith Playground.
 - [Run an evaluation in the playground](/evaluation?mode=ui)
 - [Include multimodal content in a prompt](./how_to_guides/multimodal_content)
 - [Manage prompt settings](./how_to_guides/managing_model_configurations)
+- [Use tools](./how_to_guides/use_tools)
 - [Iterate on your prompts with the Prompt Canvas](./how_to_guides/prompt_canvas)
 - [Run the playground against a custom LangServe model server](./how_to_guides/custom_endpoint)
 - [Run the playground against an OpenAI-compliant model provider/proxy](./how_to_guides/custom_openai_compliant_model)
