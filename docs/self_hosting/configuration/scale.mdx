@@ -4,11 +4,11 @@ A self-hosted LangSmith instance can handle a large number of traces. The defaul
 
 In the table below, we provide some high level guidance for LangSmith configurations. Further below, we go into detail on the recommended configurations. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes deployment of LangSmith.
 
-| Desired traces per second (TPS) | Queue pod replicas | Frontend replicas | Platform backend replicas | Clickhouse config               | Redis cache size |
+| Desired traces per second (TPS) | Queue pod replicas | Frontend replicas | Platform backend replicas | ClickHouse config               | Redis cache size |
 | ------------------------------- | ------------------ | ----------------- | ------------------------- | ------------------------------- | ---------------- |
 | **10 TPS**                      | 3 (default)        | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | 2 GB (default)   |
 | **100 TPS**                     | **10**             | **2**             | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | **13+ GB**       |
-| **1000 TPS**                    | **170**            | **4**             | **20**                    | **9 vCPUs, 36 GB Memory**       | **200+ GB**      |
+| **1000 TPS**                    | **170**            | **4**             | **20**                    | **10 vCPUs, 48 GB Memory**      | **200+ GB**      |
 
 :::note
 Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
@@ -27,7 +27,7 @@ To achieve 100 TPS, we recommend the following updates to your configuration:
 
 - A Redis cache of at least 13 GB. We also recommend a 1 hour TTL on the redis cache
 - 10 queue pod replicas
-- Increasing the clickhouse PVC to store the traces
+- Increasing the ClickHouse PVC to store the traces
 - 2 frontend pods. We use these as a reverse proxy for inbound requests
 
 Scaling up to this level will require roughly 24 vCPUs and 64 GB of memory for the pods in your kubernetes cluster.
@@ -77,12 +77,12 @@ Note that we recommend having an external Redis cache. If this is the case, you 
 In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, we recommend the following updates to the LangSmith configuration:
 
 - An external Redis cache of at least 200 GB. We also recommend a 1 hour TTL on the redis cache
-- 9 vCPU and 32 GB of memory on your clickhouse instance
+- 10 vCPU and 48 GB of memory on your ClickHouse instance
 - 170 queue pods
 - 20 platform-backend pods
 - 4 frontend pods. We use these as a reverse proxy for inbound requests
 
-Scaling up to this level will require roughly 218 vCPUs and 345 GB of memory for the pods in your kubernetes cluster.
+Scaling up to this level will require roughly 220 vCPUs and 350 GB of memory for the pods in your kubernetes cluster.
 
 Here is a `values.yaml` snippet configuring the recommendations above:
 
@@ -132,11 +132,11 @@ clickhouse:
       size: 4200Gi # This assumes 7 days TTL and operating a this scale constantly.
     resources:
       requests:
-        cpu: "9"
-        memory: "36Gi"
-      limits:
-        cpu: "12"
+        cpu: "10"
         memory: "48Gi"
+      limits:
+        cpu: "16"
+        memory: "64Gi"
 
 config:
   blobStorage:
@@ -161,15 +161,5 @@ Please also make sure that the kubernetes cluster is configured with sufficent r
 :::
 
 :::important
-Ensure any ingress controller deployed on the cluster is able to handle the desired load. In our internal testing, we saw bottlenecks in our Nginx controller and make the following updates to achieve this scale:
-
-```bash
-    replicaCount = 4
-    config = {
-        proxy-request-buffering    = "off"
-        client-body-buffer-size    = "32m"
-        proxy-body-size            = "100m"
-    }
-```
-
+Ensure any ingress controller deployed on the cluster is able to handle the desired load. In our internal testing, we saw bottlenecks in our Nginx controller and made changes to ensure it could handle the request rate.
 :::
