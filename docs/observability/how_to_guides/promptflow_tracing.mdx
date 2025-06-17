@@ -2,11 +2,11 @@
 sidebar_position: 17
 ---
 
-# Propagating LangSmith Traces in PromptFlow
+# Tracing PromptFlow applications in LangSmith
 
 ## Introduction
 
-This tutorial explains how to correctly propagate LangSmith traces in a [PromptFlow](https://github.com/microsoft/promptflow) application. We'll cover how to create nested traces, pass run tree information between nodes, and integrate LangGraph within a PromptFlow tool.
+This tutorial shows how to correctly trace a [PromptFlow](https://github.com/microsoft/promptflow) application in LangSmith. It covers initial setup, creating nested traces between nodes, and integrating LangGraph within a PromptFlow tool.
 
 ## Prerequisites
 
@@ -16,9 +16,9 @@ Before getting started, make sure you have:
 - LangSmith API key set up in your environment
 - Basic understanding of PromptFlow's DAG structure
 
-## Setting Up LangSmith Tracing in PromptFlow
+## Setting up LangSmith tracing in PromptFlow
 
-### Basic Node Setup
+### Basic node setup
 
 When creating a PromptFlow application, each node can be traced as a separate trace in LangSmith. To achieve this, you use the `@traceable` decorator from LangSmith along with the `@tool` decorator from PromptFlow.
 
@@ -36,7 +36,7 @@ def my_tool_function(input_parameter: str) -> str:
     return processed
 ```
 
-## Creating Nested Traces
+## Creating nested traces
 
 To create nested traces (where one trace is a child of another), you need to:
 
@@ -44,7 +44,7 @@ To create nested traces (where one trace is a child of another), you need to:
 2. Pass those headers to the child node via the `langsmith_extra` parameter
 3. Use those headers in the child node
 
-### Parent Node Example
+### Parent node example
 
 ```python
 from promptflow.core import tool
@@ -69,7 +69,7 @@ def parent_node(input_text: str) -> dict:
     }
 ```
 
-### Child Node Example
+### Child node example
 
 ```python
 from promptflow.core import tool
@@ -83,7 +83,7 @@ def child_node(processed_text: str, langsmith_extra: dict = None) -> str:
     return enhanced_text
 ```
 
-### Flow YAML Configuration
+### Flow YAML configuration
 
 Here's how to configure the flow.dag.yaml to connect these nodes with proper trace propagation:
 
@@ -118,11 +118,11 @@ nodes:
       langsmith_extra: ${parent.output.langsmith_extra}
 ```
 
-## Important Considerations
+## Important considerations
 
-1. **Return Type**: Make sure to correctly specify the return type of your function in the function signature to match what you're actually returning.
+1. **Return type**: Make sure to correctly specify the return type of your function in the function signature to match what you're actually returning.
 
-2. **Headers Propagation**: Always check if the run_tree exists before calling to_headers() to avoid errors.
+2. **Headers propagation**: Always check if the run_tree exists before calling to_headers() to avoid errors.
 
 ## Using LangGraph with PromptFlow and LangSmith
 
@@ -169,5 +169,5 @@ This will produce the following trace tree in LangSmith:
 ![](./static/promptflow_langsmith.png)
 
 :::tip Note
-Find out more about Nested Traces in LangSmith [here](/observability/how_to_guides/nest_traces).
+Find out more about nested traces in LangSmith [here](/observability/how_to_guides/nest_traces).
 :::
