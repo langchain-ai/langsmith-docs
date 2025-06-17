@@ -25,10 +25,10 @@ The default LangSmith configuration mentioned in our [prerequisites section](../
 
 To achieve 100 TPS, we recommend the following updates to your configuration:
 
-- A Redis cache of at least 13 GB. We also recommend a 1 hour TTL on the redis cache.
-- 10 queue pod replicas.
-- Increasing the clickhouse PVC to store the traces.
-- 2 frontend pods. We use these as a reverse proxy for inbound requests.
+- A Redis cache of at least 13 GB. We also recommend a 1 hour TTL on the redis cache
+- 10 queue pod replicas
+- Increasing the clickhouse PVC to store the traces
+- 2 frontend pods. We use these as a reverse proxy for inbound requests
 
 Scaling up to this level will require roughly 24 vCPUs and 64 GB of memory for the pods in your kubernetes cluster.
 
@@ -76,11 +76,11 @@ Note that we recommend having an external Redis cache. If this is the case, you 
 
 In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, we recommend the following updates to the LangSmith configuration:
 
-- An external Redis cache of at least 200 GB. We also recommend a 1 hour TTL on the redis cache.
-- 9 vCPU and 32 GB of memory on your clickhouse instance.
+- An external Redis cache of at least 200 GB. We also recommend a 1 hour TTL on the redis cache
+- 9 vCPU and 32 GB of memory on your clickhouse instance
 - 170 queue pods
 - 20 platform-backend pods
-- 4 frontend pods. We use these as a reverse proxy for inbound requests.
+- 4 frontend pods. We use these as a reverse proxy for inbound requests
 
 Scaling up to this level will require roughly 218 vCPUs and 345 GB of memory for the pods in your kubernetes cluster.
 
