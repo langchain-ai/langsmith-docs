@@ -8,29 +8,29 @@ Tools allow language models to interact with external systems and perform action
 
 1. **Built-in tools**: Pre-configured tools provided by model providers (like OpenAI and Anthropic) that are ready to use. These include capabilities like web search, code interpretation, and more.
 
-2. **Custom tools**: Functions you define yourself to perform specific tasks. These are useful when you need to integrate with your own systems or create specialized functionality.
+2. **Custom tools**: Functions you define to perform specific tasks. These are useful when you need to integrate with your own systems or create specialized functionality. When you define custom tools within the LangSmith Playground, you can verify that the model correctly identifies and calls these tools with the correct arguments. Soon we plan to support executing these custom tool calls directly.
 
 ## When to use tools
 
-- Use **built-in tools** when you need common capabilities like web search or code interpretation. These are maintained by the model providers and are generally more reliable.
+- Use **built-in tools** when you need common capabilities like web search or code interpretation. These are built and maintained by the model providers.
 - Use **custom tools** when you want to test and validate your own tool designs, including:
-  - Observing how a model would call your tools and what arguments it would pass
+  - Validating which tools the model chooses to use and seeing the specific arguments it provides in tool calls
   - Simulating tool interactions
 
 ## Built-in tools
 
-LangSmith supports built-in tools from various model providers:
+The LangSmith Playground has native support for a variety of tools from OpenAI and Anthropic. If you want to use a tool that isn't explicitly listed in the Playground, you can still add it by manually specifying its `type` and any required arguments.
 
 ### OpenAI Tools
 
-- **Web search**: Search the web for real-time information
-- **Image generation**: Generate images based on a text prompt
-- **MCP**: Gives the model access to tools hosted on a remote MCP server
+- **Web search**: [Search the web for real-time information](https://platform.openai.com/docs/guides/tools-web-search?api-mode=responses)
+- **Image generation**: [Generate images based on a text prompt](https://platform.openai.com/docs/guides/tools-image-generation)
+- **MCP**: [Gives the model access to tools hosted on a remote MCP server](https://platform.openai.com/docs/guides/tools-remote-mcp)
 - [View all OpenAI tools](https://platform.openai.com/docs/guides/tools?api-mode=responses)
 
 ### Anthropic Tools
 
-- **Web search**: Search the web for up-to-date information
+- **Web search**: [Search the web for up-to-date information](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/web-search-tool)
 - [View all Anthropic tools](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview)
 
 ## Adding and using tools
@@ -42,13 +42,10 @@ To add a tool to your prompt, click the `+ Tool` button at the bottom of the pro
 
 ### Use a built-in tool
 
-1. In the tool section, select the built-in tool you want to use
-2. The model will automatically know how to use the tool
-3. When the model calls the tool, the playground will display the response
+1. In the tool section, select the built-in tool you want to use. You'll only see the tools that are compatible with the provider and model you've chosen.
+2. When the model calls the tool, the playground will display the response
 
-![](./static/built_in.png)
-
-If a tool is available but not listed in the Playground, you can still add it manually if it's supported by the LangChain open source library. Check the documentation for your specific provider's LangChain integration library to see all supported tools (e.g., [OpenAI support](https://python.langchain.com/docs/integrations/chat/openai/#built-in-tools)).
+![](./static/web_search_tool.gif)
 
 ### Create a custom tool
 
@@ -58,7 +55,7 @@ To create a custom tool, you'll need to provide:
 - Description: Clear explanation of what the tool does
 - Arguments: The inputs your tool requires
 
-![](./static/custom_tool.png)
+![](./static/custom_tool.gif)
 
 Note: When running a custom tool in the playground, the model will respond with a JSON object containing the tool name and the tool call. Currently, there's no way to connect this to a hosted tool via MCP.
 
@@ -66,12 +63,12 @@ Note: When running a custom tool in the playground, the model will respond with 
 
 ## Tool choice settings
 
-Some models allow you to force the use of specific tools. To configure this:
+Some models provide control over which tools are called. To configure this:
 
 1. Go to prompt settings
 2. Navigate to tool settings
 3. Select tool choice
 
-Each provider has different options for tool choice, so check their documentation for specific details.
+To understand the available tool choice options, check the documentation for your specific provider. For example, [OpenAI's documentation on tool choice](https://platform.openai.com/docs/guides/function-calling/function-calling-behavior?api-mode=responses#tool-choice).
 
 ![](./static/tool_choice.png)
