@@ -8,10 +8,13 @@ In the table below, we provide some high level guidance for LangSmith configurat
 | ------------------------------- | --------------------- | ----------------- | ------------------------- | ------------------------------- | ---------------- |
 | **10 TPS**                      | 3 (default)           | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | 2 GB (default)   |
 | **100 TPS**                     | **10**                | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | **14+ GB**       |
-| **1000 TPS**                    | **160**               | **4**             | **20**                    | **8 vCPUs, 32 GB Memory**       | **200+ GB**      |
+| **1000 TPS**                    | **160**               | **4**             | **20**                    | **10 vCPUs, 32 GB Memory**      | **200+ GB**      |
 
 :::note
 Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
+:::
+:::note
+The configuration recommendations also assume that you are using a relatively new version of the SDK and LangSmith. If you haven't updated in a while, please do so. We are constantly pushing performance improvements, and will keep this page updated accordingly.
 :::
 
 ## 10 Traces Per Second (TPS)
@@ -29,6 +32,10 @@ To achieve 100 TPS, we recommend the following updates to your configuration:
 Here is an example `values.yaml` snippet for this configuration:
 
 ```yaml
+config:
+  settings:
+    redisRunsExpirySeconds: "3600"
+
 queue:
   deployment:
     replicas: 10
@@ -51,11 +58,7 @@ clickhouse:
     persistence:
       # This may depend on your configured TTL.
       # We recommend 60Gi for every shortlived TTL day if operating at this scale constantly.
-      size: 420Gi  # This assumes 7 days TTL and operating a this scale constantly.
-
-commonEnv:
-  - name: "REDIS_RUNS_EXPIRY_SECONDS"
-    value: "3600"
+      size: 420Gi # This assumes 7 days TTL and operating a this scale constantly.
 ```
 
 :::note
@@ -114,28 +117,31 @@ clickhouse:
     persistence:
       # This may depend on your configured TTL (see config section).
       # We recommend 600Gi for every shortlived TTL day if operating at this scale constantly.
-      size: 4200Gi  # This assumes 7 days TTL and operating a this scale constantly.
-  resources:
-    requests:
-      cpu: "8"
-      memory: "16Gi"
-    limits:
-      cpu: "12"
-      memory: "48Gi"
+      size: 4200Gi # This assumes 7 days TTL and operating a this scale constantly.
+    resources:
+      requests:
+        cpu: "10"
+        memory: "32Gi"
+      limits:
+        cpu: "12"
+        memory: "48Gi"
 
 config:
   blobStorage:
     ## Please also set the other keys to connect to your blob storage. See configuration section.
     enabled: true
+  settings:
+    redisRunsExpirySeconds: "3600"
 # ttl:
 #   enabled: true
 #   ttl_period_seconds:
 #     longlived: "7776000"  # 90 days
 #     shortlived: "604800"  # 7 days
 
+# These are important environment variables to set.
 commonEnv:
-  - name: "REDIS_RUNS_EXPIRY_SECONDS"
-    value: "3600"
+  - name: "CLICKHOUSE_ASYNC_INSERT_WAIT_PCT_FLOAT"
+    value: "0"
 ```
 
 :::important
