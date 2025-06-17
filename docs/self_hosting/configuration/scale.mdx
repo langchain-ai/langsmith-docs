@@ -19,7 +19,7 @@ The configuration recommendations also assume that you are using a relatively ne
 
 ## 10 Traces Per Second (TPS)
 
-The default LangSmith configuration mentioned in our [prerequisites section](../installation/kubernetes#prerequisites) should be able to handle 10 TPS.
+The default LangSmith configuration mentioned in our [prerequisites section](../installation/kubernetes#prerequisites) can handle 10 TPS.
 
 ## 100 TPS
 
@@ -29,6 +29,7 @@ To achieve 100 TPS, we recommend the following updates to your configuration:
 - 10 queue pod replicas
 - Increasing the ClickHouse PVC to store the traces
 - 2 frontend pods. We use these as a reverse proxy for inbound requests
+- Blob storage enabled
 
 Scaling up to this level will require roughly 24 vCPUs and 64 GB of memory for the pods in your kubernetes cluster.
 
@@ -36,6 +37,9 @@ Here is an example `values.yaml` snippet for this configuration:
 
 ```yaml
 config:
+  blobStorage:
+    ## Please also set the other keys to connect to your blob storage. See configuration section.
+    enabled: true
   settings:
     redisRunsExpirySeconds: "3600"
 
@@ -81,6 +85,7 @@ In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, w
 - 170 queue pods
 - 20 platform-backend pods
 - 4 frontend pods. We use these as a reverse proxy for inbound requests
+- Blob storage enabled
 
 Scaling up to this level will require roughly 220 vCPUs and 350 GB of memory for the pods in your kubernetes cluster.
 
