@@ -36,7 +36,6 @@ Example file system integrations:
     The following LangSmith services expose metrics at an endpoint, in the Prometheus metrics format.
     - <b>Backend</b>: `http://<backend_service_name>.<namespace>.svc.cluster.local:1984/metrics`
     - <b>Platform Backend</b>: `http://<platform_backend_service_name>.<namespace>.svc.cluster.local:1986/metrics`
-    - <b>Host Backend</b>: `http:/<host_backend_service_name>.<namespace>.svc.cluster.local:1985/metrics`
     - <b>Playground</b>: `http://<playground_service_name>.<namespace>.svc.cluster.local:1988/metrics`
 
     It is recommended to use a [Prometheus server](https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets) or
@@ -64,6 +63,10 @@ Example file system integrations:
     ```
     This will run a sidecar container alongside Postgres, exposing Prometheus metrics at `http://langsmith-<postgres_name>.<namespace>.svc.cluster.local:9187/metrics`
 
+    :::note Note
+    **You can modify the Redis and Postgres exporter configurations through the LangSmith Helm chart.**
+    :::
+
     ### Clickhouse
     The Clickhouse container can expose metrics directly, without the need for a sidecar. To expose the metrics endpoint, run the LangSmith Helm chart with the
     following values:
@@ -74,9 +77,9 @@ Example file system integrations:
     ```
     You can then scrape metrics at `http://langsmith-<clickhouse_name>.<namespace>.svc.cluster.local:9363/metrics`
 
-## Traces [OTel Example](./langsmith_collector#traces)
+## Traces: [OTel Example](./langsmith_collector#traces)
 
-The LangSmith Backend, Platform Backend, and Playground services have been instrumented using the OTEL SDK to emit
+The LangSmith Backend, Platform Backend, Playground and LangSmith Queue deployments have been instrumented using the OTEL SDK to emit
 traces adhering to the [OpenTelemetry format](https://opentelemetry.io/docs/concepts/signals/traces/). Tracing is toggled off by default, and can be enabled
 and customized with the following in your `values.yaml` file:
 
@@ -91,3 +94,10 @@ config:
 ```
 
 This will export traces from all LangSmith backend services to the specified endpoint.
+
+:::important Important
+You can override the tracing endpoint for individual services. The Python apps require an endpoint in the form
+`http://host:port/v1/traces`, while the Go app requires the same endpoint in the form `host:port` to send to the same collector.
+
+Make sure to check the logs of your services. If the endpoint is set correctly, there should be no logs. Otherwise, error logs will be shown.
+:::

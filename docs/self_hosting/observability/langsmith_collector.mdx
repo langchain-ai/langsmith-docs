@@ -59,17 +59,19 @@ prometheus:
         scrape_interval: 15s
         static_configs:
           - targets:
-              - <postgres_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-              - <redis_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-              - <clickhouse_service>.<namespace>.svc.cluster.local:<metrics_port>/metrics
+          - <postgres_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+          - <redis_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+          - <clickhouse_service>.<namespace>.svc.cluster.local:<metrics_port
+        metrics_path: /metrics
+
       - job_name: service-metrics
         scrape_interval: 15s
         static_configs:
           - targets:
-              - <backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-              - <host_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-              - <platform_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-              - <playground_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
+          - <backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+          - <platform_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+          - <playground_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+        metrics_path: /metrics
 ```
 
 ### Traces
@@ -125,7 +127,7 @@ receivers:
   filelog:
     exclude: []
     include:
-    - /var/log/pods/*/*/*.log
+      - /var/log/pods/*/*/*.log
     include_file_name: false
     include_file_path: true
     operators:
@@ -137,22 +139,25 @@ receivers:
     start_at: end
 
   prometheus:
-    scrape_configs:
-    - job_name: database-metrics
-      scrape_interval: 15s
-      static_configs:
-        - targets:
-        - <postgres_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-        - <redis_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-        - <clickhouse_service>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-    - job_name: service-metrics
-      scrape_interval: 15s
-      static_configs:
-        - targets:
-        - <backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-        - <host_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-        - <platform_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
-        - <playground_service_name>.<namespace>.svc.cluster.local:<metrics_port>/metrics
+    config:
+      scrape_configs:
+        - job_name: database-metrics
+          scrape_interval: 15s
+          static_configs:
+            - targets:
+            - <postgres_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+            - <redis_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+            - <clickhouse_service>.<namespace>.svc.cluster.local:<metrics_port
+          metrics_path: /metrics
+
+        - job_name: service-metrics
+          scrape_interval: 15s
+          static_configs:
+            - targets:
+            - <backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+            - <platform_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+            - <playground_service_name>.<namespace>.svc.cluster.local:<metrics_port>
+          metrics_path: /metrics
   otlp:
     protocols:
       grpc:
@@ -172,28 +177,28 @@ processors:
     error_mode: ignore
     logs:
       log_record:
-      - 'resource.attributes["k8s.namespace.name"] != "<langsmith_namespace>"'
-      - 'resource.attributes["k8s.app.name"] != "<langsmith_app_name>"'
+        - 'resource.attributes["k8s.namespace.name"] != "<langsmith_namespace>"'
+        - 'resource.attributes["k8s.app.name"] != "<langsmith_app_name>"'
   k8sattributes:
     extract:
       labels:
-      - from: pod
-        key: app.kubernetes.io/name
-        tag_name: k8s.app.name
+        - from: pod
+          key: app.kubernetes.io/name
+          tag_name: k8s.app.name
       metadata:
-      - k8s.namespace.name
+        - k8s.namespace.name
 
 exporters:
   otlphttp/logs:
     endpoint: <your_logs_endpoint>
     tls:
       insecure: false
-otlphttp/metrics:
-  endpoint: <your_metrics_endpoint>
+  otlphttp/metrics:
+    endpoint: <your_metrics_endpoint>
     tls:
       insecure: false
-otlphttp/traces:
-  endpoint: <your_traces_endpoint>
+  otlphttp/traces:
+    endpoint: <your_traces_endpoint>
     tls:
       insecure: false
 
