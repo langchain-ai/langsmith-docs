@@ -26,7 +26,7 @@ The default LangSmith configuration mentioned in our [prerequisites section](../
 To achieve 100 TPS, we recommend the following updates to your configuration:
 
 - A Redis cache of at least 13 GB. We also recommend a 1 hour TTL on the redis cache.
-- 10 queue worker replicas.
+- 10 queue pod replicas.
 - Increasing the clickhouse PVC to store the traces.
 - 2 frontend pods. We use these as a reverse proxy for inbound requests.
 
