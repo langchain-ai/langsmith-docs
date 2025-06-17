@@ -4,16 +4,16 @@ A self-hosted LangSmith instance can handle a large number of traces. The defaul
 
 In the table below, we provide some high level guidance for LangSmith configurations. Further below, we go into detail on the recommended configurations. Note that we measure scale here in terms of traces per second (TPS). We strongly recommend running high load against a kubernetes deployment of LangSmith.
 
-| Desired traces per second (TPS) | Queue worker replicas | Frontend replicas | Platform backend replicas | Clickhouse config               | Redis cache size |
+| Desired traces per second (TPS) | Queue pod replicas    | Frontend replicas | Platform backend replicas | Clickhouse config               | Redis cache size |
 | ------------------------------- | --------------------- | ----------------- | ------------------------- | ------------------------------- | ---------------- |
 | **10 TPS**                      | 3 (default)           | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | 2 GB (default)   |
-| **100 TPS**                     | **10**                | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | **14+ GB**       |
-| **1000 TPS**                    | **160**               | **4**             | **20**                    | **9 vCPUs, 32 GB Memory**       | **200+ GB**      |
+| **100 TPS**                     | **10**                | **2**             | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | **13+ GB**       |
+| **1000 TPS**                    | **170**               | **4**             | **20**                    | **9 vCPUs, 32 GB Memory**       | **200+ GB**      |
 
 :::note
 Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
 :::
-:::note
+:::important
 The configuration recommendations also assume that you are using a relatively new version of the SDK and LangSmith. If you haven't updated in a while, please do so. We are constantly pushing performance improvements, and will keep this page updated accordingly.
 :::
 
@@ -25,9 +25,10 @@ The default LangSmith configuration mentioned in our [prerequisites section](../
 
 To achieve 100 TPS, we recommend the following updates to your configuration:
 
-- A Redis cache of at least 14 GB. We also recommend a 1 hour TTL on the redis cache.
+- A Redis cache of at least 13 GB. We also recommend a 1 hour TTL on the redis cache.
 - 10 queue worker replicas.
 - Increasing the clickhouse PVC to store the traces.
+- 2 frontend pods. We use these as a reverse proxy for inbound requests.
 
 Here is an example `values.yaml` snippet for this configuration:
 
@@ -35,6 +36,10 @@ Here is an example `values.yaml` snippet for this configuration:
 config:
   settings:
     redisRunsExpirySeconds: "3600"
+
+frontend:
+  deployment:
+    replicas: 2
 
 queue:
   deployment:
@@ -44,9 +49,9 @@ redis:
   statefulSet:
     resources:
       requests:
-        memory: 14Gi
+        memory: 13Gi
       limits:
-        memory: 14Gi
+        memory: 13Gi
 
   # -- For external redis instead use something like below --
   # external:
@@ -62,7 +67,7 @@ clickhouse:
 ```
 
 :::note
-Note that we recommend having an external Redis cache. If this is the case, you will need to ensure your Redis cache is configured with at least 14 GB instead of the resource configuration in the values file shown above.
+Note that we recommend having an external Redis cache. If this is the case, you will need to ensure your Redis cache is configured with at least 13 GB instead of the resource configuration in the values file shown above.
 :::
 
 ## 1000 TPS
@@ -70,8 +75,8 @@ Note that we recommend having an external Redis cache. If this is the case, you 
 In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, we recommend the following updates to the LangSmith configuration:
 
 - An external Redis cache of at least 200 GB. We also recommend a 1 hour TTL on the redis cache.
-- 8 vCPU and 24 GB of memory on your clickhouse instance.
-- 160 queue workers with 20 jobs per worker
+- 9 vCPU and 32 GB of memory on your clickhouse instance.
+- 170 queue pods
 - 20 platform-backend pods
 - 4 frontend pods. We use these as a reverse proxy for inbound requests.
 
@@ -97,13 +102,13 @@ platformBackend:
 #   maxReplicas: 20
 #   minReplicas: 8
 
-## Note that we are actively working on improving performance on this service.
+## Note that we are actively working on improving performance of this service to reduce the number of replicas.
 queue:
   deployment:
-    replicas: 160 # OR enable autoscaling to this level (example below)
+    replicas: 170 # OR enable autoscaling to this level (example below)
 # autoscaling:
 #   enabled: true
-#   maxReplicas: 160
+#   maxReplicas: 170
 #   minReplicas: 40
 
 ## Ensure your Redis cache is at least 200 GB
