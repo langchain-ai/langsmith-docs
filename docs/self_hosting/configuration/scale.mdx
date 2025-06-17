@@ -8,7 +8,7 @@ In the table below, we provide some high level guidance for LangSmith configurat
 | ------------------------------- | --------------------- | ----------------- | ------------------------- | ------------------------------- | ---------------- |
 | **10 TPS**                      | 3 (default)           | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | 2 GB (default)   |
 | **100 TPS**                     | **10**                | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | **14+ GB**       |
-| **1000 TPS**                    | **160**               | **4**             | **20**                    | **10 vCPUs, 32 GB Memory**      | **200+ GB**      |
+| **1000 TPS**                    | **160**               | **4**             | **20**                    | **9 vCPUs, 32 GB Memory**       | **200+ GB**      |
 
 :::note
 Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
@@ -120,7 +120,7 @@ clickhouse:
       size: 4200Gi # This assumes 7 days TTL and operating a this scale constantly.
     resources:
       requests:
-        cpu: "10"
+        cpu: "9"
         memory: "32Gi"
       limits:
         cpu: "12"
