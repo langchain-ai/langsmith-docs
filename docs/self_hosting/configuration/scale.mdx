@@ -30,6 +30,8 @@ To achieve 100 TPS, we recommend the following updates to your configuration:
 - Increasing the clickhouse PVC to store the traces.
 - 2 frontend pods. We use these as a reverse proxy for inbound requests.
 
+Scaling up to this level will require X vCPUs and Y GB of memory in your kubernetes cluster.
+
 Here is an example `values.yaml` snippet for this configuration:
 
 ```yaml
@@ -79,6 +81,8 @@ In order to achieve 1000 TPS on a self-hosted kubernetes LangSmith deployment, w
 - 170 queue pods
 - 20 platform-backend pods
 - 4 frontend pods. We use these as a reverse proxy for inbound requests.
+
+Scaling up to this level will require X vCPUs and Y GB of memory in your kubernetes cluster.
 
 Here is a `values.yaml` snippet configuring the recommendations above:
 
