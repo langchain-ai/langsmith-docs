@@ -2,13 +2,13 @@
 
 A self-hosted LangSmith instance can handle a large number of traces. The default configuration for the deployment can handle substantial load, and you can configure your deployment to be able to achieve higher scale.
 
-The table below contains high level guidance for LangSmith configurations, wherescale is measured in terms of traces per second (TPS). The configuration recommendations also assume that you are using a relatively new version of the SDK and LangSmith (at least `0.10.69`). It is strongly recommended to run high load against a Kubernetes deployment of LangSmith. 
+The table below contains high level guidance for LangSmith configurations, wheres cale is measured in terms of traces per second (TPS). The configuration recommendations also assume that you are using a relatively new version of the SDK and LangSmith (at least `0.10.69`). It is strongly recommended to run high load against a Kubernetes deployment of LangSmith.
 
-| Desired traces per second (TPS) | Queue pod replicas | Frontend replicas | Platform backend replicas | ClickHouse config               | Redis cache size |
-| ------------------------------- | ------------------ | ----------------- | ------------------------- | ------------------------------- | ---------------- |
-| [**10 TPS**](#10-traces-per-second-tps)                      | 3 (default)        | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | 2 GB (default)   |
-| [**100 TPS**](#100-tps)                     | **10**             | **2**             | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | **13+ GB**       |
-| [**1000 TPS**](#1000-tps)                    | **170**            | **4**             | **20**                    | **10 vCPUs, 48 GB Memory**      | **200+ GB**      |
+| Desired traces per second (TPS)         | Queue pod replicas | Frontend replicas | Platform backend replicas | ClickHouse config               | Redis cache size |
+| --------------------------------------- | ------------------ | ----------------- | ------------------------- | ------------------------------- | ---------------- |
+| [**10 TPS**](#10-traces-per-second-tps) | 3 (default)        | 1 (default)       | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | 2 GB (default)   |
+| [**100 TPS**](#100-tps)                 | **10**             | **2**             | 3 (default)               | 4 vCPUs, 16 GB Memory (default) | **13+ GB**       |
+| [**1000 TPS**](#1000-tps)               | **170**            | **4**             | **20**                    | **10 vCPUs, 48 GB Memory**      | **200+ GB**      |
 
 :::note
 Your exact usage pattern of the product may require more tuning of resources. If that is the case, please reach out to the LangSmith team for any questions.
@@ -163,4 +163,3 @@ Ensure that the Kubernetes cluster is configured with sufficent resources to sca
 
 Also, ensure that any ingress controller deployed on the cluster is able to handle the desired load to prevent bottlenecks.
 :::
-
