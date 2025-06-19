@@ -7,8 +7,8 @@ import {
   PythonBlock,
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Log custom LLM traces
@@ -94,11 +94,10 @@ inputs = [
 
 @traceable(run_type="llm")
 def chat_model(messages: list):
-...
+    ...
 
 chat_model(inputs)
-
-````
+```
   </TabItem>
   <TabItem value="messages-dict" label="Messages dict">
 ```python
@@ -131,8 +130,7 @@ def chat_model(messages: dict):
     ...
 
 chat_model(inputs)
-````
-
+```
   </TabItem>
 </Tabs>
 
@@ -151,27 +149,26 @@ Here are some examples:
 from langsmith import traceable
 
 @traceable(run_type="llm")
-def chat_model_choices(messages): # Your model logic here
-return {
-"choices": [
-{
-"message": {
-"role": "assistant",
-"content": "Sure, what time would you like to book the table for?"
-}
-}
-]
-}
+def chat_model_choices(messages):
+    # Your model logic here
+    return {
+        "choices": [
+            {
+                "message": {
+                    "role": "assistant",
+                    "content": "Sure, what time would you like to book the table for?"
+                }
+            }
+        ]
+    }
 
 # Usage
-
 inputs = [
-{"role": "system", "content": "You are a helpful assistant."},
-{"role": "user", "content": "I'd like to book a table for two."}
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."}
 ]
 chat_model_choices(inputs)
-
-````
+```
   </TabItem>
   <TabItem value="message-format" label="Message format">
 ```python
@@ -193,26 +190,24 @@ inputs = [
     {"role": "user", "content": "I'd like to book a table for two."}
 ]
 chat_model_message(inputs)
-````
-
+```
   </TabItem>
   <TabItem value="tuple-format" label="Tuple format">
 ```python
 from langsmith import traceable
 
 @traceable(run_type="llm")
-def chat_model_tuple(messages): # Your model logic here
-return ["assistant", "Sure, what time would you like to book the table for?"]
+def chat_model_tuple(messages):
+    # Your model logic here
+    return ["assistant", "Sure, what time would you like to book the table for?"]
 
 # Usage
-
 inputs = [
-{"role": "system", "content": "You are a helpful assistant."},
-{"role": "user", "content": "I'd like to book a table for two."}
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."}
 ]
 chat_model_tuple(inputs)
-
-````
+```
   </TabItem>
   <TabItem value="direct-format" label="Direct format">
 ```python
@@ -232,8 +227,7 @@ inputs = [
     {"role": "user", "content": "I'd like to book a table for two."}
 ]
 chat_model_direct(inputs)
-````
-
+```
   </TabItem>
 </Tabs>
 
