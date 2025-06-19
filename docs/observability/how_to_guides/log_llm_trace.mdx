@@ -34,7 +34,36 @@ You can also use any of the [LangChain OSS chat models](https://python.langchain
 
 ### Implementing your own custom chat-model
 
-For chat-style models, inputs must be a list of messages in OpenAI-compatible format, represented as Python dictionaries or TypeScript object. Each message must contain the key `role` and `content`.
+You may also trace your model calls using [`traceable`](../annotate_code/). To properly mark the traced function
+as an LLM run, at bare minimum you must pass `run_type` as `"llm"` like this:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import traceable\n
+@traceable(run_type="llm")
+def chat_model(messages: list):
+    ...
+`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+const chatModel = traceable(
+  async (messages) => {
+    // Call the model here
+  },
+  { run_type: "llm" }
+);
+`),
+  ]}
+  groupId="client-language"
+/>
+
+To make your custom LLM traces appear well-formatted in the LangSmith UI, your trace inputs and outputs must
+conform to a format LangSmith recognizes:
+
+- A list of messages in [OpenAI](https://platform.openai.com/docs/api-reference/messages) or [Anthropic](https://docs.anthropic.com/en/api/messages) format, represented as Python dictionaries or TypeScript objects.
+  - Each message must contain the key `role` and `content`.
+  - Messages with the `"assistant"` role may optionally contain `tool_calls`. These `tool_calls` may be in [OpenAI](https://platform.openai.com/docs/guides/function-calling?api-mode=chat) format or [LangChain's format](https://python.langchain.com/api_reference/core/messages/langchain_core.messages.tool.ToolCall.html#langchain_core.messages.tool.ToolCall).
+- An dict/object containing `"messages"` key with a list of messages in the above format.
+  - LangSmith may use additional parameters in this input dict that match OpenAI's [chat completion endpoint](https://platform.openai.com/docs/guides/text?api-mode=chat) for rendering in the trace view, such as a list of available `tools` for the model to call.
 
 The output is accepted in any of the following formats:
 
@@ -42,8 +71,6 @@ The output is accepted in any of the following formats:
 - A dictionary/object that contains the key `message` with a value that is a message object with the keys `role` and `content`.
 - A tuple/array of two elements, where the first element is the role and the second element is the content.
 - A dictionary/object that contains the key `role` and `content`.
-
-The input to your function should be named `messages`.
 
 You can also provide the following `metadata` fields to help LangSmith identify the model - which if recognized, LangSmith will use to automatically calculate costs. To learn more about how to use the `metadata` fields, see [this guide](./add_metadata_tags).
 
