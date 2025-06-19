@@ -15,64 +15,97 @@ Note that all of the concepts discussed below can be translated to other collect
 **This section is only applicable for Kubernetes deployments.**
 :::
 
-## Receivers
+# Receivers
 
-### Logs
+## Logs
 
-As discussed previously, logs are read from the filesystem of the nodes/containers running the application. An example configuration for reading logs from files:
+As discussed previously, logs are read from the filesystem of the nodes/containers running the application.
+This is an example for a <b><u>Sidecar</u></b> collector to read logs from its own container, excluding noisy logs from non-domain containers.
+A Sidecar configuration is useful here because we require access to every container's filesystem. A DaemonSet can also be used.
 
 ```yaml
 filelog:
-  exclude: []
+  exclude:
+    - "**/otc-container/*.log"
+    - "**/postgres-metrics-exporter/*.log"
+    - "**/redis-metrics-exporter/*.log"
   include:
-    - /var/log/pods/*/*/*.log
+    - /var/log/pods/${POD_NAMESPACE}_${POD_NAME}_${POD_UID}/*/*.log
   include_file_name: false
   include_file_path: true
   operators:
     - id: container-parser
-      max_log_size: 102400
       type: container
   retry_on_failure:
     enabled: true
   start_at: end
+
+env:
+  - name: POD_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: POD_NAMESPACE
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.namespace
+  - name: POD_UID
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.uid
+volumes:
+  - name: varlogpods
+    hostPath:
+      path: /var/log/pods
+volumeMounts:
+  - name: varlogpods
+    mountPath: /var/log/pods
+    readOnly: true
 ```
 
-:::note Note
-**The above configuration reads logs from all files in the cluster that the collector has access to. If you would like to only read LangSmith logs, you need to either:**
+:::info Note
+**This configuration requires 'get', 'list', and 'watch' permissions on pods in the given namespace.**
+:::
 
-1. **Only include files from containers in your LangSmith namespace.**
+## Metrics
 
-   or
-
-2. **Filter out logs from other namespaces and/or application in your processing logic.**
-   :::
-
-### Metrics
-
-Metrics can be scraped using the Prometheus endpoints. The configuration below scraps all LangSmith database and service metrics:
+Metrics can be scraped using the Prometheus endpoints. A single instance <b><u>Gateway</u></b> collector can be be used to avoid
+duplication of queries when fetching metrics. The following config scrapes all of the default named LangSmith services:
 
 ```yaml
 prometheus:
   config:
     scrape_configs:
-      - job_name: database-metrics
-        scrape_interval: 15s
-        static_configs:
-          - targets:
-          - <postgres_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-          - <redis_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-          - <clickhouse_service>.<namespace>.svc.cluster.local:<metrics_port
+      - job_name: langsmith-services
         metrics_path: /metrics
-
-      - job_name: service-metrics
         scrape_interval: 15s
-        static_configs:
-          - targets:
-          - <backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-          - <platform_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-          - <playground_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-        metrics_path: /metrics
+        # Only scrape endpoints in the LangSmith namespace
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names: [<langsmith-namespace>]
+        relabel_configs:
+          # Only scrape services with the name langsmith-.*
+          - source_labels: [__meta_kubernetes_service_name]
+            regex: "langsmith-.*"
+            action: keep
+          # Only scrape ports with the following names
+          - source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: "(backend|platform|playground|redis-metrics|postgres-metrics|ch-metrics)"
+            action: keep
+          # Promote useful metadata into regular labels
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: k8s_service
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: k8s_pod
+          # Replace the default "host:port" as Prom's instance label
+          - source_labels: [__address__]
+            target_label: instance
 ```
+
+:::info Note
+**This configuration requires 'get', 'list', and 'watch' permissions on pods, services and endpoints in the given namespace.**
+:::
 
 ### Traces
 
@@ -105,115 +138,161 @@ Exporters just need to point to an external endpoint of your liking. The followi
 ```yaml
 otlphttp/logs:
   endpoint: <your_logs_endpoint>
-    tls: false
 otlphttp/metrics:
   endpoint: <your_metrics_endpoint>
-    tls: false
 otlphttp/traces:
   endpoint: <your_traces_endpoint>
-    tls: false
 ```
 
 :::note Note
 **The OTel Collector also supports exporting directly to a [Datadog](https://docs.datadoghq.com/opentelemetry/setup/collector_exporter) endpoint.**
 :::
 
-# Example Collector Configuration:
+# Example Collector Configuration: Logs Sidecar
 
 Note that this configuration uses a filter to drop any logs from files other than LangSmith logs in the deployment namespace.
 
 ```yaml
-receivers:
-  filelog:
-    exclude: []
-    include:
-      - /var/log/pods/*/*/*.log
-    include_file_name: false
-    include_file_path: true
-    operators:
-      - id: container-parser
-        max_log_size: 102400
-        type: container
-    retry_on_failure:
-      enabled: true
-    start_at: end
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel-collector-sidecar
+spec:
+  mode: sidecar
+  image: otel/opentelemetry-collector-contrib:0.123.0
 
-  prometheus:
-    config:
-      scrape_configs:
-        - job_name: database-metrics
-          scrape_interval: 15s
-          static_configs:
-            - targets:
-            - <postgres_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-            - <redis_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-            - <clickhouse_service>.<namespace>.svc.cluster.local:<metrics_port
-          metrics_path: /metrics
+  config:
+    receivers:
+      filelog:
+        exclude:
+          - "**/otc-container/*.log"
+          - "**/postgres-metrics-exporter/*.log"
+          - "**/redis-metrics-exporter/*.log"
+        include:
+          - /var/log/pods/${POD_NAMESPACE}_${POD_NAME}_${POD_UID}/*/*.log
+        include_file_name: false
+        include_file_path: true
+        operators:
+          - id: container-parser
+            type: container
+        retry_on_failure:
+          enabled: true
+        start_at: end
 
-        - job_name: service-metrics
-          scrape_interval: 15s
-          static_configs:
-            - targets:
-            - <backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-            - <platform_backend_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-            - <playground_service_name>.<namespace>.svc.cluster.local:<metrics_port>
-          metrics_path: /metrics
-  otlp:
-    protocols:
-      grpc:
-        endpoint: 0.0.0.0:4317
-      http:
-        endpoint: 0.0.0.0:4318
+    processors:
+      batch:
+        send_batch_size: 8192
+        timeout: 10s
+      memory_limiter:
+        check_interval: 1m
+        limit_percentage: 90
+        spike_limit_percentage: 80
 
-processors:
-  batch:
-    send_batch_size: 8192
-    timeout: 1s
-  memory_limiter:
-    check_interval: 1m
-    limit_percentage: 75
-    spike_limit_percentage: 25
-  filter:
-    error_mode: ignore
-    logs:
-      log_record:
-        - 'resource.attributes["k8s.namespace.name"] != "<langsmith_namespace>"'
-        - 'resource.attributes["k8s.app.name"] != "<langsmith_app_name>"'
-  k8sattributes:
-    extract:
-      labels:
-        - from: pod
-          key: app.kubernetes.io/name
-          tag_name: k8s.app.name
-      metadata:
-        - k8s.namespace.name
+    exporters:
+      otlphttp/logs:
+        endpoint: <your-endpoint>
 
-exporters:
-  otlphttp/logs:
-    endpoint: <your_logs_endpoint>
-    tls:
-      insecure: false
-  otlphttp/metrics:
-    endpoint: <your_metrics_endpoint>
-    tls:
-      insecure: false
-  otlphttp/traces:
-    endpoint: <your_traces_endpoint>
-    tls:
-      insecure: false
+    service:
+      pipelines:
+        logs/langsmith:
+          receivers: [filelog]
+          processors: [batch, memory_limiter]
+          exporters: [otlphttp/logs]
 
-service:
-  pipelines:
-    logs/langsmith:
-      receivers: [filelog]
-      processors: [k8sattributes, filter, batch, memory_limiter]
-      exporters: [otlphttp/logs]
-    metrics/langsmith:
-      receivers: [prometheus]
-      processors: [batch, memory_limiter]
-      exporters: [otlphttp/metrics]
-    traces/langsmith:
-      receivers: [otlp]
-      processors: [batch, memory_limiter]
-      exporters: [otlphttp/traces]
+  env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: POD_UID
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.uid
+  volumes:
+    - name: varlogpods
+      hostPath:
+        path: /var/log/pods
+  volumeMounts:
+    - name: varlogpods
+      mountPath: /var/log/pods
+      readOnly: true
+```
+
+# Example Collector Configuration: Metrics and Traces Gateway
+
+```yaml
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel-collector-gateway
+spec:
+  mode: deployment
+  image: otel/opentelemetry-collector-contrib:0.123.0
+
+  config:
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: langsmith-services
+              metrics_path: /metrics
+              scrape_interval: 15s
+              # Only scrape endpoints in the LangSmith namespace
+              kubernetes_sd_configs:
+                - role: endpoints
+                  namespaces:
+                    names: [<langsmith-namespace>]
+              relabel_configs:
+                # Only scrape services with the name langsmith-.*
+                - source_labels: [__meta_kubernetes_service_name]
+                  regex: "langsmith-.*"
+                  action: keep
+                # Only scrape ports with the following names
+                - source_labels: [__meta_kubernetes_endpoint_port_name]
+                  regex: "(backend|platform|playground|redis-metrics|postgres-metrics|ch-metrics)"
+                  action: keep
+                # Promote useful metadata into regular labels
+                - source_labels: [__meta_kubernetes_service_name]
+                  target_label: k8s_service
+                - source_labels: [__meta_kubernetes_pod_name]
+                  target_label: k8s_pod
+                # Replace the default "host:port" as Prom's instance label
+                - source_labels: [__address__]
+                  target_label: instance
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      batch:
+        send_batch_size: 8192
+        timeout: 10s
+      memory_limiter:
+        check_interval: 1m
+        limit_percentage: 90
+        spike_limit_percentage: 80
+
+    exporters:
+      otlphttp/metrics:
+        endpoint: <metrics_endpoint>
+      otlphttp/traces:
+        endpoint: <traces_endpoint>
+
+    service:
+      pipelines:
+        metrics/langsmith:
+          receivers: [prometheus]
+          processors: [batch, memory_limiter]
+          exporters: [otlphttp/metrics]
+        traces/langsmith:
+          receivers: [otlp]
+          processors: [batch, memory_limiter]
+          exporters: [otlphttp/traces]
 ```
