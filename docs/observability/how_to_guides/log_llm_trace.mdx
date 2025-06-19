@@ -34,8 +34,8 @@ You can also use any of the [LangChain OSS chat models](https://python.langchain
 
 ### Implementing your own custom chat-model
 
-You may also trace your model calls using [`traceable`](../annotate_code/). To properly mark the traced function
-as an LLM run, at bare minimum you must pass `run_type` as `"llm"` like this:
+You may also trace your model calls using [`traceable`](./annotate_code) or other broader tracing techniques. To properly mark the traced function
+as an LLM run in this case, at bare minimum you must pass `run_type` as `"llm"` like this:
 
 <CodeTabs
   tabs={[
