@@ -36,18 +36,7 @@ After creating the service, you'll need to retrieve the Integration Key:
 
 ![PagerDuty Integration Key Location](./static/pager_duty.png)
 
-### Step 3: Save the Integration Key as a Workspace Secrets
-
-As a best pratice, we reccomend saving the Integration Key as a Workspace Secret. This will allow you to re-use the same key across alerts for a workspace.
-
-1. Navigate to the **Settings** page
-2. Select the **Secrets** tab
-3. Click **Add secret**
-4. Enter a name for the secret (e.g., "PagerDuty Integration Key")
-5. Paste the Integration Key from Step 2 into the value field
-6. Click **Save secret**
-
-### Step 4: Configure LangSmith Alert with PagerDuty
+### Step 3: Configure LangSmith Alert with PagerDuty
 
 <div style={{ textAlign: 'center' }}>
 
@@ -56,7 +45,7 @@ As a best pratice, we reccomend saving the Integration Key as a Workspace Secret
 </div>
 
 1. In the notification section of your alert set-up in LangSmith, select **PagerDuty**
-2. Click the Key icon and select the secret you created in Step 3
+2. Click the key icon to save the Integration Key as a Workspace secret or select an existing Workspace secret. As a best practice, we recommend saving the Integration Key as a Workspace Secret rather than adding it directy. This will allow you to re-use the same key across alerts for a workspace.
 3. Configure additional notification options:
    - **Severity**: Maps to PagerDuty incident priority
 4. Send a test alert by clicking **Send Test Alert**
