@@ -276,7 +276,6 @@ const sidebars = {
         },
       ],
       link: { type: "doc", id: "reference/index" },
-  
     },
   ],
 };
