@@ -21,7 +21,7 @@ Infrastructure refers to:
 
 # Logs: [OTel Example](./langsmith_collector#logs)
 
-All services that are part of the LangSmith self-hosted deployment write their logs to their node/container filesystem. This includes Postgres, Redis and Clickhouse if you are running the default in-cluter versions.
+All services that are part of the LangSmith self-hosted deployment write their logs to their node/container filesystem. This includes Postgres, Redis and Clickhouse if you are running the in-cluster versions.
 In order to access these logs, you need to set up your collector to read from those files. Most popular collectors support reading logs from container filsystems.
 
 Example file system integrations:
@@ -36,6 +36,7 @@ Example file system integrations:
     The following LangSmith services expose metrics at an endpoint, in the Prometheus metrics format.
     - <b>Backend</b>: `http://<backend_service_name>.<namespace>.svc.cluster.local:1984/metrics`
     - <b>Platform Backend</b>: `http://<platform_backend_service_name>.<namespace>.svc.cluster.local:1986/metrics`
+    - <b>Host Backend</b>: `http://<host_backend_service_name>.<namespace>.svc.cluster.local:1985/metrics`
     - <b>Playground</b>: `http://<playground_service_name>.<namespace>.svc.cluster.local:1988/metrics`
 
     It is recommended to use a [Prometheus](https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets) or

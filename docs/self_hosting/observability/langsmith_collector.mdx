@@ -153,146 +153,136 @@ otlphttp/traces:
 Note that this configuration uses a filter to drop any logs from files other than LangSmith logs in the deployment namespace.
 
 ```yaml
-apiVersion: opentelemetry.io/v1beta1
-kind: OpenTelemetryCollector
-metadata:
-  name: otel-collector-sidecar
-spec:
-  mode: sidecar
-  image: otel/opentelemetry-collector-contrib:0.123.0
+mode: sidecar
+image: otel/opentelemetry-collector-contrib:0.123.0
 
-  config:
-    receivers:
-      filelog:
-        exclude:
-          - "**/otc-container/*.log"
-          - "**/postgres-metrics-exporter/*.log"
-          - "**/redis-metrics-exporter/*.log"
-        include:
-          - /var/log/pods/${POD_NAMESPACE}_${POD_NAME}_${POD_UID}/*/*.log
-        include_file_name: false
-        include_file_path: true
-        operators:
-          - id: container-parser
-            type: container
-        retry_on_failure:
-          enabled: true
-        start_at: end
+config:
+  receivers:
+    filelog:
+      exclude:
+        - "**/otc-container/*.log"
+        - "**/postgres-metrics-exporter/*.log"
+        - "**/redis-metrics-exporter/*.log"
+      include:
+        - /var/log/pods/${POD_NAMESPACE}_${POD_NAME}_${POD_UID}/*/*.log
+      include_file_name: false
+      include_file_path: true
+      operators:
+        - id: container-parser
+          type: container
+      retry_on_failure:
+        enabled: true
+      start_at: end
 
-    processors:
-      batch:
-        send_batch_size: 8192
-        timeout: 10s
-      memory_limiter:
-        check_interval: 1m
-        limit_percentage: 90
-        spike_limit_percentage: 80
+  processors:
+    batch:
+      send_batch_size: 8192
+      timeout: 10s
+    memory_limiter:
+      check_interval: 1m
+      limit_percentage: 90
+      spike_limit_percentage: 80
 
-    exporters:
-      otlphttp/logs:
-        endpoint: <your-endpoint>
+  exporters:
+    otlphttp/logs:
+      endpoint: <your-endpoint>
 
-    service:
-      pipelines:
-        logs/langsmith:
-          receivers: [filelog]
-          processors: [batch, memory_limiter]
-          exporters: [otlphttp/logs]
+  service:
+    pipelines:
+      logs/langsmith:
+        receivers: [filelog]
+        processors: [batch, memory_limiter]
+        exporters: [otlphttp/logs]
 
-  env:
-    - name: POD_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.name
-    - name: POD_NAMESPACE
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.namespace
-    - name: POD_UID
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.uid
-  volumes:
-    - name: varlogpods
-      hostPath:
-        path: /var/log/pods
-  volumeMounts:
-    - name: varlogpods
-      mountPath: /var/log/pods
-      readOnly: true
+env:
+  - name: POD_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: POD_NAMESPACE
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.namespace
+  - name: POD_UID
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.uid
+volumes:
+  - name: varlogpods
+    hostPath:
+      path: /var/log/pods
+volumeMounts:
+  - name: varlogpods
+    mountPath: /var/log/pods
+    readOnly: true
 ```
 
 # Example Collector Configuration: Metrics and Traces Gateway
 
 ```yaml
-apiVersion: opentelemetry.io/v1beta1
-kind: OpenTelemetryCollector
-metadata:
-  name: otel-collector-gateway
-spec:
-  mode: deployment
-  image: otel/opentelemetry-collector-contrib:0.123.0
+mode: deployment
+image: otel/opentelemetry-collector-contrib
 
-  config:
-    receivers:
-      prometheus:
-        config:
-          scrape_configs:
-            - job_name: langsmith-services
-              metrics_path: /metrics
-              scrape_interval: 15s
-              # Only scrape endpoints in the LangSmith namespace
-              kubernetes_sd_configs:
-                - role: endpoints
-                  namespaces:
-                    names: [<langsmith-namespace>]
-              relabel_configs:
-                # Only scrape services with the name langsmith-.*
-                - source_labels: [__meta_kubernetes_service_name]
-                  regex: "langsmith-.*"
-                  action: keep
-                # Only scrape ports with the following names
-                - source_labels: [__meta_kubernetes_endpoint_port_name]
-                  regex: "(backend|platform|playground|redis-metrics|postgres-metrics|ch-metrics)"
-                  action: keep
-                # Promote useful metadata into regular labels
-                - source_labels: [__meta_kubernetes_service_name]
-                  target_label: k8s_service
-                - source_labels: [__meta_kubernetes_pod_name]
-                  target_label: k8s_pod
-                # Replace the default "host:port" as Prom's instance label
-                - source_labels: [__address__]
-                  target_label: instance
-      otlp:
-        protocols:
-          grpc:
-            endpoint: 0.0.0.0:4317
-          http:
-            endpoint: 0.0.0.0:4318
+config:
+  receivers:
+    prometheus:
+      config:
+        scrape_configs:
+          - job_name: langsmith-services
+            metrics_path: /metrics
+            scrape_interval: 15s
+            # Only scrape endpoints in the LangSmith namespace
+            kubernetes_sd_configs:
+              - role: endpoints
+                namespaces:
+                  names: [<langsmith-namespace>]
+            relabel_configs:
+              # Only scrape services with the name langsmith-.*
+              - source_labels: [__meta_kubernetes_service_name]
+                regex: "langsmith-.*"
+                action: keep
+              # Only scrape ports with the following names
+              - source_labels: [__meta_kubernetes_endpoint_port_name]
+                regex: "(backend|platform|playground|redis-metrics|postgres-metrics|ch-metrics)"
+                action: keep
+              # Promote useful metadata into regular labels
+              - source_labels: [__meta_kubernetes_service_name]
+                target_label: k8s_service
+              - source_labels: [__meta_kubernetes_pod_name]
+                target_label: k8s_pod
+              # Replace the default "host:port" as Prom's instance label
+              - source_labels: [__address__]
+                target_label: instance
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
 
-    processors:
-      batch:
-        send_batch_size: 8192
-        timeout: 10s
-      memory_limiter:
-        check_interval: 1m
-        limit_percentage: 90
-        spike_limit_percentage: 80
+  processors:
+    batch:
+      send_batch_size: 8192
+      timeout: 10s
+    memory_limiter:
+      check_interval: 1m
+      limit_percentage: 90
+      spike_limit_percentage: 80
 
-    exporters:
-      otlphttp/metrics:
-        endpoint: <metrics_endpoint>
-      otlphttp/traces:
-        endpoint: <traces_endpoint>
+  exporters:
+    otlphttp/metrics:
+      endpoint: <metrics_endpoint>
+    otlphttp/traces:
+      endpoint: <traces_endpoint>
 
-    service:
-      pipelines:
-        metrics/langsmith:
-          receivers: [prometheus]
-          processors: [batch, memory_limiter]
-          exporters: [otlphttp/metrics]
-        traces/langsmith:
-          receivers: [otlp]
-          processors: [batch, memory_limiter]
-          exporters: [otlphttp/traces]
+  service:
+    pipelines:
+      metrics/langsmith:
+        receivers: [prometheus]
+        processors: [batch, memory_limiter]
+        exporters: [otlphttp/metrics]
+      traces/langsmith:
+        receivers: [otlp]
+        processors: [batch, memory_limiter]
+        exporters: [otlphttp/traces]
 ```
