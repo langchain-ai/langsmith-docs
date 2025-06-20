@@ -18,16 +18,7 @@ The prompt is made up of messages, each of which has a "role" - including `syste
 The default template format is `f-string`, but you can change the prompt template format to `mustache` by clicking on the settings icon next to the model -> prompt format -> template format. Learn more about template formats [here](../concepts#f-string-vs-mustache).
 ![](./static/create_a_prompt/template_format.png)
 
-### Structured output
-
-You can add an output schema (which makes your prompt a StructuredPrompt type). Learn more about structured output [here](../concepts#structured-output).
-![](./static/create_a_prompt/structured_output.png)
-
-### Tools
-
-You can also add a tool by clicking the `+ Tool` button at the bottom of the prompt editor. See [here](../how_to_guides/use_tools) for more information on how to use tools.
-
-## Add a template variable
+### Add a template variable
 
 The power of prompts comes from the ability to use variables in your prompt. You can use variables to add dynamic content to your prompt.
 Add a template variable in one of two ways:
@@ -40,6 +31,15 @@ Add a template variable in one of two ways:
 
 When we add a variable, we see a place to enter sample inputs for our prompt variables. Fill these in with values to test the prompt.
 ![](./static/create_a_prompt/prompt_inputs.png)
+
+### Structured output
+
+Adding an output schema to your prompt will get output in a structured format. Learn more about structured output [here](../concepts#structured-output).
+![](./static/create_a_prompt/structured_output.png)
+
+### Tools
+
+You can also add a tool by clicking the `+ Tool` button at the bottom of the prompt editor. See [here](../how_to_guides/use_tools) for more information on how to use tools.
 
 ## Run the prompt
 
