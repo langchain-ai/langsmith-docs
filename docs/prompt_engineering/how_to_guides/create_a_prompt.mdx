@@ -4,42 +4,68 @@ sidebar_position: 1
 
 # Create a prompt
 
-Navigate to the **Prompts** section in the left-hand sidebar or from the application homepage.
-Click the "+ Prompt" button to enter the Playground. The dropdown next to the button gives you a choice between a chat style prompt and an instructional prompt - chat is the default.
-![](./static/blank_prompts_page.png)
+Navigate to the **Playground** in the left-hand sidebar or from the application homepage.
+![](./static/create_a_prompt/empty_playground.png)
 
 ## Compose your prompt
 
-After choosing a prompt type, you're brought to the playground to develop your prompt.
-On the left is an editable view of the prompt. You can add more messages, change the template format (f-string or mustache), and add an output schema (which makes your prompt a StructuredPrompt type).
+On the left is an editable view of the prompt.
 
-To the right, we can enter sample inputs for our prompt variables and then run our prompt against a model.
+The prompt is made up of messages, each of which has a "role" - including `system`, `human`, and `ai`.
 
-(If you haven't yet, you'll need to enter an API key for whichever model you want to run your prompt with.)
+### Template format
 
-To see the response from the model, click "Start".
+The default template format is `f-string`, but you can change the prompt template format to `mustache` by clicking on the settings icon next to the model -> prompt format -> template format. Learn more about template formats [here](../concepts#f-string-vs-mustache).
+![](./static/create_a_prompt/template_format.png)
 
-![](./static/create_prompt_playground.png)
+### Add a template variable
+
+The power of prompts comes from the ability to use variables in your prompt. You can use variables to add dynamic content to your prompt.
+Add a template variable in one of two ways:
+
+1. Add `{{variable_name}}` to your prompt (with one curly brace on each side for `f-string` and two for `mustache`).
+   ![](./static/create_a_prompt/prompt_with_variable.png)
+
+2. Highlight text you want to templatize and click the tooltip button that shows up. Enter a name for your variable, and convert.
+   ![](./static/create_a_prompt/convert_to_variable.gif)
+
+When we add a variable, we see a place to enter sample inputs for our prompt variables. Fill these in with values to test the prompt.
+![](./static/create_a_prompt/prompt_inputs.png)
+
+### Structured output
+
+Adding an output schema to your prompt will get output in a structured format. Learn more about structured output [here](../concepts#structured-output).
+![](./static/create_a_prompt/structured_output.png)
+
+### Tools
+
+You can also add a tool by clicking the `+ Tool` button at the bottom of the prompt editor. See [here](../how_to_guides/use_tools) for more information on how to use tools.
+
+## Run the prompt
+
+Click "Start" to run the prompt.
+
+![](./static/create_a_prompt/run.png)
 
 ## Save your prompt
 
-To save your prompt, click the "Save as" button, name your prompt, and decide if you want it to be "private" or "public".
-Private prompts are only visible to your workspace, while public prompts are discoverable to anyone in the LangChain Hub.
-Click save to create your prompt.
+To save your prompt, click the "Save" button, name your prompt, and decide if you want it to be "private" or "public".
+Private prompts are only visible to your workspace, while public prompts are discoverable to anyone.
 
 The model and configuration you select in the Playground settings will be saved with the prompt. When you reopen the prompt, the model and configuration will automatically load from the saved version.
+![](./static/create_a_prompt/save_prompt.png)
 
 :::tip Public Prompts
 The first time you create a public prompt, you'll be asked to set a LangChain Hub handle. All your public prompts will be linked to this handle. In a shared workspace, this handle will be set for the whole workspace.
 :::
 
-![](./static/save_prompt.png)
+![](./static/create_a_prompt/public_handle.png)
 
 ## View your prompts
 
 You've just created your first prompt! View a table of your prompts in the prompts tab.
 
-![](./static/prompt_table.png)
+![](./static/create_a_prompt/prompt_table.png)
 
 ## Add metadata
 
@@ -47,4 +73,9 @@ To add metadata to your prompt, click the prompt and then click the "Edit" penci
 This brings you to where you can add additional information about the prompt, including a description, a README, and use cases.
 For public prompts this information will be visible to anyone who views your prompt in the LangChain Hub.
 
-![](./static/edit_prompt.png)
+![](./static/create_a_prompt/pencil.png)
+![](./static/create_a_prompt/edit_prompt.png)
+
+# Next steps
+
+Now that you've created a prompt, you can use it in your application code. See [how to pull a prompt programatically](../how_to_guides/manage_prompts_programatically#pull-a-prompt).
