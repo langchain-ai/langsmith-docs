@@ -16,13 +16,13 @@ This section assumes that you have monitoring infrastructure set up already, or 
 
 Infrastructure refers to:
 
-- Collectors, such as [OpenTelemetry](https://opentelemetry.io/docs/collector/), [FluentBit](https://docs.fluentbit.io/manual) or [Prometheus](https://prometheus.io/)
-- Observability backends, such as [Datadog](https://www.datadoghq.com/) or [the Grafana ecosystem](https://grafana.com/)
+- Collectors, such as [OpenTelemetry](https://opentelemetry.io/docs/collector/), [FluentBit](https://docs.fluentbit.io/manual) or [Prometheus](https://prometheus.io/).
+- Observability backends, such as [Datadog](https://www.datadoghq.com/) or the [Grafana](https://grafana.com/) ecosystem.
 
 # Logs: [OTel Example](./langsmith_collector#logs)
 
-All services that are part of the LangSmith self-hosted deployment write their logs to their node/container filesystem. This includes Postgres, Redis and Clickhouse if you are running the in-cluster versions.
-In order to access these logs, you need to set up your collector to read from those files. Most popular collectors support reading logs from container filsystems.
+All services that are part of the LangSmith self-hosted deployment write their logs to their node's filesystem. This includes Postgres, Redis and Clickhouse if you are running the in-cluster versions.
+In order to access these logs, you need to set up your collector to read from those files. Most popular collectors support reading logs from filesystems.
 
 Example file system integrations:
 
@@ -39,44 +39,20 @@ Example file system integrations:
     - <b>Host Backend</b>: `http://<host_backend_service_name>.<namespace>.svc.cluster.local:1985/metrics`
     - <b>Playground</b>: `http://<playground_service_name>.<namespace>.svc.cluster.local:1988/metrics`
 
-    It is recommended to use a [Prometheus](https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets) or
+    You can use a [Prometheus](https://prometheus.io/docs/prometheus/latest/getting_started/#configure-prometheus-to-monitor-the-sample-targets) or
     [OpenTelemetry](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) collector to scrape the endpoints, and export metrics to the
     backend of your choice.
 
     :::warning Important
     **The following sections apply for in-cluster databases only. If you are using external databases, you will need to configure exposing and fetching metrics.**
     :::
-    ## Redis
-    If you are using the in-cluster Redis instance from the Helm chart, LangSmith can expose metrics for you if you upgrade the chart with the following values:
-    ```yaml
-    redis:
-      metrics:
-        enabled: true
-    ```
-    This will run a sidecar container alongside your Redis container, and the LangSmith Redis service will expose Prometheus metrics at: `http://langsmith-<redis_name>.<namespace>.svc.cluster.local:9121/metrics`
-
-    ## Postgres
-    Similarly, to expose Postgres metrics, upgrade the LangSmith Helm chart with the following values:
-    ```yaml
-    postgres:
-      metrics:
-        enabled: true
-    ```
-    This will run a sidecar container alongside Postgres, and expose a Prometheus metrics endpoint at `http://langsmith-<postgres_name>.<namespace>.svc.cluster.local:9187/metrics`
-
-    :::note Note
-    **You can modify the Redis and Postgres sidecar exporter configs through the LangSmith Helm chart.**
-    :::
+    ## Postgres + Redis
+    If you are using in-cluster Postgres/Redis instances, you can use a Prometheus exporter to expose metrics from your instance. You can deploy your own, or if you would like, you can
+    use the [LangSmith Observability Helm Chart](./observability_stack) to deploy an exporter for you.
 
     ## Clickhouse
-    The Clickhouse container can expose metrics directly, without the need for a sidecar. To expose the metrics endpoint, upgrade your LangSmith Helm chart with the
-    following values:
-    ```yaml
-    clickhouse:
-      metrics:
-        enabled: true
-    ```
-    You can then scrape metrics at `http://langsmith-<clickhouse_name>.<namespace>.svc.cluster.local:9363/metrics`
+    The in-cluster Clickhouse is configured to expose metrics without the need for an exporter.
+    You can use your collector to scrape metrics at `http://langsmith-<clickhouse_name>.<namespace>.svc.cluster.local:9363/metrics`
 
 # Traces: [OTel Example](./langsmith_collector#traces)
 
@@ -95,10 +71,3 @@ config:
 ```
 
 This will export traces from all LangSmith backend services to the specified endpoint.
-
-:::important Important
-You can override the tracing endpoint for individual services. From our testing, the Python apps require an endpoint in the form
-`http://host:port/v1/traces`, while the Go app requires the same endpoint in the form `host:port` to send to the same collector.
-
-Make sure to check the logs of your services. If the trace endpoint is set incorrectly, you should see error logs in your service.
-:::

@@ -150,11 +150,9 @@ otlphttp/traces:
 
 # Example Collector Configuration: Logs Sidecar
 
-Note that this configuration uses a filter to drop any logs from files other than LangSmith logs in the deployment namespace.
-
 ```yaml
 mode: sidecar
-image: otel/opentelemetry-collector-contrib:0.123.0
+image: otel/opentelemetry-collector-contrib
 
 config:
   receivers:
