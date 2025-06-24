@@ -19,8 +19,7 @@ Note that all of the concepts discussed below can be translated to other collect
 
 ## Logs
 
-As discussed previously, logs are read from the filesystem of the nodes/containers running the application.
-This is an example for a <b><u>Sidecar</u></b> collector to read logs from its own container, excluding noisy logs from non-domain containers.
+This is an example for a <b><u>Sidecar</u></b> collector to read logs from its own pod, excluding logs from non domain-specific containers.
 A Sidecar configuration is useful here because we require access to every container's filesystem. A DaemonSet can also be used.
 
 ```yaml
@@ -91,7 +90,7 @@ prometheus:
             action: keep
           # Only scrape ports with the following names
           - source_labels: [__meta_kubernetes_endpoint_port_name]
-            regex: "(backend|platform|playground|redis-metrics|postgres-metrics|ch-metrics)"
+            regex: "(backend|platform|playground|redis-metrics|postgres-metrics|metrics)"
             action: keep
           # Promote useful metadata into regular labels
           - source_labels: [__meta_kubernetes_service_name]
@@ -241,7 +240,7 @@ config:
                 action: keep
               # Only scrape ports with the following names
               - source_labels: [__meta_kubernetes_endpoint_port_name]
-                regex: "(backend|platform|playground|redis-metrics|postgres-metrics|ch-metrics)"
+                regex: "(backend|platform|playground|redis-metrics|postgres-metrics|metrics)"
                 action: keep
               # Promote useful metadata into regular labels
               - source_labels: [__meta_kubernetes_service_name]
