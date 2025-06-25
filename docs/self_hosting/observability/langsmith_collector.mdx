@@ -158,8 +158,6 @@ config:
     filelog:
       exclude:
         - "**/otc-container/*.log"
-        - "**/postgres-metrics-exporter/*.log"
-        - "**/redis-metrics-exporter/*.log"
       include:
         - /var/log/pods/${POD_NAMESPACE}_${POD_NAME}_${POD_UID}/*/*.log
       include_file_name: false
