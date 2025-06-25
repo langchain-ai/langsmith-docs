@@ -49,10 +49,7 @@ All services that are part of the LangSmith self-hosted deployment write logs to
     :::
     ## Postgres + Redis
     If you are using in-cluster Postgres/Redis instances, you can use a Prometheus exporter to expose metrics from your instance. You can deploy your own, or if you would like, you can
-    use the [LangSmith Observability Helm Chart](./observability_stack) to deploy an exporter for you. You will need to point your exporters to:
-    - **Redis**: `langsmith-redis.<namespace>svc.cluster.local:6379`
-    - **Postgres**`langsmith-postgres.<namespace>.svc.cluster.local:5432`
-
+    use the [LangSmith Observability Helm Chart](./observability_stack) to deploy an exporter for you.
     ## Clickhouse
     The in-cluster Clickhouse is configured to expose metrics without the need for an exporter.
     You can use your collector to scrape metrics at `http://langsmith-clickhouse.<namespace>.svc.cluster.local:9363/metrics`
@@ -60,7 +57,7 @@ All services that are part of the LangSmith self-hosted deployment write logs to
 # Traces: [OTel Example](./langsmith_collector#traces)
 
 The LangSmith Backend, Platform Backend, Playground and LangSmith Queue deployments have been instrumented to emit [Otel](https://opentelemetry.io/docs/concepts/signals/traces/)
-traces. Tracing is toggled off by default, and can be enabled with the following in your `values.yaml` file:
+traces. Tracing is toggled off by default, and can be enabled for all LangSmith services with the following in your `langsmith_config.yaml` (or equivalent) file:
 
 ```yaml
 config:
@@ -71,5 +68,3 @@ config:
     env: "ls_self_hosted" # This value will be set as an "env" attribute in your spans
     exporter: "http" # must be either http or grpc
 ```
-
-This will export traces from all LangSmith backend services to the specified endpoint.

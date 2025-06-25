@@ -5,12 +5,12 @@ sidebar_position: 9
 
 # Deploy an observability stack for your LangSmith deployment
 
-:::warning Warning
+:::warning Important
 **This section is only applicable for Kubernetes deployments.**
 :::
 
 LangSmith applications expose telemetry data that can be sent to the backend of your choice. If you don’t already have an observability stack,
-or prefer to keep LangSmith telemetry separate from your main application, you can use the LangSmith Observability Helm chart to deploy an end-to-end observability stack.
+or prefer to keep LangSmith telemetry separate from your main application, you can use the LangSmith Observability Helm chart to deploy a basic observability stack.
 
 # Section 1: Prometheus Exporters
 
@@ -20,21 +20,42 @@ The helm chart provides a set of Prometheus exporters to expose metrics from [Re
 [Postgres](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-postgres-exporter), [Nginx](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-nginx-exporter), and [Kube state metrics](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics).
 
 1. Create a local file called `langsmith_obs_config.yaml`
-2. Copy over the values from the `metric-exporters-only.yaml` [file](https://github.com/langchain-ai/helm/blob/main/charts/langsmith-observability/examples/metric-exporters-only.yaml) into `langsmith_obs_config.yaml`, making sure to modify the values to match your LangSmith deployment.
+2. Copy over the values from this [file](https://github.com/langchain-ai/helm/blob/main/charts/langsmith-observability/examples/metric-exporters-only.yaml) into `langsmith_obs_config.yaml`, making sure to modify the values to match your LangSmith deployment.
 3. Find the latest version of the chart by running `helm search repo langchain/langsmith-observability --versions`.
 4. Grab the latest version number, and run `helm install langsmith-observability langchain/langsmith-observability --values langsmith_obs_config.yaml --version <version> -n <namespace> --debug`
 
 This will allow you to scrape metrics at the following service endpoints:
-- Postgres: `langsmith-observability-postgresexporter:9187/metrics`
-- Redis: `langsmith-observability-redisexporter:9121/metrics`
-- Nginx: `langsmith-observability-nginxexporter:9113/metrics`
-- KubeStateMetrics: `langsmith-observability-kubestatemetrics:8080/metrics`
+- Postgres: `langsmith-observability-postgres-exporter:9187/metrics`
+- Redis: `langsmith-observability-redis-exporter:9121/metrics`
+- Nginx: `langsmith-observability-nginx-exporter:9113/metrics`
+- KubeStateMetrics: `langsmith-observability-kube-state-metrics:8080/metrics`
 
+You should see the following if the installation went through:
+```
+Release "langsmith-observability" has been installed. Happy Helming!
+NAME: langsmith-observability
+LAST DEPLOYED: Wed Jun 25 11:17:34 2025
+NAMESPACE: langsmith-observability
+STATUS: deployed
+REVISION: 1
+```
 
-# Section 2: End-to-End Deployment
+And if you run `kubectl get pods -n langsmith-observability`, you should see:
+```
+langsmith-observability-kube-state-metrics-b58bb8db4-bm4g5        1/1     Running   0          2m22s
+langsmith-observability-nginx-exporter-6d686d9d4b-5qw9v           1/1     Running   0          2m22s
+langsmith-observability-postgres-exporter-67d5db5684-tffbm        1/1     Running   0          2m22s
+langsmith-observability-redis-exporter-846c4d65cb-vbtwd           1/1     Running   0          2m22s
+```
+
+# Section 2: Full Observability Stack
+
+:::warning Important
+**This is not a production observability stack. Use this to gain quick insight into logs, metrics and traces for your deployment. This is only made to handle a few dozen GB of data per day.**
+:::
 This section will show you how to deploy the end-to-end observability stack for LangSmith, using the [Helm Chart](https://github.com/langchain-ai/helm/tree/main/charts/langsmith-observability).
 
-This helm chart is built around the open-source LGTM Stack from Grafana. It consists of:
+This chart is built around the open-source LGTM Stack from Grafana. It consists of:
 
 - [Loki](https://grafana.com/docs/loki/latest/) for logs.
 - [Mimir](https://grafana.com/docs/mimir/latest/) for metrics + alerting.
@@ -46,10 +67,12 @@ As well as [OpenTelemetry Collectors](https://opentelemetry.io/docs/collector/) 
 ## Prerequisites
 
 ### 1. Compute Resources
-Make sure you have enough resources to handle the LGTM stack. The minimum requirements stated are:
-- Loki: 3 nodes for the EKS cluster, with size depending on workload. More info [here](https://grafana.com/docs/loki/latest/setup/size/)
-- Mimir: 1 node with 4 vCPU and 16GiB RAM
-- Tempo: Size depending on data ingest. More info [here](https://grafana.com/docs/tempo/latest/setup/size/)
+The resource requests and limits for each part of the stack can be modified in the helm chart. Here are the current allocations (request/limit):
+- Loki: `2vCPU/3vCPU + 2Gi/4Gi`
+- Mimir: `1vCPU/2vCPU + 2Gi/4Gi`
+- Tempo: `1vCPU/2vCPU + 4Gi/6Gi`
+
+Make sure you have those resources allocated before bringing up the helm chart, or modify the resource values in your helm configuration file.
 
 ### 2. Cert-Manager
 
@@ -75,15 +98,9 @@ helm install opentelemetry-operator open-telemetry/opentelemetry-operator -n <na
 
 ## Installation
 
-### <u>Development/POC Option</u>: LGTM Stack + MinIO
-:::warning Important
-**This option should only be used in development or POC environments. You should always use external object storage in production.**
-:::
-
-This option brings up the OTel collectors, LGTM stack and uses [MinIO](https://github.com/minio/minio) for object storage, which is an in-cluster S3-compatible store.
-In order to install this, you need to do the following:
+The following instructions will bring up OTel collectors, the LGTM stack, Grafana and Prometheus exporters.
 1. Create a local file called `langsmith_obs_config.yaml`
-2. Copy over the values from the `e2e-config-minio.yaml` [file](https://github.com/langchain-ai/helm/blob/main/charts/langsmith-observability/examples/e2e-stack-minio.yaml) into `langsmith_obs_config.yaml`, making sure to modify the values to match your LangSmith deployment.
+2. Copy over the values from this [file](https://github.com/langchain-ai/helm/blob/main/charts/langsmith-observability/examples/e2e-stack.yaml) into `langsmith_obs_config.yaml`, making sure to modify the values to match your LangSmith deployment.
 3. Find the latest version of the chart by running `helm search repo langchain/langsmith-observability --versions`.
 4. Grab the latest version number, and run ```helm install langsmith-observability langchain/langsmith-observability --values langsmith_obs_config.yaml --version <version> -n <namespace> --debug```
 
@@ -92,54 +109,83 @@ In order to install this, you need to do the following:
 You can also selectively bring up each respective piece of the backend (Loki, Mimir, Tempo).**
 :::
 
-### <u>Production Option</u>: LGTM Stack + External Object Storage
-You should always use this option for production environments, as it uses reliable object storage to store telemetry data.
-The LGTM stack supports Amazon S3, Google Cloud Storage and Azure Blob Storage.
+You should see the following if the install went through:
+```
+Release "langsmith-observability" has been installed. Happy Helming!
+NAME: langsmith-observability
+LAST DEPLOYED: Wed Jun 25 11:17:34 2025
+NAMESPACE: langsmith-observability
+STATUS: deployed
+REVISION: 1
+```
 
-In order to install this, you need to do the following:
-1. Create a local file called `langsmith_obs_config.yaml`
-2. Copy over the values from the `e2e-config-s3.yaml` [file](https://github.com/langchain-ai/helm/blob/main/charts/langsmith-observability/examples/e2e-stack-s3.yaml) into `langsmith_obs_config.yaml`, making sure to modify the values to match your LangSmith deployment.
-3. Find the latest version of the chart by running `helm search repo langchain/langsmith-observability --versions`.
-4. Grab the latest version number, and run `helm install langsmith-observability langchain/langsmith-observability --values langsmith_obs_config.yaml --version <version> -n <namespace> --debug`
-
-:::important Important
-You will need to create a storage bucket, as well as access to that bucket from your Kubernetes cluster. You can see more about how to configure access for:
-1. [Loki](https://grafana.com/docs/loki/latest/configure/storage/#aws-deployment-s3-single-store)
-2. [Mimir](https://grafana.com/docs/mimir/latest/configure/configure-object-storage-backend/)
-3. [Tempo](https://grafana.com/docs/tempo/latest/configuration/hosted-storage/)
-
-There are also example configurations for [GCS](https://github.com/langchain-ai/helm/blob/main/charts/langsmith-observability/examples/e2e-stack-gcs.yaml) and [Azure](https://github.com/langchain-ai/helm/blob/main/charts/langsmith-observability/examples/e2e-stack-azure.yaml)
-:::
-
+And if you run `kubectl get pods -n langsmith-observability`, you should see:
+```
+langsmith-observability-collector-gateway-collector-7746fb8pzbg   1/1     Running   0          5m26s
+langsmith-observability-grafana-7c6fc976f9-cdbvr                  1/1     Running   0          2m49s
+langsmith-observability-kube-state-metrics-b58bb8db4-bm4g5        1/1     Running   0          5m27s
+langsmith-observability-loki-0                                    2/2     Running   0          5m27s
+langsmith-observability-loki-chunks-cache-0                       2/2     Running   0          5m27s
+langsmith-observability-loki-gateway-769fb6fff8-zjsn5             1/1     Running   0          5m27s
+langsmith-observability-loki-results-cache-0                      2/2     Running   0          5m27s
+langsmith-observability-mimir-0                                   1/1     Running   0          5m26s
+langsmith-observability-nginx-exporter-6d686d9d4b-5qw9v           1/1     Running   0          5m27s
+langsmith-observability-postgres-exporter-67d5db5684-tffbm        1/1     Running   0          5m27s
+langsmith-observability-redis-exporter-846c4d65cb-vbtwd           1/1     Running   0          5m27s
+langsmith-observability-tempo-0                                   1/1     Running   0          5m27s
+opentelemetry-operator-756dff697-vblbn                            2/2     Running   0          12m
+```
 
 ## Post-Installation
 
 ### Enable Logs and Traces in LangSmith
-Once you have installed the observability helm chart, you need to set the following values in your LangSmith helm configuration file to enable collection of logs and traces:
+Once you have installed the observability helm chart, you need to set the following values in your <u>LangSmith</u> helm configuration file to enable collection of logs and traces.
 ```yaml
+commonPodAnnotations:
+  # This format fo this annotation sb
+  sidecar.opentelemetry.io/inject: "${LANGSMITH_OBS_NAMESPACE}/${LANGSMITH_OTEL_CRD_NAME}"
 observability:
-  sidecarCollector: # This will add an annotation to your containers telling the OTEL Operator to bring up a sidecar container. Used in the LangSmith Observability helm chart.
-    enabled: true
-    namespace: "langsmith-observability" # Replace with your LangSmith Observability namespace.
   tracing:
     enabled: true
-    endpoint: "http://langsmith-collector-gateway-collector.romain-observability.svc.cluster.local:4318/v1/traces" # Replace this with the endpoint of your trace collector. If you are using the LangSmith Observability helm chart, this will be the endpoint of the OTEL Gateway collector.
+    # Replace this with the endpoint of your trace collector. If you are using the LangSmith Observability helm chart, this will be the endpoint of the OTEL Gateway collector.
+    endpoint: "http://${GATEWAY_COLLECTOR_SERVICE_NAME}.${LANGSMITH_OBS_NAMESPACE}.svc.cluster.local:4318/v1/traces" 
 ```
 
-Once applied, you should see each pod in your LangSmith deployment restart with a sidecar collector, and certain containers should be pushing traces to your collector.
-Look out for any error logs in your pods to see if you misconfigured the deployment.
+:::important Note
+1. To get `${LANGSMITH_OTEL_CRD_NAME}`, you can run `kubectl get opentelemetrycollectors -n ${LANGSMITH_OBS_NAMESPACE}` and select the name of the one with MODE = `sidecar`
+2. To get `${GATEWAY_COLLECTOR_SERVICE_NAME}` name, run `kubectl get services -n ${LANGSMITH_OBS_NAMESPACE}` and select the one with Ports 4317/4318 AND a ClusterIP set. It should be something like `langsmith-observability-collector-gateway-collector`
+:::
+
+Now run `helm upgrade langsmith langchain/langsmith --values langsmith_config.yaml -n <langsmith-namespace> --debug`
+
+Once upgraded, if you run `kubectl get pods -n <langsmith-namespace>` you should see the following (note the 2/2 for sidecar collectors):
+```
+langsmith-ace-backend-7dc85f7dff-xjbkj         2/2     Running     0               7m53s
+langsmith-backend-566b66979c-rgcfh             2/2     Running     1               7m53s
+langsmith-clickhouse-0                         2/2     Running     0               7m49s
+langsmith-frontend-7cf8549885-vpkns            2/2     Running     0               7m53s
+langsmith-platform-backend-5d46db7d9d-f6gh7    2/2     Running     0               7m52s
+langsmith-platform-backend-5d46db7d9d-lrr4d    2/2     Running     1               7m41s
+langsmith-platform-backend-5d46db7d9d-pcp27    2/2     Running     0               7m28s
+langsmith-playground-65d4c9699c-h656r          2/2     Running     0               7m52s
+langsmith-postgres-0                           2/2     Running     0               7m51s
+langsmith-queue-bdcd45bd6-htssd                2/2     Running     0               7m52s
+langsmith-queue-bdcd45bd6-pwdx4                2/2     Running     0               6m31s
+langsmith-queue-bdcd45bd6-xqrb8                2/2     Running     0               5m11s
+langsmith-redis-0                              2/2     Running     0               7m51s
+```
 
 ## Grafana Usage
 Once everything is installed, do the following:
- to get your Grafana admin password:
+ to get your Grafana password:
 ```
-kubectl get secret langsmith-observability-grafana -n <your-namespace> -o jsonpath="{.data.admin-password}" | base64 --decode
+kubectl get secret langsmith-observability-grafana -n <langsmith_observability_namespace> -o jsonpath="{.data.admin-password}" | base64 --decode
 ```
 
 Then port-forward into the `langsmith-observability-grafana` container at port 3000, and open your browser as `localhost:3000`.
 Use the username `admin` and the password from the secret above to log into Grafana.
 
-Once in Grafana, you can use the UI to monitor Logs, Metrics and Traces. Grafana also comes pre-packaged with sets of dashboards for monitoring the main components of your deployment.
+Once in Grafana, you can use the UI to monitor logs, metrics and traces. Grafana also comes pre-packaged with sets of dashboards for monitoring the main components of your deployment.
 
 ![LangSmith Grafana Dashboards](../static/langsmith_grafana_dashboards.png)
 

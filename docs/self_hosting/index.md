@@ -37,4 +37,4 @@ Step-by-step guides that cover the installation, configuration, and scaling of y
 - [Observability](./self_hosting/observability): How to access telemetry data for your self-hosted LangSmith instance.
   - [Export LangSmith telemetry](./self_hosting/observability/export_backend): Export logs, metrics and traces to your collector and/or backend of choice.
   - [Collector configuration](./self_hosting/observability/langsmith_collector): Example yaml configurations for an OTel collector to gather LangSmith telemetry data.
-  - [LangSmith Observability Stack](./self_hosting/observability/observability_stack): Have LangSmith deploy an end-to-end observability stack for you.
+  - [LangSmith Observability Stack](./self_hosting/observability/observability_stack): Have LangSmith deploy a basic observability stack for you to view logs, metrics and traces for your deployment.
