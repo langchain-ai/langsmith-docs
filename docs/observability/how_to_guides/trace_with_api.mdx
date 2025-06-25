@@ -42,6 +42,8 @@ def post_run(run_id, name, run_type, inputs, parent_id=None):
         "run_type": run_type,
         "inputs": inputs,
         "start_time": datetime.utcnow().isoformat(),
+	# "session_name": "project-name",  # the name of the project to trace to
+	# "session_id": "project-id",  # the ID of the project to trace to. specify one of session_name or session_id
     }
     if parent_id:
         data["parent_run_id"] = parent_id.hex
