@@ -153,12 +153,13 @@ Once you have installed the observability helm chart, you need to set the follow
 
 ```yaml
 commonPodAnnotations:
-  # This format fo this annotation sb
+  # E.g.: "langsmith-observability/langsmith-observability-collector-sidecar"
   sidecar.opentelemetry.io/inject: "${LANGSMITH_OBS_NAMESPACE}/${LANGSMITH_OTEL_CRD_NAME}"
 observability:
   tracing:
     enabled: true
-    # Replace this with the endpoint of your trace collector. If you are using the LangSmith Observability helm chart, this will be the endpoint of the OTEL Gateway collector.
+    # Replace this with the endpoint of your trace collector.
+    # E.g.: "http://langsmith-observability-collector-gateway-collector.langsmith-observability.svc.cluster.local:4318/v1/traces"
     endpoint: "http://${GATEWAY_COLLECTOR_SERVICE_NAME}.${LANGSMITH_OBS_NAMESPACE}.svc.cluster.local:4318/v1/traces"
 ```
 
