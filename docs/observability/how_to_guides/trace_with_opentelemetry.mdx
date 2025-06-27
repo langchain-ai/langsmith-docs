@@ -59,74 +59,6 @@ If you're using LangChain or LangGraph, use the built-in integration to trace yo
 
 4. View the traces in your LangSmith dashboard ([example](https://smith.langchain.com/public/a762af6c-b67d-4f22-90a0-728df16baeba/r)) once your application runs.
 
-## Send traces to an alternate provider
-
-While LangSmith is the default destination for OpenTelemetry traces, you can also configure OpenTelemetry to send traces to other observability platforms.
-
-:::info
-In langsmith Python SDK version ≥ 0.4.1,
-setting LANGSMITH_OTEL_ENABLED=true will by default send traces to both LangSmith and your instrumented OTEL endpoint. No extra code is needed for fan-out.
-:::
-
-### Use environment variables for global configuration
-
-By default, the LangSmith OpenTelemetry exporter will send data to the LangSmith API OTEL endpoint, but this can be customized by setting standard OTEL environment variables:
-
-```bash
-OTEL_EXPORTER_OTLP_ENDPOINT: Override the endpoint URL
-OTEL_EXPORTER_OTLP_HEADERS: Add custom headers (LangSmith API keys and Project are added automatically)
-OTEL_SERVICE_NAME: Set a custom service name (defaults to "langsmith")
-```
-
-LangSmith uses the HTTP trace exporter by default. If you'd like to use your own tracing provider, you can either:
-
-1. Set the OTEL environment variables as shown above, or
-2. Set a global trace provider before initializing LangChain components, which LangSmith will detect and use instead of creating its own.
-
-### Configure alternate OTLP endpoints
-
-To send traces to a different provider, configure the OTLP exporter with your provider's endpoint:
-
-```python
-import os
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-
-# Set environment variables for LangChain
-os.environ["LANGSMITH_OTEL_ENABLED"] = "true"
-os.environ["LANGSMITH_TRACING"] = "true"
-
-# Configure the OTLP exporter for your custom endpoint
-provider = TracerProvider()
-otlp_exporter = OTLPSpanExporter(
-    # Change to your provider's endpoint
-    endpoint="https://otel.your-provider.com/v1/traces",
-    # Add any required headers for authentication
-    headers={"api-key": "your-api-key"}
-)
-processor = BatchSpanProcessor(otlp_exporter)
-provider.add_span_processor(processor)
-trace.set_tracer_provider(provider)
-
-# Create and run a LangChain application
-prompt = ChatPromptTemplate.from_template("Tell me a joke about {topic}")
-model = ChatOpenAI()
-chain = prompt | model
-
-result = chain.invoke({"topic": "programming"})
-print(result.content)
-```
-
-:::info
-To disable hybrid tracing behavior after 0.4.1 and send traces only to your OTEL endpoint and exclude sending to LangSmith, add an additional env var:
-
-LANGSMITH_OTEL_ONLY = "true"
-:::
-
 ## Trace a non-LangChain application
 
 For non-LangChain applications or custom instrumentation, you can trace your application in LangSmith with a standard OpenTelemetry client:
@@ -216,6 +148,74 @@ For non-LangChain applications or custom instrumentation, you can trace your app
    ```
 
 4. View the trace in your LangSmith dashboard ([example](https://smith.langchain.com/public/4f2890b1-f105-44aa-a6cf-c777dcc27a37/r)).
+
+## Send traces to an alternate provider
+
+While LangSmith is the default destination for OpenTelemetry traces, you can also configure OpenTelemetry to send traces to other observability platforms.
+
+:::info
+In langsmith Python SDK version ≥ 0.4.1,
+setting LANGSMITH_OTEL_ENABLED=true will by default send traces to both LangSmith and your instrumented OTEL endpoint. No extra code is needed for fan-out.
+:::
+
+### Use environment variables for global configuration
+
+By default, the LangSmith OpenTelemetry exporter will send data to the LangSmith API OTEL endpoint, but this can be customized by setting standard OTEL environment variables:
+
+```bash
+OTEL_EXPORTER_OTLP_ENDPOINT: Override the endpoint URL
+OTEL_EXPORTER_OTLP_HEADERS: Add custom headers (LangSmith API keys and Project are added automatically)
+OTEL_SERVICE_NAME: Set a custom service name (defaults to "langsmith")
+```
+
+LangSmith uses the HTTP trace exporter by default. If you'd like to use your own tracing provider, you can either:
+
+1. Set the OTEL environment variables as shown above, or
+2. Set a global trace provider before initializing LangChain components, which LangSmith will detect and use instead of creating its own.
+
+### Configure alternate OTLP endpoints
+
+To send traces to a different provider, configure the OTLP exporter with your provider's endpoint:
+
+```python
+import os
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+
+# Set environment variables for LangChain
+os.environ["LANGSMITH_OTEL_ENABLED"] = "true"
+os.environ["LANGSMITH_TRACING"] = "true"
+
+# Configure the OTLP exporter for your custom endpoint
+provider = TracerProvider()
+otlp_exporter = OTLPSpanExporter(
+    # Change to your provider's endpoint
+    endpoint="https://otel.your-provider.com/v1/traces",
+    # Add any required headers for authentication
+    headers={"api-key": "your-api-key"}
+)
+processor = BatchSpanProcessor(otlp_exporter)
+provider.add_span_processor(processor)
+trace.set_tracer_provider(provider)
+
+# Create and run a LangChain application
+prompt = ChatPromptTemplate.from_template("Tell me a joke about {topic}")
+model = ChatOpenAI()
+chain = prompt | model
+
+result = chain.invoke({"topic": "programming"})
+print(result.content)
+```
+
+:::info
+To disable hybrid tracing behavior after 0.4.1 and send traces only to your OTEL endpoint and exclude sending to LangSmith, add an additional env var:
+
+LANGSMITH_OTEL_ONLY = "true"
+:::
 
 ## Supported OpenTelemetry attribute and event mapping
 
