@@ -110,7 +110,7 @@ After creating your bucket and obtaining the necessary credentials, you can conf
   config:
     blobStorage:
       enabled: true
-      engine: "S3" # Or "Azure"
+      engine: "S3" # Or "Azure". This is case-sensitive.
       chSearchEnabled: true # Set to false if you want to disable CH search (Recommended for LangSmith Managed Clickhouse)
       bucketName: "your-bucket-name"
       apiURL: "Your connection url"
