@@ -4,6 +4,10 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/observability/how_to_guides/trace_langchain_with_otel",
+      "destination": "/observability/how_to_guides/trace_with_opentelemetry"
+    },
+    {
       "source": "/category/tracing",
       "destination": "/observability"
     },
