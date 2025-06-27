@@ -59,7 +59,7 @@ Evaluate and improve your application before deploying it.
 
 Set up evaluators that automatically run for all experiments against a dataset.
 
-- [Set up an auto-evaluator](./how_to_guides/bind_evaluator_to_dataset)
+- [Automatically run evaluators on experiments](./how_to_guides/bind_evaluator_to_dataset)
 - [Create a few-shot evaluator](./how_to_guides/create_few_shot_evaluators)
 
 ## Testing integrations
