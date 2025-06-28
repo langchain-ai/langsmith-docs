@@ -15,7 +15,7 @@ By default, LangSmith stores run inputs, outputs, errors, manifests, extras, and
 ## Requirements
 
 :::note
-Azure blob storage is available in Beta on Helm chart versions 0.8.9 and greater.  
+Azure blob storage is available in Beta on Helm chart versions 0.8.9 and greater.
 While in Beta, [deleting trace projects](../../observability/concepts/index.mdx#deleting-traces-from-langsmith) is not supported.
 :::
 
@@ -56,7 +56,7 @@ This will look something like the following:
 }
 ```
 
-Once you have the correct policy, there are two ways to authenticate with Amazon S3:
+Once you have the correct policy, there are three ways to authenticate with Amazon S3:
 
 1. [**(Recommended) IAM Role for Service Account**](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html): You can create an IAM role for your LangSmith instance and attach the policy to that role. You can then provide the role to LangSmith. This is the recommended way to authenticate with Amazon S3 in production.
    1. You will need to create an IAM role with the policy attached.
@@ -67,6 +67,9 @@ Once you have the correct policy, there are two ways to authenticate with Amazon
    1. You will need to provide the role ARN to LangSmith. You can do this by adding the `eks.amazonaws.com/role-arn: "<role_arn>"` annotation to the `queue`, `backend`, and `platform-backend` services in your Helm Chart installation.
 1. [**Access Key and Secret Key**](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html): You can provide LangSmith with an access key and secret key. This is the simplest way to authenticate with Amazon S3. However, it is not recommended for production use as it is less secure.
    1. You will need to create a user with the policy attached. Then you can provision an access key and secret key for that user.
+1. [**VPC Endpoint Access**](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html): You can enable access to your S3 bucket via a VPC endpoint, which allows traffic to flow securely from your VPC to your S3 bucket.
+   1. You'll need to provision a VPC endpoint and configure it to allow access to your S3 bucket.
+   1. You can refer to our [public Terraform modules](https://github.com/langchain-ai/terraform/blob/main/modules/aws/s3/main.tf#L12) for guidance and an example of configuring this.
 
 ### Google Cloud Storage
 
@@ -107,7 +110,7 @@ After creating your bucket and obtaining the necessary credentials, you can conf
   config:
     blobStorage:
       enabled: true
-      engine: "S3" # Or "Azure"
+      engine: "S3" # Or "Azure". This is case-sensitive.
       chSearchEnabled: true # Set to false if you want to disable CH search (Recommended for LangSmith Managed Clickhouse)
       bucketName: "your-bucket-name"
       apiURL: "Your connection url"
