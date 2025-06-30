@@ -218,7 +218,10 @@ import { traceable } from "langsmith/traceable";
 
 import { initializeOTEL } from "langsmith/experimental/otel/setup";
 import { LangSmithOTLPTraceExporter } from "langsmith/experimental/otel/exporter";
-import { BatchSpanProcessor, BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
+import {
+  BatchSpanProcessor,
+  BasicTracerProvider,
+} from "@opentelemetry/sdk-trace-base";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import { context } from "@opentelemetry/api";
 
@@ -261,15 +264,15 @@ export async function GET() {
         },
         maxSteps: 10,
       });
-  
+
       return { text };
     },
     // highlight-next-line
     { name: "parentTraceable", tracer }
   );
-  
+
   const { text } = await wrappedText("Why is the sky blue?");
-  
+
   return new Response(text);
 }
 ```
