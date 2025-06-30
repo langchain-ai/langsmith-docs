@@ -93,6 +93,12 @@ And workspace members are managed in workspace settings:
 We ended support for legacy API keys prefixed with `ls__` on October 22, 2024 in favor of personal access tokens (PATs) and service keys. We require using PATs and service keys for all new integrations. API keys prefixed with `ls__` will no longer work as of October 22, 2024.
 :::
 
+#### Expiration Dates
+
+When you create an API key, you have the option to set an expiration date. Adding an expiration date keys enhances security and minimize the risk of unauthorized access. For example, you may set expiration dates on keys for temporary tasks that require elevated access.
+
+By default, keys never expire. Once expired, an API key is no longer valid and cannot be reactivated or have its expiration modified.
+
 #### Personal Access Tokens (PATs)
 
 Personal Access Tokens (PATs) are used to authenticate requests to the LangSmith API. They are created by users and scoped to a user. The PAT will have the same permissions as the user that created it.
