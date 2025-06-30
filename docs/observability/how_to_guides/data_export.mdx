@@ -73,6 +73,16 @@ Use the returned `id` to reference this destination in subsequent bulk export op
 
 **If you receive an error while creating a destination, see [debug destination errors](#debugging-destination-errors) for details on how to debug this.**
 
+#### Credentials configuration
+
+We support the following additional credentials formats besides static `access_key_id` and `secret_access_key`:
+
+- To use [temporary credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_use-resources.html) that include an AWS session token,
+  additionally provide the `credentials.session_token` key when creating the bulk export destination.
+- (Self-hosted only): To use environment-based credentials such as with [AWS IAM Roles for Service Accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) (IRSA),
+  omit the `credentials` key from the request when creating the bulk export destination.
+  In this case, the [standard Boto3 credentials locations](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#credentials) will be checked in the order defined by the library.
+
 #### AWS S3 bucket
 
 For AWS S3, you can leave off the `endpoint_url` and supply the region that matches the region of your bucket.
