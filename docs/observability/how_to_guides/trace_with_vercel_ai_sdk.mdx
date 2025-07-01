@@ -13,7 +13,7 @@ import {
 You can use LangSmith to trace runs from the [Vercel AI SDK](https://sdk.vercel.ai/docs/introduction) using OpenTelemetry (OTEL). This guide will walk through an example.
 
 :::note
-OpenTelemetry support is only available in `langsmith` JS SDK version `>=0.3.35`. If you are on an older version of `langsmith`, see [this page](./trace_with_vercel_ai_sdk_legacy).
+OpenTelemetry support is only available in `langsmith` JS SDK version `>=0.3.37`. If you are on an older version of `langsmith`, see [this page](./trace_with_vercel_ai_sdk_legacy).
 
 OpenTelemetry support is currently experimental.
 :::
@@ -30,19 +30,43 @@ other options as well.
       value: "npm",
       label: "npm",
       language: "bash",
-      content: `npm install ai @ai-sdk/openai zod @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-proto @opentelemetry/context-async-hooks`,
+      content: `npm install ai @ai-sdk/openai zod`,
     },
     {
       value: "yarn",
       label: "yarn",
       language: "bash",
-      content: `yarn add ai @ai-sdk/openai zod @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-proto @opentelemetry/context-async-hooks`,
+      content: `yarn add ai @ai-sdk/openai zod`,
     },
     {
       value: "pnpm",
       label: "pnpm",
       language: "bash",
-      content: `pnpm add ai @ai-sdk/openai zod @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-proto @opentelemetry/context-async-hooks`,
+      content: `pnpm add ai @ai-sdk/openai zod`,
+    },
+  ]}
+/>
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    {
+      value: "npm",
+      label: "npm",
+      language: "bash",
+      content: `npm install @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-proto @opentelemetry/context-async-hooks`,
+    },
+    {
+      value: "yarn",
+      label: "yarn",
+      language: "bash",
+      content: `yarn add @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-proto @opentelemetry/context-async-hooks`,
+    },
+    {
+      value: "pnpm",
+      label: "pnpm",
+      language: "bash",
+      content: `pnpm add @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-proto @opentelemetry/context-async-hooks`,
     },
   ]}
 />
@@ -54,7 +78,9 @@ other options as well.
     ShellBlock(`export LANGSMITH_TRACING=true
 export LANGSMITH_API_KEY=<your-api-key>
 export OTEL_ENABLED=true
+
 # This example uses OpenAI, but you can use any LLM provider of choice
+
 export OPENAI_API_KEY=<your-openai-api-key>`),
   ]}
   groupId="client-language"
@@ -363,4 +389,48 @@ try {
 } finally {
   await sentry?.traceProvider?.shutdown();
 }
+```
+
+## Add other metadata
+
+You can add other metadata to your traces to help organize and filter them in the LangSmith UI:
+
+```ts
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+await generateText({
+  model: openai("gpt-4.1-nano"),
+  prompt: "Write a vegetarian lasagna recipe for 4 people.",
+  experimental_telemetry: {
+    isEnabled: true,
+    // highlight-next-line
+    metadata: { userId: "123", language: "english" },
+  },
+});
+```
+
+Metadata will be visible in your LangSmith dashboard and can be used to filter and search for specific traces.
+Note that AI SDK propagates metadata on internal child spans as well.
+
+## Customize run name
+
+You can customize the run name by passing a metadata key named `ls_run_name` into `experimental_telemetry`.
+
+```ts
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+await generateText({
+  model: openai("gpt-4o-mini"),
+  prompt: "Write a vegetarian lasagna recipe for 4 people.",
+  experimental_telemetry: {
+    isEnabled: true,
+    // highlight-start
+    metadata: {
+      ls_run_name: "my-custom-run-name",
+    },
+    // highlight-end
+  },
+});
 ```
