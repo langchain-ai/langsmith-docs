@@ -1,0 +1,94 @@
+# Aligning an LLM-as-judge Evaluator With Human Data
+
+:::info Key concepts
+[Agent evaluation](../concepts#agents) | [Evaluators](../concepts#evaluators) | [LLM-as-judge evaluators](../concepts#llm-as-judge)
+:::
+
+:::note Dataset Support only
+Currently the align evaluator flow is only supported for dataset evaluators, but support is coming in the near future for tracing session evaluators as well.
+:::
+
+## Why aligning is helpful
+
+[INSERT VISUAL HERE] - visual compares "with alignment" v.s. "without alignment"
+
+Aligning your evaluator with human expert opinion is helpful for building confidence in your evaluator outputs. Since your evaluator outputs inform downstream decisions you make about your AI application, such as
+what prompts to use in prod, having trust that they are faithful to human expert opinion is critical to ensuring you are shipping the best application possible.
+
+LLM-as-judge evaluators that are aligned with human expert feedback makes it easier to test different application configurations (i.e. different prompts, models, tools, etc.) and be confident in
+selecting the best one to ship to your users. It can also help catch incorrect answers in your application before they reach the end user, making sure your users only see high quality
+outputs.
+
+## Creating an alignment dataset
+
+To align your evaluator with a human expert, you first need to collect a "golden dataset" of human expert data. In LangSmith this is done using a two step process. First, sample
+application traces are added to an annotation queue for the expert to label them, and then a human expert (or team of experts) labels the traces and adds them to the "golden dataset".
+
+### Collecting traces to label
+
+There are two entry points for collecting traces to align your evaluator on.
+
+The first option is to go to the experiments tab of a dataset, select the experiments whose traces you want to align on, and then click the `Align Evaluator` button to choose which evaluator
+to use these traces for aligning.
+
+[GIF]
+
+The second option is to head to the evaluators tab of a dataset, select the evaluator you wish to align, the click into the alignment flow and select the experiments you wish to trace on.
+
+[GIF]
+
+### Labelling the examples
+
+Once you have selected some experiments to align on, you can access the annotation queue with those traces from the detail page for the evalautor you wish to align.
+
+[GIF]
+
+Inside the queue, your human expert can then score each example and click "Add to Alignment Dataset" to add the labeled examples to the alignment dataset.
+
+[GIF]
+
+## Running alignment experiments
+
+:::tip Collecting an alignment dataset
+We recommend collecting a representative dataset before beginning your alignment experiments. This means gathering labeled traces that reflect the kinds of inputs and outputs you 
+expect to see in production. While you don’t need to cover every possible scenario, it’s important to include examples across the full range of expected use cases. For instance, 
+if you're building a sports bot that answers questions about baseball, basketball, and football, your dataset should include at least one labeled example from each sport.
+:::
+
+Once you have collected a dataset of human expert labeled traces that you are happy with, you can move onto crafting the perfect prompt to mimic these human experts as well as possible.
+
+You can enter the evaluator playground through the detail page of the evaluator you wish to align.
+
+[GIF]
+
+Once in the evaluator playground, you can run alignment experiments by editing the prompt and clicking the 'Start Alignment Experiment' button. You will then be able to see the 
+results of the experiment in the playground and can debug misaligned examples to improve your prompt.
+
+:::note Alignment Score Calculation
+The alignment score is calculated by doing an equality comparison on the feedback scores given by the human expert and the LLM as judge. It does not take into account the reasoning
+from either the human or the LLM.
+:::
+
+[GIF]
+
+### Tips for improving alignment score
+
+Improving the alignment score of your evaluator isn't an exact science but there are a few strategies we have found to be generally helpful in increasing the alignment score.
+
+1. Identify misaligned examples
+
+Combing through the misaligned examples and trying to group them into common failure modes is a great first step for improving your evaluator prompt. There are an endless list of
+potential failure modes. Maybe the LLM is unaware of some specific acronym/term used in the misaligned examples? Maybe the LLM is making assumptions about what good/bad is? etc.
+A great way to get insight into what the LLM is thinking is to enable reasoning for your LLM, so instead of your judge just outputting a score you also see the logic.
+
+2. Explain the failure modes to the LLM
+
+Once you have identified the common failure modes, you should put instructions in your prompt so the LLM knows how to avoid them! For example, you could explain that "MFA stands for
+multi-factor authentication" if you notice it not understanding that specific acronym. Or you could tell it that "a good response will always contain at least 3 potential hotels to book"
+if it is confused on what good/bad means in your evaluator context.
+
+3. Watch out for "chance alignments"
+
+Just because the LLM was aligned with a human expert does NOT mean the logic it used was correct. For example, the LLM could have assigned a score of 1 because of reason X, 
+while the human expert assigned a score of 1 because of reason Y. If your prompt doesn't mention reason Y as a correctness condition you could be fooled into thinking your LLM
+is aligned when in reality it just got lucky. Be sure to examine aligned examples as well as misaligned examples to ensure your LLM judge is behaving as expected.
