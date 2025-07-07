@@ -65,6 +65,8 @@ When a user belongs to multiple groups for the same workspace, the following pre
 
 :::note
 When a group is deleted or a user is removed from a group, their access is updated according to their remaining group membership, following the precedence rules above.
+
+SCIM group membership will override manually-assigned roles or roles assigned via Just-in-Time (JIT) provisioning. We recommend disabling JIT provisioning to avoid conflicts.
 :::
 
 ## Set up SCIM for your organization
