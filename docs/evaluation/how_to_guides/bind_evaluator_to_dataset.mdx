@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Automatically run evaluators on experiments
 
-While you can specify evaluators to grade the results of your experiments programmatically (see [this guide](./evaluate_llm_application) for more information), you can also bind evaluators to a dataset in the UI.
+You can grade your experiment results in two ways: **programmatically**, by specifying evaluators in your code (see [this guide](./evaluate_llm_application) for details) or you can **automatically run evaluators** defined in the UI. By binding evaluators to a dataset in the UI, they'll automatically run on your experiments. These UI-configured evaluators complement any you've set up via the SDK. We support both LLM-based and custom Python code evaluators.
 This allows you to configure automatic evaluators that grade your experiment results. We have support for both LLM-based evaluators, and custom python code evaluators.
 
 The process for configuring this is very similar to the process for configuring an [online evaluator](../../../observability/how_to_guides/online_evaluations) for traces.
@@ -22,7 +22,7 @@ The next steps vary based on the evaluator type.
 
 [See this page for instructions on setting up an LLM-as-a-judge evaluator](./llm_as_judge?mode=ui#customize-your-llm-as-a-judge-evaluator)
 
-Once you have saved your new evaluator, **subsequent** experiment run from the dataset will now be evaluated by the evaluator you configured. Note that in the below image, each run in the experiment has a "correctness" score.
+Once you have created an evaluator, **subsequent** experiments on that dataset will be automatically graded by the evaluator(s) you configured.
 
 ![Playground evaluator results](./static/experiment_view_results.png)
 
