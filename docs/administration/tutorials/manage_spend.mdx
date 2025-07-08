@@ -110,7 +110,7 @@ have this defaulted to Base.
 
 Data retention settings are adjustable per project on the tracing project page.
 
-Navigate to **Projects** > ***Your project name*** > Select **Retention** and modify the default rentetion of the project to **Base**. This will only affect retention (and pricing) for **traces going forward**.
+Navigate to **Projects** > **_Your project name_** > Select **Retention** and modify the default rentetion of the project to **Base**. This will only affect retention (and pricing) for **traces going forward**.
 
 ![](./static/p1projectretention.png)
 
@@ -123,21 +123,21 @@ You may not want all traces to expire after 14 days. You can automatically exten
 - Traces with specific metadata: For long-term examination of particular features or user flows
 
 To configure this:
-1. Navigate to **Projects** > ***Your project name*** > Select **+ New** > Select **New Automation**
+
+1. Navigate to **Projects** > **_Your project name_** > Select **+ New** > Select **New Automation**
 2. Name your rule and optionally apply filters or a sample rate. For more information on configuring filters, see [filtering techniques](/observability/how_to_guides/filter_traces_in_application#filter-operators)
 
 :::note
-When an automation rule matches any [run](/observability/concepts#runs) within a [trace](observability/concepts#traces), the all runs within the trace are upgraded to be retained for 400 days.
+When an automation rule matches any [run](/observability/concepts#runs) within a [trace](/observability/concepts#traces), the all runs within the trace are upgraded to be retained for 400 days.
 :::
 
-For example, this is what the configuration looks like to keep 10% of all traces for extended data retention: 
+For example, this is what the configuration looks like to keep 10% of all traces for extended data retention:
 
 ![](./static/P2SampleTraces.png)
 
 If you want to keep a subset of traces for **longer than 400 days** for data collection purposes, you can create another run
 rule that sends some runs to a dataset of your choosing. A dataset allows you to store the trace inputs and outputs (e.g., as a key-value dataset),
 and will persist indefinitely, even after the trace gets deleted.
-
 
 ### See results after 7 days
 
