@@ -96,11 +96,11 @@ show the effect it has on our bill.
 
 ### Change org level retention defaults for new projects
 
-We navigate to the `Usage configuration` tab, and look at our organization level retention settings. Modifying this setting affects all **new projects** that are
+Navigate to the `Usage configuration` tab, and look at our organization level retention settings. Modifying this setting affects all **new projects** that are
 created going forward in all workspaces in our org.
 
 :::note
-For backwards compatibility, older organizations may have this defaulted to Extended. Organizations created after June 3rd
+For backwards compatibility, older organizations may have this defaulted to Extended. Organizations created after June 3rd, 2024
 have this defaulted to Base.
 :::
 
@@ -108,45 +108,36 @@ have this defaulted to Base.
 
 ### Change project level retention defaults
 
-Our existing projects have not changed their data retention settings, so we can change these on the individual project pages.
+Data retention settings are adjustable per project on the tracing project page.
 
-We navigate to `Projects` -> `<your project name>`, click the data retention drop down, and modify it to base retention. As
-with the organization level setting, this will only affect retention (and pricing) for traces going forward.
+Navigate to **Projects** > ***Your project name*** > Select **Retention** and modify the default rentetion of the project to **Base**. This will only affect retention (and pricing) for **traces going forward**.
 
 ![](./static/p1projectretention.png)
 
 ### Keep around a percentage of traces for extended data retention
 
-We may not want all our traces to expire after 14 days if we care about historical debugging. As such, we can take advantage
-of LangSmith's built in ability to do server side sampling for extended data retention.
+You may not want all traces to expire after 14 days. You can automatically extend the retention of traces that match some criteria by creating an [automation rule](/observability/how_to_guides/rules). You might want to apply extended data retention to specific types of traces, such as:
 
-Choosing the right percentage of runs to sample depends on your use case. We will arbitrarily pick 10% of runs here, but will
-leave it to the user to find the right value that balances collecting rare events and cost constraints.
+- 10% of all traces: For general analysis or long-term trends
+- Errored traces: To thoroughly investigate and debug issues
+- Traces with specific metadata: For long-term examination of particular features or user flows
 
-LangSmith automatically upgrades the data retention for any trace that matches a run rule in our automations product (see our [run rules docs](../../observability/how_to_guides/rules)). On the
-projects page, click `Rules -> Add Rule`, and configure the rule as follows:
+To configure this:
+1. Navigate to **Projects** > ***Your project name*** > Select **+ New** > Select **New Automation**
+2. Name your rule and optionally apply filters or a sample rate. For more information on configuring filters, see [filtering techniques](/observability/how_to_guides/filter_traces_in_application#filter-operators)
+
+:::note
+When an automation rule matches any [run](/observability/concepts#runs) within a [trace](observability/concepts#traces), the all runs within the trace are upgraded to be retained for 400 days.
+:::
+
+For example, this is what the configuration looks like to keep 10% of all traces for extended data retention: 
 
 ![](./static/P2SampleTraces.png)
 
-Run rules match on runs rather than traces. Runs are single units of work within an LLM application's API handling. Traces
-are end to end API calls (learn more about [tracing concepts in LangSmith](/observability/concepts)). This means a trace can
-be thought of as a tree of runs making up an API call. When a run rule matches any run within a trace, the trace's full run tree
-upgrades to be retained for 400 days.
-
-Therefore, to make sure we have the proper sampling rate on traces, we take advantage of the
-[filtering](../../observability/how_to_guides/rules#step-2-define-the-filter) functionality of run rules.
-
-We add add a filter condition to only match the "root" run in the run tree. This is distinct per trace, so our 10% sampling
-will upgrade 10% of traces, rather 10% of runs, which could correspond to more than 10% of traces. If desired, we can optionally add
-any other filtering conditions required (e.g. specific tags/metadata attached to our traces) for more pointed data retention
-extension. For the sake of this tutorial, we will stick with the simplest condition, and leave more advanced filtering as an
-exercise to the user.
-
-:::note
-If you want to keep a subset of traces for longer than 400 days for data collection purposes, you can create another run
+If you want to keep a subset of traces for **longer than 400 days** for data collection purposes, you can create another run
 rule that sends some runs to a dataset of your choosing. A dataset allows you to store the trace inputs and outputs (e.g., as a key-value dataset),
 and will persist indefinitely, even after the trace gets deleted.
-:::
+
 
 ### See results after 7 days
 
