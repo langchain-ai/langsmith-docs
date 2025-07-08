@@ -134,6 +134,7 @@ For additional information, see Microsoft's [documentation](https://learn.micros
 1. Ensure required claims are present with `Namespace`: `http://schemas.xmlsoap.org/ws/2005/05/identity/claims`
    1. `sub`: `user.objectid`
    1. `emailaddress`: `user.userprincipalname` or `user.mail` (if using the latter, ensure all users have the `Email` field filled in under `Contact Information`)
+   1. (Optional) For SCIM, see the [setup documentation](./set_up_scim.mdx) for specific instructions about `Unique User Identifier (Name ID)`
 1. On the SAML-based Sign-on page, under `SAML Certificates`, copy the `App Federation Metadata Url`.
 
 **Step 3: Set up LangSmith SSO Configuration**
