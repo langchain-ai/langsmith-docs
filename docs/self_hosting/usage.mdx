@@ -16,9 +16,9 @@ This guide assumes you have already deployed a self-hosted LangSmith instance. I
 
 LangSmith has a single API for interacting with both the hub and the LangSmith backend.
 
-1. Once you have deployed your instance, you can access the LangSmith UI at `http://<host>`.
-2. The LangSmith API will be available at `http://<host>/api/v1`
-3. The LangGraph Platform Control Plane will be available at `http://<host>/api-host`
+1. Once you have deployed your instance, you can access the LangSmith UI at `http(s)://<host>`.
+2. The LangSmith API will be available at `http(s)://<host>/api/v1`
+3. The LangGraph Platform Control Plane will be available at `http(s)://<host>/api-host`
 
 To use the API of your instance, you will need to set the following environment variables in your application:
 
@@ -34,7 +34,7 @@ import langsmith
 
 langsmith_client = langsmith.Client(
     api_key='<api_key>',
-    api_url='http://<host>/api/v1',
+    api_url='http(s)://<host>/api/v1',
 )
 ```
 
@@ -60,7 +60,7 @@ import langsmith
 
 langsmith_client = langsmith.Client(
     api_key='<api_key>',
-    api_url='http://<host>/api/v1',
+    api_url='http(s)://<host>/api/v1',
 )
 ```
 
