@@ -71,6 +71,12 @@ Examples:
 - `LS:Organization User:Engineering:Developers`
 - `LS:Organization User:Marketing:Viewers`
 
+## Email verification
+
+In cloud only, creating a new user with SCIM triggers an email to the user.
+They must verify their email address by clicking the link in this email.
+The link expires in 24 hours, and can be resent if needed by removing and re-adding the user via SCIM.
+
 ## Set up SCIM for your organization
 
 ### Step 1: Configure SAML SSO (Cloud only)
