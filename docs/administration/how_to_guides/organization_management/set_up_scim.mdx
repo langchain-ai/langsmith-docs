@@ -77,6 +77,20 @@ Examples:
 
 If you're using LangSmith Cloud, ensure [SAML SSO](./set_up_saml_sso.mdx) is configured for your organization.
 
+#### NameID Format
+
+LangSmith uses the SAML NameID to identify users. The NameID is a required field in the SAML response and is case-insensitive.
+
+The NameID must:
+
+1. Be unique to each user.
+1. Be a persistent value that never changes, such as a randomly generated unique user ID.
+1. Match exactly on each sign-in attempt. It should not rely on user input.
+
+The NameID should not be an email address or username because Email addresses and usernames are more likely to change over time and can be case-sensitive.
+
+The NameID format must be `Persistent`, unless you are using a field, like email, that requires a different format.
+
 ### Step 2: Disable JIT Provisioning (Cloud only)
 
 Before enabling SCIM, disable [Just-in-Time (JIT) provisioning](./set_up_saml_sso.mdx#just-in-time-jit-provisioning) to prevent conflicts between automatic and manual user provisioning. Use the `PATCH /orgs/current/info` <RegionalUrl
