@@ -59,17 +59,23 @@ Group membership maps to LangSmith Workspace membership and workspace roles with
 
 ### Organization Admin Groups
 
-- `LS:Organization Admin` or `LS:Organization Admins`
+Format: `<optional_prefix>Organization Admin` or `<optional_prefix>Organization Admins`
+
+Examples:
+
+- `LS:Organization Admins`
+- `Groups-Organization Admins`
+- `Organization Admin`
 
 ### Workspace-Specific Groups
 
-Format: `LS:<org_role_name>:<workspace_name>:<workspace_role_name>`
+Format: `<optional_prefix><org_role_name>:<workspace_name>:<workspace_role_name>`
 
 Examples:
 
 - `LS:Organization User:Production:Annotators`
-- `LS:Organization User:Engineering:Developers`
-- `LS:Organization User:Marketing:Viewers`
+- `Groups-Organization User:Engineering:Developers`
+- `Organization User:Marketing:Viewers`
 
 ## Email verification
 
