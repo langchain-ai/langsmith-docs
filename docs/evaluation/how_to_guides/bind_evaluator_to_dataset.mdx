@@ -4,109 +4,59 @@ sidebar_position: 2
 
 # Automatically run evaluators on experiments
 
-You can grade your experiment results in two ways: **programmatically**, by specifying evaluators in your code (see [this guide](./evaluate_llm_application) for details) or you can **automatically run evaluators** defined in the UI. By binding evaluators to a dataset in the UI, they'll automatically run on your experiments. These UI-configured evaluators complement any you've set up via the SDK. We support both LLM-based and custom Python code evaluators.
-This allows you to configure automatic evaluators that grade your experiment results. We have support for both LLM-based evaluators, and custom python code evaluators.
+LangSmith supports two ways to grade experiments created via the SDK:
 
-The process for configuring this is very similar to the process for configuring an [online evaluator](../../../observability/how_to_guides/online_evaluations) for traces.
+- **Programmatically**, by specifying evaluators in your code (see [this guide](./evaluate_llm_application) for details)
+- By **binding evaluators to a dataset** in the UI. This will automatically run the evaluators on any new experiments created, in addition to any evaluators you've set up via the SDK. This is useful when you're iterating on your application (target function), and have a standard set of evaluators you want to run for all experiments. 
 
-:::note Only affects subsequent experiment runs
+
+## Configuring an evaluator on a dataset
+1. Click on the **Datasets and Experiments** tab in the sidebar.
+2. Select the dataset you want to configure the evaluator for.
+3. Click on the **+ Evaluator** button to add an evaluator to the dataset. This will open a pane you can use to configure the evaluator.
+
+:::note Evaluator will only apply to subsequent experiments
 When you configure an evaluator for a dataset, it will only affect the experiment runs that are created after the evaluator is configured. It will not affect the evaluation of experiment runs that were created before the evaluator was configured.
 :::
 
-1. **Navigate to the dataset details page** by clicking **Datasets and Experiments** in the sidebar and selecting the dataset you want to configure the evaluator for.
-2. **Click on the `+ Evaluator` button** to add an evaluator to the dataset. This will open a pane you can use to configure the evaluator.
+## LLM-as-a-judge evaluators
 
-The next steps vary based on the evaluator type.
+The process for binding evaluators to a dataset is very similar to the process for configuring a LLM-as-a-judge evaluator in the Playground. View instructions for [configuring an LLM-as-a-judge evaluator in the Playground.](/evaluation/how_to_guides/llm_as_judge?mode=ui)
 
-## LLM as a judge evaluators
 
-[See this page for instructions on setting up an LLM-as-a-judge evaluator](./llm_as_judge?mode=ui#customize-your-llm-as-a-judge-evaluator)
-
-Once you have created an evaluator, **subsequent** experiments on that dataset will be automatically graded by the evaluator(s) you configured.
-
-![Playground evaluator results](./static/experiment_view_results.png)
 
 ## Custom code evaluators
 
-1. **Select the `Custom code` type evaluator**
-2. **Write your evaluation function**
+The process for binding a code evaluators to a dataset is very similar to the process for configuring a code evaluator in online evaluation. View instruction for [configuring code evaluators](/observability/how_to_guides/online_evaluations#configure-a-custom-code-evaluator). 
 
-:::note Custom code evaluators restrictions.
+The only difference between configuring a code evaluator in online evaluation and binding a code evaluator to a dataset is that the custom code evaluator can reference outputs that are part of the dataset's `Example`. 
 
-**Allowed Libraries**: You can import all standard library functions, as well as the following public packages:
 
-```
-  numpy (v2.2.2): "numpy"
-  pandas (v1.5.2): "pandas"
-  jsonschema (v4.21.1): "jsonschema"
-  scipy (v1.14.1): "scipy"
-  sklearn (v1.26.4): "scikit-learn"
-```
-
-**Network Access**: You cannot access the internet from a custom code evaluator.
-:::
-
-In the UI, you will see a panel that lets you write your code inline, with some starter code:
-
-![](./static/code-autoeval-popup.png)
-
-Custom Code evaluators take in two arguments:
+For custom code evaluators bound to a dataset, the evaluator function takes in two arguments:
 
 - A `Run` ([reference](/reference/data_formats/run_data_format)). This represents the new run in your
   experiment. For example, if you ran an experiment via SDK, this would contain the input/output from your
   chain or model you are testing.
-- An `Example`. This represents the reference example in your dataset that the chain or model you are testing
+- An `Example` ([reference](/reference/data_formats/example_data_format)). This represents the reference example in your dataset that the chain or model you are testing
   uses. The `inputs` to the Run and Example should be the same. If your Example has a reference `outputs`, then
   you can use this to compare to the run's output for scoring.
 
-They return a single value:
 
-- Feedback(s) Dictionary: A dictionary whose keys are the type of feedback you want to return, and values are the
-  score you will give for that feedback key. For example, `{"correctness": 1, "silliness": 0}` would create two types
-  of feedback on the run in your experiment, one saying it is correct, and the other saying it is not silly.
-
-In the below screenshot, you can see an example of a simple function that validates that each run in the experiment
-has a known json field:
+The code below shows an example of a simple evaluatorfunction that checks that the outputs exactly equal the reference outputs.
 
 ```{python}
-import json
+import numpy as np
 
 def perform_eval(run, example):
-  output_to_validate = run['outputs']
-  is_valid_json = 0
+  # run is a Run object
+  # example is an Example object
 
-  # assert you can serialize/deserialize as json
-  try:
-    json.loads(json.dumps(output_to_validate))
-  except Exception as e:
-    return { "formatted": False }
+  output = run['outputs']['output']
+  ref_output = example['outputs']['outputs']
 
-  # assert output facts exist
-  if "facts" not in output_to_validate:
-    return { "formatted": False }
-
-  # assert required fields exist
-  if "years_mentioned" not in output_to_validate["facts"]:
-    return { "formatted": False }
-
-  return {"formatted": True}
+  output_match = np.array_equal(output, ref_output)
+  
+  return { "exact_match": output_match }
 ```
 
-3. **Test and save your evaluation function**
 
-Before saving, you can click test, and LangSmith will run your code over a past run+example pair to make sure your evaluation code works.
-
-This auto evaluator will now leave feedback on any type of future experiment, whether it be from the SDK or via Playground.
-
-4. **See the results in action**
-
-To visualize the feedback left on new experiments, try running a new experiment via playground.
-
-On the dataset, if you now click to the `experiments` tab -> `+ Experiment` -> `Run in Playground`, you can see the results in action.
-Your runs in your experiments will be automatically marked with the key specified in your code sample above (here, `formatted`):
-
-![](./static/show-feedback-from-autoeval-code.png)
-
-And if you navigate back to your dataset, you'll see summary stats for said experiment in the `experiments` tab:
-
-![](./static/experiments-tab-code-results.png)
