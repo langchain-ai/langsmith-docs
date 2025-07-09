@@ -52,7 +52,7 @@ def perform_eval(run, example):
   # example is an Example object
 
   output = run['outputs']['output']
-  ref_output = example['outputs']['outputs']
+  ref_output = example['outputs']['ou.tputs']
 
   output_match = np.array_equal(output, ref_output)
   
@@ -61,5 +61,5 @@ def perform_eval(run, example):
 
 
 ## Next steps
-- Analyze your experiment results in the [experiments tab](/evaluation/how_to_guides/analyze_experiment_results)
+- Analyze your experiment results in the [experiments tab](/evaluation/how_to_guides/analyze_single_experiment)
 - Compare your experiment results in the [comparison view](/evaluation/how_to_guides/compare_experiment_results)
