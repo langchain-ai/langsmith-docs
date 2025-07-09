@@ -3,3 +3,6 @@ build
 .docusaurus
 docs/api
 docs/evaluation
+# TODO: Fix our formatter
+docs/observability/how_to_guides/threads.mdx
+docs/observability/how_to_guides/log_llm_trace.mdx

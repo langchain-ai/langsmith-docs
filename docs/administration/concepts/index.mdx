@@ -93,6 +93,12 @@ And workspace members are managed in workspace settings:
 We ended support for legacy API keys prefixed with `ls__` on October 22, 2024 in favor of personal access tokens (PATs) and service keys. We require using PATs and service keys for all new integrations. API keys prefixed with `ls__` will no longer work as of October 22, 2024.
 :::
 
+#### Expiration Dates
+
+When you create an API key, you have the option to set an expiration date. Adding an expiration date keys enhances security and minimize the risk of unauthorized access. For example, you may set expiration dates on keys for temporary tasks that require elevated access.
+
+By default, keys never expire. Once expired, an API key is no longer valid and cannot be reactivated or have its expiration modified.
+
 #### Personal Access Tokens (PATs)
 
 Personal Access Tokens (PATs) are used to authenticate requests to the LangSmith API. They are created by users and scoped to a user. The PAT will have the same permissions as the user that created it.
@@ -171,7 +177,7 @@ For more details on assigning and creating roles, see the [access control setup 
 
 Use [resource tags](#resource-tags) to organize resources by environment using the default tag key `Environment` and different values for the environment (e.g. `dev`, `staging`, `prod`). This tagging structure will allow you to organize your tracing projects today and easily enforce
 permissions when we release attribute based access control (ABAC). ABAC on the resource tag will provide a fine-grained way to restrict access to production tracing projects, for example. We do not recommend that you use Workspaces for environment separation as you cannot share resources
-across Workspaces. If you would like to promote a prompt from `staging` to `prod`, we recommend you use prompt tags instead. See [docs](../prompt_engineering/concepts#tags) for more information.
+across Workspaces. If you would like to promote a prompt from `staging` to `prod`, we recommend you use commit tags instead. See [docs](../prompt_engineering/concepts#tags) for more information.
 
 ## Usage and Billing
 

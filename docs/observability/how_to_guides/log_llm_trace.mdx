@@ -7,6 +7,8 @@ import {
   PythonBlock,
   TypeScriptBlock,
 } from "@site/src/components/InstructionsWithCode";
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 import { RegionalUrl } from "@site/src/components/RegionalUrls";
 
 # Log custom LLM traces
@@ -34,7 +36,103 @@ You can also use any of the [LangChain OSS chat models](https://python.langchain
 
 ### Implementing your own custom chat-model
 
-For chat-style models, inputs must be a list of messages in OpenAI-compatible format, represented as Python dictionaries or TypeScript object. Each message must contain the key `role` and `content`.
+You may also trace your model calls using [`traceable`](./annotate_code) or other broader tracing techniques. To properly mark the traced function
+as an LLM run in this case, at bare minimum you must pass `run_type` as `"llm"` like this:
+
+<CodeTabs
+  tabs={[
+    PythonBlock(`from langsmith import traceable\n
+@traceable(run_type="llm")
+def chat_model(messages: list):
+    ...
+`),
+    TypeScriptBlock(`import { traceable } from "langsmith/traceable";\n
+const chatModel = traceable(
+  async (messages) => {
+    // Call the model here
+  },
+  { run_type: "llm" }
+);
+`),
+  ]}
+  groupId="client-language"
+/>
+
+To make your custom LLM traces appear well-formatted in the LangSmith UI, your trace inputs and outputs must
+conform to a format LangSmith recognizes:
+
+- A list of messages in [OpenAI](https://platform.openai.com/docs/api-reference/messages) or [Anthropic](https://docs.anthropic.com/en/api/messages) format, represented as Python dictionaries or TypeScript objects.
+  - Each message must contain the key `role` and `content`.
+  - Messages with the `"assistant"` role may optionally contain `tool_calls`. These `tool_calls` may be in [OpenAI](https://platform.openai.com/docs/guides/function-calling?api-mode=chat) format or [LangChain's format](https://python.langchain.com/api_reference/core/messages/langchain_core.messages.tool.ToolCall.html#langchain_core.messages.tool.ToolCall).
+- An dict/object containing `"messages"` key with a list of messages in the above format.
+  - LangSmith may use additional parameters in this input dict that match OpenAI's [chat completion endpoint](https://platform.openai.com/docs/guides/text?api-mode=chat) for rendering in the trace view, such as a list of available `tools` for the model to call.
+
+Here are some examples:
+
+<Tabs className="interface-tabs">
+  <TabItem value="messages-list" label="List of messages">
+```python
+# Format 1: List of messages
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "What's the weather like?"},
+    {
+        "role": "assistant", 
+        "content": "I need to check the weather for you.",
+        "tool_calls": [
+            {
+                "id": "call_123",
+                "type": "function",
+                "function": {
+                    "name": "get_weather",
+                    "arguments": '{"location": "current"}'
+                }
+            }
+        ]
+    }
+]
+
+@traceable(run_type="llm")
+def chat_model(messages: list):
+    ...
+
+chat_model(inputs)
+```
+  </TabItem>
+  <TabItem value="messages-dict" label="Messages dict">
+```python
+# Format 2: Object with messages key
+inputs = {
+    "messages": [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "What's the weather like?"}
+    ],
+    "tools": [
+        {
+            "type": "function",
+            "function": {
+                "name": "get_weather",
+                "description": "Get current weather",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {"type": "string"}
+                    }
+                }
+            }
+        }
+    ],
+    "temperature": 0.7
+}
+
+@traceable(run_type="llm")
+def chat_model(messages: dict):
+    ...
+
+chat_model(inputs)
+```
+  </TabItem>
+</Tabs>
 
 The output is accepted in any of the following formats:
 
@@ -43,7 +141,95 @@ The output is accepted in any of the following formats:
 - A tuple/array of two elements, where the first element is the role and the second element is the content.
 - A dictionary/object that contains the key `role` and `content`.
 
-The input to your function should be named `messages`.
+Here are some examples:
+
+<Tabs className="interface-tabs">
+  <TabItem value="choices-format" label="Choices format">
+```python
+from langsmith import traceable
+
+@traceable(run_type="llm")
+def chat_model_choices(messages):
+    # Your model logic here
+    return {
+        "choices": [
+            {
+                "message": {
+                    "role": "assistant",
+                    "content": "Sure, what time would you like to book the table for?"
+                }
+            }
+        ]
+    }
+
+# Usage
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."}
+]
+chat_model_choices(inputs)
+```
+  </TabItem>
+  <TabItem value="message-format" label="Message format">
+```python
+from langsmith import traceable
+
+@traceable(run_type="llm")
+def chat_model_message(messages):
+    # Your model logic here
+    return {
+        "message": {
+            "role": "assistant",
+            "content": "Sure, what time would you like to book the table for?"
+        }
+    }
+
+# Usage
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."}
+]
+chat_model_message(inputs)
+```
+  </TabItem>
+  <TabItem value="tuple-format" label="Tuple format">
+```python
+from langsmith import traceable
+
+@traceable(run_type="llm")
+def chat_model_tuple(messages):
+    # Your model logic here
+    return ["assistant", "Sure, what time would you like to book the table for?"]
+
+# Usage
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."}
+]
+chat_model_tuple(inputs)
+```
+  </TabItem>
+  <TabItem value="direct-format" label="Direct format">
+```python
+from langsmith import traceable
+
+@traceable(run_type="llm")
+def chat_model_direct(messages):
+    # Your model logic here
+    return {
+        "role": "assistant",
+        "content": "Sure, what time would you like to book the table for?"
+    }
+
+# Usage
+inputs = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "I'd like to book a table for two."}
+]
+chat_model_direct(inputs)
+```
+  </TabItem>
+</Tabs>
 
 You can also provide the following `metadata` fields to help LangSmith identify the model - which if recognized, LangSmith will use to automatically calculate costs. To learn more about how to use the `metadata` fields, see [this guide](./add_metadata_tags).
 

@@ -58,8 +58,30 @@ And here is one with mustache:
 Hello, {{name}}!
 ```
 
+To add a conditional mustache prompt:
+
+```python
+{{#is_logged_in}}
+  Welcome back, {{name}}!
+{{else}}
+  Please log in.
+{{/is_logged_in}}
+```
+
+- The playground UI will pick up `is_logged_in` variable, but any nested variables you'll need to specify yourself.
+  Paste the following into inputs to ensure the above conditional prompt works:
+
+```
+{
+  "name": "Alice"
+}
+```
+
 :::tip Mustache format
-Mustache format gives your more flexbility around conditional variables, loops, and nested keys.
+The LangSmith Playground uses `f-string` as the default template format,
+but you can switch to `mustache` format in the prompt settings/template format section.
+`mustache` gives you more flexibility around conditional variables, loops, and nested keys.
+For conditional variables, you'll need to manually add json variables in the 'inputs' section.
 Read [the documentation](https://mustache.github.io/mustache.5.html)
 :::
 
