@@ -63,8 +63,8 @@ langsmith_extra={"project_name": langsmith_project, "metadata":{"session_id": se
 # gets a history of all LLM calls in the thread to construct conversation history
 
 def get_thread_history(thread_id: str, project_name: str): # Filter runs by the specific thread and project
-filter_string = f'and(in(metadata_key, ["session_id","conversation_id","thread_id"]), eq(metadata_value, "{thread_id}"))' # Only grab the LLM runs
-runs = [r for r in langsmith_client.list_runs(project_name=project_name, filter=filter_string, run_type="llm")]
+    filter_string = f'and(in(metadata_key, ["session_id","conversation_id","thread_id"]), eq(metadata_value, "{thread_id}"))' # Only grab the LLM runs
+    runs = [r for r in langsmith_client.list_runs(project_name=project_name, filter=filter_string, run_type="llm")]
 
     # Sort by start time to get the most recent interaction
     runs = sorted(runs, key=lambda run: run.start_time, reverse=True)
@@ -75,11 +75,11 @@ runs = [r for r in langsmith_client.list_runs(project_name=project_name, filter=
 
 @traceable(name="Chat Bot")
 def chat_pipeline(question: str, get_chat_history: bool = False): # Whether to continue an existing thread or start a new one
-if get_chat_history:
-run_tree = ls.get_current_run_tree()
-messages = get_thread_history(run_tree.extra["metadata"]["session_id"],run_tree.session_name) + [{"role": "user", "content": question}]
-else:
-messages = [{"role": "user", "content": question}]
+    if get_chat_history:
+        run_tree = ls.get_current_run_tree()
+        messages = get_thread_history(run_tree.extra["metadata"]["session_id"],run_tree.session_name) + [{"role": "user", "content": question}]
+    else:
+        messages = [{"role": "user", "content": question}]
 
     # Invoke the model
     chat_completion = client.chat.completions.create(

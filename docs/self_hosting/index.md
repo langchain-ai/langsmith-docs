@@ -34,3 +34,7 @@ Step-by-step guides that cover the installation, configuration, and scaling of y
   - [Week of January 29, 2024 - LangSmith v0.2](./self_hosting/release_notes#week-of-january-29-2024---langsmith-v02): Release notes for version 0.2 of LangSmith.
 - [FAQ](./self_hosting/faq): Frequently asked questions about LangSmith.
 - [Troubleshooting](./self_hosting/troubleshooting): Troubleshooting common issues with your Self-Hosted LangSmith instance.
+- [Observability](./self_hosting/observability): How to access telemetry data for your self-hosted LangSmith instance.
+  - [Export LangSmith telemetry](./self_hosting/observability/export_backend): Export logs, metrics and traces to your collector and/or backend of choice.
+  - [Collector configuration](./self_hosting/observability/langsmith_collector): Example yaml configurations for an OTel collector to gather LangSmith telemetry data.
+  - [LangSmith Observability Stack](./self_hosting/observability/observability_stack): Have LangSmith deploy a basic observability stack for you to view logs, metrics and traces for your deployment.
