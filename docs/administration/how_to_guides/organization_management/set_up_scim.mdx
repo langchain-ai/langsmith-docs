@@ -161,7 +161,10 @@ For additional information, see Microsoft's [documentation](https://learn.micros
 **Step 2: Configure Admin Credentials**
 
 1. Under `Admin Credentials`:
-   - **Tenant URL**: `https://api.smith.langchain.com/scim/v2` (or `https://eu.api.smith.langchain.com/scim/v2` if in EU)
+   - **Tenant URL**:
+     - US: `https://api.smith.langchain.com/scim/v2`
+     - EU: `https://eu.api.smith.langchain.com/scim/v2`
+     - Self-hosted: `<langsmith_url>/scim/v2`
    - **Secret Token**: Enter the SCIM Bearer Token generated in Step 3 above
 2. Click `Test Connection` to verify the configuration
 3. Click `Save`
