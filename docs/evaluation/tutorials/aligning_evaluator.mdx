@@ -6,7 +6,7 @@ Before diving into this content, it might be helpful to read the following:
 - [Creating LLM-as-a-judge evaluators](/evaluation/how_to_guides/llm_as_judge)
 :::
 
-Reliable LLM-as-a-judge evaluators are critical for making informed decisions about your AI applications (eg. prompt, model, architecture changes, etc.). But, getting your evaluator prompt just right can be challenging, impacting the trustworthiness of your evaluations
+Reliable LLM-as-a-judge evaluators are critical for making informed decisions about your AI applications (eg. prompt, model, architecture changes, etc.). But, getting your evaluator prompt just right can be challenging, impacting the trustworthiness of your evaluations.
 
 This guide will walk you through **aligning your LLM-as-a-judge evaluator using human feedback**, ultimately improving your evaluator's quality to help you build reliable AI applications.
 
@@ -14,12 +14,12 @@ This guide will walk you through **aligning your LLM-as-a-judge evaluator using 
 LangSmith's **Align Evaluator** feature has a series of steps that help you align your LLM-as-a-judge evaluator with human expert feedback:
 
 1. **Select one or more experiments** that contain outputs from your application.
-2. Add the selected experiments to an **annotation queue** to label the data.
-3. **Test your evaluator prompt** against the labeled examples. Check the cases where your evaluator result is not aligned with the labeled data. This indicates areas where your evaluator prompt needs improvement.
-4. **Refine and repeat** to improve evaluator alignment. Update your evaluator prompt and test again
+2. Add the selected experiments to an **annotation queue** where a human expert can add evaluator scores.
+3. **Test your LLM-as-judge** against human feedback. Check the cases where your evaluator result is not aligned with the human expert. This indicates areas where your evaluator prompt needs improvement.
+4. **Refine and repeat** to improve evaluator alignment. Update your LLM-as-judge prompt and test again.
 
 :::note Offline evaluators support only
-Currently this feature is only supported for evaluations over a dataset ([offline evaluations](/evaluation/concepts#offline-evaluation)), however we do plan to support this for [online evaluators](/evaluation/concepts#online-evaluation) as well. 
+Currently this feature is only supported for evaluations over a dataset ([offline evaluations](/evaluation/concepts#offline-evaluation)), however we do plan to support this for [online evaluators](/evaluation/concepts#online-evaluation) as well in the near future. 
 :::
 
 ## Prerequisites
@@ -37,23 +37,26 @@ While you don’t need to cover every possible scenario, it’s important to inc
 
 ![Experiment](./static/alignment_starting_point.png) 
 
-## Getting started
+## Aligning your evaluator
 
-#### Create a new evaluator using labeled data:
+You can align both an existing evaluator and a new evaluator, using a similar process. 
+
+### Align a new evaluator
 
 1. Navigate to the **Datasets and Experiments** tab
 2. Select a dataset
 3. Click on **+Evaluator**
 4. Choose **Create from labeled data**
 5. **Name your feedback key.** This name should reflect what you're evaluating (eg. correctness, hallucination, etc.). It is not possible to change the name of an evaluator after it is created.
+6. Click **Select Experiments** and follow the steps below
 
-#### Align an existing evaluator with experiment data:
+### Align an existing evaluator
 
 1. Navigate to the **Datasets and Experiments** tab
 2. Select a dataset
 3. Go to the **Evaluators** tab
 4. Click on the evaluator you want to align
-5. In the "Align Evaluator with experiment data" box, click **Select Experiments**
+5. In the "Align Evaluator with experiment data" box, click **Select Experiments** and follow the steps below
 
 :::note
 Please note that this feature is only supported for **boolean** evaluators created after July 10th, 2025. 
@@ -94,6 +97,8 @@ Iterate by updating your prompt and testing again to improve evaluator alignment
 Updates to your evaluator prompt are not saved by default. We reccomend saving your evaluator prompt regularly, and especially after you see your alignment score improve.
 :::
 
+### Tips for improving alignment
+
 Improving the alignment score of your evaluator isn't an exact science but there are a few strategies that are helpful in increasing the alignment score.
 
 **1. Investigate misaligned examples**
@@ -105,6 +110,3 @@ Once you have identified the common failure modes, add instructions to your eval
 **2. Add more labeled examples and validate performance**
 
 To avoid overfitting to the labeled examples, it's important to add more labeled examples and test performance, especially if you started off with a small number of examples.
-
-
-
