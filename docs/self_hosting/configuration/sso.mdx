@@ -35,8 +35,9 @@ Finally, we do not support having both basic auth and OAuth at the same time. En
 - Your IdP must support the `Authorization Code` flow with `Client Secret`.
 - Your IdP must support using an external discovery/issuer URL. We will use this to fetch the necessary routes and keys for your IdP.
 - You must provide the `OIDC`, `email`, and `profile` scopes to LangSmith. We use these to fetch the necessary user information and email for your users.
-- You will need to set the callback URL in your IdP to `http://<host>/api/v1/oauth/custom-oidc/callback`, where host is the domain or IP you have provisioned for your LangSmith instance. This is where your IdP will redirect the user after they have authenticated.
+- You will need to set the callback URL in your IdP to `https://<host>/api/v1/oauth/custom-oidc/callback`, where host is the domain or IP you have provisioned for your LangSmith instance. This is where your IdP will redirect the user after they have authenticated.
 - You will need to provide the `oauthClientId`, `oauthClientSecret`, `hostname`, and `oauthIssuerUrl` in your `values.yaml` file. This is where you will configure your LangSmith instance.
+- <u>Note</u>: Langsmith SSO is only supported through `https`.
 
 <CodeTabs
   tabs={[

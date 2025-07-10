@@ -6,6 +6,8 @@ Single Sign-On (SSO) functionality is available for Enterprise Cloud customers t
 
 LangSmith's SSO configuration is built using the SAML (Security Assertion Markup Language) 2.0 standard. SAML 2.0 enables connecting an Identity Provider (IdP) to your organization for an easier, more secure login experience.
 
+See [SCIM setup](./set_up_scim.mdx) for instructions on using SCIM along with SAML for user provisioning and deprovisioning.
+
 :::note
 SAML SSO is available for organizations on the [Enterprise plan](https://www.langchain.com/pricing-langsmith). Please [contact sales](https://www.langchain.com/contact-sales) to learn more.
 :::
@@ -75,7 +77,7 @@ Once you have completed your configuration of SAML SSO for your organization, us
 ## Enforce SAML SSO only
 
 To ensure users can only access the organization when logged in using SAML SSO and no other method, check the `Login via SSO only` checkbox and click `Save`.
-Once this happens, users accessing the organization that are logged-in via a non-SSO login method are required to log back in using SAML SSO.  
+Once this happens, users accessing the organization that are logged-in via a non-SSO login method are required to log back in using SAML SSO.
 This setting can be switched back to allow all login methods by unselecting the checkbox and clicking `Save`.
 
 :::note
@@ -132,6 +134,7 @@ For additional information, see Microsoft's [documentation](https://learn.micros
 1. Ensure required claims are present with `Namespace`: `http://schemas.xmlsoap.org/ws/2005/05/identity/claims`
    1. `sub`: `user.objectid`
    1. `emailaddress`: `user.userprincipalname` or `user.mail` (if using the latter, ensure all users have the `Email` field filled in under `Contact Information`)
+   1. (Optional) For SCIM, see the [setup documentation](./set_up_scim.mdx) for specific instructions about `Unique User Identifier (Name ID)`
 1. On the SAML-based Sign-on page, under `SAML Certificates`, copy the `App Federation Metadata Url`.
 
 **Step 3: Set up LangSmith SSO Configuration**
