@@ -582,13 +582,13 @@ For more advanced scenarios, you can use the OpenTelemetry Collector to fan out 
 
    exporters:
      otlphttp/langsmith:
-       endpoint: https://api.smith.langchain.com/otel/v1/traces
+       endpoint: https://api.smith.langchain.com/otel
        headers:
          x-api-key: ${env:LANGSMITH_API_KEY}
          Langsmith-Project: my_project
 
      otlphttp/other_provider:
-       endpoint: https://otel.your-provider.com/v1/traces
+       endpoint: https://otel.your-provider.com
        headers:
          api-key: ${env:OTHER_PROVIDER_API_KEY}
 
