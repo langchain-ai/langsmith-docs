@@ -15,14 +15,14 @@ By default, LangSmith stores run inputs, outputs, errors, manifests, extras, and
 ## Requirements
 
 :::note
-Azure blob storage is available in Beta on Helm chart versions 0.8.9 and greater.
-While in Beta, [deleting trace projects](../../observability/concepts/index.mdx#deleting-traces-from-langsmith) is not supported.
+Azure blob storage is available in Helm chart versions 0.8.9 and greater.
+[Deleting trace projects](../../observability/concepts/index.mdx#deleting-traces-from-langsmith) is not currently supported in Azure.
 :::
 
 - Access to a valid blob storage service
   - [Amazon S3](https://aws.amazon.com/s3/)
   - [Google Cloud Storage (GCS)](https://cloud.google.com/storage?hl=en)
-  - [Azure Blob Storage [BETA]](https://azure.microsoft.com/en-us/products/storage/blobs)
+  - [Azure Blob Storage](https://azure.microsoft.com/en-us/products/storage/blobs)
 - A bucket/directory in your blob storage to store the data. We highly recommend creating a separate bucket/directory for LangSmith data.
   - **If you are using TTLs**, you will need to set up a lifecycle policy to delete old data. You can find more information on configuring TTLs [here](/self_hosting/configuration/ttl). These policies should mirror the TTLs you have set in your LangSmith configuration, or you may experience data loss.
     See [here](#ttl-configuration) on how to setup the lifecycle rules for TTLs for blob storage.
