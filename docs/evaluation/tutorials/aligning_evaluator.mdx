@@ -91,17 +91,31 @@ In the evaluator playground you can create or edit your evaluator prompt and cli
 Iterate by updating your prompt and testing again to improve evaluator alignment. 
 
 :::tip
-Updates to your evaluator prompt are not saved by default. We reccomend saving your evaluator prompt regularly, and especially after you see your alignment score improve.
+Updates to your evaluator prompt are **not saved by default**. We reccomend saving your evaluator prompt regularly, and especially after you see your alignment score improve. 
+
+The evaluator playground will show the alignment score for the most recently saved version of your evaluator prompt for comparison when you're iterating on your prompt. 
 :::
 
-Improving the alignment score of your evaluator isn't an exact science but there are a few strategies that are helpful in increasing the alignment score:
+Improving the alignment score of your evaluator isn't an exact science but there are a few strategies that are helpful in increasing the alignment score.
+
+### Tips for improving evaluator alignment
 
 **1. Investigate misaligned examples**
 
-Digging into misaligned examples and trying to group them into common failure modes is a great first step for improving your evaluator alignment. To identify the eamples that are misaligned, the alignment column allows for sorting. 
+Digging into misaligned examples and trying to group them into common failure modes is a great first step for improving your evaluator alignment. 
 
 Once you have identified the common failure modes, add instructions to your evaluator prompt so the LLM knows about them. For example, you could explain that "MFA stands for "multi-factor authentication" if you notice it not understanding that specific acronym. Or you could tell it that "a good response will always contain at least 3 potential hotels to book" if it is confused on what good/bad means in your evaluator's context.
 
-**2. Add more labeled examples and validate performance**
+**2. Inspect the reasoning behind the LLM score**
+
+To understand why the LLM scored an example the way it did, you can enable reasoning for your LLM-as-a-judge evaluator. Reasoning is helpful to understand the LLM's thought process and can help you identify common failure modes to incorporate into your evaluator prompt as well..
+
+In order to see the reasoning in the evaluator playground, hover over the LLM score. 
+
+![Enable reasoning](./static/enable_reasoning.gif)
+
+This will show the reasoning behind the LLM's score in the evaluator playground.
+
+**3. Add more labeled examples and validate performance**
 
 To avoid overfitting to the labeled examples, it's important to add more labeled examples and test performance, especially if you started off with a small number of examples.
