@@ -250,6 +250,14 @@
     {
       "source": "/old/cookbook/introduction/:path*",
       "destination": "/evaluation/concepts"
+    },
+    {
+      "source": "/evaluation/how_to_guides/use_langchain_off_the_shelf_evaluators_old",
+      "destination": "/evaluation/how_to_guides/prebuilt_evaluators"
+    },
+    {
+      "source": "/reference/sdk_reference/langchain_evaluators",
+      "destination": "/evaluation/how_to_guides/prebuilt_evaluators"
     }
   ]
 }
