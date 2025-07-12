@@ -2,7 +2,9 @@
 sidebar_label: Best Practices
 sidebar_position: 5
 ---
+
 # Prompt management best practices
+
 Here are our recommended best practices for managing your prompts. This guide will help you establish a robust workflow for developing, testing, and deploying prompts using LangSmith.
 
 ## The prompt development lifecycle: iterating in the playground
@@ -31,7 +33,7 @@ Prompts are not static text; they are a fundamental component of your LLM applic
 
 ## Update application prompts based on prompt tags
 
-LangSmith provides a collaborative interface to iterate on prompts and share them with your team. After some initial testing in the Playground, you'll want to see how the prompt interacts within the context of your application. In LangSmith’s Prompt Hub, you can apply [_prompt commit tags_](/prompt_engineering/how_to_guides/prompt_tags) for new versions of the prompt without requiring code changes each time. 
+LangSmith provides a collaborative interface to iterate on prompts and share them with your team. After some initial testing in the Playground, you'll want to see how the prompt interacts within the context of your application. In LangSmith’s Prompt Hub, you can apply [_prompt commit tags_](/prompt_engineering/how_to_guides/prompt_tags) for new versions of the prompt without requiring code changes each time.
 
 You can assign a meaningful name (e.g., `dev`, `staging`, `prod`) to a specific version (commit) of your prompt. This allows you to create a dynamic reference to the prompt version you want to use in a particular environment.
 
