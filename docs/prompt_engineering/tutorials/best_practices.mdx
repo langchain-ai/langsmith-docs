@@ -7,31 +7,31 @@ Here are our recommended best practices for managing your prompts. This guide wi
 
 ## The prompt development lifecycle: iterating in the playground
 
-Before a prompt is versioned or deployed, it must be created. The best practice for prompt development is to treat it as an iterative, experimental process. The LangSmith Playground is the ideal environment for this initial "development" phase.
+We recommend treating prompt development as an iterative, experimental process. The LangSmith Playground is the ideal environment for this initial "development" phase.
 
-Using the Playground, you and your team can:
+Using the [Playground](/prompt_engineering/how_to_guides#playground), you and your team can:
 
-- **Rapidly iterate on prompts:** Modify prompt templates on the fly and immediately see how the changes affect the output.
+- **Rapidly iterate on prompts:** Modify prompt templates and see how the changes affect the output immediately.
 - **Compare different LLMs:** Test the same prompt against various models (e.g., GPT-4o vs. Claude 3 Opus vs. Llama 3) side-by-side to find the best one for the job. This is crucial, as a prompt's effectiveness can vary significantly between models.
-- **Test with diverse inputs:** Easily run the prompt and model configuration against a range of different inputs to check for edge cases and ensure reliability.
-- **Optimize the prompt**: Use the Prompt Canvas feature to use an LLM to improve your prompt
+- **Test with diverse inputs:** Run the prompt and model configuration against a range of different inputs to check for edge cases and ensure reliability.
+- **Optimize the prompt**: Use the [Prompt Canvas](/prompt_engineering/how_to_guides/prompt_canvas) feature to have an LLM improve your prompt.
   ➡️ **See the blog post:** [LangChain Changelog](https://changelog.langchain.com/announcements/prompt-canvas-for-streamlined-prompt-engineering)
 - **Develop and test tool calling:** Configure tools and functions that the LLM can call, and test the full interaction within the Playground.
-- **Refine your app:** Run experiments directly against your dataset in the Playground, seeing changes in real time as you iterate on prompts. Share these experiments with teammates to get feedback and collaboratively optimize performance.
+- **Refine your app:** Run experiments directly against your dataset in the Playground to see changes in real time as you iterate on prompts. Share experiments with teammates to get feedback and collaboratively optimize performance.
 
 Once you are satisfied with a prompt and its configuration in the Playground, you can save it as a new commit to your prompt's history. While the Playground UI is great for experimentation, you can also create and update prompts programmatically for more automated workflows using the LangSmith SDK.
 
-**➡️ See the docs:** https://docs.smith.langchain.com/prompt_engineering/how_to_guides/manage_prompts_programatically
+**➡️ See the docs:** [Manage prompts programmatically](/prompt_engineering/how_to_guides/manage_prompts_programatically)
 
-**➡️ See the SDK reference:** [client.create_prompt](https://docs.smith.langchain.com/reference/python/client/langsmith.client.Client#langsmith.client.Client.create_prompt)
+**➡️ See the SDK reference:** [client.create_prompt](/reference/python/client/langsmith.client.Client#langsmith.client.Client.create_prompt)
 
-## Managing prompts through different environments
+## Manage prompts through different environments
 
 Prompts are not static text; they are a fundamental component of your LLM application's logic, just like source code. A minor change can significantly alter an LLM's response or tool selection, making structured lifecycle management essential. The **LangSmith Prompt Hub** provides a central workspace to manage this complexity. This guide details the complete workflow for using the Hub to test prompts in development, validate them in staging, and deploy them confidently to production.
 
 ## Update application prompts based on prompt tags
 
-LangSmith provides a collaborative interface to iterate on prompts and share them with your team. After some initial testing in the Playground, you'll want to see how the prompt interacts within the context of your application. In LangSmith’s Prompt Hub, you can apply [_prompt commit tags_](./prompt_engineering/how_to_guides/prompt_tags.mdx) for new versions of the prompt without requiring code changes each time. 
+LangSmith provides a collaborative interface to iterate on prompts and share them with your team. After some initial testing in the Playground, you'll want to see how the prompt interacts within the context of your application. In LangSmith’s Prompt Hub, you can apply [_prompt commit tags_](/prompt_engineering/how_to_guides/prompt_tags) for new versions of the prompt without requiring code changes each time. 
 
 You can assign a meaningful name (e.g., `dev`, `staging`, `prod`) to a specific version (commit) of your prompt. This allows you to create a dynamic reference to the prompt version you want to use in a particular environment.
 
@@ -60,7 +60,7 @@ prompt_prod = client.pull_prompt("your-prompt-name:prod")
 
 ![Git Diagram](./static/prompt-best-practice-git.png)
 
-### Evaluate prompt changes before promotion to production
+### Best practice: evaluate prompt changes before promotion to production
 
 A typical pipeline consists of several automated stages that run in sequence. If any stage fails, the pipeline stops and notifies the team.
 
@@ -68,7 +68,7 @@ A typical pipeline consists of several automated stages that run in sequence. If
 
 - **Stage 1: Trigger**
   The pipeline starts automatically when a new prompt version is created.
-  - **How:** This can be a `git push` to your main branch or, more powerfully, a **webhook** triggered from LangSmith on every new prompt commit.
+  - **How:** This can be a `git push` to your main branch or a **webhook** triggered from LangSmith on every new prompt commit.
 - **Stage 2: Linting & unit tests**
   This stage performs quick, low-cost checks.
   - **Linting:** A simple script checks for basic syntax. For example, does the prompt template contain all the required input variables (e.g., `{question}`, `{context}`)?
@@ -77,14 +77,14 @@ A typical pipeline consists of several automated stages that run in sequence. If
     - "Does it contain the expected keys?"
     - "Is the list length correct?"
 - **Stage 3: Quality evaluation**
-  This is the heart of the pipeline. The new prompt version is run against your evaluation dataset to ensure it meets quality standards.
+  The new prompt version is run against your evaluation dataset to ensure it meets quality standards.
   - **How:** This can be done in a few ways:
     - **Programmatic SDK Evals:** For checks against known ground truths, a script can use the LangSmith SDK's `evaluate` [function](https://docs.smith.langchain.com/evaluation#7-run-and-view-results). This executes the new prompt against every example in your dataset, and the results are automatically scored by your chosen programmatic evaluators (e.g., for JSON validity, string matching).
-    - **Advanced Qualitative Evals with `openevals`:** For more nuanced quality checks (like helpfulness, style, or adherence to complex instructions), you can leverage the `openevals` library. This library integrates directly with `pytest` and allows you to define sophisticated, "LLM-as-a-judge" evaluations. You can create tests that use another LLM to score the quality of your prompt's output. Thanks to the [LangSmith integration](https://github.com/langchain-ai/openevals?tab=readme-ov-file#langsmith-integration), all these evaluation runs are automatically traced and can be visualized in LangSmith, giving you a detailed view of the results.
+    - **Advanced Qualitative Evals with `openevals`:** For more nuanced quality checks (like helpfulness, style, or adherence to complex instructions), you can leverage the `openevals` library. This library integrates directly with `pytest` and allows you to define sophisticated, "LLM-as-a-judge" evaluations. You can create tests that use another LLM to score the quality of your prompt's output. The [LangSmith integration](https://github.com/langchain-ai/openevals?tab=readme-ov-file#langsmith-integration) automatically traces and visualizes all these evaluation runs in LangSmith, which provides a detailed view of the results.
   - **The Check:** The pipeline then compares the new prompt's aggregate evaluation scores (e.g., average correctness, helpfulness score, latency, cost) against the current production prompt's scores.
 - **Stage 4: Continuous deployment (promotion)**
   Based on the evaluation results, the prompt is automatically promoted.
-  - **Pass/Fail Logic:** The pipeline checks if the new prompt is "better" than the current one (e.g., higher correctness score, no drop in helpfulness, within cost budget).
+  - **Pass/Fail Logic:** The pipeline checks if the new prompt is "better" than the current one based on criteria such as higher correctness score, no drop in helpfulness, within cost budget.
   - **Promotion to `staging`:** If it passes, a script uses the LangSmith SDK to move the `staging` tag to this new commit hash. Your staging application, which pulls the `your-prompt:staging` tag, will automatically start using the new prompt.
   - **Promotion to `prod`:** This is often a **manual step**. After the team has reviewed the performance in the staging environment and is confident in the results, a team member can manually move the `prod` tag in the LangSmith UI. This final human check is a crucial safety measure.
 
@@ -94,7 +94,7 @@ For better version control, collaboration, and integration with your existing CI
 
 ### Best practice: use webhooks for synchronization
 
-The most effective way to automate this is by using webhooks. You can configure LangSmith to send a notification to a service every time a new version of a prompt is saved. This creates a seamless bridge between the user-friendly prompt editing environment in LangSmith and your rigorous version control system.
+The most effective way to automate this is by using webhooks. You can configure LangSmith to send a notification to a service every time a new version of a prompt is saved. This creates a seamless bridge between the user-friendly prompt editing environment in LangSmith and your version control system.
 
 ### Webhook synchronization flow
 
@@ -109,8 +109,6 @@ LangSmith allows you to configure a webhook for your workspace that will fire on
 **➡️ Learn more in the official documentation:** [Trigger a webhook on prompt commit](https://docs.smith.langchain.com/prompt_engineering/how_to_guides/trigger_webhook), [How to Sync Prompts with GitHub](https://docs.smith.langchain.com/prompt_engineering/tutorials/prompt_commit)
 
 ## How to use a prompt in production without repeated API calls
-
-In a production application, making a network request to fetch a prompt every time a function is executed adds unnecessary latency and creates a dependency that could fail. The application should be resilient and fast.
 
 ### Best practice: cache prompts in your application
 
@@ -130,5 +128,5 @@ There are two primary strategies for caching prompts, each with its own trade-of
   This approach uses an external, centralized caching service that is shared by all instances of your application.
   - **How it works**: Your application instances connect to a shared caching service like **Redis** or **Memcached**. When a prompt is needed, the application first checks the distributed cache. If it's not there (a "cache miss"), it fetches the prompt from LangSmith, stores it in the cache, and then uses it.
   - **Pros**: The cache is persistent and is not lost on application restarts. All application instances share the same cache, ensuring consistency. Highly scalable for large, distributed systems.
-  - **Cons**: Requires setting up and maintaining an additional service (like Redis). There is slightly more network latency compared to in-memory caching, though it's still extremely fast.
+  - **How it works**: Your application instances connect to a shared caching service like [Redis](https://redis.io/) or [Memcached](https://memcached.org/). When a prompt is needed, the application first checks the distributed cache. If it's not there (a "cache miss"), it fetches the prompt from LangSmith, stores it in the cache, and then uses it.
   - **Best for**: Scalable, multi-instance production applications where consistency and resilience are top priorities. Using a service like Redis is the industry-standard approach for robust application caching.
