@@ -35,7 +35,7 @@ LangSmith provides a collaborative interface to iterate on prompts and share the
 
 You can assign a meaningful name (e.g., `dev`, `staging`, `prod`) to a specific version (commit) of your prompt. This allows you to create a dynamic reference to the prompt version you want to use in a particular environment.
 
-For instance, you can have a `dev` tag pointing to the latest, most experimental version of your prompt, a `staging` tag for a more stable version undergoing final testing, and a `prod` tag for the version you trust to be in your live application. As you promote a prompt from development to production, you simply move the tag from one commit to another within the LangSmith UI.
+For instance, you can have a `dev` tag pointing to the latest, most experimental version of your prompt, a `staging` tag for a more stable version undergoing final testing, and a `prod` tag for the version you trust to be in your live application. As you promote a prompt from development to production, you move the tag from one commit to another within the LangSmith UI.
 
 To implement this workflow, you reference the tag in your application code instead of a static commit hash. This enables you to update the prompt in your application without a new code deployment.
 
