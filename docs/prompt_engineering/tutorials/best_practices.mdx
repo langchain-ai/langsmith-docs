@@ -31,9 +31,9 @@ Prompts are not static text; they are a fundamental component of your LLM applic
 
 ## Dynamically updating application prompts based on prompt tags
 
-LangSmith provides a collaborative interface to iterate on prompts and share them with your team. After some initial testing in the Playground, you'll want to see how the prompt interacts within the context of your application. LangSmith’s Prompt Hub provides a way to do this without requiring code changes for every new version of the prompt. This is achieved by using **prompt commit tags**.
+LangSmith provides a collaborative interface to iterate on prompts and share them with your team. After some initial testing in the Playground, you'll want to see how the prompt interacts within the context of your application. In LangSmith’s Prompt Hub, you can apply [_prompt commit tags_](./prompt_engineering/how_to_guides/prompt_tags.mdx) for new versions of the prompt without requiring code changes each time. 
 
-Think of prompt tags just like Git tags. You can assign a meaningful name (e.g., `dev`, `staging`, `prod`) to a specific version (commit) of your prompt. This allows you to create a dynamic reference to the prompt version you want to use in a particular environment.
+You can assign a meaningful name (e.g., `dev`, `staging`, `prod`) to a specific version (commit) of your prompt. This allows you to create a dynamic reference to the prompt version you want to use in a particular environment.
 
 For instance, you can have a `dev` tag pointing to the latest, most experimental version of your prompt, a `staging` tag for a more stable version undergoing final testing, and a `prod` tag for the version you trust to be in your live application. As you promote a prompt from development to production, you simply move the tag from one commit to another within the LangSmith UI.
 
