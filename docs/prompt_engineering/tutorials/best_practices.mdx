@@ -88,7 +88,7 @@ A typical pipeline consists of several automated stages that run in sequence. If
   - **Promotion to `staging`:** If it passes, a script uses the LangSmith SDK to move the `staging` tag to this new commit hash. Your staging application, which pulls the `your-prompt:staging` tag, will automatically start using the new prompt.
   - **Promotion to `prod`:** This is often a **manual step**. After the team has reviewed the performance in the staging environment and is confident in the results, a team member can manually move the `prod` tag in the LangSmith UI. This final human check is a crucial safety measure.
 
-## Syncing prompts in production
+## Sync prompts in production
 
 For better version control, collaboration, and integration with your existing CI/CD pipelines, synchronizing your LangSmith prompts with an external source code repository will give you a full commit history alongside your application code.
 
