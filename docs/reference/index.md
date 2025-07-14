@@ -16,7 +16,6 @@ Technical reference that covers components, APIs, and other aspects of LangSmith
 
 - [Python SDK Reference](https://docs.smith.langchain.com/reference/python)
 - [JS/TS SDK Reference](https://docs.smith.langchain.com/reference/js)
-- [LangChain off-the-shelf evaluators (Python only)](./reference/sdk_reference/langchain_evaluators)
 
 ### Common data types
 

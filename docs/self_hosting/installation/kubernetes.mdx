@@ -139,7 +139,7 @@ Ensure you have the following tools/items ready. Some items are marked optional:
     langchain/langsmith     0.10.10         0.10.29         Helm chart to deploy the langsmith application ...
     ```
 
-1.  Run `helm install langsmith langchain/langsmith --values langsmith_config.yaml --version <version> -n <namespace> --debug`
+1.  Run `helm install langsmith langchain/langsmith --values langsmith_config.yaml --version <version> -n <namespace> --wait --debug`
 
     - Replace `<namespace>` with the namespace you want to deploy LangSmith to.
     - Replace `<version>` with the version of LangSmith you want to install from the previous step. Most users should install the latest version available.
