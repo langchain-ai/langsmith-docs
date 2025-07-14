@@ -22,7 +22,7 @@ The helm chart provides a set of Prometheus exporters to expose metrics from [Re
 1. Create a local file called `langsmith_obs_config.yaml`
 2. Copy over the values from this [file](https://github.com/langchain-ai/helm/blob/main/charts/langsmith-observability/examples/metric-exporters-only.yaml) into `langsmith_obs_config.yaml`, making sure to modify the values to match your LangSmith deployment.
 3. Find the latest version of the chart by running `helm search repo langchain/langsmith-observability --versions`.
-4. Grab the latest version number, and run `helm install langsmith-observability langchain/langsmith-observability --values langsmith_obs_config.yaml --version <version> -n <namespace> --debug`
+4. Grab the latest version number, and run `helm install langsmith-observability langchain/langsmith-observability --values langsmith_obs_config.yaml --version <version> -n <namespace> --wait --debug`
 
 This will allow you to scrape metrics at the following service endpoints:
 
@@ -109,7 +109,7 @@ The following instructions will bring up OTel collectors, the LGTM stack, Grafan
 1. Create a local file called `langsmith_obs_config.yaml`
 2. Copy over the values from this [file](https://github.com/langchain-ai/helm/blob/main/charts/langsmith-observability/examples/e2e-stack.yaml) into `langsmith_obs_config.yaml`, making sure to modify the values to match your LangSmith deployment.
 3. Find the latest version of the chart by running `helm search repo langchain/langsmith-observability --versions`.
-4. Grab the latest version number, and run `helm install langsmith-observability langchain/langsmith-observability --values langsmith_obs_config.yaml --version <version> -n <namespace> --debug`
+4. Grab the latest version number, and run `helm install langsmith-observability langchain/langsmith-observability --values langsmith_obs_config.yaml --version <version> -n <namespace> --wait --debug`
 
 :::note Note
 **You can selectively collect logs, metrics or traces by modifying the boolean values under `otelCollector` in your config file.
@@ -169,7 +169,7 @@ observability:
 2. To get `${GATEWAY_COLLECTOR_SERVICE_NAME}` name, run `kubectl get services -n ${LANGSMITH_OBS_NAMESPACE}` and select the one with Ports 4317/4318 AND a ClusterIP set. It should be something like `langsmith-observability-collector-gateway-collector`
    :::
 
-Now run `helm upgrade langsmith langchain/langsmith --values langsmith_config.yaml -n <langsmith-namespace> --debug`
+Now run `helm upgrade langsmith langchain/langsmith --values langsmith_config.yaml -n <langsmith-namespace> --wait --debug`
 
 Once upgraded, if you run `kubectl get pods -n <langsmith-namespace>` you should see the following (note the 2/2 for sidecar collectors):
 
