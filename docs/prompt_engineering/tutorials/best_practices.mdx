@@ -88,7 +88,7 @@ A typical pipeline consists of several automated stages that run in sequence. If
   Based on the evaluation results, the prompt is automatically promoted.
   - **Pass/Fail Logic:** The pipeline checks if the new prompt is "better" than the current one based on criteria such as higher correctness score, no drop in helpfulness, within cost budget.
   - **Promotion to `staging`:** If it passes, a script uses the LangSmith SDK to move the `staging` tag to this new commit hash. Your staging application, which pulls the `your-prompt:staging` tag, will automatically start using the new prompt.
-  - **Promotion to `prod`:** This is often a **manual step**. After the team has reviewed the performance in the staging environment and is confident in the results, a team member can manually move the `prod` tag in the LangSmith UI. This final human check is a crucial safety measure.
+  - **Promotion to `prod`:** This is often a **manual step**, a team member can move the `prod` tag in the LangSmith UI after reviewing performance in staging. However, if your evaluation pipeline is trustworthy and consistently reflects real-world performance, this step can be automated (e.g., [canary deployments](https://semaphore.io/blog/what-is-canary-deployment) with rollback monitoring), and the prod tag can be advanced programmatically using the LangSmith SDK.
 
 ## Sync prompts in production
 
