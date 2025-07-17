@@ -212,9 +212,11 @@ curl --request POST \
 
 If a scheduled bulk export is created with `start_time=2025-07-16T00:00:00Z` and `interval_hours=6`:
 
-- 1st spawned bulk export has `start_time=2025-07-16T00:00:00Z` and `end_time=2025-07-16T06:00:00Z` and runs at `2025-07-16T06:10:00Z`
-- 2nd spawned bulk export has `start_time=2025-07-16T06:00:00Z` and `end_time=2025-07-16T12:00:00Z` and runs at `2025-07-16T12:10:00Z`
-- 3rd spawned bulk export has `start_time=2025-07-16T12:00:00Z` and `end_time=2025-07-16T18:00:00Z` and runs at `2025-07-16T18:10:00Z`
+| Export | Start Time           | End Time             | Runs At              |
+| ------ | -------------------- | -------------------- | -------------------- |
+| 1      | 2025-07-16T00:00:00Z | 2025-07-16T06:00:00Z | 2025-07-16T06:10:00Z |
+| 2      | 2025-07-16T06:00:00Z | 2025-07-16T12:00:00Z | 2025-07-16T12:10:00Z |
+| 3      | 2025-07-16T12:00:00Z | 2025-07-16T18:00:00Z | 2025-07-16T18:10:00Z |
 
 ## Monitoring the Export Job
 
