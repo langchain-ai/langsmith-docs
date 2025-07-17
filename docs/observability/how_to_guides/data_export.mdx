@@ -195,10 +195,6 @@ curl --request POST \
 **Details**
 
 - `interval_hours` must be between 1 hour and 168 hours (1 week) inclusive.
-- `start_time thru (start_time + interval_hours)` is the first time range exported. Then `(start_time + interval_hours) thru (start_time + 2 * interval_hours)`, and so on.
-- Exports run at `end_time + 10 minutes` to account for any runs that are submitted with `end_time` in the past.
-- `end_time` must be omitted for scheduled exports.
-- `interval_hours` must be between 1 hour and 168 hours (1 week) inclusive
 - For spawned exports, the first time range exported is `start_time=(scheduled_export_start_time), end_time=(start_time + interval_hours)`.
   Then `start_time=(previous_export_end_time), end_time=(this_export_start_time + interval_hours)`, and so on.
 - `end_time` must be omitted for scheduled exports. `end_time` is still required for non-scheduled exports.
