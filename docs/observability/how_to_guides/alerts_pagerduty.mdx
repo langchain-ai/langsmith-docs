@@ -38,7 +38,7 @@ After creating the service, you'll need to retrieve the Integration Key:
 
 ### Step 3: Configure LangSmith Alert with PagerDuty
 :::info
-LangSmith deduplicates alerts by alert rule, trace project, and hourly time bucket. This helps reduce noise and avoid duplicate incidents within the same context.
+To receive the same alert again within an hour of it being triggered, you must resolve the active incident created by the alert in PagerDuty.
 :::
 
 <div style={{ textAlign: 'center' }}>
