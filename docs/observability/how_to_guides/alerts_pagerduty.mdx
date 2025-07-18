@@ -37,6 +37,9 @@ After creating the service, you'll need to retrieve the Integration Key:
 ![PagerDuty Integration Key Location](./static/pager_duty.png)
 
 ### Step 3: Configure LangSmith Alert with PagerDuty
+:::info
+To receive the same alert again within an hour of it being triggered, you must resolve the active incident created by the alert in PagerDuty.
+:::
 
 <div style={{ textAlign: 'center' }}>
 
@@ -58,6 +61,7 @@ If incidents aren't being created in PagerDuty:
 - Verify the Integration Key is entered correctly in LangSmith
 - Ensure the PagerDuty service is active and not in maintenance mode
 - Check that your PagerDuty account has Events API v2 enabled
+- If an alert trigger appears to be missing in PagerDuty, check whether the expected trigger occurred within one hour of a previous trigger from the same alert rule, and whether the incident created by the previous alert is still open.
 - Review network connectivity if your LangSmith instance is behind a firewall
 
 ## Additional Resources
