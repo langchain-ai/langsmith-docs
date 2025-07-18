@@ -61,7 +61,7 @@ If incidents aren't being created in PagerDuty:
 - Verify the Integration Key is entered correctly in LangSmith
 - Ensure the PagerDuty service is active and not in maintenance mode
 - Check that your PagerDuty account has Events API v2 enabled
-- Check if the alerts was within the 1 hour window from previous trigger and filtered by deduplication 
+- If an alert trigger appears to be missing in PagerDuty, check whether the expected trigger occurred within one hour of a previous trigger from the same alert rule, and whether the incident created by the previous alert is still open.
 - Review network connectivity if your LangSmith instance is behind a firewall
 
 ## Additional Resources
