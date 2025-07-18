@@ -37,6 +37,9 @@ After creating the service, you'll need to retrieve the Integration Key:
 ![PagerDuty Integration Key Location](./static/pager_duty.png)
 
 ### Step 3: Configure LangSmith Alert with PagerDuty
+:::info
+LangSmith deduplicates alerts by alert rule, trace project, and hourly time bucket. This helps reduce noise and avoid duplicate incidents within the same context.
+:::
 
 <div style={{ textAlign: 'center' }}>
 
@@ -58,6 +61,7 @@ If incidents aren't being created in PagerDuty:
 - Verify the Integration Key is entered correctly in LangSmith
 - Ensure the PagerDuty service is active and not in maintenance mode
 - Check that your PagerDuty account has Events API v2 enabled
+- Check if the alerts was within the 1 hour window from previous trigger and filtered by deduplication 
 - Review network connectivity if your LangSmith instance is behind a firewall
 
 ## Additional Resources
