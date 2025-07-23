@@ -7,16 +7,18 @@ import { RegionalUrl } from "@site/src/components/RegionalUrls";
 # Set up automation rules
 
 While you can manually sift through and process production logs from our LLM application, it often becomes difficult as your application scales to more users.
-LangSmith provides a powerful feature called automations that allow you to trigger certain actions on your trace data.
+LangSmith provides a powerful feature called **Automations** that allow you to trigger certain actions on your trace data.
 At a high level, automations are defined by a **filter**, **sampling rate**, and **action**.
 
-Automation rules can trigger actions such as: adding traces to a dataset, adding to an annotation queue, and triggering a webhook (eg. for remote evaluations) or extending data retention.
+Automation rules can trigger actions such as: adding traces to a dataset, adding to an annotation queue, and triggering a webhook (e.g. for remote evaluations) or extending data retention. Some examples of automations you can set up:
+- Send all traces with negative feedback to an annotation queue for human review
+- Send 10% of all traces to an annotation queue for human review to spot check for issues 
+- Upgrade all traces with errors for extended data retention
+
 
 :::info
-To configure online evalautions, visit the [online evaluations](/observability/how_to_guides/online_evaluations) page.
+To configure online evaluations, visit the [online evaluations](/observability/how_to_guides/online_evaluations) page.
 :::
-
-An example of an automation you can set up can be _"send all traces with negative feedback to an annotation queue for human review"_.
 
 ## View automation rules
 
@@ -26,7 +28,7 @@ Head to the **Tracing Projects** tab and select a tracing project. To view exist
 
 ## Create a rule
 
-[TO-DO: VIDEO HERE]
+![Create rule](./static/aq_spot_check_rule.gif)
 
 #### 1. Navigate to rule creation
 
@@ -38,7 +40,7 @@ Head to the **Tracing Projects** tab and select a tracing project. Click on **+ 
 
 Automation rule filters work the same way as filters applied traces in the project. For more information on filters, you can refer to [this guide](./filter_traces_in_application)
 
-#### 4. (Optional) Configure a sampling rate
+#### 4. Configure a sampling rate
 
 Configure a sampling rate to control the percentage of filtered runs trigger the automation action.
 
@@ -71,5 +73,4 @@ The logs tab allows you to:
 - You can monitor the progress of a backfill job by filtering to the rule's creation timestamp. This is because the backfill starts from when the rule was created.
 - Inspect the run that the automation rule applied to using the **View run** button. For rules that add runs as examples to datasets, you can view the example produced.
 
-[TO-DO: NEEDS REFILMING]
-![Logs_Gif](./static/rules_logs.gif)
+![Logs_Gif](./static/rule_logs.gif)

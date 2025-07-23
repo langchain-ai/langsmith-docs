@@ -29,7 +29,7 @@ Head to the **Tracing Projects** tab and select a tracing project. To view exist
 
 #### 1. Navigate to online evaluators
 
-Head to the **Tracing Projects** tab and select a tracing project. Click on **+ New** in the top right corner the tracing projectpage, then click on **New Evaluator**.
+Head to the **Tracing Projects** tab and select a tracing project. Click on **+ New** in the top right corner the tracing project page, then click on **New Evaluator**.
 
 #### 2. Name your evaluator
 
@@ -37,11 +37,15 @@ Head to the **Tracing Projects** tab and select a tracing project. Click on **+ 
 
 For example, you may want to apply specific evaluators based on:
 
-- Runs where a [user left feedback](/evaluation/how_to_guides/attach_user_feedback) indicating he response was unsatisfactory
-- Runs that invoke a specific tool call. See [filtering for tool calls](//observability/how_to_guides/filter_traces_in_application#example-filtering-for-tool-calls) for more information
-- Runs that match a particular piece of metadata (eg. if you log traces with a plan_type and only want to run evaluations on traces from your enterprise customers). See [adding metadata to your traces](/observability/how_to_guides/add_metadata_tags) for more information.
+- Runs where a [user left feedback](/evaluation/how_to_guides/attach_user_feedback) indicating the response was unsatisfactory.
+- Runs that invoke a specific tool call. See [filtering for tool calls](//observability/how_to_guides/filter_traces_in_application#example-filtering-for-tool-calls) for more information.
+- Runs that match a particular piece of metadata (e.g. if you log traces with a `plan_type` and only want to run evaluations on traces from your enterprise customers). See [adding metadata to your traces](/observability/how_to_guides/add_metadata_tags) for more information.
 
-Filters on evaluators work the same way as filters applied traces in the project. For more information on filters, you can refer to [this guide](./filter_traces_in_application).
+Filters on evaluators work the same way as when you're filtering traces in a project. For more information on filters, you can refer to [this guide](./filter_traces_in_application).
+
+:::tip
+It's often helpful to inspect runs as you're creating a filter for your evaluator. With the evaluator configuration panel open, you can inspect runs and apply filters to them. Any filters you apply to the runs table will automatically be reflected in filters on your evaluator.
+:::
 
 #### 4. (Optional) Configure a sampling rate
 
@@ -64,7 +68,7 @@ In order to track progress of the backfill, you can view logs for your evaluator
 
 ### Configure a LLM-as-a-judge online evaluator
 
-View this guide to configure on configuring an [LLM-as-a-judge evaluator](/evaluation/how_to_guides/llm_as_judge?mode=ui).
+View this guide to configure an [LLM-as-a-judge evaluator](/evaluation/how_to_guides/llm_as_judge?mode=ui).
 
 ### Configure a custom code evaluator
 
