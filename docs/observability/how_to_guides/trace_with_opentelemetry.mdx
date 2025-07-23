@@ -78,6 +78,14 @@ For non-LangChain applications or custom instrumentation, you can trace your app
    OTEL_EXPORTER_OTLP_HEADERS="x-api-key=<your langsmith api key>"
    ```
 
+   :::note Trace endpoint
+   Depending on how your otel exporter is configured, you may need to append `/v1/traces` to the endpoint if you are only sending traces.
+   :::
+
+   :::note Self-hosted deployments
+   If you're self-hosting LangSmith, replace the base endpoint with your LangSmith api endpoint and append `/api/v1`. For example: `OTEL_EXPORTER_OTLP_ENDPOINT=https://ai-company.com/api/v1/otel`
+   :::
+
    Optional: Specify a custom project name other than "default":
 
    ```bash

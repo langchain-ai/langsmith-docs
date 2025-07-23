@@ -168,6 +168,52 @@ The `session_id` is also known as the Tracing Project ID, which can be copied fr
 
 Use the returned `id` to reference this export in subsequent bulk export operations.
 
+### Scheduled exports
+
+:::note
+Requires LangSmith Helm version >= `0.10.42` (application version >= `0.10.109`)
+:::
+
+Scheduled exports collect runs periodically and export to the configured destination.
+To create a scheduled export, include `interval_hours` and remove `end_time`:
+
+```bash
+curl --request POST \
+  --url 'https://api.smith.langchain.com/api/v1/bulk-exports' \
+  --header 'Content-Type: application/json' \
+  --header 'X-API-Key: YOUR_API_KEY' \
+  --header 'X-Tenant-Id: YOUR_WORKSPACE_ID' \
+  --data '{
+    "bulk_export_destination_id": "your_destination_id",
+    "session_id": "project_uuid",
+    "start_time": "2024-01-01T00:00:00Z",
+    "filter": "and(eq(run_type, \"llm\"), eq(name, \"ChatOpenAI\"), eq(input_key, \"messages.content\"), like(input_value, \"%messages.content%\"))",
+    "interval_hours": 1
+  }'
+```
+
+**Details**
+
+- `interval_hours` must be between 1 hour and 168 hours (1 week) inclusive.
+- For spawned exports, the first time range exported is `start_time=(scheduled_export_start_time), end_time=(start_time + interval_hours)`.
+  Then `start_time=(previous_export_end_time), end_time=(this_export_start_time + interval_hours)`, and so on.
+- `end_time` must be omitted for scheduled exports. `end_time` is still required for non-scheduled exports.
+- Scheduled exports can be stopped by [cancelling the export](#stop-an-export).
+  - Exports that have been spawned by a scheduled export have the `source_bulk_export_id` attribute filled.
+  - If desired, these spawned bulk exports must be canceled separately from the source scheduled bulk export -
+    canceling the source bulk export **does not** cancel the spawned bulk exports.
+- Spawned exports run at `end_time + 10 minutes` to account for any runs that are submitted with `end_time` in the recent past.
+
+**Example**
+
+If a scheduled bulk export is created with `start_time=2025-07-16T00:00:00Z` and `interval_hours=6`:
+
+| Export | Start Time           | End Time             | Runs At              |
+| ------ | -------------------- | -------------------- | -------------------- |
+| 1      | 2025-07-16T00:00:00Z | 2025-07-16T06:00:00Z | 2025-07-16T06:10:00Z |
+| 2      | 2025-07-16T06:00:00Z | 2025-07-16T12:00:00Z | 2025-07-16T12:10:00Z |
+| 3      | 2025-07-16T12:00:00Z | 2025-07-16T18:00:00Z | 2025-07-16T18:10:00Z |
+
 ## Monitoring the Export Job
 
 ### Monitor Export Status
