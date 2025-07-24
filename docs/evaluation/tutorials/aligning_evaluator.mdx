@@ -11,68 +11,49 @@ Reliable LLM-as-a-judge evaluators are critical for making informed decisions ab
 This guide will walk you through **aligning your LLM-as-a-judge evaluator using human feedback**, ultimately improving your evaluator's quality to help you build reliable AI applications.
 
 ## How it works 
-LangSmith's **Align Evaluator** feature has a series of steps that help you align your LLM-as-a-judge evaluator with human expert feedback:
+LangSmith's **Align Evaluator** feature has a series of steps that help you align your LLM-as-a-judge evaluator with human expert feedback. You can use this feature to align evaluators that run on a dataset for [offline evaluations](/evaluation/concepts#offline-evaluation) or for [online evaluations](/evaluation/concepts#online-evaluation). In either case, the steps are similar:
 
-1. **Select one or more experiments** that contain outputs from your application.
-2. Add the selected experiments to an **annotation queue** where a human expert can label the data.
+1. **Select experiments or runs** that contain outputs from your application.
+2. Add the selected experiments or runs to an **annotation queue** where a human expert can label the data.
 3. **Test your LLM-as-a-judge evaluator prompt** against the labeled examples. Check the cases where your evaluator result is not aligned with the labeled data. This indicates areas where your evaluator prompt needs improvement.
 4. **Refine and repeat** to improve evaluator alignment. Update your LLM-as-a-judge evaluator prompt and test again.
 
-:::note Offline evaluators support only
-Currently this feature is only supported for evaluations over a dataset ([offline evaluations](/evaluation/concepts#offline-evaluation)), however we do plan to support this for [online evaluators](/evaluation/concepts#online-evaluation) in the near future. 
-:::
 
 ## Prerequisites
 
-In order to get started, you need a [dataset](/evaluation/concepts#datasets) with at least one [experiment](/evaluation/concepts#experiment). 
+| Offline Evaluations  | Online Evaluations          |
+|-----------|------|
+|In order to get started, you need a [dataset](/evaluation/concepts#datasets) with at least [experiment](/evaluation/concepts#experiment)<br/><br/>You'll need to upload or create datasets via the [SDK](/evaluation/how_to_guides/manage_datasets_programmatically#create-a-dataset) or the [UI](/evaluation/how_to_guides/manage_datasets_in_application#set-up-your-dataset) and run an experiment via the [SDK](/evaluation/how_to_guides/evaluate_llm_application#run-the-evaluation) or the [Playground](/evaluation?mode=ui#5-run-your-evaluation)<br/>    | In order to get started, you need an application that’s already sending traces to LangSmith.<br/><br/>Configure one of our [tracing integrations](/observability/how_to_guides#integrations) to start     |
 
-:::tip Collecting a representative dataset
+## Getting started
+
+You can begin aligning evaluators in one of two ways: either create a new evaluator—using labeled data to craft its prompt—or opt an existing evaluator into the alignment workflow.
+
+| Workflow                      | Offline Evaluations                                                                                                       | Online Evaluations                                                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Create a new evaluator using labeled data**    | 1. **Datasets & Experiments** and select your dataset<br/>2. Click **+ Evaluator** > **Create from labeled data**<br/>3. Enter a descriptive feedback key name (e.g. `correctness`, `hallucination`)                                            | 1. **Projects** and select your project<br/>2. Click **+ New** > **Evaluator** > **Create from labeled data**<br/>3. Enter a descriptive feedback‑key name (e.g. `correctness`, `hallucination`)                                         |
+| **Align an existing evaluator** | 1. **Datasets & Experiments** > select your dataset > **Evaluators** tab<br/>   2. In the **Align Evaluator with experiment data** box, click **Select Experiments**                                              | 1. **Projects** > select your project > **Evaluators** tab<br/>2. In the **Align Evaluator with experiment data** box, click **Select Experiments**  
+
+## 1. Select experiments/runs
+
+Select one or more experiments (or runs) to send for human labeling. This will add runs to an [annotation queue](/evaluation/concepts#annotation-queues). 
+
+![Add to evaluator queue](./static/add_to_evaluator_queue.gif)
+
+To add any new experiments/runs to an existing annotation queue, head to the **Evaluators** tab, select the evaluator you are aligning and click **Add to Queue.**
+
+:::tip Collecting a representative set of examples/runs
 Datasets should be representative of inputs and outputs you expect to see in production.
 
 While you don’t need to cover every possible scenario, it’s important to include examples across the full range of expected use cases. For example, if you're building a sports bot that answers questions about baseball, basketball, and football, your dataset should include at least one labeled example from each sport.
 :::
-
-- You can upload or create a dataset using the [SDK](/evaluation/how_to_guides/manage_datasets_programmatically#create-a-dataset) or the [UI](/evaluation/how_to_guides/manage_datasets_in_application#set-up-your-dataset)
-- You can run an experiment using the [SDK](/evaluation/how_to_guides/evaluate_llm_application#run-the-evaluation) or in the [Playground](/evaluation?mode=ui#5-run-your-evaluation)
-
-![Experiment](./static/alignment_starting_point.png) 
-
-## Getting started
-
-#### Create a new evaluator using labeled data:
-
-1. Navigate to the **Datasets and Experiments** tab
-2. Select a dataset
-3. Click on **+Evaluator**
-4. Choose **Create from labeled data**
-5. **Name your feedback key.** This name should reflect what you're evaluating (eg. correctness, hallucination, etc.). It is not possible to change the name of an evaluator after it is created.
-
-#### Align an existing evaluator using labeled data:
-
-1. Navigate to the **Datasets and Experiments** tab
-2. Select a dataset
-3. Go to the **Evaluators** tab
-4. Click on the evaluator you want to align
-5. In the "Align Evaluator with experiment data" box, click **Select Experiments**
-
-:::note
-Please note that this feature is only supported for **boolean** evaluators created after July 10th, 2025. 
-:::
-
-## 1. Select experiments
-
-Select one or more experiments to send for human labeling. This will add all runs from the selected experiments to an [annotation queue](/evaluation/concepts#annotation-queues). 
-
-![Add to evaluator queue](./static/add_to_evaluator_queue.gif)
-
-To add any new experiments to an existing annotation queue, head to the **Evaluators** tab, select the evaluator you are aligning and click **Add to Queue.**
 
 ## 2. Label examples
 
 Label examples in the annotation queue by adding a feedback score. Once you've labeled an example, click **Add to Reference Dataset**. 
 
 :::tip Labeling examples
-If you have a large number of examples in your experiments, you don't need to label every example to get started. We recommend starting with at least 20 examples, you can always add more later. We recccomend that the examples that you label are diverse (balanced in both 0 and 1 labels) and representative (reflective of real use cases) of your dataset to ensure that you're building a well rounded evaluator prompt. 
+If you have a large number of examples in your experiments, you don't need to label every example to get started. We recommend starting with at least 20 examples, you can always add more later. We recommend that the examples that you label are diverse (balanced in both 0 and 1 labels) and representative (reflective of real use cases) of your dataset to ensure that you're building a well rounded evaluator prompt. 
 :::
 
 ## 3. Test your evaluator prompt against the labeled examples
