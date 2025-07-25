@@ -112,7 +112,7 @@ Check that the version matches the version you upgraded to.
 
 Upgrading the Docker version of LangSmith is a bit more involved than the Helm version and may require a small amount of downtime. Please follow the instructions below to upgrade your Docker version of LangSmith.
 
-1. Update your `docker-compose.yml` file to the file used in the latest release. You can find this in the [LangSmith SDK GitHub repository](https://github.com/langchain-ai/langsmith-sdk/blob/main/python/langsmith/cli/docker-compose.yaml)
+1. Update your `docker-compose.yml` file to the file used in the latest release. You can find this in the [LangSmith SDK GitHub repository](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/docker-compose/docker-compose.yaml)
 2. Update your `.env` file with any new environment variables that are required in the new version. These will be detailed in the release notes for the new version.
 3. Run the following command to stop your current LangSmith instance:
 
