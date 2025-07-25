@@ -1,4 +1,4 @@
-# Improving LLM-as-judge evaluators using human feedback (beta)
+# Improving LLM-as-judge evaluators using human feedback
 
 :::tip Recommended Reading
 Before diving into this content, it might be helpful to read the following:
@@ -23,15 +23,15 @@ LangSmith's **Align Evaluator** feature has a series of steps that help you alig
 
 | Offline Evaluations  | Online Evaluations          |
 |-----------|------|
-|In order to get started, you need a [dataset](/evaluation/concepts#datasets) with at least [experiment](/evaluation/concepts#experiment)<br/><br/>You'll need to upload or create datasets via the [SDK](/evaluation/how_to_guides/manage_datasets_programmatically#create-a-dataset) or the [UI](/evaluation/how_to_guides/manage_datasets_in_application#set-up-your-dataset) and run an experiment via the [SDK](/evaluation/how_to_guides/evaluate_llm_application#run-the-evaluation) or the [Playground](/evaluation?mode=ui#5-run-your-evaluation)<br/>    | In order to get started, you need an application that’s already sending traces to LangSmith.<br/><br/>Configure one of our [tracing integrations](/observability/how_to_guides#integrations) to start     |
+|In order to get started, you need a [dataset](/evaluation/concepts#datasets) with at least one [experiment](/evaluation/concepts#experiment)<br/><br/>You'll need to upload or create datasets via the [SDK](/evaluation/how_to_guides/manage_datasets_programmatically#create-a-dataset) or the [UI](/evaluation/how_to_guides/manage_datasets_in_application#set-up-your-dataset) and run an experiment via the [SDK](/evaluation/how_to_guides/evaluate_llm_application#run-the-evaluation) or the [Playground](/evaluation?mode=ui#5-run-your-evaluation)<br/>    | In order to get started, you need an application that’s already sending traces to LangSmith.<br/><br/>Configure one of our [tracing integrations](/observability/how_to_guides#integrations) to start     |
 
 ## Getting started
 
-You can begin aligning evaluators in one of two ways: either create a new evaluator—using labeled data to craft its prompt—or opt an existing evaluator into the alignment workflow.
+You can enter the alignment flow for both new and existing evaluators in datasets and tracing projects.
 
-| Workflow                      | Offline Evaluations                                                                                                       | Online Evaluations                                                                                                  |
+|                               | Dataset Evaluators                                                                                                        | Tracing Project Evaluators                                                                                          |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **Create a new evaluator using labeled data**    | 1. **Datasets & Experiments** and select your dataset<br/>2. Click **+ Evaluator** > **Create from labeled data**<br/>3. Enter a descriptive feedback key name (e.g. `correctness`, `hallucination`)                                            | 1. **Projects** and select your project<br/>2. Click **+ New** > **Evaluator** > **Create from labeled data**<br/>3. Enter a descriptive feedback‑key name (e.g. `correctness`, `hallucination`)                                         |
+| **Create an aligned evaluator from scratch**    | 1. **Datasets & Experiments** and select your dataset<br/>2. Click **+ Evaluator** > **Create from labeled data**<br/>3. Enter a descriptive feedback key name (e.g. `correctness`, `hallucination`)                                            | 1. **Projects** and select your project<br/>2. Click **+ New** > **Evaluator** > **Create from labeled data**<br/>3. Enter a descriptive feedback‑key name (e.g. `correctness`, `hallucination`)                                         |
 | **Align an existing evaluator** | 1. **Datasets & Experiments** > select your dataset > **Evaluators** tab<br/>   2. In the **Align Evaluator with experiment data** box, click **Select Experiments**                                              | 1. **Projects** > select your project > **Evaluators** tab<br/>2. In the **Align Evaluator with experiment data** box, click **Select Experiments**  
 
 ## 1. Select experiments/runs
@@ -53,7 +53,7 @@ While you don’t need to cover every possible scenario, it’s important to inc
 Label examples in the annotation queue by adding a feedback score. Once you've labeled an example, click **Add to Reference Dataset**. 
 
 :::tip Labeling examples
-If you have a large number of examples in your experiments, you don't need to label every example to get started. We recommend starting with at least 20 examples, you can always add more later. We recommend that the examples that you label are diverse (balanced in both 0 and 1 labels) and representative (reflective of real use cases) of your dataset to ensure that you're building a well rounded evaluator prompt. 
+If you have a large number of examples in your experiments, you don't need to label every example to get started. We recommend starting with at least 20 examples, you can always add more later. We recommend that the examples that you label are diverse (balanced in both 0 and 1 labels) to ensure that you're building a well rounded evaluator prompt. 
 :::
 
 ## 3. Test your evaluator prompt against the labeled examples
