@@ -41,7 +41,17 @@ We support any S3 compatible bucket, for non AWS buckets such as GCS or MinIO, y
 ### Preparing the Destination
 
 :::note For self-hosted and EU region deployments
-Update the LangSmith URL appropriately for self-hosted installations or organizations in the EU region in the requests below. For the EU region, use `eu.api.smith.langchain.com`.
+Update the LangSmith URL appropriately for self-hosted installations or organizations in the EU region in the requests below.
+For the EU region, use `eu.api.smith.langchain.com`.
+:::
+
+:::note Permissions required
+Both the `backend` and `queue` services require write access to the destination bucket:
+
+- The `backend` service attempts to write a test file to the destination bucket when the export destination is created.
+  It will delete the test file if it has permission to do so (delete access is optional).
+- The `queue` service is responsible for bulk export execution and uploading the files to the bucket.
+
 :::
 
 The following example demonstrates how to create a destination using cURL. Replace the placeholder values with your actual configuration details.
