@@ -29,24 +29,29 @@ Generally, data that we send to Beacon can be categorized as follows:
   - This metadata will contain and collect the above subscription metrics to assist with remote support, allowing the LangChain team to diagnose and troubleshoot performance issues more effectively and proactively.
 
 ## LangSmith Telemetry
+
 As of version <b><u>0.11</u></b>, LangSmith deployments will by default send telemetry data back to our backend. All telemetry data is associated with an organization and deployment, but never identified with individual users. We <b><u>do not collect PII</u></b> (personally identifiable information) in any form.
 
+### What we use it for
+
+- To provide more proactive support and faster troubleshooting of self-hosted instances.
+- Assisting with performance tuning.
+- Understanding real-world usage to prioritize improvements.
+
 ### What we collect
-	- <b>Request metadata</b>: anonymized request counts, sizes, and durations
-	- <b>Database metrics</b>: query durations, error rates, and performance counters
-	- <b>Distributed traces</b>: end-to-end traces with timing and error information for high-latency or failed requests
-  
+
+    - <b>Request metadata</b>: anonymized request counts, sizes, and durations
+    - <b>Database metrics</b>: query durations, error rates, and performance counters
+    - <b>Distributed traces</b>: end-to-end traces with timing and error information for high-latency or failed requests
+
 :::important Important
 We do not collect actual payload contents, database records, or any data that can identify your end users or customers.
 :::
 
-### What we use it for
-  - To provide more proactive support and faster troubleshooting of self-hosted instances.
-  - Assisting with performance tuning.
-  - Understanding real-world usage to prioritize improvements.
-  
 ### How to Disable
+
 Set the following values in your `langsmith_config.yaml` file:
+
 ```yaml
 config:
   telemetry:
@@ -132,16 +137,21 @@ In an effort to maximize transparency, we provide sample payloads here:
     {
       "resource": {
         "attributes": [
-          { "key": "resource.name", "value": { "stringValue": "langsmith-metrics" } },
-          { "key": "env", "value": { "stringValue": "ls_self_hosted" } }
+          {
+            "key": "resource.name",
+            "value": { "stringValue": "langsmith-metrics" }
+          },
+          {
+            "key": "env",
+            "value": { "stringValue": "ls_self_hosted" }
+          }
         ]
       },
       "scopeMetrics": [
         {
           "scope": {
             "name": "langsmith.metrics",
-            "version": "0.1.0",
-            "attributes": []
+            "version": "0.1.0"
           },
           "metrics": [
             {
@@ -153,12 +163,45 @@ In an effort to maximize transparency, we provide sample payloads here:
                   {
                     "asDouble": 12.34,
                     "startTimeUnixNano": 1678886400000000000,
-                    "timeUnixNano":      1678886400000000000,
+                    "timeUnixNano": 1678886400000000000,
                     "attributes": [
-                      { "key": "endpoint", "value": { "stringValue": "/sessions" } },
+                      {
+                        "key": "endpoint",
+                        "value": { "stringValue": "/sessions" }
+                      },
                       { "key": "method", "value": { "stringValue": "GET" } },
-                      { "key": "service_name", "value": { "stringValue": "langsmith_backend" } }
+                      {
+                        "key": "service_name",
+                        "value": { "stringValue": "langsmith_backend" }
+                      }
                     ]
+                  }
+                ]
+              }
+            },
+            {
+              "name": "langsmith_http_requests_failed",
+              "unit": "1",
+              "description": "Counter of failed requests for LangSmith services",
+              "sum": {
+                "dataPoints": [
+                  {
+                    "asInt": 456,
+                    "startTimeUnixNano": 1678886400000000000,
+                    "timeUnixNano": 1678886400000000000,
+                    "attributes": [
+                      {
+                        "key": "endpoint",
+                        "value": { "stringValue": "/info" }
+                      },
+                      { "key": "method", "value": { "stringValue": "POST" } },
+                      {
+                        "key": "service_name",
+                        "value": { "stringValue": "langsmith_platform_backend" }
+                      }
+                    ],
+                    "aggregationTemporality": 2,
+                    "isMonotonic": true
                   }
                 ]
               }
@@ -185,36 +228,82 @@ In an effort to maximize transparency, we provide sample payloads here:
     {
       "resource": {
         "attributes": [
-          { "key": "service.name", "value": { "stringValue": "langsmith-backend" } },
-          { "key": "env", "value": { "stringValue": "ls_self_hosted" } }
+          {
+            "key": "env",
+            "value": {
+              "stringValue": "ls_self_hosted"
+            }
+          },
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "langsmith_backend"
+            }
+          }
         ]
       },
       "scopeSpans": [
         {
-          "scope": { "name": "fetch_runs" },
+          "scope": {},
           "spans": [
             {
               "traceId": "71699b6fe85982c7c8995ea3d9c95df2",
-              "spanId":  "3c191d03fa8be065",
-              "name":    "receive_request",
-              "kind":    2,
-              "startTimeUnixNano": 1722446875887000000,
-              "endTimeUnixNano":   1722446876000000000,
-              "status": { "code": 1 }
-            }
-          ]
-        },
-        {
-          "scope": { "name": "receive_runs" },
-          "spans": [
+              "spanId": "3c191d03fa8be0",
+              "parentSpanId": "",
+              "name": "receive_request",
+              "startTimeUnixNano": "1581452772000000321",
+              "endTimeUnixNano": "1581452773000000789",
+              "droppedAttributesCount": 1,
+              "events": [
+                {
+                  "timeUnixNano": "1581452773000000123",
+                  "name": "parse_request",
+                  "attributes": [
+                    {
+                      "key": "request_size",
+                      "value": {
+                        "stringValue": "100"
+                      }
+                    }
+                  ],
+                  "droppedAttributesCount": 2
+                },
+                {
+                  "timeUnixNano": "1581452773000000123",
+                  "name": "event",
+                  "droppedAttributesCount": 2
+                }
+              ],
+              "droppedEventsCount": 1,
+              "status": {
+                "message": "status-cancelled",
+                "code": 2
+              }
+            },
             {
               "traceId": "71699b6fe85982c7c8995ea3d9c95df2",
-              "spanId":  "2j389skd912kd87b1",
-              "name":    "return_request",
-              "kind":    1,
-              "startTimeUnixNano": 1722446877000000000,
-              "endTimeUnixNano":   1722446879000000000,
-              "status": { "code": 1 }
+              "spanId": "0932ksdka12345",
+              "parentSpanId": "3c191d03fa8be0",
+              "name": "process_request",
+              "startTimeUnixNano": "1581452772000000321",
+              "endTimeUnixNano": "1581452773000000789",
+              "links": [
+                {
+                  "traceId": "71699b6fe85982c7c8995ea3d9c95df2",
+                  "spanId": "8995ea3d9b6fe8",
+                  "attributes": [
+                    {
+                      "key": "ls_dataset_id",
+                      "value": {
+                        "stringValue": "83ksdajd123902kdsad912"
+                      }
+                    }
+                  ],
+                  "droppedAttributesCount": 4
+                }
+              ],
+              "droppedLinksCount": 3,
+              "status": {}
             }
           ]
         }
