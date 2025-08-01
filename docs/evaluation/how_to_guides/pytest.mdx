@@ -238,7 +238,7 @@ LANGSMITH_TEST_SUITE="SQL app tests" LANGSMITH_EXPERIMENT="baseline" pytest test
 
 LLMs on every commit in CI can get expensive. 
 To save time and resources, LangSmith lets you cache HTTP requests to disk.
-To enable caching, install with `langsmith[pytest]` and set env var `LANGSMITH_TEST_CACHE=/my/cache/path`:
+To enable caching, install with `langsmith[pytest]` and set an env var: `LANGSMITH_TEST_CACHE=/my/cache/path`:
 
 ```bash
 pip install -U "langsmith[pytest]"
@@ -246,6 +246,14 @@ LANGSMITH_TEST_CACHE=tests/cassettes pytest tests/my_llm_tests
 ```
 
 All requests will be cached to `tests/cassettes` and loaded from there on subsequent runs. If you check this in to your repository, your CI will be able to use the cache as well.
+
+In `langsmith>=0.4.10`, you may selectively enable caching for requests to individual URLs or hostnames like this:
+
+```python
+@pytest.mark.langsmith(cached_hosts=["api.openai.com", "https://api.anthropic.com"])
+def my_test():
+    ...
+```
 
 ## pytest features
 
