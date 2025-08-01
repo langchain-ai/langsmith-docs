@@ -75,6 +75,10 @@ In order to setup LangSmith with a replicated multi-node Clickhouse setup:
 When running migrations with `cluster` enabled, the migration will create the `Replicated` table engine flavor. This means that data will be replicated among the servers in the cluster.
 This is a master-master setup where any server can process reads, writes, or merges.
 
+:::info
+For an example setup of a replicated ClickHouse cluster, check out the [replicated ClickHouse section](https://github.com/langchain-ai/helm/blob/main/charts/langsmith/examples/replicated-clickhouse/README.md) in the LangSmith Helm chart repo, under examples.
+:::
+
 ## LangSmith-managed ClickHouse
 
 - If using LangSmith-managed ClickHouse, you will need to set up a VPC peering connection between the LangSmith VPC and the ClickHouse VPC. Please reach out to [support@langchain.dev](mailto:support@langchain.dev) for more information.
@@ -83,6 +87,8 @@ This is a master-master setup where any server can process reads, writes, or mer
 :::note
 ClickHouse installations managed by LangSmith use a SharedMerge engine, which automatically clusters them and separates compute from storage.
 :::
+
+For more information, check out the dedicated page for [managed ClickHouse](/self_hosting/langsmith_managed_clickhouse)
 
 ## Parameters
 
