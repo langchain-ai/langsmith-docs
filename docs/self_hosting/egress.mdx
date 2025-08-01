@@ -40,9 +40,9 @@ As of version <b><u>0.11</u></b>, LangSmith deployments will by default send tel
 
 ### What we collect
 
-    - <b>Request metadata</b>: anonymized request counts, sizes, and durations
-    - <b>Database metrics</b>: query durations, error rates, and performance counters
-    - <b>Distributed traces</b>: end-to-end traces with timing and error information for high-latency or failed requests
+    - <b>Request metadata</b>: anonymized request counts, sizes, and durations.
+    - <b>Database metrics</b>: query durations, error rates, and performance counters.
+    - <b>Distributed traces</b>: end-to-end traces with timing and error information for high-latency or failed requests.
 
 :::important Important
 We do not collect actual payload contents, database records, or any data that can identify your end users or customers.
@@ -287,21 +287,7 @@ In an effort to maximize transparency, we provide sample payloads here:
               "name": "process_request",
               "startTimeUnixNano": "1581452772000000321",
               "endTimeUnixNano": "1581452773000000789",
-              "links": [
-                {
-                  "traceId": "71699b6fe85982c7c8995ea3d9c95df2",
-                  "spanId": "8995ea3d9b6fe8",
-                  "attributes": [
-                    {
-                      "key": "ls_dataset_id",
-                      "value": {
-                        "stringValue": "83ksdajd123902kdsad912"
-                      }
-                    }
-                  ],
-                  "droppedAttributesCount": 4
-                }
-              ],
+              "links": [],
               "droppedLinksCount": 3,
               "status": {}
             }
