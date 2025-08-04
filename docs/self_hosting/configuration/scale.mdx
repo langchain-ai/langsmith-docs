@@ -78,6 +78,18 @@ This means that you have a very high scale of trace ingestions, but single digit
 For this, we recommend a configuration like this:
 
 ```yaml
+config:
+  blobStorage:
+    # Please also set the other keys to connect to your blob storage. See configuration section.
+    enabled: true
+  settings:
+    redisRunsExpirySeconds: "3600"
+# ttl:
+#   enabled: true
+#   ttl_period_seconds:
+#     longlived: "7776000"  # 90 days
+#     shortlived: "604800"  # 7 days
+
 frontend:
   deployment:
     replicas: 4 # OR enable autoscaling to this level (example below)
@@ -130,18 +142,6 @@ clickhouse:
       limits:
         cpu: "16"
         memory: "48Gi"
-
-config:
-  blobStorage:
-    # Please also set the other keys to connect to your blob storage. See configuration section.
-    enabled: true
-  settings:
-    redisRunsExpirySeconds: "3600"
-# ttl:
-#   enabled: true
-#   ttl_period_seconds:
-#     longlived: "7776000"  # 90 days
-#     shortlived: "604800"  # 7 days
 
 commonEnv:
   - name: "CLICKHOUSE_ASYNC_INSERT_WAIT_PCT_FLOAT"
@@ -278,6 +278,18 @@ This means you are both ingesting traces at a very high rate (approaching 1000 t
 Overall, we recommend a configuration like this:
 
 ```yaml
+config:
+  blobStorage:
+    # Please also set the other keys to connect to your blob storage. See configuration section.
+    enabled: true
+  settings:
+    redisRunsExpirySeconds: "3600"
+# ttl:
+#   enabled: true
+#   ttl_period_seconds:
+#     longlived: "7776000"  # 90 days
+#     shortlived: "604800"  # 7 days
+
 frontend:
   deployment:
     replicas: 4 # OR enable autoscaling to this level (example below)
@@ -330,18 +342,6 @@ clickhouse:
     password: "password"
     database: "default"
     cluster: "replicated"
-
-config:
-  blobStorage:
-    # Please also set the other keys to connect to your blob storage. See configuration section.
-    enabled: true
-  settings:
-    redisRunsExpirySeconds: "3600"
-# ttl:
-#   enabled: true
-#   ttl_period_seconds:
-#     longlived: "7776000"  # 90 days
-#     shortlived: "604800"  # 7 days
 
 commonEnv:
   - name: "CLICKHOUSE_ASYNC_INSERT_WAIT_PCT_FLOAT"
