@@ -358,3 +358,9 @@ commonEnv:
   - name: "CLICKHOUSE_ASYNC_INSERT_WAIT_PCT_FLOAT"
     value: "0"
 ```
+
+:::important
+Ensure that the Kubernetes cluster is configured with sufficent resources to scale to the recommended size. After deployment, all of the pods in the Kubernetes cluster should be in a `Running` state. Pods stuck in `Pending` may indicate that you are reaching node pool limits or need larger nodes.
+
+Also, ensure that any ingress controller deployed on the cluster is able to handle the desired load to prevent bottlenecks.
+:::
