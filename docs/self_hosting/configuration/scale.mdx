@@ -19,7 +19,7 @@ Common usage that put load on the write path:
 - Ingesting traces via the `@traceable` wrapper
 - Submitting traces via the `/runs/multipart` endpoint
 
-When scaling up the write path (trace ingestion), it is helpful to monitor the four services/resources listed above. Here are some typical changes that can help increase perfromance of trace ingestion:
+When scaling up the write path (trace ingestion), it is helpful to monitor the four services/resources listed above. Here are some typical changes that can help increase performance of trace ingestion:
 
 - Give ClickHouse more resources (CPU and memory) if it is approaching resource limits.
 - Increase the number of platform-backend pods if ingest requests are taking long to respond.
@@ -49,15 +49,15 @@ For more precise guidance on how this translates to helm chart values, check out
 
 ## Example LangSmith configurations for scale
 
-Below we provide some example LangSmith configurations based on expected read and write loads. Similar to the above sections, writes refer to trace ingestion, and reads refer to trace querying.
+Below we provide some example LangSmith configurations based on expected read and write loads.
 
-For read load:
+For read load (trace querying):
 
-- Low means up to 5 users looking at traces at a time (roughly 10 requests per second)
-- Medium means up to 20 users looking at traces at a time (roughly 40 requests per second)
-- High means up to 50 users looking at traces at a time (roughly 100 requests per second)
+- Low means roughly 5 users looking at traces at a time (about 10 requests per second)
+- Medium means roughly 20 users looking at traces at a time (about 40 requests per second)
+- High means roughly 50 users looking at traces at a time (about 100 requests per second)
 
-For write load:
+For write load (trace ingestion):
 
 - Low means up to 10 traces submitted per second
 - Medium means up to 100 traces submitted per second
@@ -73,7 +73,7 @@ Our default LangSmith configuration should be able to easily handle this load. N
 
 ### Low reads, high writes
 
-This means that you have a very high scale of trace ingestions, but not too many users on the frontend querying traces.
+This means that you have a very high scale of trace ingestions, but single digit number of users on the frontend querying traces at any once time.
 
 For this, we recommend a configuration like this:
 
@@ -126,14 +126,14 @@ clickhouse:
     resources:
       requests:
         cpu: "10"
-        memory: "48Gi"
+        memory: "32Gi"
       limits:
         cpu: "16"
-        memory: "64Gi"
+        memory: "48Gi"
 
 config:
   blobStorage:
-    ## Please also set the other keys to connect to your blob storage. See configuration section.
+    # Please also set the other keys to connect to your blob storage. See configuration section.
     enabled: true
   settings:
     redisRunsExpirySeconds: "3600"
@@ -157,7 +157,7 @@ For this, we recommend a configuration like this:
 ```yaml
 config:
   blobStorage:
-    ## Please also set the other keys to connect to your blob storage. See configuration section.
+    # Please also set the other keys to connect to your blob storage. See configuration section.
     enabled: true
   settings:
     redisRunsExpirySeconds: "3600"
@@ -208,11 +208,11 @@ clickhouse:
         cpu: "36"
 ```
 
-:::Warning
+:::warning
 If you still notice slow reads with the above configuration, we recommend moving to a [replicated Clickhouse cluster setup](./external_clickhouse#ha-replicated-clickhouse-cluster)
 :::
 
-### Medium writes, medium reads
+### Medium reads, medium writes
 
 This is a good all around configuration that should be able to handle most usage patterns of LangSmith. In internal testing, this configuration allowed us to scale to 100 traces ingested per second and 40 read requests per second.
 
@@ -221,7 +221,7 @@ For this, we recommend a configuration like this:
 ```yaml
 config:
   blobStorage:
-    ## Please also set the other keys to connect to your blob storage. See configuration section.
+    # Please also set the other keys to connect to your blob storage. See configuration section.
     enabled: true
   settings:
     redisRunsExpirySeconds: "3600"
@@ -232,11 +232,19 @@ frontend:
 
 queue:
   deployment:
-    replicas: 10
+    replicas: 10 # OR enable autoscaling to this level (example below)
+# autoscaling:
+#   enabled: true
+#   maxReplicas: 10
+#   minReplicas: 5
 
 backend:
   deployment:
-    replicas: 15
+    replicas: 15 # OR enable autoscaling to this level (example below)
+# autoscaling:
+#   enabled: true
+#   maxReplicas: 15
+#   minReplicas: 8
 
 redis:
   statefulSet:
@@ -268,11 +276,11 @@ commonEnv:
     value: "0"
 ```
 
-:::Warning
+:::warning
 If you still notice slow reads with the above configuration, we recommend moving to a [replicated Clickhouse cluster setup](./external_clickhouse#ha-replicated-clickhouse-cluster)
 :::
 
-### High writes, high reads
+### High reads, high writes
 
 This means you are both ingesting traces at a very high rate (approaching 1000 traces submitted per second) and also have many users querying traces on the frontend (over 50 users) and/or scripts that are consistenlty making requests to `/runs/query` or `/runs/<run-id>` endpoints.
 
@@ -320,23 +328,23 @@ redis:
     enabled: true
     existingSecretName: langsmith-redis-secret # Set the connection url for your external Redis instance (200+ GB)
 
+# We strongly recommend setting up a replicated clickhouse cluster for this load.
+# Update these values as needed to connect to your replicated clickhouse cluster.
 clickhouse:
-  statefulSet:
-    persistence:
-      # This may depend on your configured TTL (see config section).
-      # We recommend 600Gi for every shortlived TTL day if operating at this scale constantly.
-      size: 4200Gi # This assumes 7 days TTL and operating a this scale constantly.
-    resources:
-      requests:
-        cpu: "10"
-        memory: "48Gi"
-      limits:
-        cpu: "16"
-        memory: "64Gi"
+  external:
+    # Each replica in the cluster should have resource requests of 8 cores and 16 GB memory, and resource limit of 12 cores and 32 GB memory.
+    enabled: true
+    host: langsmith-ch-clickhouse-replicated.default.svc.cluster.local
+    port: "8123"
+    nativePort: "9000"
+    user: "default"
+    password: "password"
+    database: "default"
+    cluster: "replicated"
 
 config:
   blobStorage:
-    ## Please also set the other keys to connect to your blob storage. See configuration section.
+    # Please also set the other keys to connect to your blob storage. See configuration section.
     enabled: true
   settings:
     redisRunsExpirySeconds: "3600"
