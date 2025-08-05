@@ -23,7 +23,7 @@ By default, the experiment view shows the input, output, and reference output fo
 You can customize the columns using the **Display** button to make it easier to interpret experiment results:
 - **Break out fields from inputs, outputs, and reference outputs** into their own columns. This is especially helpful if you have long inputs/outputs/reference outputs and want to surface important fields
 - **Hide and reorder columns** to create focused views for analysis 
-- **Control decimal precision on feedback scores**. By default, we surface numerical feedback scores with a decimal precision of 2 and this is now customizable
+- **Control decimal precision on feedback scores**. By default, we surface numerical feedback scores with a decimal precision of 2, but you can customize this setting to be up to 6 decimals
 
 :::tip
 You can set default configurations for an entire dataset or temporarily save settings just for yourself.
@@ -31,11 +31,9 @@ You can set default configurations for an entire dataset or temporarily save set
 
 ![Experiment view](./static/column_config.gif)
 
-### Heatmap view
-The experiment view defaults to a heat map enabled view, making it easy to identify patterns, spot outliers, and understand score distributions across your dataset. Based on the type of evaluator, you can configure if a higher or lower feedback score indicates better performance for each metric by clicking on the three dots in the heat map button. 
+You can also set the high, middle, and low thresholds for numeric feedback scores in your experiment, which affects the threshold at which score chips render as red or green:
 
-
-![Heatmap view](./static/heat_map.gif)
+![Column heatmap configuration](./static/column_heat_map.png)
 
 ### Sort and filter
 To sort or filter feedback scores, you can use the actions in the column headers.
