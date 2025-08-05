@@ -23,6 +23,7 @@ Set up LangSmith tracing to get visibility into your production applications.
 - [Vercel AI SDK (JS only)](./how_to_guides/trace_with_vercel_ai_sdk)
 - [OpenTelemetry](./how_to_guides/trace_with_opentelemetry)
 - [OpenAI Agent SDK (Python only)](./how_to_guides/trace_with_openai_agents_sdk)
+- [Claude Code](./how_to_guides/claude_code)
 
 ### Advanced configuration
 
