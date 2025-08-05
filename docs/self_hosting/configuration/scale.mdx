@@ -6,18 +6,18 @@ For example configurations, refer to [Example LangSmith configurations for scale
 
 ## Trace ingestion (write path)
 
+Common usage that put load on the write path:
+
+- Ingesting traces via the Python or JavaScript LangSmith SDK
+- Ingesting traces via the `@traceable` wrapper
+- Submitting traces via the `/runs/multipart` endpoint
+
 Services that play a large role in trace ingestion:
 
 - Platform backend service: Receives initial request to ingest traces and places traces on a Redis queue
 - Redis cache: Used to queue traces that need to be persisted
 - Queue service: Persists traces for querying
 - ClickHouse: Persistent storage used for traces
-
-Common usage that put load on the write path:
-
-- Ingesting traces via the Python or JavaScript LangSmith SDK
-- Ingesting traces via the `@traceable` wrapper
-- Submitting traces via the `/runs/multipart` endpoint
 
 When scaling up the write path (trace ingestion), it is helpful to monitor the four services/resources listed above. Here are some typical changes that can help increase performance of trace ingestion:
 
@@ -28,16 +28,17 @@ When scaling up the write path (trace ingestion), it is helpful to monitor the f
 
 ## Trace querying (read path)
 
-Services that play a large role in querying traces:
-
-- Backend service: Receives the request and submits a query to ClickHouse to then respond to the request
-- ClickHouse: Persistent storage for traces. This is the main database that is queried when requesting trace info.
-
 Common usage that puts load on the read path:
 
 - Users on the frontend looking at tracing projects or individual traces
 - Scripts used to query for trace info
 - Hitting either the `/runs/query` or `/runs/<run-id>` api endpoints
+
+
+Services that play a large role in querying traces:
+
+- Backend service: Receives the request and submits a query to ClickHouse to then respond to the request
+- ClickHouse: Persistent storage for traces. This is the main database that is queried when requesting trace info.
 
 When scaling up the read path (trace querying), it is helpful to monitor the two services/resources listed above. Here are some typical changes that can help improve performance of trace querying:
 
