@@ -50,22 +50,21 @@ By default, the trace will be logged to the project with the name `default`. An 
 
 The [previous section](#quick-start) showed how to trace all invocations of a LangChain runnables within your applications by setting a single environment variable. While this is a convenient way to get started, you may want to trace only specific invocations or parts of your application.
 
-There are two ways to do this in Python: by manually passing in a `LangChainTracer` ([reference docs](https://api.python.langchain.com/en/latest/tracers/langchain_core.tracers.langchain.LangChainTracer.html#langchain_core.tracers.langchain.LangChainTracer)) instance as a callback, or by using the `tracing_v2_enabled` context manager ([reference docs](https://api.python.langchain.com/en/latest/tracers/langchain_core.tracers.context.tracing_v2_enabled.html)).
+There are two ways to do this in Python: by manually passing in a `LangChainTracer` ([reference docs](https://api.python.langchain.com/en/latest/tracers/langchain_core.tracers.langchain.LangChainTracer.html#langchain_core.tracers.langchain.LangChainTracer)) instance as a callback, or by using the `tracing_context` context manager ([reference docs](https://docs.smith.langchain.com/reference/python/run_helpers/langsmith.run_helpers.tracing_context#langsmith.run_helpers.tracing_context)).
 
 In JS/TS, you can pass a `LangChainTracer` ([reference docs](https://api.js.langchain.com/classes/langchain_core_tracers_tracer_langchain.LangChainTracer.html)) instance as a callback.
 
 <CodeTabs
   tabs={[
-    PythonBlock(`# You can configure a LangChainTracer instance to trace a specific invocation.
-from langchain.callbacks.tracers import LangChainTracer\n
-tracer = LangChainTracer()
-chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})\n
-# LangChain Python also supports a context manager for tracing a specific block of code.
-from langchain_core.tracers.context import tracing_v2_enabled
-with tracing_v2_enabled():
-    chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})\n
+    PythonBlock(`# You can opt-in to specific invocations..
+import langsmith as ls\n
+with ls.tracing_context(enabled=True):
+    chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"})\n
 # This will NOT be traced (assuming LANGSMITH_TRACING is not set)
-chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced"})`),
+chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced"})\n
+# This would not be traced, even if LANGSMITH_TRACING=true
+with ls.tracing_context(enabled=False):
+    chain.invoke({"question": "Am I being traced?", "context": "I'm not being traced"})`),
     TypeScriptBlock(`// You can configure a LangChainTracer instance to trace a specific invocation.
 import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";\n
 const tracer = new LangChainTracer();
@@ -96,17 +95,13 @@ The `LANGSMITH_PROJECT` flag is only supported in JS SDK versions >= 0.2.16, use
 
 ### Dynamically
 
-This largely builds off of the [previous section](#trace-selectively) and allows you to set the project name for a specific `LangChainTracer` instance or as parameters to the `tracing_v2_enabled` context manager in Python.
+This largely builds off of the [previous section](#trace-selectively) and allows you to set the project name for a specific `LangChainTracer` instance or as parameters to the `tracing_context` context manager in Python.
 
 <CodeTabs
   tabs={[
-    PythonBlock(`# You can set the project name for a specific tracer instance:
-from langchain.callbacks.tracers import LangChainTracer\n
-tracer = LangChainTracer(project_name="My Project")
-chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})\n
-# You can set the project name using the project_name parameter.
-from langchain_core.tracers.context import tracing_v2_enabled
-with tracing_v2_enabled(project_name="My Project"):
+    PythonBlock(`# You can set the project name using the project_name parameter.
+import langsmith as ls\n
+with ls.tracing_context(project_name="My Project", enabled=True):
     chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})`),
     TypeScriptBlock(`// You can set the project name for a specific tracer instance:
 import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";\n
@@ -332,22 +327,16 @@ This largely builds off of the [previous section](#trace-selectively).
 
 <CodeTabs
   tabs={[
-    PythonBlock(`from langchain.callbacks.tracers import LangChainTracer
-from langsmith import Client\n
+    PythonBlock(`import langsmith as ls\n
 # You can create a client instance with an api key and api url
-client = Client(
+client = ls.Client(
     api_key="YOUR_API_KEY",  # This can be retrieved from a secrets manager
     api_url="https://api.smith.langchain.com",  # Update appropriately for self-hosted installations or the EU region
 )\n
-# You can pass the client and project_name to the LangChainTracer instance
+# You can pass the client and project_name to the tracing_context
 # highlight-next-line
-tracer = LangChainTracer(client=client, project_name="test-no-env")
-chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"}, config={"callbacks": [tracer]})\n
-# LangChain Python also supports a context manager which allows passing the client and project_name
-from langchain_core.tracers.context import tracing_v2_enabled
-# highlight-next-line
-with tracing_v2_enabled(client=client, project_name="test-no-env"):
-    chain.invoke({"question": "Am I using a context manager?", "context": "I'm using a context manager"})`),
+with ls.tracing_context(client=client, project_name="test-no-env", enabled=True):
+    chain.invoke({"question": "Am I using a callback?", "context": "I'm using a callback"})\n`),
     TypeScriptBlock(`import { LangChainTracer } from "@langchain/core/tracers/tracer_langchain";
 import { Client } from "langsmith";\n
 // You can create a client instance with an api key and api url
