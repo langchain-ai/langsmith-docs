@@ -83,12 +83,11 @@ If you are using other server frameworks, you can always "receive" the distribut
 
 ```python
 # server.py
-from langsmith import traceable
-from langsmith.run_helpers import tracing_context
+import langsmith as ls
 from fastapi import FastAPI, Request
 
 
-@traceable
+@ls.traceable
 async def my_application():
     ...
 
@@ -101,7 +100,7 @@ async def fake_route(request: Request):
     # request.headers:  {"langsmith-trace": "..."}
     # as well as optional metadata/tags in `baggage`
     # highlight-next-line
-    with tracing_context(parent=request.headers):
+    with ls.tracing_context(parent=request.headers):
         return await my_application()
 
 ```
@@ -109,7 +108,6 @@ async def fake_route(request: Request):
 The example above uses the `tracing_context` context manager. You can also directly specify the parent run context in the `langsmith_extra` parameter of a method wrapped with `@traceable`.
 
 ```python
-from langsmith.run_helpers import traceable, trace
 # ... same as above
 @app.post("/my-route")
 async def fake_route(request: Request):
