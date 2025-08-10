@@ -260,7 +260,9 @@ First, install the [`@vercel/otel`](https://www.npmjs.com/package/@vercel/otel) 
   ]}
 />
 
-Then, set up an [`instrumentation.ts`](https://nextjs.org/docs/app/guides/instrumentation) file in your root directory. It should look like this:
+Then, set up an [`instrumentation.ts`](https://nextjs.org/docs/app/guides/instrumentation) file in your root directory.
+Call `initializeOTEL` and pass the resulting `DEFAULT_LANGSMITH_SPAN_PROCESSOR` into the `spanProcessors` field into your `registerOTEL(...)` call.
+It should look something like this:
 
 ```ts
 import { registerOTel } from "@vercel/otel";
