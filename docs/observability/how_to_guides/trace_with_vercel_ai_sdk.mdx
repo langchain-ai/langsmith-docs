@@ -234,74 +234,73 @@ The resulting trace will look [like this](https://smith.langchain.com/public/296
 
 ### Next.js
 
-The [default OTEL setup](https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation) for Next.js will trace all routes, including
-those that do not contain LLM traces. We instead suggest manually instrumenting specific routes by creating and passing a tracer as shown below:
+First, install the [`@vercel/otel`](https://www.npmjs.com/package/@vercel/otel) package:
+
+<CodeTabs
+  groupId="client-language"
+  tabs={[
+    {
+      value: "npm",
+      label: "npm",
+      language: "bash",
+      content: `npm install @vercel/otel`,
+    },
+    {
+      value: "yarn",
+      label: "yarn",
+      language: "bash",
+      content: `yarn add @vercel/otel`,
+    },
+    {
+      value: "pnpm",
+      label: "pnpm",
+      language: "bash",
+      content: `pnpm add @vercel/otel`,
+    },
+  ]}
+/>
+
+Then, set up an [`instrumentation.ts`](https://nextjs.org/docs/app/guides/instrumentation) file in your root directory. It should look like this:
+
+```ts
+import { registerOTel } from "@vercel/otel";
+import { initializeOTEL } from "langsmith/experimental/otel/setup";
+
+const { DEFAULT_LANGSMITH_SPAN_PROCESSOR } = initializeOTEL({});
+
+export function register() {
+  registerOTel({
+    serviceName: "your-project-name",
+    spanProcessors: [DEFAULT_LANGSMITH_SPAN_PROCESSOR],
+  });
+}
+```
+
+And finally, in your API routes, call `initializeOTEL` as well and add an `experimental_telemetry` field to your AI SDK calls:
 
 ```ts
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
-import { traceable } from "langsmith/traceable";
 
 import { initializeOTEL } from "langsmith/experimental/otel/setup";
-import { LangSmithOTLPTraceExporter } from "langsmith/experimental/otel/exporter";
-import {
-  BatchSpanProcessor,
-  BasicTracerProvider,
-} from "@opentelemetry/sdk-trace-base";
-import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
-import { context } from "@opentelemetry/api";
 
-import { after } from "next/server";
-
-const exporter = new LangSmithOTLPTraceExporter();
-const processor = new BatchSpanProcessor(exporter);
-const contextManager = new AsyncHooksContextManager();
-
-contextManager.enable();
-context.setGlobalContextManager(contextManager);
-
-const provider = new BasicTracerProvider({
-  spanProcessors: [processor],
-});
-
-// Pass instantiated provider and context manager to LangSmith
-initializeOTEL({
-  globalTracerProvider: provider,
-  globalContextManager: contextManager,
-});
-
-// highlight-next-line
-const tracer = provider.getTracer("ai-sdk-telemetry");
+initializeOTEL();
 
 export async function GET() {
-  after(async () => {
-    await provider.shutdown();
-  });
-
-  const wrappedText = traceable(
-    async (content: string) => {
-      const { text } = await generateText({
-        model: openai("gpt-4.1-nano"),
-        messages: [{ role: "user", content }],
-        experimental_telemetry: {
-          isEnabled: true,
-          // highlight-next-line
-          tracer,
-        },
-        maxSteps: 10,
-      });
-
-      return { text };
+  const { text } = await generateText({
+    model: openai("gpt-4.1-nano"),
+    messages: [{ role: "user", content: "Why is the sky blue?" }],
+    experimental_telemetry: {
+      isEnabled: true,
     },
-    // highlight-next-line
-    { name: "parentTraceable", tracer }
-  );
-
-  const { text } = await wrappedText("Why is the sky blue?");
+    maxSteps: 10,
+  });
 
   return new Response(text);
 }
 ```
+
+You can also wrap parts of your code in `traceables` for more granularity.
 
 ### Sentry
 
