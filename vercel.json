@@ -262,6 +262,898 @@
     {
       "source": "/how_to_guides/evaluation/evaluate_pairwise",
       "destination": "/evaluation/how_to_guides/evaluate_pairwise"
+    },
+    {
+      "source": "/",
+      "destination": "https://www.docs.langchain.com/langsmith"
+    },
+    {
+      "source": "/index",
+      "destination": "https://www.docs.langchain.com/langsmith"
+    },
+    {
+      "source": "/langgraph_cloud",
+      "destination": "https://www.docs.langchain.com/langsmith"
+    },
+    {
+      "source": "/observability",
+      "destination": "https://www.docs.langchain.com/langsmith/observability-stack"
+    },
+    {
+      "source": "/observability/index",
+      "destination": "https://www.docs.langchain.com/langsmith/observability-stack"
+    },
+    {
+      "source": "/evaluation",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluation-overview"
+    },
+    {
+      "source": "/evaluation/index",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluation-overview"
+    },
+    {
+      "source": "/administration",
+      "destination": "https://www.docs.langchain.com/langsmith/administration-overview"
+    },
+    {
+      "source": "/administration/index",
+      "destination": "https://www.docs.langchain.com/langsmith/administration-overview"
+    },
+    {
+      "source": "/prompt_engineering",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-engineering-overview"
+    },
+    {
+      "source": "/prompt_engineering/index",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-engineering-overview"
+    },
+    {
+      "source": "/self_hosting",
+      "destination": "https://www.docs.langchain.com/langsmith/architectural-overview"
+    },
+    {
+      "source": "/self_hosting/index",
+      "destination": "https://www.docs.langchain.com/langsmith/architectural-overview"
+    },
+    {
+      "source": "/reference",
+      "destination": "https://www.docs.langchain.com/langsmith"
+    },
+    {
+      "source": "/reference/index",
+      "destination": "https://www.docs.langchain.com/langsmith"
+    },
+    {
+      "source": "/pricing",
+      "destination": "https://www.docs.langchain.com/langsmith"
+    },
+    {
+      "source": "/pricing/index",
+      "destination": "https://www.docs.langchain.com/langsmith"
+    },
+    {
+      "source": "/observability/concepts",
+      "destination": "https://www.docs.langchain.com/langsmith/observability-stack"
+    },
+    {
+      "source": "/observability/concepts/index",
+      "destination": "https://www.docs.langchain.com/langsmith/observability-stack"
+    },
+    {
+      "source": "/observability/how_to_guides",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-with-langchain"
+    },
+    {
+      "source": "/observability/how_to_guides/index",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-with-langchain"
+    },
+    {
+      "source": "/observability/how_to_guides/access_current_span",
+      "destination": "https://www.docs.langchain.com/langsmith/access-current-span"
+    },
+    {
+      "source": "/observability/how_to_guides/add_metadata_tags",
+      "destination": "https://www.docs.langchain.com/langsmith/add-metadata-tags"
+    },
+    {
+      "source": "/observability/how_to_guides/alerts",
+      "destination": "https://www.docs.langchain.com/langsmith/alerts-webhook"
+    },
+    {
+      "source": "/observability/how_to_guides/alerts_pagerduty",
+      "destination": "https://www.docs.langchain.com/langsmith/alerts-pagerduty"
+    },
+    {
+      "source": "/observability/how_to_guides/alerts_webhook",
+      "destination": "https://www.docs.langchain.com/langsmith/alerts-webhook"
+    },
+    {
+      "source": "/observability/how_to_guides/annotate_code",
+      "destination": "https://www.docs.langchain.com/langsmith/annotate-code"
+    },
+    {
+      "source": "/observability/how_to_guides/calculate_token_based_costs",
+      "destination": "https://www.docs.langchain.com/langsmith/calculate-token-based-costs"
+    },
+    {
+      "source": "/observability/how_to_guides/claude_code",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-claude-code"
+    },
+    {
+      "source": "/observability/how_to_guides/collector_proxy",
+      "destination": "https://www.docs.langchain.com/langsmith/collector-proxy"
+    },
+    {
+      "source": "/observability/how_to_guides/compare_traces",
+      "destination": "https://www.docs.langchain.com/langsmith/compare-traces"
+    },
+    {
+      "source": "/observability/how_to_guides/dashboards",
+      "destination": "https://www.docs.langchain.com/langsmith/dashboards"
+    },
+    {
+      "source": "/observability/how_to_guides/data_export",
+      "destination": "https://www.docs.langchain.com/langsmith/data-export"
+    },
+    {
+      "source": "/observability/how_to_guides/distributed_tracing",
+      "destination": "https://www.docs.langchain.com/langsmith/distributed-tracing"
+    },
+    {
+      "source": "/observability/how_to_guides/export_traces",
+      "destination": "https://www.docs.langchain.com/langsmith/export-traces"
+    },
+    {
+      "source": "/observability/how_to_guides/filter_traces_in_application",
+      "destination": "https://www.docs.langchain.com/langsmith/filter-traces-in-application"
+    },
+    {
+      "source": "/observability/how_to_guides/langgraph_platform_logs",
+      "destination": "https://www.docs.langchain.com/langsmith/langgraph-platform-logs"
+    },
+    {
+      "source": "/observability/how_to_guides/log_llm_trace",
+      "destination": "https://www.docs.langchain.com/langsmith/log-llm-trace"
+    },
+    {
+      "source": "/observability/how_to_guides/log_multimodal_traces",
+      "destination": "https://www.docs.langchain.com/langsmith/multimodal-content"
+    },
+    {
+      "source": "/observability/how_to_guides/log_retriever_trace",
+      "destination": "https://www.docs.langchain.com/langsmith/log-retriever-trace"
+    },
+    {
+      "source": "/observability/how_to_guides/log_traces_to_project",
+      "destination": "https://www.docs.langchain.com/langsmith/log-traces-to-project"
+    },
+    {
+      "source": "/observability/how_to_guides/mask_inputs_outputs",
+      "destination": "https://www.docs.langchain.com/langsmith/mask-inputs-outputs"
+    },
+    {
+      "source": "/observability/how_to_guides/nest_traces",
+      "destination": "https://www.docs.langchain.com/langsmith/nest-traces"
+    },
+    {
+      "source": "/observability/how_to_guides/online_evaluations",
+      "destination": "https://www.docs.langchain.com/langsmith/online-evaluations"
+    },
+    {
+      "source": "/observability/how_to_guides/output_detailed_logs",
+      "destination": "https://www.docs.langchain.com/langsmith/output-detailed-logs"
+    },
+    {
+      "source": "/observability/how_to_guides/rules",
+      "destination": "https://www.docs.langchain.com/langsmith/rules"
+    },
+    {
+      "source": "/observability/how_to_guides/sample_traces",
+      "destination": "https://www.docs.langchain.com/langsmith/sample-traces"
+    },
+    {
+      "source": "/observability/how_to_guides/serverless_environments",
+      "destination": "https://www.docs.langchain.com/langsmith/serverless-environments"
+    },
+    {
+      "source": "/observability/how_to_guides/share_trace",
+      "destination": "https://www.docs.langchain.com/langsmith/share-trace"
+    },
+    {
+      "source": "/observability/how_to_guides/threads",
+      "destination": "https://www.docs.langchain.com/langsmith/threads"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_generator_functions",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-generator-functions"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_with_api",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-with-api"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_with_instructor",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-with-instructor"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_with_langchain",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-with-langchain"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_with_langgraph",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-with-langgraph"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_with_openai_agents_sdk",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-openai"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_with_opentelemetry",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-with-opentelemetry"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_with_vercel_ai_sdk",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-with-vercel-ai-sdk"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_with_vercel_ai_sdk_legacy",
+      "destination": "https://www.docs.langchain.com/langsmith/legacy-trace-with-vercel-ai-sdk"
+    },
+    {
+      "source": "/observability/how_to_guides/trace_without_env_vars",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-without-env-vars"
+    },
+    {
+      "source": "/observability/how_to_guides/toubleshooting_variable_caching",
+      "destination": "https://www.docs.langchain.com/langsmith/troubleshooting-variable-caching"
+    },
+    {
+      "source": "/observability/how_to_guides/upload_files_with_traces",
+      "destination": "https://www.docs.langchain.com/langsmith/upload-files-with-traces"
+    },
+    {
+      "source": "/observability/how_to_guides/webhooks",
+      "destination": "https://www.docs.langchain.com/langsmith/webhooks"
+    },
+    {
+      "source": "/observability/tutorials",
+      "destination": "https://www.docs.langchain.com/langsmith/observability-tutorial"
+    },
+    {
+      "source": "/observability/tutorials/index",
+      "destination": "https://www.docs.langchain.com/langsmith/observability-tutorial"
+    },
+    {
+      "source": "/observability/tutorials/observability",
+      "destination": "https://www.docs.langchain.com/langsmith/observability-tutorial"
+    },
+    {
+      "source": "/evaluation/concepts",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluation-overview"
+    },
+    {
+      "source": "/evaluation/concepts/index",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluation-overview"
+    },
+    {
+      "source": "/evaluation/how_to_guides",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-llm-application"
+    },
+    {
+      "source": "/evaluation/how_to_guides/index",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-llm-application"
+    },
+    {
+      "source": "/evaluation/how_to_guides/analyze_single_experiment",
+      "destination": "https://www.docs.langchain.com/langsmith/analyze-single-experiment"
+    },
+    {
+      "source": "/evaluation/how_to_guides/annotate_traces_inline",
+      "destination": "https://www.docs.langchain.com/langsmith/annotate-traces-inline"
+    },
+    {
+      "source": "/evaluation/how_to_guides/annotation_queues",
+      "destination": "https://www.docs.langchain.com/langsmith/annotation-queues"
+    },
+    {
+      "source": "/evaluation/how_to_guides/async",
+      "destination": "https://www.docs.langchain.com/langsmith/async"
+    },
+    {
+      "source": "/evaluation/how_to_guides/attach_user_feedback",
+      "destination": "https://www.docs.langchain.com/langsmith/attach-user-feedback"
+    },
+    {
+      "source": "/evaluation/how_to_guides/audit_evaluator_scores",
+      "destination": "https://www.docs.langchain.com/langsmith/audit-evaluator-scores"
+    },
+    {
+      "source": "/evaluation/how_to_guides/bind_evaluator_to_dataset",
+      "destination": "https://www.docs.langchain.com/langsmith/bind-evaluator-to-dataset"
+    },
+    {
+      "source": "/evaluation/how_to_guides/compare_experiment_results",
+      "destination": "https://www.docs.langchain.com/langsmith/compare-experiment-results"
+    },
+    {
+      "source": "/evaluation/how_to_guides/create_few_shot_evaluators",
+      "destination": "https://www.docs.langchain.com/langsmith/create-few-shot-evaluators"
+    },
+    {
+      "source": "/evaluation/how_to_guides/custom_evaluator",
+      "destination": "https://www.docs.langchain.com/langsmith/code-evaluator"
+    },
+    {
+      "source": "/evaluation/how_to_guides/dataset_subset",
+      "destination": "https://www.docs.langchain.com/langsmith/dataset-subset"
+    },
+    {
+      "source": "/evaluation/how_to_guides/dataset_version",
+      "destination": "https://www.docs.langchain.com/langsmith/dataset-version"
+    },
+    {
+      "source": "/evaluation/how_to_guides/define_target",
+      "destination": "https://www.docs.langchain.com/langsmith/define-target-function"
+    },
+    {
+      "source": "/evaluation/how_to_guides/download_experiment_results_as_csv",
+      "destination": "https://www.docs.langchain.com/langsmith/download-experiment-results-as-csv"
+    },
+    {
+      "source": "/evaluation/how_to_guides/evaluate_existing_experiment",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-existing-experiment"
+    },
+    {
+      "source": "/evaluation/how_to_guides/evaluate_llm_application",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-llm-application"
+    },
+    {
+      "source": "/evaluation/how_to_guides/evaluate_on_intermediate_steps",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-on-intermediate-steps"
+    },
+    {
+      "source": "/evaluation/how_to_guides/evaluate_pairwise",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-pairwise"
+    },
+    {
+      "source": "/evaluation/how_to_guides/evaluate_with_attachments",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-with-attachments"
+    },
+    {
+      "source": "/evaluation/how_to_guides/export_filtered_traces_to_dataset",
+      "destination": "https://www.docs.langchain.com/langsmith/export-filtered-traces-to-dataset"
+    },
+    {
+      "source": "/evaluation/how_to_guides/fetch_perf_metrics_experiment",
+      "destination": "https://www.docs.langchain.com/langsmith/fetch-perf-metrics-experiment"
+    },
+    {
+      "source": "/evaluation/how_to_guides/filter_experiments_ui",
+      "destination": "https://www.docs.langchain.com/langsmith/filter-experiments-ui"
+    },
+    {
+      "source": "/evaluation/how_to_guides/index_datasets_for_dynamic_few_shot_example_selection",
+      "destination": "https://www.docs.langchain.com/langsmith/index-datasets-for-dynamic-few-shot-example-selection"
+    },
+    {
+      "source": "/evaluation/how_to_guides/langchain_runnable",
+      "destination": "https://www.docs.langchain.com/langsmith/langchain-runnable"
+    },
+    {
+      "source": "/evaluation/how_to_guides/langgraph",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-graph"
+    },
+    {
+      "source": "/evaluation/how_to_guides/llm_as_judge",
+      "destination": "https://www.docs.langchain.com/langsmith/llm-as-judge"
+    },
+    {
+      "source": "/evaluation/how_to_guides/local",
+      "destination": "https://www.docs.langchain.com/langsmith/local"
+    },
+    {
+      "source": "/evaluation/how_to_guides/manage_datasets_in_application",
+      "destination": "https://www.docs.langchain.com/langsmith/manage-datasets-in-application"
+    },
+    {
+      "source": "/evaluation/how_to_guides/manage_datasets_programmatically",
+      "destination": "https://www.docs.langchain.com/langsmith/manage-datasets-programmatically"
+    },
+    {
+      "source": "/evaluation/how_to_guides/metric_type",
+      "destination": "https://www.docs.langchain.com/langsmith/metric-type"
+    },
+    {
+      "source": "/evaluation/how_to_guides/multi_turn_simulation",
+      "destination": "https://www.docs.langchain.com/langsmith/multi-turn-simulation"
+    },
+    {
+      "source": "/evaluation/how_to_guides/multiple_scores",
+      "destination": "https://www.docs.langchain.com/langsmith/multiple-scores"
+    },
+    {
+      "source": "/evaluation/how_to_guides/prebuilt_evaluators",
+      "destination": "https://www.docs.langchain.com/langsmith/prebuilt-evaluators"
+    },
+    {
+      "source": "/evaluation/how_to_guides/pytest",
+      "destination": "https://www.docs.langchain.com/langsmith/pytest"
+    },
+    {
+      "source": "/evaluation/how_to_guides/rate_limiting",
+      "destination": "https://www.docs.langchain.com/langsmith/rate-limiting"
+    },
+    {
+      "source": "/evaluation/how_to_guides/renaming_experiment",
+      "destination": "https://www.docs.langchain.com/langsmith/renaming-experiment"
+    },
+    {
+      "source": "/evaluation/how_to_guides/repetition",
+      "destination": "https://www.docs.langchain.com/langsmith/repetition"
+    },
+    {
+      "source": "/evaluation/how_to_guides/run_evals_api_only",
+      "destination": "https://www.docs.langchain.com/langsmith/run-evals-api-only"
+    },
+    {
+      "source": "/evaluation/how_to_guides/run_evaluation_from_prompt_playground",
+      "destination": "https://www.docs.langchain.com/langsmith/run-evaluation-from-prompt-playground"
+    },
+    {
+      "source": "/evaluation/how_to_guides/set_up_feedback_criteria",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-feedback-criteria"
+    },
+    {
+      "source": "/evaluation/how_to_guides/share_dataset",
+      "destination": "https://www.docs.langchain.com/langsmith/share-dataset"
+    },
+    {
+      "source": "/evaluation/how_to_guides/summary",
+      "destination": "https://www.docs.langchain.com/langsmith/summary"
+    },
+    {
+      "source": "/evaluation/how_to_guides/upload_existing_experiments",
+      "destination": "https://www.docs.langchain.com/langsmith/upload-existing-experiments"
+    },
+    {
+      "source": "/evaluation/how_to_guides/use_langchain_off_the_shelf_evaluators_old",
+      "destination": "https://www.docs.langchain.com/langsmith/prebuilt-evaluators"
+    },
+    {
+      "source": "/evaluation/how_to_guides/version_datasets",
+      "destination": "https://www.docs.langchain.com/langsmith/version-datasets"
+    },
+    {
+      "source": "/evaluation/how_to_guides/vitest_jest",
+      "destination": "https://www.docs.langchain.com/langsmith/vitest-jest"
+    },
+    {
+      "source": "/evaluation/tutorials",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluation-quickstart"
+    },
+    {
+      "source": "/evaluation/tutorials/index",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluation-quickstart"
+    },
+    {
+      "source": "/evaluation/tutorials/agents",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-complex-agent"
+    },
+    {
+      "source": "/evaluation/tutorials/aligning_evaluator",
+      "destination": "https://www.docs.langchain.com/langsmith/improve-judge-evaluator-feedback"
+    },
+    {
+      "source": "/evaluation/tutorials/backtesting",
+      "destination": "https://www.docs.langchain.com/langsmith/run-backtests-new-agent"
+    },
+    {
+      "source": "/evaluation/tutorials/evaluation",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-chatbot-tutorial"
+    },
+    {
+      "source": "/evaluation/tutorials/rag",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluate-rag-tutorial"
+    },
+    {
+      "source": "/evaluation/tutorials/swe-benchmark",
+      "destination": "https://www.docs.langchain.com/langsmith/swe-benchmark"
+    },
+    {
+      "source": "/evaluation/tutorials/testing",
+      "destination": "https://www.docs.langchain.com/langsmith/testing"
+    },
+    {
+      "source": "/administration/concepts",
+      "destination": "https://www.docs.langchain.com/langsmith/administration-overview"
+    },
+    {
+      "source": "/administration/concepts/index",
+      "destination": "https://www.docs.langchain.com/langsmith/administration-overview"
+    },
+    {
+      "source": "/administration/how_to_guides",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-organization"
+    },
+    {
+      "source": "/administration/how_to_guides/index",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-organization"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-organization"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/create_account_api_key",
+      "destination": "https://www.docs.langchain.com/langsmith/create-account-api-key"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/manage_organization_by_api",
+      "destination": "https://www.docs.langchain.com/langsmith/manage-organization-by-api"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/set_up_access_control",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-access-control"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/set_up_billing",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-billing"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/set_up_organization",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-organization"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/set_up_resource_tags",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-resource-tags"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/set_up_saml_sso",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-saml-sso"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/set_up_scim",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-scim"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/set_up_workspace",
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-workspace"
+    },
+    {
+      "source": "/administration/how_to_guides/organization_management/update_business_info",
+      "destination": "https://www.docs.langchain.com/langsmith/update-business-info"
+    },
+    {
+      "source": "/administration/tutorials",
+      "destination": "https://www.docs.langchain.com/langsmith/manage-spend"
+    },
+    {
+      "source": "/administration/tutorials/index",
+      "destination": "https://www.docs.langchain.com/langsmith/manage-spend"
+    },
+    {
+      "source": "/administration/tutorials/manage_spend",
+      "destination": "https://www.docs.langchain.com/langsmith/manage-spend"
+    },
+    {
+      "source": "/prompt_engineering/concepts",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-engineering-overview"
+    },
+    {
+      "source": "/prompt_engineering/concepts/index",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-engineering-overview"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides",
+      "destination": "https://www.docs.langchain.com/langsmith/create-a-prompt"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/index",
+      "destination": "https://www.docs.langchain.com/langsmith/create-a-prompt"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/create_a_prompt",
+      "destination": "https://www.docs.langchain.com/langsmith/create-a-prompt"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/custom_endpoint",
+      "destination": "https://www.docs.langchain.com/langsmith/custom-endpoint"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/custom_openai_compliant_model",
+      "destination": "https://www.docs.langchain.com/langsmith/custom-openai-compliant-model"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/langchain_hub",
+      "destination": "https://www.docs.langchain.com/langsmith/langchain-hub"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/manage_prompts_programatically",
+      "destination": "https://www.docs.langchain.com/langsmith/manage-prompts-programmatically"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/managing_model_configurations",
+      "destination": "https://www.docs.langchain.com/langsmith/managing-model-configurations"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/multimodal_content",
+      "destination": "https://www.docs.langchain.com/langsmith/multimodal-content"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/multiple_messages",
+      "destination": "https://www.docs.langchain.com/langsmith/multiple-messages"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/open_a_prompt_from_a_trace",
+      "destination": "https://www.docs.langchain.com/langsmith/open-a-prompt-from-a-trace"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/prompt_canvas",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-canvas"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/prompt_tags",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-tags"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/trigger_webhook",
+      "destination": "https://www.docs.langchain.com/langsmith/trigger-webhook"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/update_a_prompt",
+      "destination": "https://www.docs.langchain.com/langsmith/update-a-prompt"
+    },
+    {
+      "source": "/prompt_engineering/how_to_guides/use_tools",
+      "destination": "https://www.docs.langchain.com/langsmith/use-tools"
+    },
+    {
+      "source": "/prompt_engineering/quickstarts",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-engineering-quickstart-ui"
+    },
+    {
+      "source": "/prompt_engineering/quickstarts/quickstart_sdk",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-engineering-quickstart-sdk"
+    },
+    {
+      "source": "/prompt_engineering/quickstarts/quickstart_ui",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-engineering-quickstart-ui"
+    },
+    {
+      "source": "/prompt_engineering/tutorials",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-engineering-tutorials"
+    },
+    {
+      "source": "/prompt_engineering/tutorials/index",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-engineering-tutorials"
+    },
+    {
+      "source": "/prompt_engineering/tutorials/optimize_classifier",
+      "destination": "https://www.docs.langchain.com/langsmith/optimize-classifier"
+    },
+    {
+      "source": "/prompt_engineering/tutorials/prompt_commit",
+      "destination": "https://www.docs.langchain.com/langsmith/prompt-commit"
+    },
+    {
+      "source": "/self_hosting/architectural_overview",
+      "destination": "https://www.docs.langchain.com/langsmith/architectural-overview"
+    },
+    {
+      "source": "/self_hosting/egress",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-egress"
+    },
+    {
+      "source": "/self_hosting/faq",
+      "destination": "https://www.docs.langchain.com/langsmith/faq"
+    },
+    {
+      "source": "/self_hosting/langsmith_managed_clickhouse",
+      "destination": "https://www.docs.langchain.com/langsmith/langsmith-managed-clickhouse"
+    },
+    {
+      "source": "/self_hosting/organization_charts",
+      "destination": "https://www.docs.langchain.com/langsmith/organization-charts"
+    },
+    {
+      "source": "/self_hosting/release_notes",
+      "destination": "https://www.docs.langchain.com/langsmith/release-notes"
+    },
+    {
+      "source": "/self_hosting/troubleshooting",
+      "destination": "https://www.docs.langchain.com/langsmith/troubleshooting"
+    },
+    {
+      "source": "/self_hosting/upgrades",
+      "destination": "https://www.docs.langchain.com/langsmith/upgrades"
+    },
+    {
+      "source": "/self_hosting/usage",
+      "destination": "https://www.docs.langchain.com/langsmith/usage"
+    },
+    {
+      "source": "/self_hosting/configuration",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-scale"
+    },
+    {
+      "source": "/self_hosting/configuration/index",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-scale"
+    },
+    {
+      "source": "/self_hosting/configuration/basic_auth",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-basic-auth"
+    },
+    {
+      "source": "/self_hosting/configuration/blob_storage",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-blob-storage"
+    },
+    {
+      "source": "/self_hosting/configuration/custom_tls_certificates",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-custom-tls-certificates"
+    },
+    {
+      "source": "/self_hosting/configuration/external_clickhouse",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-external-clickhouse"
+    },
+    {
+      "source": "/self_hosting/configuration/external_postgres",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-external-postgres"
+    },
+    {
+      "source": "/self_hosting/configuration/external_redis",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-external-redis"
+    },
+    {
+      "source": "/self_hosting/configuration/ingress",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-ingress"
+    },
+    {
+      "source": "/self_hosting/configuration/mirroring_images",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-mirroring-images"
+    },
+    {
+      "source": "/self_hosting/configuration/playground_environment_settings",
+      "destination": "https://www.docs.langchain.com/langsmith/playground-environment-settings"
+    },
+    {
+      "source": "/self_hosting/configuration/scale",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-scale"
+    },
+    {
+      "source": "/self_hosting/configuration/sso",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-sso"
+    },
+    {
+      "source": "/self_hosting/configuration/ttl",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-ttl"
+    },
+    {
+      "source": "/self_hosting/configuration/using_an_existing_secret",
+      "destination": "https://www.docs.langchain.com/langsmith/using-an-existing-secret"
+    },
+    {
+      "source": "/self_hosting/configuration/user_management",
+      "destination": "https://www.docs.langchain.com/langsmith/user-management"
+    },
+    {
+      "source": "/self_hosting/installation",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-installation"
+    },
+    {
+      "source": "/self_hosting/installation/index",
+      "destination": "https://www.docs.langchain.com/langsmith/self-host-installation"
+    },
+    {
+      "source": "/self_hosting/installation/docker",
+      "destination": "https://www.docs.langchain.com/langsmith/docker"
+    },
+    {
+      "source": "/self_hosting/installation/kubernetes",
+      "destination": "https://www.docs.langchain.com/langsmith/kubernetes"
+    },
+    {
+      "source": "/self_hosting/observability",
+      "destination": "https://www.docs.langchain.com/langsmith/observability"
+    },
+    {
+      "source": "/self_hosting/observability/index",
+      "destination": "https://www.docs.langchain.com/langsmith/observability"
+    },
+    {
+      "source": "/self_hosting/observability/export_backend",
+      "destination": "https://www.docs.langchain.com/langsmith/export-backend"
+    },
+    {
+      "source": "/self_hosting/observability/langsmith_collector",
+      "destination": "https://www.docs.langchain.com/langsmith/langsmith-collector"
+    },
+    {
+      "source": "/self_hosting/observability/observability_stack",
+      "destination": "https://www.docs.langchain.com/langsmith/observability-stack"
+    },
+    {
+      "source": "/self_hosting/scripts",
+      "destination": "https://www.docs.langchain.com/langsmith/scripts"
+    },
+    {
+      "source": "/self_hosting/scripts/index",
+      "destination": "https://www.docs.langchain.com/langsmith/scripts"
+    },
+    {
+      "source": "/self_hosting/scripts/delete_a_workspace",
+      "destination": "https://www.docs.langchain.com/langsmith/script-delete-a-workspace"
+    },
+    {
+      "source": "/self_hosting/scripts/delete_an_organization",
+      "destination": "https://www.docs.langchain.com/langsmith/script-delete-an-organization"
+    },
+    {
+      "source": "/self_hosting/scripts/delete_traces",
+      "destination": "https://www.docs.langchain.com/langsmith/script-delete-traces"
+    },
+    {
+      "source": "/self_hosting/scripts/generate_clickhouse_stats",
+      "destination": "https://www.docs.langchain.com/langsmith/script-generate-clickhouse-stats"
+    },
+    {
+      "source": "/self_hosting/scripts/generate_query_stats",
+      "destination": "https://www.docs.langchain.com/langsmith/script-generate-query-stats"
+    },
+    {
+      "source": "/self_hosting/scripts/running_ch_support_queries",
+      "destination": "https://www.docs.langchain.com/langsmith/script-running-ch-support-queries"
+    },
+    {
+      "source": "/self_hosting/scripts/running_pg_support_queries",
+      "destination": "https://www.docs.langchain.com/langsmith/script-running-pg-support-queries"
+    },
+    {
+      "source": "/reference/cloud_architecture_and_scalability",
+      "destination": "https://www.docs.langchain.com/langsmith/cloud-architecture-and-scalability"
+    },
+    {
+      "source": "/reference/regions_faq",
+      "destination": "https://www.docs.langchain.com/langsmith/regions-faq"
+    },
+    {
+      "source": "/reference/authentication_authorization/authentication_methods",
+      "destination": "https://www.docs.langchain.com/langsmith/authentication-methods"
+    },
+    {
+      "source": "/reference/data_formats",
+      "destination": "https://www.docs.langchain.com/langsmith/run-data-formats"
+    },
+    {
+      "source": "/reference/data_formats/dataset_json_types",
+      "destination": "https://www.docs.langchain.com/langsmith/dataset-json-types"
+    },
+    {
+      "source": "/reference/data_formats/example_data_format",
+      "destination": "https://www.docs.langchain.com/langsmith/example-data-format"
+    },
+    {
+      "source": "/reference/data_formats/feedback_data_format",
+      "destination": "https://www.docs.langchain.com/langsmith/feedback-data-format"
+    },
+    {
+      "source": "/reference/data_formats/run_data_format",
+      "destination": "https://www.docs.langchain.com/langsmith/run-data-format"
+    },
+    {
+      "source": "/reference/data_formats/trace_query_syntax",
+      "destination": "https://www.docs.langchain.com/langsmith/trace-query-syntax"
+    },
+    {
+      "source": "/reference/evaluation/dataset_transformations",
+      "destination": "https://www.docs.langchain.com/langsmith/dataset-transformations"
+    },
+    {
+      "source": "/pricing/plans",
+      "destination": "https://www.docs.langchain.com/langsmith/pricing-plans"
+    },
+    {
+      "source": "/pricing/faq",
+      "destination": "https://www.docs.langchain.com/langsmith/pricing-faq"
     }
   ]
 }
