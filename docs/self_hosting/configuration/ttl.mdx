@@ -42,13 +42,23 @@ TRACE_TIER_TTL_DURATION_SEC_MAP='{"longlived": 34560000, "shortlived": 1209600}'
 
 As of version **0.11**, a cron job runs on weekends to assist in deleting expired data that may not have been cleaned up by ClickHouse's built-in TTL mechanism.
 
-By default, it runs:
-- **Saturday**: 8pm/10pm UTC
-- **Sunday**: 12am/2am/4am UTC
+It goes table by table, scanning all parts for expired rows. If a part has more expired rows than a configurable minimum, it triggers a **delete mutation**.
+Parts are cached so they are not reprocessed in further job runs.
+
+:::warning Performance Considerations
+This job uses delete mutations (`ALTER TABLE DELETE`), which are expensive operations that can impact system performance. We recommend running these operations only during off-peak hours (nights and weekends). During testing with 1 active mutation, we did not observe significant CPU, memory, or latency increases.
+:::
+
+### Default Schedule
+
+By default, the cleanup job runs:
+
+- **Saturday**: 8pm and 10pm UTC
+- **Sunday**: 12am, 2am, and 4am UTC
 
 ### Disabling the Job
 
-If you would like to disable the job entirely, you can set the following values in your `values.yaml` file:
+To disable the cleanup job entirely:
 
 ```yaml
 queue:
@@ -57,44 +67,45 @@ queue:
       value: "false"
 ```
 
-### Configuring Job Schedule
+### Configuring the Schedule
 
-You can set the following parameters to customize the job schedule:
-
-:::warning Important
-1. If you want the job to only run on a single cron schedule, set `CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_EVENING` and `CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_MORNING` to the same value. We use locking to prevent job overlaps.
-2. We recommend running these queries only during off-peak hours (nights and weekends) when you can handle increased system load. This job uses Delete mutations (`ALTER TABLE DELETE`) to clean up tables. 
-These are expensive operations that can impact system performance, although running 1 at a time did not cause any significant spikes during our testing.
-:::
+You can customize when the cleanup job runs by modifying the cron expressions:
 
 ```yaml
 queue:
   extraEnv:
-    # UTC: Sun 12am/2am/4am
+    # UTC: Sunday 12am/2am/4am
     - name: "CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_MORNING"
       value: "0 0,2,4 * * 0"
-    # UTC: Sat 8pm/10pm
+    # UTC: Saturday 8pm/10pm
     - name: "CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_EVENING"
       value: "0 20,22 * * 6"
 ```
 
-### Configuring `CLICKHOUSE_TTL_CRON_MIN_EXPIRED_ROWS_PER_PART`
+:::tip Single Schedule
+To run the job on a single cron schedule, set both `CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_EVENING` and `CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_MORNING` to the same value. Job locking prevents overlapping executions.
+:::
 
-The job scans all parts, deleting data from parts that have a minimum number of expired rows. The value of `CLICKHOUSE_TTL_CRON_MIN_EXPIRED_ROWS_PER_PART` determines how many expired rows should be in a part before it is considered for deletion.
+### Configuring Minimum Expired Rows Per Part
 
-If this value is set too low, the job loses effectiveness, as it will scan entire parts to clear little data. If set too high, the job will miss parts that have significant expired data.
+The job scans table parts and deletes data from parts containing a minimum number of expired rows. This threshold balances efficiency and thoroughness:
 
-**Default value**:
+- **Too low**: Job scans entire parts to clear minimal data (inefficient)
+- **Too high**: Job misses parts with significant expired data
+
 ```yaml
 queue:
   extraEnv:
     - name: "CLICKHOUSE_TTL_CRON_MIN_EXPIRED_ROWS_PER_PART"
-      value: "100000" # 100k
+      value: "100000" # 100k rows
 ```
 
-You can use this query to check the expired rows in your tables:
+#### Checking Expired Rows
+
+Use this query to analyze expired rows in your tables:
 
 ```sql
+-- Query for Runs table. For other tables, replace 'ttl_seconds' with 'trace_ttl_seconds'
 SELECT
     _part,
     count() AS expired_rows
@@ -106,11 +117,10 @@ GROUP BY _part
 ORDER BY expired_rows DESC
 ```
 
-### Configuring `CLICKHOUSE_TTL_CRON_MAX_ACTIVE_MUTATIONS`
+### Configuring Maximum Active Mutations
 
-The delete operations can take a long time (~50 minutes for a 100GB part). To speed up the deletion process, you can increase the number of active mutations. When testing with 1 active mutation, we did not see any significant CPU, memory, or latency increases.
+Delete operations can be time-consuming (~50 minutes for a 100GB part). You can increase concurrent mutations to speed up the process:
 
-**Default value**:
 ```yaml
 queue:
   extraEnv:
@@ -118,6 +128,23 @@ queue:
       value: "1"
 ```
 
-:::warning Performance Impact
-You should only increase the number of concurrent mutations if you are comfortable with potentially slower insert and read latencies.
+:::warning Concurrent Mutations
+Increasing concurrent DELETE operations can impact system performance. Monitor your system carefully and only increase this value if you can tolerate potentially slower insert and read latencies.
 :::
+
+### Emergency: Stopping Running Mutations
+
+If you experience latency spikes and need to terminate a running mutation:
+
+1. **Find active mutations**:
+
+   ```sql
+   SELECT * FROM system.mutations WHERE is_done = 0;
+   ```
+
+   Look for the `mutation_id` where the `command` column contains a `DELETE` statement.
+
+2. **Kill the mutation**:
+   ```sql
+   KILL MUTATION WHERE mutation_id = '<mutation_id>';
+   ```
