@@ -37,3 +37,70 @@ TRACE_TIER_TTL_DURATION_SEC_MAP='{"longlived": 34560000, "shortlived": 1209600}'
     ),
   ]}
 />
+
+# Clickhouse TTL Cleanup Job
+As of version <b><u>0.11</u></b>, a cron job will run on weekends to assist in deleting expired data that may have not been cleaned up by ClickHouse's built in TTL mechanism.
+
+By default, it runs:
+- Saturday: <b>8pm/10pm UTC</b>
+- Sunday: <b>12am/2am/4am UTC</b>
+
+## Disabling the Job
+If you would like to disable the job entirely, you can set the following values in your `values.yaml` file
+
+```yaml
+queue:
+  extraEnv:
+    - name: "ENABLE_CLICKHOUSE_TTL_CLEANUP_CRON"
+      value: "false"
+```
+
+## Customizing the Job
+You can set the following parameters to customize the job.
+:::warning NOTE
+If you want the job to only run on a singular cron schedule, set `CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_EVENING` and `CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_MORNING` to the same value. We use 
+locking to prevent job overlaps.
+:::
+```yaml
+queue:
+  extraEnv:
+    # UTC: Sun 12am/2am/4am
+    - name: "CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_MORNING"
+      value: "0 0,2,4 * * 0"
+    # UTC: Sat 8pm/10pm
+    - name: "CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_EVENING"
+      value: "0 20,22 * * 6"
+    # 100K rows
+    - name: "CLICKHOUSE_TTL_CRON_MIN_EXPIRED_ROWS_PER_PART"
+      value: "100000"
+```
+
+### Setting `CLICKHOUSE_TTL_CRON_MIN_EXPIRED_ROWS_PER_PART`
+The job scans all parts, deleting data from parts which have a minimum number of expired rows.
+The value of `CLICKHOUSE_TTL_CRON_MIN_EXPIRED_ROWS_PER_PART` is used to determine how many expired rows should be in a part before it is considered for deletion.
+
+If this value is set too low, the job loses effectiveness, as it will scan entire parts to clear little data. Set it too high, and the job will miss parts that have significant expired data.
+
+A good query to run to check the expired rows in your tables is as such:
+```sql
+SELECT
+    _part,
+    count() AS expired_rows
+FROM runs
+WHERE trace_first_received_at IS NOT NULL
+AND ttl_seconds IS NOT NULL
+AND toDateTime(assumeNotNull(trace_first_received_at) + toIntervalSecond(assumeNotNull(ttl_seconds))) < now()
+GROUP BY _part
+ORDER BY expired_rows DESC
+```
+
+## Performance Considerations
+This job uses Delete mutations (`ALTER TABLE DELETE`) to clean up tables. These are expensive operations that can impact system performance. Below are some tips to minimize system impact:
+1. **<u>Single mutation recommendation</u>**: We recommend running only 1 delete mutation at a time. In our testing, we did not see significant CPU/memory/latency spikes with this approach.
+2. **<u>Timing</u>**: Only run these queries during off-peak hours (nights and weekends) when you can handle increased system load.
+3. **<u>Performance benchmarks</u>**: 
+In our testing, a mutation scanning and deleting from a 100GB part took approximately 50 minutes when running a single mutation (no concurrency).
+
+:::note NOTE
+You can increase the number of concurrent delete operations through `CLICKHOUSE_TTL_CRON_MAX_ACTIVE_MUTATIONS` (default to 1). Please consider carefully before increasing.
+:::
