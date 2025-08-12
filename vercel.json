@@ -258,6 +258,10 @@
     {
       "source": "/reference/sdk_reference/langchain_evaluators",
       "destination": "/evaluation/how_to_guides/prebuilt_evaluators"
+    },
+    {
+      "source": "/how_to_guides/evaluation/evaluate_pairwise",
+      "destination": "/evaluation/how_to_guides/evaluate_pairwise"
     }
   ]
 }
