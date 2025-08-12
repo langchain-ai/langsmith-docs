@@ -42,11 +42,8 @@ TRACE_TIER_TTL_DURATION_SEC_MAP='{"longlived": 34560000, "shortlived": 1209600}'
 
 As of version **0.11**, a cron job runs on weekends to assist in deleting expired data that may not have been cleaned up by ClickHouse's built-in TTL mechanism.
 
-It goes table by table, scanning all parts for expired rows. If a part has more expired rows than a configurable minimum, it triggers a **delete mutation**.
-Parts are cached so they are not reprocessed in further job runs.
-
 :::warning Performance Considerations
-This job uses delete mutations (`ALTER TABLE DELETE`), which are expensive operations that can impact system performance. We recommend running these operations only during off-peak hours (nights and weekends). During testing with 1 active mutation, we did not observe significant CPU, memory, or latency increases.
+This job uses **mutations** (`ALTER TABLE DELETE`), which are expensive operations that can impact ClickHouse's performance. We recommend running these operations only during off-peak hours (nights and weekends). During testing with **1 concurrent active** mutation, we did not observe significant CPU, memory, or latency increases.
 :::
 
 ### Default Schedule
@@ -88,7 +85,7 @@ To run the job on a single cron schedule, set both `CLICKHOUSE_TTL_CLEANUP_CRON_
 
 ### Configuring Minimum Expired Rows Per Part
 
-The job scans table parts and deletes data from parts containing a minimum number of expired rows. This threshold balances efficiency and thoroughness:
+The job goes table by table, scanning table parts and deleting data from parts containing a minimum number of expired rows. This threshold balances efficiency and thoroughness:
 
 - **Too low**: Job scans entire parts to clear minimal data (inefficient)
 - **Too high**: Job misses parts with significant expired data
@@ -102,7 +99,7 @@ queue:
 
 #### Checking Expired Rows
 
-Use this query to analyze expired rows in your tables:
+Use this query to analyze expired rows in your tables, and tweak your minimum value accordingly:
 
 ```sql
 -- Query for Runs table. For other tables, replace 'ttl_seconds' with 'trace_ttl_seconds'
