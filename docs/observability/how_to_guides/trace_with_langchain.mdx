@@ -138,7 +138,8 @@ prompt = ChatPromptTemplate.from_messages([
   ("system", "You are a helpful AI."),
   ("user", "{input}")
 ])
-# The tag "model-tag" and metadata {"model-key": "model-value"} will be attached to the ChatOpenAI run only
+# The tag "model-tag" and metadata {"model-key": "model-value"} will be attached to the ChatOpenAI object only
+# All invocations of this model will have these tags and metadata
 # highlight-next-line
 chat_model = ChatOpenAI().with_config({"tags": ["model-tag"], "metadata": {"model-key": "model-value"}})
 output_parser = StrOutputParser()\n
