@@ -585,11 +585,11 @@
     },
     {
       "source": "/evaluation/how_to_guides/dataset_subset",
-      "destination": "https://www.docs.langchain.com/langsmith/dataset-subset"
+      "destination": "https://www.docs.langchain.com/langsmith/manage-datasets"
     },
     {
       "source": "/evaluation/how_to_guides/dataset_version",
-      "destination": "https://www.docs.langchain.com/langsmith/dataset-version"
+      "destination": "https://www.docs.langchain.com/langsmith/manage-datasets#evaluate-on-a-specific-dataset-version"
     },
     {
       "source": "/evaluation/how_to_guides/define_target",
@@ -621,7 +621,7 @@
     },
     {
       "source": "/evaluation/how_to_guides/export_filtered_traces_to_dataset",
-      "destination": "https://www.docs.langchain.com/langsmith/export-filtered-traces-to-dataset"
+      "destination": "https://www.docs.langchain.com/langsmith/manage-datasets#export-filtered-traces-from-experiment-to-dataset"
     },
     {
       "source": "/evaluation/how_to_guides/fetch_perf_metrics_experiment",
@@ -705,7 +705,7 @@
     },
     {
       "source": "/evaluation/how_to_guides/share_dataset",
-      "destination": "https://www.docs.langchain.com/langsmith/share-dataset"
+      "destination": "https://www.docs.langchain.com/langsmith/manage-datasets#share-a-dataset"
     },
     {
       "source": "/evaluation/how_to_guides/summary",
@@ -721,7 +721,7 @@
     },
     {
       "source": "/evaluation/how_to_guides/version_datasets",
-      "destination": "https://www.docs.langchain.com/langsmith/version-datasets"
+      "destination": "https://www.docs.langchain.com/langsmith/manage-datasets#version-a-dataset"
     },
     {
       "source": "/evaluation/how_to_guides/vitest_jest",
