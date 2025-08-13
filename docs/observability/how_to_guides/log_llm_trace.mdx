@@ -569,29 +569,33 @@ await chatModel({ messages });`),
 
 ## Time-to-first-token
 
-If you are using `traceable` or one of our SDKs, time-to-first-token for streaming LLM runs will be calculated automatically.
-However, if you are using the `RunTree` API directly, you will need to add a `new_token` event in order to get statistics calculated properly.
+If you are using `traceable` or one of our SDK wrappers, LangSmith will automatically populate time-to-first-token for streaming LLM runs.
+However, if you are using the `RunTree` API directly, you will need to add a `new_token` event to the run tree in order to properly populate time-to-first-token.
+
+Here's an example:
 
 <CodeTabs
   tabs={[
     PythonBlock(`from langsmith.run_trees import RunTree
 
 run_tree = RunTree(
-  name="CustomChatModel",
-  run_type="llm",
-  inputs={ ... }
+    name="CustomChatModel",
+    run_type="llm",
+    inputs={ ... }
 )
+
 run_tree.post()
 
 llm_stream = ...
 
 first_token = None
-for token of llm_stream:
-  if first_token is None:
-    first_token = token
-    run_tree.add_event({
-      "name": "new_token"
-    })
+
+for token in llm_stream:
+    if first_token is None:
+      first_token = token
+      run_tree.add_event({
+        "name": "new_token"
+      })
 
 run_tree.end(outputs={ ... })
 run_tree.patch()
@@ -599,24 +603,25 @@ run_tree.patch()
     TypeScriptBlock(`import { RunTree } from "langsmith";
 
 const runTree = new RunTree({
-  name: "CustomChatModel",
-  run_type: "llm",
-  inputs: { ... },
+    name: "CustomChatModel",
+    run_type: "llm",
+    inputs: { ... },
 });
+
 await runTree.postRun();
 
 const llmStream = ...;
 
 let firstToken;
 for (const token of llmStream) {
-  if (firstToken == null) {
-    firstToken = token;
-    runTree.addEvent({ name: "new_token" });
-  }
+    if (firstToken == null) {
+      firstToken = token;
+      runTree.addEvent({ name: "new_token" });
+    }
 }
 
 await runTree.end({
-  outputs: { ... },
+    outputs: { ... },
 });
 
 await runTree.patchRun();
@@ -624,8 +629,6 @@ await runTree.patchRun();
   ]}
   groupId="client-language"
 />
-
-
 
 ## Instruct-style models
 
