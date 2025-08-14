@@ -110,7 +110,7 @@ const config = {
       },
       announcementBar: {
         content:
-          '<strong>Our <a href="https://academy.langchain.com/courses/ambient-agents/?utm_medium=internal&utm_source=docs&utm_campaign=q2-2025_ambient-agents_co" target="_blank">Building Ambient Agents with LangGraph</a> course is now available on LangChain Academy!</strong>',
+          '<strong>LangSmith docs have moved!</strong> Find the LangSmith docs at the new <a href="https://docs.langchain.com/langsmith" target="_blank">LangChain Docs</a> site.',
       },
       prism: {
         theme: {
