@@ -865,7 +865,7 @@
     },
     {
       "source": "/prompt_engineering/how_to_guides/langchain_hub",
-      "destination": "https://www.docs.langchain.com/langsmith/langchain-hub"
+      "destination": "https://www.docs.langchain.com/langsmith/manage-prompts#public-prompt-hub"
     },
     {
       "source": "/prompt_engineering/how_to_guides/manage_prompts_programatically",
@@ -893,11 +893,11 @@
     },
     {
       "source": "/prompt_engineering/how_to_guides/prompt_tags",
-      "destination": "https://www.docs.langchain.com/langsmith/prompt-tags"
+      "destination": "https://www.docs.langchain.com/langsmith/manage-prompts#commit-tags"
     },
     {
       "source": "/prompt_engineering/how_to_guides/trigger_webhook",
-      "destination": "https://www.docs.langchain.com/langsmith/trigger-webhook"
+      "destination": "https://www.docs.langchain.com/langsmith/manage-prompts#trigger-a-webhook-on-prompt-commit"
     },
     {
       "source": "/prompt_engineering/how_to_guides/update_a_prompt",
