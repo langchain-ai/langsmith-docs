@@ -29,15 +29,6 @@ All trace deletions will delete related entities like feedbacks, aggregations, a
 
 Trace deletions are processed during non-peak usage times and are not instant, usually within a few hours. There is no confirmation of deletion - you'll need to query the data again to verify it has been removed.
 
-### Delete by Metadata
-
-When deleting by metadata:
-
-- Accepts a `metadata` object of key/value pairs. KV pair matching uses an OR condition. A trace will match if it has ANY of the key-value pairs specified in metadata (not all)
-- You don't need to specify a session id when deleting by metadata. Deletes will apply across the workspace.
-
-## Sample Trace Delete Requests
-
 ### Delete Specific Traces
 
 To delete specific traces by their trace IDs from a single session:
@@ -54,7 +45,12 @@ curl -X POST "https://api.smith.langchain.com/api/v1/runs/delete" \
 
 ### Delete by Metadata
 
-To delete traces based on metadata across a workspace (matches ANY of the metadata key-value pairs):
+When deleting by metadata:
+
+- Accepts a `metadata` object of key/value pairs. KV pair matching uses an **or** condition. A trace will match if it has **any** of the key-value pairs specified in metadata (not all)
+- You don't need to specify a session id when deleting by metadata. Deletes will apply across the workspace.
+
+To delete traces based on metadata across a workspace (matches **any** of the metadata key-value pairs):
 
 ```bash
 curl -X POST "https://api.smith.langchain.com/api/v1/runs/delete" \
@@ -68,7 +64,7 @@ curl -X POST "https://api.smith.langchain.com/api/v1/runs/delete" \
   }'
 ```
 
-This will delete traces that have either `user_id: "user123"` OR `environment: "staging"` in their metadata.
+This will delete traces that have either `user_id: "user123"` **or** `environment: "staging"` in their metadata.
 
 :::warning Rate Limits
 Remember that you can only schedule up to 1000 traces per session per request. For larger deletions, you'll need to make multiple requests.
@@ -76,13 +72,54 @@ Remember that you can only schedule up to 1000 traces per session per request. F
 
 ## Example Deletes
 
-Example deletes can be done self-serve via our API and support both soft and hard deletion methods depending on your data retention needs.
-
-For more details, refer to the [API spec](https://api.smith.langchain.com/redoc#tag/examples/operation/delete_examples_api_v1_examples_delete).
+You can delete dataset examples self-serve via our API, which supports both soft and hard deletion methods depending on your data retention needs.
 
 :::warning Example Deletes
 Hard deletes will permanently remove inputs, outputs, and metadata from ALL versions of the specified examples across the entire dataset history.
 :::
+
+### Deleting Examples is a Two-Step Process
+
+For bulk operations, example deletion follows a two-step process:
+
+#### 1. Search for Examples by Metadata
+
+Find all examples with matching metadata across all datasets in a workspace.
+
+[GET /examples](https://api.smith.langchain.com/redoc#tag/examples/operation/read_examples_api_v1_examples_get)
+
+- `as_of` must be explicitly specified as a timestamp. Only examples created before the `as_of` date will be returned
+
+```bash
+curl -X GET "https://api.smith.langchain.com/api/v1/examples?as_of=2024-01-01T00:00:00Z" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "metadata": {
+      "user_id": "user123",
+      "environment": "staging"
+    }
+  }'
+```
+
+This will return examples that have either `user_id: "user123"` **or** `environment: "staging"` in their metadata across all datasets in your workspace.
+
+#### 2. Hard Delete Examples
+
+Once you have the example IDs, send a delete request. This will zero-out the inputs, outputs, and metadata from all versions of the dataset for that example.
+
+[DELETE /examples](https://api.smith.langchain.com/redoc#tag/examples/operation/delete_examples_api_v1_examples_delete)
+
+- Specify example IDs and add `"hard_delete": true` to the query params of the request
+
+```bash
+curl -X DELETE "https://api.smith.langchain.com/api/v1/examples?hard_delete=true" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "example_ids": ["example-id-1", "example-id-2", "example-id-3"]
+  }'
+```
 
 ### Deletion Types
 
@@ -98,13 +135,4 @@ Hard deletes will permanently remove inputs, outputs, and metadata from ALL vers
 - Complete data removal when compliance requires zero-out across all versions
 - Add `"hard_delete": true` to the query parameters
 
-### Two-Step Deletion Process
-
-For bulk operations, example deletion follows a two-step process:
-
-1. **Search for examples**: Use the search API to find examples by metadata across all datasets
-2. **Delete examples**: Send delete requests with the retrieved example IDs
-
-:::info Search Requirements
-When searching for examples, the `as_of` parameter must be explicitly specified as a timestamp. Only examples created before the `as_of` date will be returned.
-:::
+For more details, refer to the [API spec](https://api.smith.langchain.com/redoc#tag/examples/operation/delete_examples_api_v1_examples_delete).
