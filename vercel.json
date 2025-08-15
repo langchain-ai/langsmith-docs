@@ -773,15 +773,15 @@
     },
     {
       "source": "/administration/how_to_guides",
-      "destination": "https://www.docs.langchain.com/langsmith/set-up-organization"
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-a-workspace"
     },
     {
       "source": "/administration/how_to_guides/index",
-      "destination": "https://www.docs.langchain.com/langsmith/set-up-organization"
+      "destination": "https://www.docs.langchain.com/langsmith/administration-overview"
     },
     {
       "source": "/administration/how_to_guides/organization_management",
-      "destination": "https://www.docs.langchain.com/langsmith/set-up-organization"
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-a-workspace#set-up-an-organization"
     },
     {
       "source": "/administration/how_to_guides/organization_management/create_account_api_key",
@@ -793,7 +793,7 @@
     },
     {
       "source": "/administration/how_to_guides/organization_management/set_up_access_control",
-      "destination": "https://www.docs.langchain.com/langsmith/set-up-access-control"
+      "destination": "https://www.docs.langchain.com/langsmith/user-management"
     },
     {
       "source": "/administration/how_to_guides/organization_management/set_up_billing",
@@ -801,7 +801,7 @@
     },
     {
       "source": "/administration/how_to_guides/organization_management/set_up_organization",
-      "destination": "https://www.docs.langchain.com/langsmith/set-up-organization"
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-a-workspace#set-up-an-organization"
     },
     {
       "source": "/administration/how_to_guides/organization_management/set_up_resource_tags",
@@ -809,15 +809,15 @@
     },
     {
       "source": "/administration/how_to_guides/organization_management/set_up_saml_sso",
-      "destination": "https://www.docs.langchain.com/langsmith/set-up-saml-sso"
+      "destination": "https://www.docs.langchain.com/langsmith/user-management"
     },
     {
       "source": "/administration/how_to_guides/organization_management/set_up_scim",
-      "destination": "https://www.docs.langchain.com/langsmith/set-up-scim"
+      "destination": "https://www.docs.langchain.com/langsmith/user-management"
     },
     {
       "source": "/administration/how_to_guides/organization_management/set_up_workspace",
-      "destination": "https://www.docs.langchain.com/langsmith/set-up-workspace"
+      "destination": "https://www.docs.langchain.com/langsmith/set-up-a-workspace"
     },
     {
       "source": "/administration/how_to_guides/organization_management/update_business_info",
