@@ -27,3 +27,4 @@ See the following guides to set up your LangSmith account.
   - [Assign a tag to a resource](./how_to_guides/organization_management/set_up_resource_tags#assign-a-tag-to-a-resource)
   - [Delete a tag](./how_to_guides/organization_management/set_up_resource_tags#delete-a-tag)
   - [Filter resources by tags](./how_to_guides/organization_management/set_up_resource_tags#filter-resources-by-tags)
+- [Data purging for compliance](./how_to_guides/organization_management/data_purging_compliance)
