@@ -24,15 +24,7 @@ SCIM enables automatic user provisioning and deprovisioning between your identit
 - **Consistent access control**: User attributes and group memberships are synchronized between systems
 - **Scalable**: Efficiently manage large teams with many workspaces and custom roles
 
-## Prerequisites
-
-- Your organization must be on an Enterprise plan
-- Your Identity Provider (IdP) must support SCIM 2.0
-- Only [Organization Admins](../../concepts#organization-roles) can configure SCIM
-- For cloud customers: [SAML SSO](./set_up_saml_sso.mdx) must be configured for your organization
-- For self-hosted customers: [OAuth with Client Secret](../../../self_hosting/configuration/sso#with-secret) authentication mode must be enabled
-
-## Capabilities
+## Supported Features
 
 SCIM enables the following capabilities:
 
@@ -42,7 +34,17 @@ SCIM enables the following capabilities:
 - **Group-based access**: Sync membership from IdP user groups to LangSmith workspaces
 - **Role assignment**: Select specific [Organization Roles](../../concepts#organization-roles) and [Workspace Roles](../../concepts#workspace-roles) for groups of users
 
-## Role Precedence
+## Requirements
+
+### Prerequisites
+
+- Your organization must be on an Enterprise plan
+- Your Identity Provider (IdP) must support SCIM 2.0
+- Only [Organization Admins](../../concepts#organization-roles) can configure SCIM
+- For cloud customers: [SAML SSO](./set_up_saml_sso.mdx) must be configured for your organization
+- For self-hosted customers: [OAuth with Client Secret](../../../self_hosting/configuration/sso#with-secret) authentication mode must be enabled
+
+### Role Precedence
 
 When a user belongs to multiple groups for the same workspace, the following precedence applies:
 
@@ -55,37 +57,7 @@ When a group is deleted or a user is removed from a group, their access is updat
 SCIM group membership will override manually-assigned roles or roles assigned via Just-in-Time (JIT) provisioning. We recommend disabling JIT provisioning to avoid conflicts.
 :::
 
-## Group Naming Convention
-
-Group membership maps to LangSmith Workspace membership and workspace roles with a specific naming convention:
-
-### Organization Admin Groups
-
-Format: `<optional_prefix>Organization Admin` or `<optional_prefix>Organization Admins`
-
-Examples:
-
-- `LS:Organization Admins`
-- `Groups-Organization Admins`
-- `Organization Admin`
-
-### Workspace-Specific Groups
-
-Format: `<optional_prefix><org_role_name>:<workspace_name>:<workspace_role_name>`
-
-Examples:
-
-- `LS:Organization User:Production:Annotators`
-- `Groups-Organization User:Engineering:Developers`
-- `Organization User:Marketing:Viewers`
-
-## Email verification
-
-In cloud only, creating a new user with SCIM triggers an email to the user.
-They must verify their email address by clicking the link in this email.
-The link expires in 24 hours, and can be resent if needed by removing and re-adding the user via SCIM.
-
-## Set up SCIM for your organization
+## Configuration Steps
 
 ### Step 1: Configure SAML SSO (Cloud only)
 
@@ -145,6 +117,38 @@ These additional endpoints are present:
 
 Follow the IdP-specific instructions below to configure SCIM integration.
 
+## Attributes and Mapping
+
+### Group Naming Convention
+
+Group membership maps to LangSmith Workspace membership and workspace roles with a specific naming convention:
+
+#### Organization Admin Groups
+
+Format: `<optional_prefix>Organization Admin` or `<optional_prefix>Organization Admins`
+
+Examples:
+
+- `LS:Organization Admins`
+- `Groups-Organization Admins`
+- `Organization Admin`
+
+#### Workspace-Specific Groups
+
+Format: `<optional_prefix><org_role_name>:<workspace_name>:<workspace_role_name>`
+
+Examples:
+
+- `LS:Organization User:Production:Annotators`
+- `Groups-Organization User:Engineering:Developers`
+- `Organization User:Marketing:Viewers`
+
+### Email Verification
+
+In cloud only, creating a new user with SCIM triggers an email to the user.
+They must verify their email address by clicking the link in this email.
+The link expires in 24 hours, and can be resent if needed by removing and re-adding the user via SCIM.
+
 ## Identity Provider (IdP) Setup
 
 ### Azure Entra ID
@@ -200,7 +204,7 @@ Set `Target Object Actions` to `Create` and `Update` only (start with `Delete` d
 | `externalId`                | `objectId`                       |                         |
 | `members`                   | `members`                        |                         |
 
-1. Groups must follow the naming convention described in the [Azure Group Naming Convention](#group-naming-convention) section
+1. Groups must follow the naming convention described in the [Group Naming Convention](#group-naming-convention) section
 
 **Step 4: Assign Users and Groups**
 
@@ -222,7 +226,9 @@ Support for Okta is not yet released. If you are interested in using Okta with S
 
 Other identity providers have not been tested but may function depending on their SCIM implementation.
 
-## Support and troubleshooting
+## Troubleshooting and Tips
+
+### Support
 
 If you have issues setting up SCIM, please reach out to [support@langchain.dev](mailto:support@langchain.dev).
 
