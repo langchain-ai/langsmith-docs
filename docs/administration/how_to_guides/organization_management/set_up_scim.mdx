@@ -9,7 +9,7 @@ SCIM is available for organizations on the [Enterprise plan](https://www.langcha
 
 SCIM is available on Helm chart versions 0.10.41 (application version 0.10.108) and later.
 
-At the moment, SCIM support is API-only (see instructions below).
+SCIM support is API-only (see instructions below).
 :::
 
 ## What is SCIM?
@@ -43,13 +43,13 @@ SCIM is supported for these authentication methods:
 
 ### Prerequisites
 
-- Your organization must be on an Enterprise plan
-- Your Identity Provider (IdP) must support SCIM 2.0
-- Only [Organization Admins](../../concepts#organization-roles) can configure SCIM
-- For cloud customers: [SAML SSO](./set_up_saml_sso.mdx) must be configurable for your organization
-- For self-hosted customers: [OAuth with Client Secret](../../../self_hosting/configuration/sso#with-secret) authentication mode must be enabled
-- For self-hosted customers: Network traffic must be allowed from the identity provider to LangSmith
-  - Microsoft Entra ID supports allowlisting IP ranges or an agent-based solution to provide connectivity
+- Your organization must be on an Enterprise plan.
+- Your Identity Provider (IdP) must support SCIM 2.0.
+- Only [Organization Admins](../../concepts#organization-roles) can configure SCIM.
+- For cloud customers: [SAML SSO](./set_up_saml_sso.mdx) must be configurable for your organization.
+- For self-hosted customers: [OAuth with Client Secret](../../../self_hosting/configuration/sso#with-secret) authentication mode must be enabled.
+- For self-hosted customers, network traffic must be allowed from the identity provider to LangSmith:
+  - Microsoft Entra ID supports allowlisting IP ranges or an agent-based solution to provide connectivity.
     ([details](https://learn.microsoft.com/en-us/entra/identity/app-provisioning/use-scim-to-provision-users-and-groups#ip-ranges)).
   - Okta supports allow-listing IPs or domains ([details](https://help.okta.com/en-us/content/topics/security/ip-address-allow-listing.htm))
     or an agent-based solution ([details](https://help.okta.com/en-us/content/topics/provisioning/opp/opp-main.htm)) to provide connectivity.

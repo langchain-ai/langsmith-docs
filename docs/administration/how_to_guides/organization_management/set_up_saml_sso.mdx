@@ -201,25 +201,25 @@ For additional information, see Okta's [documentation](https://help.okta.com/en-
 
 **Via Okta Integration Network (recommended)**
 
-1. Sign in to Okta.
+1. Sign in to [Okta](https://login.okta.com/).
 1. In the upper-right corner, select Admin. The button is not visible from the Admin area.
-1. Select `Browse App Integration Catalog`
+1. Select `Browse App Integration Catalog`.
 1. Find and select the LangSmith application.
 1. On the application overview page, select Add Integration.
 1. Fill in `ApiUrlBase`:
-1. US: `api.smith.langchain.com`
-1. EU: `eu.api.smith.langchain.com`
+    - US: `api.smith.langchain.com`
+    - EU: `eu.api.smith.langchain.com`
 1. Fill in `AuthHost`:
-1. US: `auth.langchain.com`
-1. EU: `eu.auth.langchain.com`
+    - US: `auth.langchain.com`
+    - EU: `eu.auth.langchain.com`
 1. Fill in `LangSmithUrl`: Same as `ApiUrlBase`
 1. Under Application Visibility, keep the box unchecked.
-1. Select Next
-1. Select `SAML 2.0`
-1. Fill in `Sign-On Options`
-1. `Application username format`: `Email`
-1. `Update application username on`: `Create and update`
-1. `Allow users to securely see their password`: leave **unchecked**
+1. Select Next.
+1. Select `SAML 2.0`.
+1. Fill in `Sign-On Options`: 
+    - `Application username format`: `Email`
+    - `Update application username on`: `Create and update`
+    - `Allow users to securely see their password`: leave **unchecked**.
 
 **Via Custom App Integration**
 
