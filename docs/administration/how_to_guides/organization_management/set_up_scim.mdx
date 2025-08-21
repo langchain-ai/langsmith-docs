@@ -67,79 +67,7 @@ When a group is deleted or a user is removed from a group, their access is updat
 SCIM group membership will override manually-assigned roles or roles assigned via Just-in-Time (JIT) provisioning. We recommend disabling JIT provisioning to avoid conflicts.
 :::
 
-## Configuration Steps
-
-### Step 1: Configure SAML SSO (Cloud only)
-
-:::note
-If you use one of the identity providers [below](#identity-provider-idp-setup), follow the instructions there
-to configure your specific identity provider. The instructions here must be additionally followed and are applicable for all identity providers.
-:::
-
-There are two scenarios for [SAML SSO](./set_up_saml_sso.mdx) configuration:
-
-1. If SAML SSO is already configured for your organization, you should skip the steps to initially add the application (e.g. `Add application from Okta Integration Network`), as you already have an application configured and just need to enable provisioning.
-1. If you are configuring SAML SSO for the first time alongside SCIM, first follow the instructions to [set up SAML SSO](./set_up_saml_sso.mdx), _then_ follow the instructions here to enable SCIM.
-
-#### NameID Format
-
-LangSmith uses the SAML NameID to identify users. The NameID is a required field in the SAML response and is case-insensitive.
-
-The NameID must:
-
-1. Be unique to each user.
-1. Be a persistent value that never changes, such as a randomly generated unique user ID.
-1. Match exactly on each sign-in attempt. It should not rely on user input.
-
-The NameID should not be an email address or username because Email addresses and usernames are more likely to change over time and can be case-sensitive.
-
-The NameID format must be `Persistent`, unless you are using a field, like email, that requires a different format.
-
-### Step 2: Disable JIT Provisioning (Cloud only)
-
-Before enabling SCIM, disable [Just-in-Time (JIT) provisioning](./set_up_saml_sso.mdx#just-in-time-jit-provisioning) to prevent conflicts between automatic and manual user provisioning. Use the `PATCH /orgs/current/info` <RegionalUrl
-    text="endpoint"
-    type="api"
-    suffix="/redoc#tag/orgs/operation/update_current_organization_info_api_v1_orgs_current_info_patch"
-  />:
-
-```shell
-curl -X PATCH $LANGCHAIN_ENDPOINT/orgs/current/info \
-  -H "X-Api-Key: $LANGCHAIN_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"jit_provisioning_enabled": false}'
-```
-
-### Step 3: Generate SCIM Bearer Token
-
-:::note
-In self-hosted environments, the full URL below may look like `https://langsmith.internal.corp.dev/api/v1/platform/orgs/current/scim/tokens` (without subdomain, note the `/api/v1` path prefix) or `https://langsmith.internal.corp.dev/subdomain/api/v1/platform/orgs/current/scim/tokens` (with subdomain) - see the [ingress docs](../../../self_hosting/configuration/ingress.mdx) for more details.
-:::
-
-Generate a SCIM Bearer Token for your organization. This token will be used by your IdP to authenticate SCIM API requests.
-Ensure env vars are set appropriately, for example:
-
-```shell
-curl -X POST $LANGCHAIN_ENDPOINT/v1/platform/orgs/current/scim/tokens \
-  -H "X-Api-Key: $LANGCHAIN_API_KEY" \
-  -H "X-Organization-Id: $LANGCHAIN_ORGANIZATION_ID" \
-  -H "Content-Type: application/json" \
-  -d '{"description": "Your description here"}'
-```
-
-Note that the SCIM Bearer Token value is not available outside of the response to this request.
-These additional endpoints are present:
-
-- `GET /v1/platform/orgs/current/scim/tokens`
-- `GET /v1/platform/orgs/current/scim/tokens/{scim_token_id}`
-- `PATCH /v1/platform/orgs/current/scim/tokens/{scim_token_id}` (only the `description` field is supported)
-- `DELETE /v1/platform/orgs/current/scim/tokens/{scim_token_id}`
-
-### Step 4: Configure your Identity Provider
-
-Follow the IdP-specific instructions below to configure SCIM integration.
-
-## Email Verification
+### Email Verification
 
 In cloud only, creating a new user with SCIM triggers an email to the user.
 They must verify their email address by clicking the link in this email.
@@ -204,7 +132,74 @@ While specific instructions depending on the identity provider may vary, these m
    If your company has a group naming policy, you should instead map from the `description` identity provider attribute and
    set the description based on the [Group Naming Convention](#group-naming-convention) section.
 
-## Identity Provider (IdP) Setup
+## Configuration Steps
+
+### Step 1: Configure SAML SSO (Cloud only)
+
+There are two scenarios for [SAML SSO](./set_up_saml_sso.mdx) configuration:
+
+1. If SAML SSO is already configured for your organization, you should skip the steps to initially add the application ([Add application from Okta Integration Network](#add-application-okta-oin) or [Create a new Entra ID application integration](./set_up_saml_sso#create-application-entra-id)), as you already have an application configured and just need to enable provisioning.
+1. If you are configuring SAML SSO for the first time alongside SCIM, first follow the instructions to [set up SAML SSO](./set_up_saml_sso.mdx), _then_ follow the instructions here to enable SCIM.
+
+#### NameID Format
+
+LangSmith uses the SAML NameID to identify users. The NameID is a required field in the SAML response and is case-insensitive.
+
+The NameID must:
+
+1. Be unique to each user.
+1. Be a persistent value that never changes, such as a randomly generated unique user ID.
+1. Match exactly on each sign-in attempt. It should not rely on user input.
+
+The NameID should not be an email address or username because Email addresses and usernames are more likely to change over time and can be case-sensitive.
+
+The NameID format must be `Persistent`, unless you are using a field, like email, that requires a different format.
+
+### Step 2: Disable JIT Provisioning (Cloud only)
+
+Before enabling SCIM, disable [Just-in-Time (JIT) provisioning](./set_up_saml_sso.mdx#just-in-time-jit-provisioning) to prevent conflicts between automatic and manual user provisioning. Use the `PATCH /orgs/current/info` <RegionalUrl
+    text="endpoint"
+    type="api"
+    suffix="/redoc#tag/orgs/operation/update_current_organization_info_api_v1_orgs_current_info_patch"
+  />:
+
+```shell
+curl -X PATCH $LANGCHAIN_ENDPOINT/orgs/current/info \
+  -H "X-Api-Key: $LANGCHAIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"jit_provisioning_enabled": false}'
+```
+
+### Step 3: Generate SCIM Bearer Token
+
+:::note
+In self-hosted environments, the full URL below may look like `https://langsmith.internal.corp.dev/api/v1/platform/orgs/current/scim/tokens` (without subdomain, note the `/api/v1` path prefix) or `https://langsmith.internal.corp.dev/subdomain/api/v1/platform/orgs/current/scim/tokens` (with subdomain) - see the [ingress docs](../../../self_hosting/configuration/ingress.mdx) for more details.
+:::
+
+Generate a SCIM Bearer Token for your organization. This token will be used by your IdP to authenticate SCIM API requests.
+Ensure env vars are set appropriately, for example:
+
+```shell
+curl -X POST $LANGCHAIN_ENDPOINT/v1/platform/orgs/current/scim/tokens \
+  -H "X-Api-Key: $LANGCHAIN_API_KEY" \
+  -H "X-Organization-Id: $LANGCHAIN_ORGANIZATION_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Your description here"}'
+```
+
+Note that the SCIM Bearer Token value is not available outside of the response to this request.
+These additional endpoints are present:
+
+- `GET /v1/platform/orgs/current/scim/tokens`
+- `GET /v1/platform/orgs/current/scim/tokens/{scim_token_id}`
+- `PATCH /v1/platform/orgs/current/scim/tokens/{scim_token_id}` (only the `description` field is supported)
+- `DELETE /v1/platform/orgs/current/scim/tokens/{scim_token_id}`
+
+### Step 4: Configure your Identity Provider
+
+:::note
+If you use Azure Entra ID (formerly Azure AD) or Okta, there are specific instructions below for identity provider setup ([Azure Entra ID](#azure-entra-id), [Okta](#okta)). The requirements and steps above are applicable for all identity providers.
+:::
 
 ### Azure Entra ID
 
@@ -281,7 +276,9 @@ Set `Target Object Actions` to `Create` and `Update` only (start with `Delete` d
 You must use the [Okta Lifecycle Management](https://www.okta.com/products/lifecycle-management/) product. This product tier is required to use SCIM on Okta.
 :::
 
-**Step 1: Add application from Okta Integration Network**
+<span id="add-application-okta-oin">
+  <b>Step 1: Add application from Okta Integration Network</b>
+</span>
 
 :::note
 If you have already configured SSO login via SAML (cloud) or OAuth2.0 with OIDC (self-hosted), you may skip this step.

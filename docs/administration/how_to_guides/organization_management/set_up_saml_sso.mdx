@@ -111,7 +111,9 @@ These are instructions for setting up LangSmith SAML SSO with Entra ID (formerly
 
 For additional information, see Microsoft's [documentation](https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/add-application-portal-setup-sso).
 
-**Step 1: Create a new Entra ID application integration**
+<span id="create-application-entra-id">
+  <b>Step 1: Create a new Entra ID application integration</b>
+</span>
 
 1. Log in to the [Azure portal](https://portal.azure.com/#home) with a privileged role (e.g. Global Administrator). On the left navigation pane, select the `Entra ID` service.
 1. Navigate to Enterprise Applications and then select All Applications.
@@ -207,19 +209,19 @@ For additional information, see Okta's [documentation](https://help.okta.com/en-
 1. Find and select the LangSmith application.
 1. On the application overview page, select Add Integration.
 1. Fill in `ApiUrlBase`:
-    - US: `api.smith.langchain.com`
-    - EU: `eu.api.smith.langchain.com`
+   - US: `api.smith.langchain.com`
+   - EU: `eu.api.smith.langchain.com`
 1. Fill in `AuthHost`:
-    - US: `auth.langchain.com`
-    - EU: `eu.auth.langchain.com`
+   - US: `auth.langchain.com`
+   - EU: `eu.auth.langchain.com`
 1. Fill in `LangSmithUrl`: Same as `ApiUrlBase`
 1. Under Application Visibility, keep the box unchecked.
 1. Select Next.
 1. Select `SAML 2.0`.
-1. Fill in `Sign-On Options`: 
-    - `Application username format`: `Email`
-    - `Update application username on`: `Create and update`
-    - `Allow users to securely see their password`: leave **unchecked**.
+1. Fill in `Sign-On Options`:
+   - `Application username format`: `Email`
+   - `Update application username on`: `Create and update`
+   - `Allow users to securely see their password`: leave **unchecked**.
 
 **Via Custom App Integration**
 
@@ -230,7 +232,7 @@ For additional information, see Okta's [documentation](https://help.okta.com/en-
 1. Enter the following information in the `Configure SAML` page:
    1. `Single sign-on URL` a.k.a. `ACS URL`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/acs'/>. Keep `Use this for Recipient URL and Destination URL` checked.
    1. `Audience URI (SP Entity ID)`: <RegionalUrl type='auth' suffix='/auth/v1/sso/saml/metadata'/>
-   1. `Name ID format`: `Persistent`
+   1. `Name ID format`: **Persistent**
    1. `Application username`: `email`
    1. Leave the rest of the fields empty or set to their default.
    1. Click `Next
