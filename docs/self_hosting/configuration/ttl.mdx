@@ -59,9 +59,10 @@ To disable the cleanup job entirely:
 
 ```yaml
 queue:
-  extraEnv:
-    - name: "ENABLE_CLICKHOUSE_TTL_CLEANUP_CRON"
-      value: "false"
+  deployment:
+    extraEnv:
+      - name: "ENABLE_CLICKHOUSE_TTL_CLEANUP_CRON"
+        value: "false"
 ```
 
 ### Configuring the Schedule
@@ -70,13 +71,14 @@ You can customize when the cleanup job runs by modifying the cron expressions:
 
 ```yaml
 queue:
-  extraEnv:
-    # UTC: Sunday 12am/2am/4am
-    - name: "CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_MORNING"
-      value: "0 0,2,4 * * 0"
-    # UTC: Saturday 8pm/10pm
-    - name: "CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_EVENING"
-      value: "0 20,22 * * 6"
+  deployment:
+    extraEnv:
+      # UTC: Sunday 12am/2am/4am
+      - name: "CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_MORNING"
+        value: "0 0,2,4 * * 0"
+      # UTC: Saturday 8pm/10pm
+      - name: "CLICKHOUSE_TTL_CLEANUP_CRON_WEEKEND_EVENING"
+        value: "0 20,22 * * 6"
 ```
 
 :::tip Single Schedule
@@ -92,9 +94,10 @@ The job goes table by table, scanning parts and deleting data from parts contain
 
 ```yaml
 queue:
-  extraEnv:
-    - name: "CLICKHOUSE_TTL_CRON_MIN_EXPIRED_ROWS_PER_PART"
-      value: "100000" # 100k expired rows
+  deployment:
+    extraEnv:
+      - name: "CLICKHOUSE_TTL_CRON_MIN_EXPIRED_ROWS_PER_PART"
+        value: "100000" # 100k expired rows
 ```
 
 #### Checking Expired Rows
@@ -120,9 +123,10 @@ Delete operations can be time-consuming (~50 minutes for a 100GB part). You can 
 
 ```yaml
 queue:
-  extraEnv:
-    - name: "CLICKHOUSE_TTL_CRON_MAX_ACTIVE_MUTATIONS"
-      value: "1"
+  deployment:
+    extraEnv:
+      - name: "CLICKHOUSE_TTL_CRON_MAX_ACTIVE_MUTATIONS"
+        value: "1"
 ```
 
 :::danger Concurrent Mutations
