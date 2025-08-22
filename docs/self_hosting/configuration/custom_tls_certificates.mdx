@@ -1,4 +1,26 @@
+import {
+  CodeTabs,
+  DockerBlock,
+  HelmBlock,
+} from "../../../src/components/InstructionsWithCode";
+
 # Use custom TLS certificates for model providers
+
+## Using Truststore to utilize system CA certificates
+
+:::note Helm v0.10.29 or later
+This feature is available in LangSmith Helm chart version 0.10.29/app z
+:::
+
+If you are using a self-signed certificate or a certificate from a custom certificate authority (CA), you can use the system's truststore to configure the TLS settings for model providers. This is useful if you want to use the system's CA certificates instead of providing a custom CA certificate.
+To use the system's truststore, you will need to mount the certificate authority (CA) certificates into the LangSmith application container. You can do this by adding a volume mount to the LangSmith deployment or Docker container.
+
+## Requirements
+
+- A self-signed certificate or a certificate from a custom CA that you want to use for the model provider.
+- The certificate authority (CA) certificate in PEM format. This must be a config-map or
+
+## Configuration
 
 :::note Select providers only
 
