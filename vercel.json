@@ -797,7 +797,7 @@
     },
     {
       "source": "/administration/how_to_guides/organization_management/set_up_billing",
-      "destination": "https://www.docs.langchain.com/langsmith/set-up-billing"
+      "destination": "https://www.docs.langchain.com/langsmith/manage-billing"
     },
     {
       "source": "/administration/how_to_guides/organization_management/set_up_organization",
