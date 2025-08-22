@@ -889,7 +889,7 @@
     },
     {
       "source": "/prompt_engineering/how_to_guides/prompt_canvas",
-      "destination": "https://www.docs.langchain.com/langsmith/prompt-canvas"
+      "destination": "https://www.docs.langchain.com/langsmith/write-prompt-with-ai"
     },
     {
       "source": "/prompt_engineering/how_to_guides/prompt_tags",
