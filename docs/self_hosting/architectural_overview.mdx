@@ -23,8 +23,9 @@ The LangSmith application consists of several components including 5 LangSmith s
 - ClickHouse
 - Postgres
 - Redis
+- Blob Storage (Optional but highly recommended)
 
-![./static/self_hosted_architecture_diagram.png](./static/self_hosted_architecture_diagram.png)
+![./static/architecture_diagram_blob.png](./static/self_hosted_architecture_diagram.png)
 
 To access the LangSmith UI and send API requests, you will need to expose the LangSmith Frontend service. Depending on your installation method, this can be a load balancer or a port exposed on the host machine.
 
@@ -53,6 +54,11 @@ LangSmith uses Postgres as the primary data store for transactional workloads an
 
 LangSmith uses Redis to back queuing/caching operations.
 
+### Blob Storage
+
+LangSmith supports several blob storage providers, including [AWS S3](https://aws.amazon.com/s3/), [Azure Blob Storage](https://azure.microsoft.com/en-us/services/storage/blobs/), and [Google Cloud Storage](https://cloud.google.com/storage).
+LangSmith uses blob storage to store large files, such as trace artifacts, feedback attachments, and other large data objects. Blob storage is optional but highly recommended for production deployments.
+
 ## Services
 
 ### LangSmith Frontend
@@ -61,7 +67,7 @@ The frontend uses Nginx to serve the LangSmith UI and route API requests to the 
 
 ### LangSmith Backend
 
-The backend is the primary entrypoint for API requests and handles the majority of the business logic for the application. This includes handling requests from the frontend and sdk, preparing traces for ingestion, and supporting the hub API.
+The backend is the main entrypoint for CRUD API requests and handles the majority of the business logic for the application. This includes handling requests from the frontend and sdk, preparing traces for ingestion, and supporting the hub API.
 
 ### LangSmith Queue
 
@@ -69,7 +75,7 @@ The queue handles incoming traces and feedback to ensure that they are ingested 
 
 ### LangSmith Platform Backend
 
-The platform backend is an internal service that primarily handles authentication and other high-volume tasks. The user should not need to interact with this service directly.
+The platform backend is another critical service that primarily handles authentication, run ingestion and other high-volume tasks.
 
 ### LangSmith Playground
 
