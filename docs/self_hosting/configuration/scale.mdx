@@ -4,6 +4,27 @@ A self-hosted LangSmith instance can handle a large number of traces and users. 
 
 For example configurations, refer to [Example LangSmith configurations for scale](#example-langsmith-configurations-for-scale).
 
+## Summary
+
+The table below provides an overview comparing different LangSmith configurations for various load patterns.
+
+| Load Pattern (Reads/Writes)                      | Concurrent Frontend Users | Traces Submitted per Second | Frontend Replicas | Platform Backend Replicas | Queue Replicas | Backend Replicas | Redis Resources | ClickHouse Resources      | ClickHouse Setup              | Postgres Resources                          | Blob Storage |
+| ------------------------------------------------ | ------------------------- | --------------------------- | ----------------- | ------------------------- | -------------- | ---------------- | --------------- | ------------------------- | ----------------------------- | ------------------------------------------- | ------------ |
+| **[Low/Low](#low-reads-low-writes)**             | 5                         | 10                          | 1 (default)       | 3 (default)               | 3 (default)    | 2 (default)      | 8 Gi (default)  | 4 CPU, 16 Gi (default)    | Single instance               | 2 CPU, 8 GB memory, 10GB storage (external) | Disabled     |
+| **[Low/High](#low-reads-high-writes)**           | 5                         | 1000                        | 4                 | 20                        | 160            | 5                | 200 Gi external | 10 CPU, 32Gi memory       | Single instance               | 2 CPU, 8 GB memory, 10GB storage (external) | Enabled      |
+| **[High/Low](#high-reads-low-writes)**           | 50                        | 10                          | 2                 | 3 (default)               | 6              | 40               | 8 Gi (default)  | 8 CPU, 16 Gi per replica  | **3-node replicated cluster** | 2 CPU, 8 GB memory, 10GB storage (external) | Enabled      |
+| **[Medium/Medium](#medium-reads-medium-writes)** | 20                        | 100                         | 2                 | 3 (default)               | 10             | 16               | 13Gi external   | 16 CPU, 24Gi memory       | Single instance               | 2 CPU, 8 GB memory, 10GB storage (external) | Enabled      |
+| **[High/High](#high-reads-high-writes)**         | 50                        | 1000                        | 4                 | 20                        | 160            | 50               | 200 Gi external | 14 CPU, 24 Gi per replica | **3-node replicated cluster** | 2 CPU, 8 GB memory, 10GB storage (external) | Enabled      |
+
+**Notes:**
+
+- **Concurrent Frontend Users**: Number of users actively viewing traces on the frontend
+- **Traces Submitted per Second**: Number of traces being ingested via SDKs or API endpoints
+- **Replicated ClickHouse**: Recommended for high read loads to prevent degraded performance. Another option would be [managed clickhouse](./external_clickhouse#langsmith-managed-clickhouse).
+- **PostgreSQL**: We recommend using an external instance and enabling autoexpansion for the disk to handle growing data requirements.
+
+Below we go into more details about the read and write paths as well as provide a `values.yaml` snippet for you to start with for your self-hosted LangSmith instance.
+
 ## Trace ingestion (write path)
 
 Common usage that put load on the write path:
