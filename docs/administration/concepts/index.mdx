@@ -46,7 +46,7 @@ See the table below for details on which features are available in which scope (
 | Datasets &amp; Experiments                                                  | Workspace        |
 | Prompts                                                                     | Workspace        |
 | Resource Tags                                                               | Workspace        |
-| API Keys                                                                    | Workspace        |
+| API Keys                                                                    | Organization     |
 | Settings including Secrets, Feedback config, Models, Rules, and Shared URLs | Workspace        |
 | User management: Invite User to Workspace                                   | Workspace        |
 | RBAC: Assigning Workspace Roles                                             | Workspace        |
@@ -108,8 +108,9 @@ PATs are prefixed with `lsv2_pt_`
 
 #### Service keys
 
-Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account. Only admins can create service keys. We recommend using these for applications / services that need to interact with the LangSmith API, such as LangGraph agents or other integrations.
-Service keys are scoped to a workspace and can be used to authenticate requests to the LangSmith API for that workspace.
+Service keys are similar to PATs, but are used to authenticate requests to the LangSmith API on behalf of a service account. Only admins can create service keys. The creator must be an admin in all of the workspaces the key is being scoped to, or an organization admin for org-scoped keys. We recommend using these for applications / services that need to interact with the LangSmith API, such as LangGraph agents or other integrations.
+Service keys can be scoped to workspaces or an organization and can be used to authenticate requests to the LangSmith API for any workspaces within its scope.
+For Enterprise users, service keys can also be assigned roles, including custom roles, which will give the key a set of permissions for the workspaces it is scoped to.
 
 Service keys are prefixed with `lsv2_sk_`
 
@@ -168,6 +169,8 @@ Organization admins can also create/edit custom roles with specific permissions 
 Roles can be managed in organization settings under the `Roles` tab:
 
 ![Roles](./static/roles_tab_rbac.png)
+
+Alternatively, custom roles can also be created in the API key creation process.
 
 For more details on assigning and creating roles, see the [access control setup guide](../how_to_guides/organization_management/set_up_access_control.mdx).
 
