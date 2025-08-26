@@ -545,7 +545,7 @@
     },
     {
       "source": "/evaluation/how_to_guides/analyze_single_experiment",
-      "destination": "https://www.docs.langchain.com/langsmith/work-with-experiments"
+      "destination": "https://www.docs.langchain.com/langsmith/analyze-an-experiment"
     },
     {
       "source": "/evaluation/how_to_guides/annotate_traces_inline",
