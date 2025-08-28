@@ -292,6 +292,10 @@
       "destination": "https://www.docs.langchain.com/langsmith/evaluation-concepts"
     },
     {
+      "source": "/evaluation/concepts#application-specific-techniques",
+      "destination": "https://www.docs.langchain.com/langsmith/evaluation-approaches"
+    },
+    {
       "source": "/administration",
       "destination": "https://www.docs.langchain.com/langsmith/administration-overview"
     },
