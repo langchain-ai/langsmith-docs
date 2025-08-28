@@ -154,7 +154,7 @@
     {
       "source": "/administration/pricing",
       "destination": "https://www.langchain.com/pricing-langsmith"
-    },    
+    },
     {
       "source": "/pricing/plans",
       "destination": "https://www.langchain.com/pricing-langsmith"
