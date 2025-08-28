@@ -898,10 +898,6 @@
     {
       "source": "/",
       "destination": "https://docs.langchain.com/langsmith"
-    },
-    {
-      "source": "/:path*",
-      "destination": "https://docs.langchain.com/langsmith"
     }
   ]
 }
