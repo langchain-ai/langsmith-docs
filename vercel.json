@@ -69,15 +69,15 @@
     },
     {
       "source": "/pricing/index",
-      "destination": "https://docs.langchain.com/langsmith"
+      "destination": "https://docs.langchain.com/langsmith/pricing-plans"
     },
     {
       "source": "/observability/concepts",
-      "destination": "https://docs.langchain.com/langsmith/observability-stack"
+      "destination": "https://docs.langchain.com/langsmith/observability-concepts"
     },
     {
       "source": "/observability/concepts/index",
-      "destination": "https://docs.langchain.com/langsmith/observability-stack"
+      "destination": "https://docs.langchain.com/langsmith/observability-concepts"
     },
     {
       "source": "/observability/how_to_guides",
@@ -693,7 +693,7 @@
     },
     {
       "source": "/self_hosting/organization_charts",
-      "destination": "https://docs.langchain.com/langsmith/organization-charts"
+      "destination": "https://docs.langchain.com/langsmith/self-host-organization-charts"
     },
     {
       "source": "/self_hosting/release_notes",
