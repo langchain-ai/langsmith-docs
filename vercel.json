@@ -76,27 +76,27 @@
       "destination": "/administration/how_to_guides/organization_management"
     },
     {
-      "source": "/concepts/admin:path*",
-      "destination": "/administration/concepts"
+      "source": "/concepts/admin/:path*",
+      "destination": "https://www.docs.langchain.com/langsmith/adminstration-overview"
     },
     {
-      "source": "/concepts/usage_and_billing:path*",
-      "destination": "/administration/concepts"
+      "source": "/concepts/usage_and_billing/:path*",
+      "destination": "https://www.docs.langchain.com/langsmith/billing"
     },
     {
-      "source": "/concepts/evaluation:path*",
+      "source": "/concepts/evaluation/:path*",
       "destination": "/evaluation/concepts"
     },
     {
-      "source": "/concepts/tracing:path*",
+      "source": "/concepts/tracing/:path*",
       "destination": "/observability/concepts"
     },
     {
-      "source": "/concepts/prompts:path*",
+      "source": "/concepts/prompts/:path*",
       "destination": "/prompt_engineering/concepts"
     },
     {
-      "source": "/pricing:path*",
+      "source": "/pricing/:path*",
       "destination": "https://www.langchain.com/pricing-langsmith"
     },
     {
