@@ -228,7 +228,7 @@
       "destination": "https://docs.langchain.com/langsmith/trace-openai"
     },
     {
-      "source": "/observability/how_to_guides/trace_with_opentelemetry",
+      "source": "/observability/how_to_guides/trace_langchain_with_otel",
       "destination": "https://docs.langchain.com/langsmith/trace-with-opentelemetry"
     },
     {
