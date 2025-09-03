@@ -110,7 +110,7 @@ const config = {
       },
       announcementBar: {
         content:
-          'Our new LangChain Academy Course Deep Research with LangGraph is now live! <a href="https://academy.langchain.com/courses/deep-research-with-langgraph/?utm_medium=internal&utm_source=docs&utm_campaign=q3-2025_deep-research-course_co" target="_blank">Enroll for free</a>.',
+          '<strong>LangSmith docs have moved!</strong> Find the LangSmith docs at the new <a href="https://docs.langchain.com/langsmith" target="_blank">LangChain Docs</a> site.',
       },
       prism: {
         theme: {
