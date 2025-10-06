@@ -921,31 +921,31 @@
     },
     {
       "source": "/cookbook/hub-examples/retrieval-qa-chain",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/log-retriever-trace"
     },
     {
       "source": "/evaluation/evaluator-implementations",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/code-evaluator"
     },
     {
       "source": "/user_guide",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/administration-overview"
     },
     {
       "source": "/concepts/tracing",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/observability-concepts"
     },
     {
       "source": "/tutorials/Developers/evaluation",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/evaluate-chatbot-tutorial"
     },
     {
       "source": "/evaluation/capturing-feedback",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/attach-user-feedback"
     },
     {
       "source": "/how_to_guides/tracing",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/integrations-overview"
     },
     {
       "source": "/category/testing--evaluation",
@@ -953,15 +953,15 @@
     },
     {
       "source": "/evaluation/faq/custom-evaluators",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/code-evaluator"
     },
     {
       "source": "/old/category/prompt-hub",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/manage-prompts"
     },
     {
       "source": "/old/evaluation",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/evaluation"
     },
     {
       "source": "/setup",
@@ -969,7 +969,7 @@
     },
     {
       "source": "/evaluation/faq/evaluator-implementations",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/code-evaluator"
     },
     {
       "source": "/user_guide%22",
@@ -985,11 +985,11 @@
     },
     {
       "source": "/old/tracing/quick_start",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/observability-quickstart"
     },
     {
       "source": "/tracing",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/observability-quickstart"
     },
     {
       "source": "/tracing/faq/logging_and_viewing",
@@ -1013,83 +1013,83 @@
     },
     {
       "source": "/evaluation/additional-resources/expand-datasets",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/manage-datasets"
     },
     {
       "source": "/evaluation/recommendations",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/evaluation"
     },
     {
       "source": "/how_to_guides/setup/create_account_api_key?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/create-account-api-key"
     },
     {
       "source": "/how_to_guides/setup/set_up_access_control?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/user-management"
     },
     {
       "source": "/observability/how_to_guides/tracing/trace_with_opentelemetry",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/trace-with-opentelemetry"
     },
     {
       "source": "/self_hosting/kubernetes?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/kubernetes"
     },
     {
       "source": "/category/self-hosting",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/architectural-overview"
     },
     {
       "source": "/cookbook/testing-examples/rag_eval",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/evaluate-rag-tutorial"
     },
     {
       "source": "/evaluation/additional-resources/recommendations",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/evaluation"
     },
     {
       "source": "/evaluation/datasets",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/manage-datasets"
     },
     {
       "source": "/evaluation/datasets?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/manage-datasets"
     },
     {
       "source": "/evaluation/evaluator-implementations?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/code-evaluator"
     },
     {
       "source": "/evaluation/faq/manage-datasets",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/manage-datasets"
     },
     {
       "source": "/evaluation/how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/index-datasets-for-dynamic-few-shot-example-selection"
     },
     {
       "source": "/evaluation/how_to_guides/human_feedback/annotation_queues?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/annotation-queues"
     },
     {
       "source": "/how_to_guides/datasets/manage_datasets_in_application",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/manage-datasets"
     },
     {
       "source": "/how_to_guides/evaluation/evaluate_on_intermediate_steps?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/evaluate-on-intermediate-steps"
     },
     {
       "source": "/how_to_guides/human_feedback/annotation_queues?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/annotation-queues"
     },
     {
       "source": "/old/cookbook/testing-examples/rag_eval?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/evaluate-rag-tutorial"
     },
     {
       "source": "/old/tracing/concepts",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/observability-concepts"
     },
     {
       "source": "/proxy/quickstart",
@@ -1097,7 +1097,7 @@
     },
     {
       "source": "/tutorials/Developers/observability",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/observability-quickstart"
     },
     {
       "source": "/api-docs",
@@ -1133,7 +1133,7 @@
     },
     {
       "source": "/cookbook/hub-examples/runnable-prompt",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/prompt-engineering"
     },
     {
       "source": "/cookbook/testing-examples/download-feedback-and-examples",
@@ -1153,11 +1153,11 @@
     },
     {
       "source": "/cookbook/testing-examples/pytest",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/pytest"
     },
     {
       "source": "/cookbook/testing-examples/pytest-ut",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/pytest"
     },
     {
       "source": "/cookbook/testing-examples/qa-correctness",
@@ -1181,7 +1181,7 @@
     },
     {
       "source": "/cookbook/tracing-examples/traceable",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/integrations-overview"
     },
     {
       "source": "/cookbook/typescript-testing-examples/eval-in-python",
@@ -1189,11 +1189,11 @@
     },
     {
       "source": "/docs/additional-resources/local_installation",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/deployment-options"
     },
     {
       "source": "/docs/getting-started/local_installation",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/deployment-options"
     },
     {
       "source": "/evaluation/faq/datasets-webapp",
@@ -1209,7 +1209,7 @@
     },
     {
       "source": "/how_to_guides/monitoring/online_evaluations?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/evaluate-llm-application"
     },
     {
       "source": "/how_to_guides/prompts/open_a_prompt_from_a_trace",
@@ -1221,11 +1221,11 @@
     },
     {
       "source": "/hub/faq",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/faq"
     },
     {
       "source": "/observability/how_to_guides/tracing/trace_with_vercel_ai_sdk?ref=blog.langchain.dev",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/trace-with-vercel-ai-sdk"
     },
     {
       "source": "/observability/how_to_guides/tracing/upload_files_with_traces",
@@ -1245,7 +1245,7 @@
     },
     {
       "source": "/old/evaluation/faq/manage-datasets",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/manage-datasets"
     },
     {
       "source": "/old/hub/dev-setup",
@@ -1253,15 +1253,15 @@
     },
     {
       "source": "/old/monitoring/faq/annotation_queue",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/annotation-queues"
     },
     {
       "source": "/old/self_hosting/docker",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/docker"
     },
     {
       "source": "/old/tracing",
-      "destination": "https://docs.langchain.com/langsmith/"
+      "destination": "https://docs.langchain.com/langsmith/observability"
     },
     {
       "source": "/tracing/use-cases/export-runs",
