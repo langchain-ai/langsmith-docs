@@ -157,7 +157,7 @@
     },
     {
       "source": "/observability/how_to_guides/langgraph_platform_logs",
-      "destination": "https://docs.langchain.com/langsmith/langgraph-platform-logs"
+      "destination": "https://docs.langchain.com/langsmith/platform-logs"
     },
     {
       "source": "/observability/how_to_guides/log_llm_trace",
