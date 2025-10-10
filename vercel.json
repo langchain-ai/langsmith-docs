@@ -1285,7 +1285,7 @@
     },
     {
       "source": "/reference/js",
-      "destination": "https://reference.langchain.com/langsmith/"
+      "destination": "https://reference.langchain.com/javascript/modules/langsmith.html"
     }
   ]
 }
