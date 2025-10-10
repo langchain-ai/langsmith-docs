@@ -1282,10 +1282,6 @@
     {
       "source": "/user_guide",
       "destination": "https://docs.langchain.com/langsmith/"
-    },
-    {
-      "source": "/reference/js",
-      "destination": "https://reference.langchain.com/javascript/modules/langsmith.html"
     }
   ]
 }
