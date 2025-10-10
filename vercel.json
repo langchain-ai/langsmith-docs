@@ -72,6 +72,14 @@
       "destination": "https://docs.langchain.com/langsmith/self-hosted"
     },
     {
+      "source": "/reference",
+      "destination": "https://docs.langchain.com/langsmith"
+    },
+    {
+      "source": "/reference/index",
+      "destination": "https://docs.langchain.com/langsmith"
+    },
+    {
       "source": "/pricing",
       "destination": "https://www.langchain.com/pricing"
     },
