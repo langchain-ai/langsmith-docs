@@ -893,7 +893,7 @@
     },
     {
       "source": "/reference/data_formats",
-      "destination": "https://docs.langchain.com/langsmith/run-data-formats"
+      "destination": "https://docs.langchain.com/langsmith/run-data-format"
     },
     {
       "source": "/reference/data_formats/dataset_json_types",
@@ -1282,6 +1282,10 @@
     {
       "source": "/user_guide",
       "destination": "https://docs.langchain.com/langsmith/"
+    },
+    {
+      "source": "/reference/js",
+      "destination": "https://reference.langchain.com/langsmith/"
     }
   ]
 }
