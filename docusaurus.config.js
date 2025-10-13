@@ -189,11 +189,11 @@ const config = {
                 href: "https://github.com/langchain-ai/langsmith-sdk",
               },
               {
-                label: "Python",
+                label: "LangChain Python",
                 href: "https://github.com/langchain-ai/langchain",
               },
               {
-                label: "JS/TS",
+                label: "LangChain JS/TS",
                 href: "https://github.com/langchain-ai/langchainjs",
               },
             ],
