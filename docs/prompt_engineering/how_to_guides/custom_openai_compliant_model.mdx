@@ -4,25 +4,36 @@ sidebar_position: 2
 
 # Run the playground against an OpenAI-compliant model provider/proxy
 
-The LangSmith playground allows you to use any model that is compliant with the OpenAI API. You can utilize your model by setting the Proxy Provider for `OpenAI` in the playground.
+The LangSmith playground allows you to use any model that is compliant with the OpenAI API.
 
-## Deploy an OpenAI compliant model
+## Deploy an OpenAI-compliant model
 
-Many providers offer OpenAI compliant models or proxy services. Some examples of this include:
+Many providers offer OpenAI-compliant models or proxy services that wrap existing models with an OpenAI-compatible API. Some popular options include:
 
 - [LiteLLM Proxy](https://github.com/BerriAI/litellm?tab=readme-ov-file#quick-start-proxy---cli)
 - [Ollama](https://ollama.com/)
 
-You can use these providers to deploy your model and get an API endpoint that is compliant with the OpenAI API.
-
-Take a look at the full [specification](https://platform.openai.com/docs/api-reference/chat) for more information.
+These tools allow you to deploy models with an API endpoint that follows the OpenAI specification. For implementation details, refer to the [OpenAI API documentation](https://platform.openai.com/docs/api-reference/chat).
 
 ## Use the model in the LangSmith Playground
 
-Once you have deployed a model server, you can use it in the LangSmith Playground. Enter the playground and select the `Proxy Provider` inside the `OpenAI` modal.
+Once you have deployed a model server, you can use it in the LangSmith Playground.
 
-![OpenAI Proxy Provider](./static/openai_proxy_provider.png)
+### Configure the playground
 
-If everything is set up correctly, you should see the model's response in the playground. You can also use this functionality to invoke downstream pipelines as well.
+1. Open the LangSmith Playground
+2. Change the provider to `Custom Model Endpoint`
+3. Enter your model's endpoint URL in the `Base URL` field
+4. Configure any additional configuration parameters
 
-See how to store your model configuration for later use [here](./managing_model_configurations).
+![Custom Model Endpoint](./static/custom_model_endpoint.png)
+
+The playground uses [`ChatOpenAI`](https://python.langchain.com/api_reference/openai/chat_models/langchain_openai.chat_models.base.ChatOpenAI.html) from `langchain-openai` under the hood, automatically configuring it with your custom endpoint as the `base_url`.
+
+### Testing the connection
+
+Click `Start` to test the connection. If properly configured, you should see your model's responses appear in the playground. You can then experiment with different prompts and parameters.
+
+## Save your model configuration
+
+To reuse your custom model configuration in future sessions, learn how to save and manage your settings [here](./managing_model_configurations).
