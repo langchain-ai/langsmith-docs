@@ -4,6 +4,30 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/reference/python/:module/langsmith.:rest",
+      "destination": "https://reference.langchain.com/python/langsmith/observability/sdk/:module/#langsmith.:rest"
+    },
+    {
+      "source": "/reference/python/:module/:path*",
+      "destination": "https://reference.langchain.com/python/langsmith/observability/sdk/:module/:path"
+    },
+    {
+      "source": "/reference/python",
+      "destination": "https://reference.langchain.com/python/langsmith/"
+    },
+    {
+      "source": "/reference/js/:module/:rest*",
+      "destination": "https://reference.langchain.com/javascript/modules/langsmith.:module.html"
+    },
+    {
+      "source": "/reference/js/:module",
+      "destination": "https://reference.langchain.com/javascript/modules/langsmith.:module.html"
+    },
+    {
+      "source": "/reference/js",
+      "destination": "https://reference.langchain.com/javascript/modules/langsmith.html"
+    },
+    {
       "source": "/index",
       "destination": "https://docs.langchain.com/langsmith"
     },
@@ -16,15 +40,11 @@
       "destination": "https://docs.langchain.com/langgraph-platform"
     },
     {
-      "source": "/observability",
+      "source": "/observability(/index)?",
       "destination": "https://docs.langchain.com/langsmith/observability"
     },
     {
-      "source": "/observability/index",
-      "destination": "https://docs.langchain.com/langsmith/observability"
-    },
-    {
-      "source": "/evaluation",
+      "source": "/evaluation(/index)?",
       "destination": "https://docs.langchain.com/langsmith/evaluation-concepts"
     },
     {
@@ -32,19 +52,11 @@
       "destination": "https://docs.langchain.com/langsmith/evaluation-concepts"
     },
     {
-      "source": "/evaluation/index",
-      "destination": "https://docs.langchain.com/langsmith/evaluation-concepts"
-    },
-    {
       "source": "/evaluation/concepts#application-specific-techniques",
       "destination": "https://docs.langchain.com/langsmith/evaluation-approaches"
     },
     {
-      "source": "/administration",
-      "destination": "https://docs.langchain.com/langsmith/administration-overview"
-    },
-    {
-      "source": "/administration/index",
+      "source": "/administration(/index)?",
       "destination": "https://docs.langchain.com/langsmith/administration-overview"
     },
     {
@@ -56,11 +68,7 @@
       "destination": "https://docs.langchain.com/langsmith/prompt-engineering"
     },
     {
-      "source": "/prompt_engineering",
-      "destination": "https://docs.langchain.com/langsmith/prompt-engineering"
-    },
-    {
-      "source": "/prompt_engineering/index",
+      "source": "/prompt_engineering(/index)?",
       "destination": "https://docs.langchain.com/langsmith/prompt-engineering"
     },
     {
@@ -72,35 +80,19 @@
       "destination": "https://docs.langchain.com/langsmith/self-hosted"
     },
     {
-      "source": "/reference",
+      "source": "/reference(/index)?",
       "destination": "https://docs.langchain.com/langsmith"
     },
     {
-      "source": "/reference/index",
-      "destination": "https://docs.langchain.com/langsmith"
-    },
-    {
-      "source": "/pricing",
+      "source": "/pricing(/index)?",
       "destination": "https://www.langchain.com/pricing"
     },
     {
-      "source": "/pricing/index",
-      "destination": "https://www.langchain.com/pricing"
-    },
-    {
-      "source": "/observability/concepts",
+      "source": "/observability/concepts(/index)?",
       "destination": "https://docs.langchain.com/langsmith/observability-concepts"
     },
     {
-      "source": "/observability/concepts/index",
-      "destination": "https://docs.langchain.com/langsmith/observability-concepts"
-    },
-    {
-      "source": "/observability/how_to_guides",
-      "destination": "https://docs.langchain.com/langsmith/trace-with-langchain"
-    },
-    {
-      "source": "/observability/how_to_guides/index",
+      "source": "/observability/how_to_guides(/index)?",
       "destination": "https://docs.langchain.com/langsmith/trace-with-langchain"
     },
     {
@@ -276,11 +268,7 @@
       "destination": "https://docs.langchain.com/langsmith/webhooks"
     },
     {
-      "source": "/observability/tutorials",
-      "destination": "https://docs.langchain.com/langsmith/observability-tutorial"
-    },
-    {
-      "source": "/observability/tutorials/index",
+      "source": "/observability/tutorials(/index)?",
       "destination": "https://docs.langchain.com/langsmith/observability-tutorial"
     },
     {
@@ -288,19 +276,11 @@
       "destination": "https://docs.langchain.com/langsmith/observability-tutorial"
     },
     {
-      "source": "/evaluation/concepts",
+      "source": "/evaluation/concepts(/index)?",
       "destination": "https://docs.langchain.com/langsmith/evaluation"
     },
     {
-      "source": "/evaluation/concepts/index",
-      "destination": "https://docs.langchain.com/langsmith/evaluation"
-    },
-    {
-      "source": "/evaluation/how_to_guides",
-      "destination": "https://docs.langchain.com/langsmith/evaluate-llm-application"
-    },
-    {
-      "source": "/evaluation/how_to_guides/index",
+      "source": "/evaluation/how_to_guides(/index)?",
       "destination": "https://docs.langchain.com/langsmith/evaluate-llm-application"
     },
     {
@@ -488,11 +468,7 @@
       "destination": "https://docs.langchain.com/langsmith/vitest-jest"
     },
     {
-      "source": "/evaluation/tutorials",
-      "destination": "https://docs.langchain.com/langsmith/evaluation-quickstart"
-    },
-    {
-      "source": "/evaluation/tutorials/index",
+      "source": "/evaluation/tutorials(/index)?",
       "destination": "https://docs.langchain.com/langsmith/evaluation-quickstart"
     },
     {
@@ -528,11 +504,7 @@
       "destination": "https://docs.langchain.com/langsmith/evaluate-chatbot-tutorial#evaluate-a-chatbot"
     },
     {
-      "source": "/administration/concepts",
-      "destination": "https://docs.langchain.com/langsmith/administration-overview"
-    },
-    {
-      "source": "/administration/concepts/index",
+      "source": "/administration/concepts(/index)?",
       "destination": "https://docs.langchain.com/langsmith/administration-overview"
     },
     {
@@ -592,11 +564,7 @@
       "destination": "https://docs.langchain.com/langsmith/set-up-a-workspace"
     },
     {
-      "source": "/administration/tutorials",
-      "destination": "https://docs.langchain.com/langsmith/billing"
-    },
-    {
-      "source": "/administration/tutorials/index",
+      "source": "/administration/tutorials(/index)?",
       "destination": "https://docs.langchain.com/langsmith/billing"
     },
     {
@@ -608,19 +576,11 @@
       "destination": "https://docs.langchain.com/langsmith/billing#optimize-your-tracing-spend"
     },
     {
-      "source": "/prompt_engineering/concepts",
+      "source": "/prompt_engineering/concepts(/index)?",
       "destination": "https://docs.langchain.com/langsmith/prompt-engineering-concepts"
     },
     {
-      "source": "/prompt_engineering/concepts/index",
-      "destination": "https://docs.langchain.com/langsmith/prompt-engineering-concepts"
-    },
-    {
-      "source": "/prompt_engineering/how_to_guides",
-      "destination": "https://docs.langchain.com/langsmith/create-a-prompt"
-    },
-    {
-      "source": "/prompt_engineering/how_to_guides/index",
+      "source": "/prompt_engineering/how_to_guides(/index)?",
       "destination": "https://docs.langchain.com/langsmith/create-a-prompt"
     },
     {
@@ -692,11 +652,7 @@
       "destination": "https://docs.langchain.com/langsmith/prompt-engineering-quickstart"
     },
     {
-      "source": "/prompt_engineering/tutorials",
-      "destination": "https://docs.langchain.com/langsmith/optimize-classifier"
-    },
-    {
-      "source": "/prompt_engineering/tutorials/index",
+      "source": "/prompt_engineering/tutorials(/index)?",
       "destination": "https://docs.langchain.com/langsmith/optimize-classifier"
     },
     {
@@ -744,11 +700,7 @@
       "destination": "https://docs.langchain.com/langsmith/self-host-usage"
     },
     {
-      "source": "/self_hosting/configuration",
-      "destination": "https://docs.langchain.com/langsmith/self-host-scale"
-    },
-    {
-      "source": "/self_hosting/configuration/index",
+      "source": "/self_hosting/configuration(/index)?",
       "destination": "https://docs.langchain.com/langsmith/self-host-scale"
     },
     {
@@ -808,11 +760,7 @@
       "destination": "https://docs.langchain.com/langsmith/user-management"
     },
     {
-      "source": "/self_hosting/installation",
-      "destination": "https://docs.langchain.com/langsmith/self-host-installation"
-    },
-    {
-      "source": "/self_hosting/installation/index",
+      "source": "/self_hosting/installation(/index)?",
       "destination": "https://docs.langchain.com/langsmith/self-host-installation"
     },
     {
@@ -824,11 +772,7 @@
       "destination": "https://docs.langchain.com/langsmith/kubernetes"
     },
     {
-      "source": "/self_hosting/observability",
-      "destination": "https://docs.langchain.com/langsmith/observability"
-    },
-    {
-      "source": "/self_hosting/observability/index",
+      "source": "/self_hosting/observability(/index)?",
       "destination": "https://docs.langchain.com/langsmith/observability"
     },
     {
@@ -844,11 +788,7 @@
       "destination": "https://docs.langchain.com/langsmith/observability-stack"
     },
     {
-      "source": "/self_hosting/scripts",
-      "destination": "https://docs.langchain.com/langsmith/script-delete-a-workspace"
-    },
-    {
-      "source": "/self_hosting/scripts/index",
+      "source": "/self_hosting/scripts(/index)?",
       "destination": "https://docs.langchain.com/langsmith/script-delete-a-workspace"
     },
     {
@@ -946,10 +886,6 @@
     {
       "source": "/concepts/tracing",
       "destination": "https://docs.langchain.com/langsmith/observability-concepts"
-    },
-    {
-      "source": "/tutorials/Developers/evaluation",
-      "destination": "https://docs.langchain.com/langsmith/evaluate-chatbot-tutorial"
     },
     {
       "source": "/evaluation/capturing-feedback",
@@ -1062,14 +998,6 @@
     {
       "source": "/evaluation/datasets",
       "destination": "https://docs.langchain.com/langsmith/manage-datasets"
-    },
-    {
-      "source": "/evaluation/datasets",
-      "destination": "https://docs.langchain.com/langsmith/manage-datasets"
-    },
-    {
-      "source": "/evaluation/evaluator-implementations",
-      "destination": "https://docs.langchain.com/langsmith/code-evaluator"
     },
     {
       "source": "/evaluation/faq/manage-datasets",
@@ -1277,10 +1205,6 @@
     },
     {
       "source": "/tracing/use-cases/export-runs",
-      "destination": "https://docs.langchain.com/langsmith/"
-    },
-    {
-      "source": "/user_guide",
       "destination": "https://docs.langchain.com/langsmith/"
     }
   ]
