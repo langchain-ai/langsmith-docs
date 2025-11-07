@@ -4,7 +4,11 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/reference/python/:module/langsmith.:rest",
+      "source": "/reference/python/reference",
+      "destination": "https://reference.langchain.com/python/langsmith/"
+    },
+    {
+      "source": "/reference/python/:module/langsmith.:rest*",
       "destination": "https://reference.langchain.com/python/langsmith/observability/sdk/:module/#langsmith.:rest"
     },
     {
