@@ -248,6 +248,10 @@
       "destination": "https://docs.langchain.com/langsmith/trace-with-opentelemetry"
     },
     {
+      "source": "/observability/how_to_guides/trace_with_opentelemetry",
+      "destination": "https://docs.langchain.com/langsmith/trace-with-opentelemetry"
+    },
+    {
       "source": "/observability/how_to_guides/trace_with_vercel_ai_sdk",
       "destination": "https://docs.langchain.com/langsmith/trace-with-vercel-ai-sdk"
     },
