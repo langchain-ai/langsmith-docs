@@ -380,7 +380,7 @@
       "destination": "https://docs.langchain.com/langsmith/filter-experiments-ui"
     },
     {
-      "source": "/evaluation/how_to_guides/index_datasets_for_dynamic_few_shot_example_selection",
+      "source": "/evaluation/how_to_guides/datasets/index_datasets_for_dynamic_few_shot_example_selection",
       "destination": "https://docs.langchain.com/langsmith/index-datasets-for-dynamic-few-shot-example-selection"
     },
     {
