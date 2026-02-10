@@ -1,4 +1,4 @@
-# API reference build disabled - docs now redirect to docs.langchain.com/langsmith
+# API reference build disabled - docs now redirect to reference.langchain.com/python/langsmith
 # build-api-ref:
 # 	git clone --depth=1 https://github.com/langchain-ai/langsmith-sdk.git
 # 	...
