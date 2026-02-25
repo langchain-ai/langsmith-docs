@@ -35,7 +35,7 @@
     "@mdx-js/react": "^3.0.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/joy": "^5.0.0-alpha.81",
-    "@scalar/docusaurus": "0.6.7",
+    "@scalar/docusaurus": "^0.7.41",
     "@supabase/supabase-js": "^2.39.7",
     "clsx": "^1.2.1",
     "dedent": "^1.5.3",
@@ -87,7 +87,7 @@
     ]
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "resolutions": {
     "form-data": ">=4.0.4",
