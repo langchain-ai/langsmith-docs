@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   repository_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-submodule:
     runs-on: ubuntu-latest
