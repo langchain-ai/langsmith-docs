@@ -6709,9 +6709,9 @@ flat@^5.0.2:
   integrity sha512-b6suED+5/3rTpUBdG1gupIl8MPFCAMA0QXwmljLhvCUKcUvdE4gWky9zpuGCcXHOsz4J9wPGNWq6OKpmIzz3hQ==
 
 flatted@^3.2.9:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.4.1.tgz#84ccd9579e76e9cc0d246c11d8be0beb019143e6"
-  integrity sha512-IxfVbRFVlV8V/yRaGzk0UVIcsKKHMSfYw66T/u4nTwlWteQePsxe//LjudR1AMX4tZW3WFCh3Zqa/sjlqpbURQ==
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.4.2.tgz#f5c23c107f0f37de8dbdf24f13722b3b98d52726"
+  integrity sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==
 
 follow-redirects@^1.0.0:
   version "1.15.9"
@@ -8610,10 +8610,10 @@ langsmith@^0.3.67:
     semver "^7.6.3"
     uuid "^10.0.0"
 
-langsmith@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/langsmith/-/langsmith-0.5.0.tgz#69d2fa04f5a87cd41a98d0d254999fdfdd80f30b"
-  integrity sha512-5U9Ar/wAu5vyTBBImvMLrM9sjynHzN703oLHScEqJaXWE6gm+uti0rWDryQZ6ObnuqSNa4IOUudYej9X6VNEwg==
+langsmith@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/langsmith/-/langsmith-0.5.1.tgz#e650f0f40794408879143bd3baba950fe01ca93f"
+  integrity sha512-v7s9h2Y9IM223IdDeexC8sQId8khZNsxYZugyoxxz8XMJ+4eGHxGPggwIXQpQQxl8/+luP7yfObP4saOZG0YWA==
   dependencies:
     "@types/uuid" "^10.0.0"
     chalk "^4.1.2"
