@@ -433,8 +433,8 @@ We suggest running the code by forking or cloning the repository.
                         parent_dir = os.path.normpath(os.path.dirname(relative_link))
                         return f"]({parent_dir})"
 
-                    # Skip markdown comments
-                    content = re.sub(r"^\s*<!--.*?-->", "", content, flags=re.MULTILINE)
+                    # Skip markdown comments (DOTALL so .*? matches across newlines)
+                    content = re.sub(r"^\s*<!--.*?-->", "", content, flags=re.MULTILINE | re.DOTALL)
                     # Bad sidebar ampersands
                     content = re.sub(
                         r"(^#\s+.*?)(\&amp;)(.*?$)",
