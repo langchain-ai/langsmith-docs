@@ -67,7 +67,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^29.6.2",
     "langchain": "^0.3.37",
-    "langsmith": "^0.5.4",
+    "langsmith": "^0.5.5",
     "supabase": "^2.76.14",
     "ts-jest": "^29.1.1",
     "typedoc": "^0.27.9",
