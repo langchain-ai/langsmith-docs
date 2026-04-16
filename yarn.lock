@@ -5806,10 +5806,10 @@ domhandler@^5.0.2, domhandler@^5.0.3:
   dependencies:
     domelementtype "^2.3.0"
 
-dompurify@>=3.3.2, dompurify@^3.2.1, dompurify@^3.2.4, dompurify@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.3.2.tgz#58c515d0f8508b8749452a028aa589ad80b36325"
-  integrity sha512-6obghkliLdmKa56xdbLOpUZ43pAR6xFy1uOrxBaIDjT+yaRuuybLjGS9eVBoSR/UPU5fq3OXClEHLJNGvbxKpQ==
+dompurify@>=3.3.2, dompurify@^3.2.1, dompurify@^3.2.4, dompurify@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-3.4.0.tgz#b1fc33ebdadb373241621e0a30e4ad81573dfd0b"
+  integrity sha512-nolgK9JcaUXMSmW+j1yaSvaEaoXYHwWyGJlkoCTghc97KgGDDSnpoU/PlEnw63Ah+TGKFOyY+X5LnxaWbCSfXg==
   optionalDependencies:
     "@types/trusted-types" "^2.0.7"
 
@@ -8610,10 +8610,10 @@ langsmith@^0.3.67:
     semver "^7.6.3"
     uuid "^10.0.0"
 
-langsmith@^0.5.19:
-  version "0.5.19"
-  resolved "https://registry.yarnpkg.com/langsmith/-/langsmith-0.5.19.tgz#c19f9a7e6c7e35fd1bab681864e3586279d94655"
-  integrity sha512-5tFoETuFMvGkbPGsINNlIE4Ab86CsPhdPOQZCGwNt/NX0h5NDKQLKOWS/G2XcRUBOQl4mCNbrayUvUTWaIRsCg==
+langsmith@^0.5.20:
+  version "0.5.20"
+  resolved "https://registry.yarnpkg.com/langsmith/-/langsmith-0.5.20.tgz#4021847d2ccd5a86c5eb96060f9bb5f19f80eca5"
+  integrity sha512-ULhLM8RswvQDXufLtNtvclHrWCBx8Cb5UPI6lAZC+8Dq59iHsVPz/3Ac9khWNm1VIvChRsuykixD/WrmzuuA3Q==
   dependencies:
     p-queue "6.6.2"
     uuid "10.0.0"
