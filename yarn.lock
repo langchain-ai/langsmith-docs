@@ -1687,7 +1687,7 @@
     "@docusaurus/theme-search-algolia" "3.5.2"
     "@docusaurus/types" "3.5.2"
 
-"@docusaurus/react-loadable@5.5.2":
+"@docusaurus/react-loadable@5.5.2", "react-loadable@npm:@docusaurus/react-loadable@5.5.2":
   version "5.5.2"
   resolved "https://registry.npmjs.org/@docusaurus/react-loadable/-/react-loadable-5.5.2.tgz"
   integrity sha512-A3dYjdBGuy0IGT+wyLIGIKLRE+sAk1iNk0f1HjNDysO7u8lhL4N3VEm+FAubmJbAztn94F7MxBTPmnixbiyFdQ==
@@ -3633,11 +3633,6 @@
   resolved "https://registry.npmjs.org/@types/unist/-/unist-2.0.11.tgz"
   integrity sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA==
 
-"@types/uuid@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-10.0.0.tgz#e9c07fe50da0f53dc24970cca94d619ff03f6f6d"
-  integrity sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==
-
 "@types/ws@^8.5.10":
   version "8.5.13"
   resolved "https://registry.npmjs.org/@types/ws/-/ws-8.5.13.tgz"
@@ -4867,13 +4862,6 @@ consola@^2.15.3:
   version "2.15.3"
   resolved "https://registry.npmjs.org/consola/-/consola-2.15.3.tgz"
   integrity sha512-9vAdYbHj6x2fLKC4+oPH0kFzY/orMZyG2Aj+kNylHxKGJ/Ed4dpNyAQYwJOdqO4zdM7XpVHmyejQDcQHrnuXbw==
-
-console-table-printer@^2.12.1:
-  version "2.15.0"
-  resolved "https://registry.yarnpkg.com/console-table-printer/-/console-table-printer-2.15.0.tgz#5c808204640b8f024d545bde8aabe5d344dfadc1"
-  integrity sha512-SrhBq4hYVjLCkBVOWaTzceJalvn5K1Zq5aQA6wXC/cYjI3frKWNPEMK3sZsJfNNQApvCQmgBcc13ZKmFj8qExw==
-  dependencies:
-    simple-wcswidth "^1.1.2"
 
 content-disposition@0.5.2:
   version "0.5.2"
@@ -8598,17 +8586,13 @@ langchain@^0.3.37:
     yaml "^2.2.1"
     zod "^3.25.32"
 
-langsmith@^0.3.67:
-  version "0.3.87"
-  resolved "https://registry.yarnpkg.com/langsmith/-/langsmith-0.3.87.tgz#f1c991c93a5d4d226a31671be7e4443b4b8673b1"
-  integrity sha512-XXR1+9INH8YX96FKWc5tie0QixWz6tOqAsAKfcJyPkE0xPep+NDz0IQLR32q4bn10QK3LqD2HN6T3n6z1YLW7Q==
+langsmith@>=0.5.19, langsmith@^0.3.67:
+  version "0.5.21"
+  resolved "https://registry.yarnpkg.com/langsmith/-/langsmith-0.5.21.tgz#2f4cd30dafc22922e423cf0f151ead5f636e76b0"
+  integrity sha512-l140hzgqo91T/QKDXLEfRnnxahuwVEVohr9zqpy3BaGDeBdrPiJuNJ2TBhPZxNXNCl68IkVcn555FD3jp5peyw==
   dependencies:
-    "@types/uuid" "^10.0.0"
-    chalk "^4.1.2"
-    console-table-printer "^2.12.1"
-    p-queue "^6.6.2"
-    semver "^7.6.3"
-    uuid "^10.0.0"
+    p-queue "6.6.2"
+    uuid "10.0.0"
 
 langsmith@^0.5.20:
   version "0.5.20"
@@ -10262,7 +10246,7 @@ p-map@^4.0.0:
   dependencies:
     aggregate-error "^3.0.0"
 
-p-queue@6.6.2, p-queue@^6.6.2:
+p-queue@6.6.2:
   version "6.6.2"
   resolved "https://registry.npmjs.org/p-queue/-/p-queue-6.6.2.tgz"
   integrity sha512-RwFpb72c/BhQLEXIZ5K2e+AhgNVmIejGlTgiB9MzZ0e93GRvqZ7uSi0dvRF7/XIXDeNkra2fNHBxTyPDGySpjQ==
@@ -11056,14 +11040,6 @@ react-loadable-ssr-addon-v5-slorber@^1.0.1:
   dependencies:
     "@babel/runtime" "^7.10.3"
 
-"react-loadable@npm:@docusaurus/react-loadable@5.5.2":
-  version "5.5.2"
-  resolved "https://registry.npmjs.org/@docusaurus/react-loadable/-/react-loadable-5.5.2.tgz"
-  integrity sha512-A3dYjdBGuy0IGT+wyLIGIKLRE+sAk1iNk0f1HjNDysO7u8lhL4N3VEm+FAubmJbAztn94F7MxBTPmnixbiyFdQ==
-  dependencies:
-    "@types/react" "*"
-    prop-types "^15.6.2"
-
 "react-loadable@npm:@docusaurus/react-loadable@6.0.0":
   version "6.0.0"
   resolved "https://registry.npmjs.org/@docusaurus/react-loadable/-/react-loadable-6.0.0.tgz"
@@ -11702,10 +11678,10 @@ send@~0.19.0, send@~0.19.1:
     range-parser "~1.2.1"
     statuses "~2.0.2"
 
-serialize-javascript@>=7.0.3, serialize-javascript@^6.0.0, serialize-javascript@^6.0.1, serialize-javascript@^6.0.2:
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.0.4.tgz#c517735bd5b7631dd1fc191ee19cbb713ff8e05c"
-  integrity sha512-DuGdB+Po43Q5Jxwpzt1lhyFSYKryqoNjQSA9M92tyw0lyHIOur+XCalOUe0KTJpyqzT8+fQ5A0Jf7vCx/NKmIg==
+serialize-javascript@>=7.0.5, serialize-javascript@^6.0.0, serialize-javascript@^6.0.1, serialize-javascript@^6.0.2:
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.0.5.tgz#c798cc0552ffbb08981914a42a8756e339d0d5b1"
+  integrity sha512-F4LcB0UqUl1zErq+1nYEEzSHJnIwb3AF2XWB94b+afhrekOUijwooAYqFyRbjYkm2PAKBabx6oYv/xDxNi8IBw==
 
 serve-handler@^6.1.5:
   version "6.1.6"
@@ -11867,11 +11843,6 @@ signal-exit@^4.0.1:
   version "4.1.0"
   resolved "https://registry.npmjs.org/signal-exit/-/signal-exit-4.1.0.tgz"
   integrity sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==
-
-simple-wcswidth@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/simple-wcswidth/-/simple-wcswidth-1.1.2.tgz#66722f37629d5203f9b47c5477b1225b85d6525b"
-  integrity sha512-j7piyCjAeTDSjzTSQ7DokZtMNwNlEAyxqSZeCS+CXH7fJ4jx3FuJ/mTW3mE+6JLs4VJBbcll0Kjn+KXI5t21Iw==
 
 sirv@^2.0.3:
   version "2.0.4"
@@ -13264,15 +13235,15 @@ yallist@^5.0.0:
   resolved "https://registry.npmjs.org/yallist/-/yallist-5.0.0.tgz"
   integrity sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==
 
-yaml@^1.10.0, yaml@^1.7.2:
-  version "1.10.2"
-  resolved "https://registry.npmjs.org/yaml/-/yaml-1.10.2.tgz"
-  integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
+yaml@1.10.3, yaml@^1.10.0, yaml@^1.7.2:
+  version "1.10.3"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.3.tgz#76e407ed95c42684fb8e14641e5de62fe65bbcb3"
+  integrity sha512-vIYeF1u3CjlhAFekPPAk2h/Kv4T3mAkMox5OymRiJQB0spDP10LHvt+K7G9Ny6NuuMAb25/6n1qyUjAcGNf/AA==
 
-yaml@^2.2.1, yaml@^2.6.1:
-  version "2.7.0"
-  resolved "https://registry.npmjs.org/yaml/-/yaml-2.7.0.tgz"
-  integrity sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==
+yaml@2.8.3, yaml@^2.2.1, yaml@^2.6.1:
+  version "2.8.3"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.8.3.tgz#a0d6bd2efb3dd03c59370223701834e60409bd7d"
+  integrity sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg==
 
 yargs-parser@^21.1.1:
   version "21.1.1"
