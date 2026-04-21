@@ -99,12 +99,16 @@
     "**/filelist/minimatch": "5.1.8",
     "tar": ">=7.5.11",
     "svgo": ">=3.3.3",
-    "serialize-javascript": ">=7.0.3",
+    "serialize-javascript": ">=7.0.5",
     "dompurify": ">=3.3.2",
     "gray-matter/js-yaml": "3.14.2",
     "@supabase/auth-js": ">=2.69.1",
     "express/path-to-regexp": "0.1.13",
     "on-headers": ">=1.1.0",
-    "webpack-dev-server": ">=5.2.1"
+    "webpack-dev-server": ">=5.2.1",
+    "langsmith": ">=0.5.19",
+    "**/cosmiconfig/yaml": "1.10.3",
+    "**/langchain/yaml": "2.8.3",
+    "**/typedoc/yaml": "2.8.3"
   }
 }
