@@ -99,15 +99,35 @@ In the Python example below, we are pulling [this structured prompt](https://smi
 
 <CodeTabs
   tabs={[
-    python({caption: "Requires `langsmith>=0.2.0`"})`
-      from langchain import hub
+    python({caption: "Requires `langsmith>=0.2.0`, `langchain>=0.3`, `pydantic>=2`"})`
       from langchain.chat_models import init_chat_model
+      from langchain_core.prompts import ChatPromptTemplate
       from langsmith import evaluate
+      from pydantic import BaseModel, Field
 
-      # See the prompt: https://smith.langchain.com/hub/langchain-ai/pairwise-evaluation-2
-      prompt = hub.pull("langchain-ai/pairwise-evaluation-2")
-      model = init_chat_model("gpt-4o")
-      chain = prompt | model
+      class Score(BaseModel):
+          """Output 1 if A is better, 2 if B is better, 0 for a tie."""
+          Preference: int = Field(description="Which assistant answer is preferred?")
+
+      prompt = ChatPromptTemplate.from_messages([
+          ("system",
+           "Please act as an impartial judge and evaluate the quality of the responses "
+           "provided by two AI assistants to the user question displayed below. You "
+           "should choose the assistant that follows the user's instructions and "
+           "answers the user's question better. Your evaluation should consider "
+           "factors such as the helpfulness, relevance, accuracy, depth, creativity, "
+           "and level of detail of their responses. Begin your evaluation by comparing "
+           "the two responses and provide a short explanation. Avoid any position "
+           "biases and ensure that the order in which the responses were presented "
+           "does not influence your decision. Do not allow the length of the "
+           "responses to influence your evaluation. Do not favor certain names of "
+           "the assistants. Be as objective as possible."),
+          ("human",
+           "[User Question] {question}\\n"
+           "[The Start of Assistant A's Answer] {answer_a} [The End of Assistant A's Answer]\\n"
+           "[The Start of Assistant B's Answer] {answer_b} [The End of Assistant B's Answer]"),
+      ])
+      chain = prompt | init_chat_model("gpt-4o").with_structured_output(Score)
 
       def ranked_preference(inputs: dict, outputs: list[dict]) -> list:
           # Assumes example inputs have a 'question' key and experiment
@@ -118,9 +138,9 @@ In the Python example below, we are pulling [this structured prompt](https://smi
               "answer_b": outputs[1].get("answer", "N/A"),
           })
 
-          if response["Preference"] == 1:
+          if response.Preference == 1:
               scores = [1, 0]
-          elif response["Preference"] == 2:
+          elif response.Preference == 2:
               scores = [0, 1]
           else:
               scores = [0, 0]
