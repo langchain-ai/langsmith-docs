@@ -1,21 +1,18 @@
----
-sidebar_position: 19
----
-
-import {
-  CodeTabs,
-  PythonBlock,
-} from "@site/src/components/InstructionsWithCode";
-
 # Trace with OpenAI Agents SDK
 
 The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) allows you to build agentic applications powered by OpenAI's models.
 
+## Prerequisites
+
+Before getting started, you'll need:
+- An OpenAI API key (get one from [OpenAI Platform](https://platform.openai.com/api-keys))
+- A LangSmith API key (get one from [LangSmith Settings](https://smith.langchain.com/settings))
+
 ## Installation
 
-:::info
+info
 Requires Python SDK version `langsmith>=0.3.15`.
-:::
+
 
 Install LangSmith with OpenAI Agents support:
 
@@ -25,9 +22,19 @@ pip install "langsmith[openai-agents]"
 
 This will install both the LangSmith library and the OpenAI Agents SDK.
 
+## Configuration
+
+Set up your environment variables with your API keys:
+
+```bash
+OPENAI_API_KEY="your-openai-api-key-here"
+LANGSMITH_API_KEY="your-langsmith-api-key-here"
+LANGSMITH_PROJECT="your-project-name"  # Optional: defaults to "default"
+```
+
 ## Quick Start
 
-You can integrate LangSmith tracing with the OpenAI Agents SDK by using the `OpenAIAgentsTracingProcessor` class.
+Integrate LangSmith tracing with the OpenAI Agents SDK by using the `OpenAIAgentsTracingProcessor` class.
 
 ```python
 import asyncio
@@ -49,6 +56,15 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-The agent's execution flow, including all spans and their details, will be logged to LangSmith.
+
+The agent's execution flow, including all spans and their details, will be logged to LangSmith and you can view the trace in your [LangSmith dashboard](https://smith.langchain.com/).
 
 ![OpenAI Agents SDK Trace in LangSmith](./static/agent_trace.png)
+
+## Troubleshooting
+
+**Common Issues:**
+
+- **Authentication Error**: Ensure both `OPENAI_API_KEY` and `LANGSMITH_API_KEY` are properly set
+- **Import Error**: Verify you installed the correct package with `pip install "langsmith[openai-agents]"`
+- **No traces appearing**: Check that your `LANGSMITH_PROJECT` environment variable is set and matches your project name in LangSmith
