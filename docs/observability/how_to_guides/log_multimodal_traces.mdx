@@ -12,6 +12,10 @@ import {
 
 LangSmith supports logging and rendering images as part of traces. This is currently supported for multimodal LLM runs.
 
+:::tip
+If you're using LangChain, refer to the [multimodal traces section in the LangChain guide](./trace_with_langchain#log-multimodal-traces) for examples using `ChatPromptTemplate`.
+:::
+
 In order to log images, use `wrap_openai`/ `wrapOpenAI` in Python or TypeScript respectively and pass an image URL or base64 encoded image as part of the input.
 
 <CodeTabs
@@ -25,7 +29,7 @@ response = client.chat.completions.create(
     {
       "role": "user",
       "content": [
-        {"type": "text", "text": "What’s in this image?"},
+        {"type": "text", "text": "What's in this image?"},
         {
           "type": "image_url",
           "image_url": {
@@ -47,7 +51,7 @@ const response = await wrappedClient.chat.completions.create({
       {
         role: "user",
         content: [
-          { type: "text", text: "What’s in this image?" },
+          { type: "text", text: "What's in this image?" },
           {
             type: "image_url",
             image_url: {
